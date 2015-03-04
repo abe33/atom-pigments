@@ -107,7 +107,7 @@ describe 'Color', ->
       expect(color).toBeColor(102, 128, 153, 0.4)
 
   describe '::hwba', ->
-    it 'returns an array with the hue, whiteness and blackness components', ->
+    it 'returns an array with the hue, whiteness, blackness and alpha components', ->
       expect(color.hwba).toBeComponentArrayCloseTo([16, 20, 0, 0.4])
 
     it 'sets the color components based on the passed-in values', ->
@@ -116,10 +116,10 @@ describe 'Color', ->
       expect(color).toBeColor(102, 128, 153, 0.7)
 
   describe '::hex', ->
-    it 'returns the color component as a hexadecimal string', ->
+    it 'returns the color as a hexadecimal string', ->
       expect(color.hex).toEqual('ff6933')
 
-    it 'parses the affected string and sets the color components accordingly', ->
+    it 'parses the string and sets the color components accordingly', ->
       color.hex = '00ff00'
 
       expect(color).toBeColor(0,255,0,0.4)
@@ -128,7 +128,7 @@ describe 'Color', ->
     it 'returns the color component as a hexadecimal string', ->
       expect(color.hexARGB).toEqual('66ff6933')
 
-    it 'parses the affected string and sets the color components accordingly', ->
+    it 'parses the string and sets the color components accordingly', ->
       color.hexARGB = 'ff00ff00'
 
       expect(color).toBeColor(0,255,0,1)
