@@ -20,6 +20,10 @@ describe 'Color', ->
     it 'creates the color with the provided components', ->
       expect(new Color('#66ff6933')).toBeColor(255, 105, 51, 0.4)
 
+  describe 'created with the name of a svg color', ->
+    it 'creates the color using its name', ->
+      expect(new Color('orange')).toBeColor('#ffa500')
+
   describe '::rgb', ->
     it 'returns an array with the color components', ->
       expect(color.rgb).toBeComponentArrayCloseTo([

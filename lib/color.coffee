@@ -1,3 +1,5 @@
+SVGColors = require './svg-colors'
+
 module.exports =
 class Color
 
@@ -10,6 +12,10 @@ class Color
 
   constructor: (r=0,g=0,b=0,a=1) ->
     if typeof r is 'string'
+      if r of SVGColors.allCases
+        @name = r
+        r = SVGColors.allCases[r]
+
       expr = r.replace(/\#|0x/, '')
       if expr.length is 6
         @hex = expr
@@ -27,14 +33,6 @@ class Color
         @[index] = component
         @isInvalid = true if isNaN(component)
     }
-
-  # Object.defineProperty Color.prototype, 'name', {
-  #   enumerable: true
-  #   get: -> @_name
-  #   set: (@_name) ->
-  #     if color = Color.namedColors[@_name.toLowerCase()].replace('#', '')
-  #       @hex = color
-  # }
 
   Object.defineProperty Color.prototype, 'rgb', {
     enumerable: true
