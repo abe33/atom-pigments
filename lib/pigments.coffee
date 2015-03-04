@@ -1,6 +1,6 @@
 {CompositeDisposable} = require 'atom'
 
-module.exports = Pigments =
+module.exports =
   activate: (state) ->
 
   deactivate: ->

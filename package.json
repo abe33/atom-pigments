@@ -2,7 +2,7 @@
   "name": "pigments",
   "main": "./lib/pigments",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "A rework of atom-color-highlight and project-palette-finder as a single package",
   "repository": "https://github.com/abe33/atom-pigments",
   "license": "MIT",
   "engines": {
