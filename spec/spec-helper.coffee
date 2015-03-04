@@ -1,14 +1,14 @@
 beforeEach ->
+  compare = (a,b,p) -> Math.abs(b - a) < (Math.pow(10, -p) / 2)
+
   @addMatchers
     toBeComponentArrayCloseTo: (arr, precision=0) ->
       notText = if @isNot then " not" else ""
       this.message = => "Expected #{jasmine.pp(@actual)} to#{notText} be an array whose values are close to #{jasmine.pp(arr)} with a precision of #{precision}"
 
-      compare = (a,b) -> Math.abs(b - a) < (Math.pow(10, -precision) / 2)
-
       return false if @actual.length isnt arr.length
 
-      @actual.every (value,i) -> compare(value, arr[i])
+      @actual.every (value,i) -> compare(value, arr[i], precision)
 
     toBeColor: (colorOrRed,green=0,blue=0,alpha=1) ->
       color = switch typeof colorOrRed
@@ -48,4 +48,4 @@ beforeEach ->
       Math.round(@actual.red) is color.red and
       Math.round(@actual.green) is color.green and
       Math.round(@actual.blue) is color.blue and
-      @actual.alpha is color.alpha
+      compare(@actual.alpha, color.alpha, 2)
