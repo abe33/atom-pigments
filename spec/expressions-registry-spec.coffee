@@ -37,3 +37,11 @@ describe 'ExpressionsRegistry', ->
         expression3
         expression2
       ])
+
+  describe '::removeExpression', ->
+    it 'removes an expression with its name', ->
+      registry.createExpression 'dummy', 'foo'
+
+      registry.removeExpression('dummy')
+
+      expect(registry.getExpressions()).toEqual([])
