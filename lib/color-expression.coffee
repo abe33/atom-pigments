@@ -2,7 +2,7 @@ Color = require './color'
 
 module.exports =
 class ColorExpression
-  constructor: (@name, @regexpString, @handle, @priority=0) ->
+  constructor: ({@name, @regexpString, @handle}) ->
     @regexp = new RegExp("^#{@regexpString}$", 'i')
 
   match: (expression) -> @regexp.test expression

@@ -24,8 +24,9 @@
 } = require './utils'
 
 ExpressionsRegistry = require './expressions-registry'
+ColorExpression = require './color-expression'
 
-module.exports = registry = new ExpressionsRegistry
+module.exports = registry = new ExpressionsRegistry(ColorExpression)
 
 ##    ##       #### ######## ######## ########     ###    ##
 ##    ##        ##     ##    ##       ##     ##   ## ##   ##
@@ -36,19 +37,19 @@ module.exports = registry = new ExpressionsRegistry
 ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
 # #6f3489ef
-registry.addExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (match, expression) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # #3489ef
-registry.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (match, expression) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # #38e
-registry.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expression) ->
   [_, hexa] = match
   colorAsInt = readInt(hexa, {}, this, 16)
 
@@ -57,19 +58,19 @@ registry.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expres
   @blue = (colorAsInt & 0xf) * 17
 
 # 0xab3489ef
-registry.addExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (match, expression) ->
+registry.createExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (match, expression) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # 0x3489ef
-registry.addExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (match, expression) ->
+registry.createExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (match, expression) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # rgb(50,120,200)
-registry.addExpression 'css_rgb', strip("
+registry.createExpression 'css_rgb', strip("
   rgb#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
@@ -86,7 +87,7 @@ registry.addExpression 'css_rgb', strip("
   @alpha = 1
 
 # rgba(50,120,200,0.7)
-registry.addExpression 'css_rgba', strip("
+registry.createExpression 'css_rgba', strip("
   rgba#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
@@ -105,7 +106,7 @@ registry.addExpression 'css_rgba', strip("
   @alpha = readFloat(a, vars, this)
 
 # rgba(green,0.7)
-registry.addExpression 'stylus_rgba', strip("
+registry.createExpression 'stylus_rgba', strip("
   rgba#{ps}\\s*
     (#{notQuote})
     #{comma}
@@ -126,7 +127,7 @@ registry.addExpression 'stylus_rgba', strip("
     @isInvalid = true
 
 # hsl(210,50%,50%)
-registry.addExpression 'css_hsl', strip("
+registry.createExpression 'css_hsl', strip("
   hsl#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -145,7 +146,7 @@ registry.addExpression 'css_hsl', strip("
   @alpha = 1
 
 # hsla(210,50%,50%,0.7)
-registry.addExpression 'css_hsla', strip("
+registry.createExpression 'css_hsla', strip("
   hsla#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -166,7 +167,7 @@ registry.addExpression 'css_hsla', strip("
   @alpha = readFloat(a,vars, this)
 
 # hsv(210,70%,90%)
-registry.addExpression 'hsv', strip("
+registry.createExpression 'hsv', strip("
   hsv#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -185,7 +186,7 @@ registry.addExpression 'hsv', strip("
   @alpha = 1
 
 # hsva(210,70%,90%,0.7)
-registry.addExpression 'hsva', strip("
+registry.createExpression 'hsva', strip("
   hsva#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -207,7 +208,7 @@ registry.addExpression 'hsva', strip("
 
 
 # vec4(0.2, 0.5, 0.9, 0.7)
-registry.addExpression 'vec4', strip("
+registry.createExpression 'vec4', strip("
   vec4#{ps}\\s*
     (#{float})
     #{comma}
@@ -228,7 +229,7 @@ registry.addExpression 'vec4', strip("
   ]
 
 # hwb(210,40%,40%)
-registry.addExpression 'hwb', strip("
+registry.createExpression 'hwb', strip("
   hwb#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -249,7 +250,7 @@ registry.addExpression 'hwb', strip("
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
-registry.addExpression 'gray', strip("
+registry.createExpression 'gray', strip("
   gray#{ps}\\s*
     (#{percent}|#{variables})
     (#{comma}(#{float}|#{variables}))?
@@ -266,7 +267,7 @@ registry.addExpression 'gray', strip("
 #
 # colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
 #
-# registry.addExpression 'named_colors', colorRegexp, (match, expression) ->
+# registry.createExpression 'named_colors', colorRegexp, (match, expression) ->
 #   [_,_,name] = match
 #
 #   @colorExpression = @name = name
