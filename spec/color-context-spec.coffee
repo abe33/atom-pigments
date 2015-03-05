@@ -1,8 +1,9 @@
 
 ColorContext = require '../lib/color-context'
+ColorParser = require '../lib/color-parser'
 
 describe 'ColorContext', ->
-  [context] = []
+  [context, parser] = []
 
   itParses = (expression) ->
     asInt: (expected) ->
@@ -25,13 +26,13 @@ describe 'ColorContext', ->
       it "parses '#{expression}' as a color expression", ->
         expect(context.readColorExpression(expression)).toEqual(expected)
 
-    asColor: (expected) ->
+    asColor: (expected...) ->
       it "parses '#{expression}' as a color with value of #{jasmine.pp expected}", ->
-        expect(context.readColor(expression)).toBeColor(expected)
+        expect(context.readColor(expression)).toBeColor(expected...)
 
   describe 'created without any variables', ->
     beforeEach ->
-      context = new ColorContext
+      context = new ColorContext(new ColorParser)
 
     itParses('10').asInt(10)
 
@@ -47,4 +48,6 @@ describe 'ColorContext', ->
 
     itParses('red').asColorExpression('red')
 
-    itParses('red').asColor('#ff0000')
+    itParses('red').asColor(255, 0, 0)
+    itParses('#ff0000').asColor(255, 0, 0)
+    itParses('rgb(255,127,0)').asColor(255, 127, 0)

@@ -7,11 +7,11 @@ class ColorExpression
 
   match: (expression) -> @regexp.test expression
 
-  parse: (expression) ->
+  parse: (expression, context) ->
     return null unless @match(expression)
 
     color = new Color()
-    @handle.call(color, @regexp.exec(expression), expression, {})
+    @handle.call(color, @regexp.exec(expression), expression, context)
     color
 
   search: (text, start=0) ->

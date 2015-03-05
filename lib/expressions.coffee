@@ -17,14 +17,11 @@
   strip
   clamp
   clampInt
-  readInt
-  readFloat
-  readIntOrPercent
-  readFloatOrPercent
 } = require './utils'
 
 ExpressionsRegistry = require './expressions-registry'
 ColorExpression = require './color-expression'
+SVGColors = require './svg-colors'
 
 module.exports = registry = new ExpressionsRegistry(ColorExpression)
 
@@ -37,34 +34,34 @@ module.exports = registry = new ExpressionsRegistry(ColorExpression)
 ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
 # #6f3489ef
-registry.createExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # #3489ef
-registry.createExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # #38e
-registry.createExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expression) ->
+registry.createExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
-  colorAsInt = readInt(hexa, {}, this, 16)
+  colorAsInt = context.readInt(hexa, 16)
 
   @red = (colorAsInt >> 8 & 0xf) * 17
   @green = (colorAsInt >> 4 & 0xf) * 17
   @blue = (colorAsInt & 0xf) * 17
 
 # 0xab3489ef
-registry.createExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (match, expression) ->
+registry.createExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (match, expression, context) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # 0x3489ef
-registry.createExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (match, expression) ->
+registry.createExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (match, expression, context) ->
   [_, hexa] = match
 
   @hex = hexa
@@ -78,12 +75,12 @@ registry.createExpression 'css_rgb', strip("
     #{comma}
     (#{intOrPercent}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,r,_,_,g,_,_,b] = match
 
-  @red = readIntOrPercent(r, vars, this)
-  @green = readIntOrPercent(g, vars, this)
-  @blue = readIntOrPercent(b, vars, this)
+  @red = context.readIntOrPercent(r)
+  @green = context.readIntOrPercent(g)
+  @blue = context.readIntOrPercent(b)
   @alpha = 1
 
 # rgba(50,120,200,0.7)
@@ -97,13 +94,13 @@ registry.createExpression 'css_rgba', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,r,_,_,g,_,_,b,_,_,a] = match
 
-  @red = readIntOrPercent(r, vars, this)
-  @green = readIntOrPercent(g, vars, this)
-  @blue = readIntOrPercent(b, vars, this)
-  @alpha = readFloat(a, vars, this)
+  @red = context.readIntOrPercent(r)
+  @green = context.readIntOrPercent(g)
+  @blue = context.readIntOrPercent(b)
+  @alpha = context.readFloat(a)
 
 # rgba(green,0.7)
 registry.createExpression 'stylus_rgba', strip("
@@ -112,19 +109,13 @@ registry.createExpression 'stylus_rgba', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,subexpr,a] = match
 
-  if vars[subexpr]?
-    @usedVariables.push(subexpr)
-    subexpr = vars[subexpr].value
+  baseColor = context.readColor(subexpr)
 
-  if Color.canHandle(subexpr)
-    baseColor = new Color(subexpr, vars)
-    @rgb = baseColor.rgb
-    @alpha = readFloat(a, vars, this)
-  else
-    @isInvalid = true
+  @rgb = baseColor.rgb
+  @alpha = context.readFloat(a)
 
 # hsl(210,50%,50%)
 registry.createExpression 'css_hsl', strip("
@@ -135,13 +126,13 @@ registry.createExpression 'css_hsl', strip("
     #{comma}
     (#{percent}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,h,_,s,_,l] = match
 
   @hsl = [
-    readInt(h, vars, this)
-    readFloat(s, vars, this)
-    readFloat(l, vars, this)
+    context.readInt(h)
+    context.readFloat(s)
+    context.readFloat(l)
   ]
   @alpha = 1
 
@@ -156,15 +147,15 @@ registry.createExpression 'css_hsla', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,h,_,s,_,l,_,a] = match
 
   @hsl = [
-    readInt(h, vars, this)
-    readFloat(s,vars, this)
-    readFloat(l,vars, this)
+    context.readInt(h)
+    context.readFloat(s)
+    context.readFloat(l)
   ]
-  @alpha = readFloat(a,vars, this)
+  @alpha = context.readFloat(a)
 
 # hsv(210,70%,90%)
 registry.createExpression 'hsv', strip("
@@ -175,13 +166,13 @@ registry.createExpression 'hsv', strip("
     #{comma}
     (#{percent}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,h,_,s,_,v] = match
 
   @hsv = [
-    readInt(h, vars, this)
-    readFloat(s, vars, this)
-    readFloat(v, vars, this)
+    context.readInt(h)
+    context.readFloat(s)
+    context.readFloat(v)
   ]
   @alpha = 1
 
@@ -196,15 +187,15 @@ registry.createExpression 'hsva', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,h,_,s,_,v,_,a] = match
 
   @hsv = [
-    readInt(h, vars, this)
-    readFloat(s, vars, this)
-    readFloat(v, vars, this)
+    context.readInt(h)
+    context.readFloat(s)
+    context.readFloat(v)
   ]
-  @alpha = readFloat(a, vars, this)
+  @alpha = context.readFloat(a)
 
 
 # vec4(0.2, 0.5, 0.9, 0.7)
@@ -218,14 +209,14 @@ registry.createExpression 'vec4', strip("
     #{comma}
     (#{float})
   #{pe}
-"), (match, expression) ->
+"), (match, expression, context) ->
   [_,h,s,l,a] = match
 
   @rgba = [
-    readFloat(h, vars, this) * 255
-    readFloat(s, vars, this) * 255
-    readFloat(l, vars, this) * 255
-    readFloat(a, vars, this)
+    context.readFloat(h) * 255
+    context.readFloat(s) * 255
+    context.readFloat(l) * 255
+    context.readFloat(a)
   ]
 
 # hwb(210,40%,40%)
@@ -238,15 +229,15 @@ registry.createExpression 'hwb', strip("
     (#{percent}|#{variables})
     (#{comma}(#{float}|#{variables}))?
   #{pe}
-"), (match, expression, vars) ->
+"), (match, expression, context) ->
   [_,h,_,w,_,b,_,_,a] = match
 
   @hwb = [
-    readInt(h, vars, this)
-    readFloat(w, vars, this)
-    readFloat(b, vars, this)
+    context.readInt(h)
+    context.readFloat(w)
+    context.readFloat(b)
   ]
-  @alpha = if a? then readFloat(a, vars, this) else 1
+  @alpha = if a? then context.readFloat(a) else 1
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
@@ -254,23 +245,23 @@ registry.createExpression 'gray', strip("
   gray#{ps}\\s*
     (#{percent}|#{variables})
     (#{comma}(#{float}|#{variables}))?
-  #{pe}"), 1, (match, expression, vars) ->
+  #{pe}"), 1, (match, expression, context) ->
 
   [_,p,_,_,a] = match
 
-  p = readFloat(p, vars, this) / 100 * 255
+  p = context.readFloat(p) / 100 * 255
   @rgb = [p, p, p]
-  @alpha = if a? then readFloat(a, vars, this) else 1
+  @alpha = if a? then context.readFloat(a) else 1
 
 # dodgerblue
-# colors = Object.keys(Color.namedColors)
-#
-# colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
-#
-# registry.createExpression 'named_colors', colorRegexp, (match, expression) ->
-#   [_,_,name] = match
-#
-#   @colorExpression = @name = name
+colors = Object.keys(SVGColors.allCases)
+colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
+
+registry.createExpression 'named_colors', colorRegexp, (match, expression, context) ->
+  [_,_,name] = match
+
+  @name = name
+  @hex = SVGColors.allCases[name].replace('#','')
 
 ##    ######## ##     ## ##    ##  ######
 ##    ##       ##     ## ###   ## ##    ##
