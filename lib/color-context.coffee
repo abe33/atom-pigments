@@ -2,12 +2,15 @@ Color = require './color'
 
 module.exports =
 class ColorContext
-  constructor: (@parser) ->
-    @vars={}
+  constructor: (@parser, @vars={}) ->
     @usedVariables = []
 
   readColorExpression: (value) ->
-    value
+    if @vars[value]?
+      @usedVariables.push(value)
+      @vars[value].value
+    else
+      value
 
   readColor: (value) ->
     @parser.parse(@readColorExpression(value), this)

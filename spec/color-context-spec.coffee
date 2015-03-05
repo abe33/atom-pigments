@@ -51,3 +51,23 @@ describe 'ColorContext', ->
     itParses('red').asColor(255, 0, 0)
     itParses('#ff0000').asColor(255, 0, 0)
     itParses('rgb(255,127,0)').asColor(255, 127, 0)
+
+  describe 'with a variables hash', ->
+    beforeEach ->
+      createVar = (value) -> {value}
+
+      variables =
+        x: createVar '10'
+        y: createVar '0.1'
+        z: createVar '10%'
+        c: createVar 'rgb(255,127,0)'
+
+      context = new ColorContext(new ColorParser, variables)
+
+    itParses('x').asInt(10)
+    itParses('y').asFloat(0.1)
+    itParses('z').asIntOrPercent(26)
+    itParses('z').asFloatOrPercent(0.1)
+
+    itParses('c').asColorExpression('rgb(255,127,0)')
+    itParses('c').asColor(255, 127, 0)
