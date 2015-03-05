@@ -12,7 +12,7 @@ class ColorExpression
 
     color = new Color()
     @handle.call(color, @regexp.exec(expression), expression, context)
-    return color if color.isValid()
+    color
 
   search: (text, start=0) ->
     results = undefined
