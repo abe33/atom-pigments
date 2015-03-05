@@ -10,7 +10,8 @@ class ColorParser
   constructor: ->
 
   parse: (expression, context) ->
-    context ?= new ColorContext(this)
+    context ?= new ColorContext
+    context.parser ?= this
 
     for e in registry.getExpressions()
       return e.parse(expression, context) if e.match(expression)

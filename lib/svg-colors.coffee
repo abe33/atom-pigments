@@ -161,6 +161,7 @@ tocamelCase = (s,i) -> if i is 0 then s else s[0].toUpperCase() + s[1..-1]
 
 for k,v of colors
   a = k.split('_')
+  ex.allCases[k] =
   ex.allCases[a.map(toCamelCase).join('')] =
   ex.allCases[a.map(tocamelCase).join('')] =
   ex.allCases[a.join('_').toUpperCase()] =

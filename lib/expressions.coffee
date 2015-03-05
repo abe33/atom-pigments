@@ -114,6 +114,8 @@ registry.createExpression 'stylus_rgba', strip("
 
   baseColor = context.readColor(subexpr)
 
+  return @invalid = true unless baseColor?
+
   @rgb = baseColor.rgb
   @alpha = context.readFloat(a)
 
