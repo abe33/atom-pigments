@@ -3,7 +3,7 @@ Color = require './color'
 module.exports =
 class ColorExpression
   constructor: ({@name, @regexpString, @handle}) ->
-    @regexp = new RegExp("^#{@regexpString}$", 'i')
+    @regexp = new RegExp("^#{@regexpString}$")
 
   match: (expression) -> @regexp.test expression
 
@@ -16,7 +16,7 @@ class ColorExpression
 
   search: (text, start=0) ->
     results = undefined
-    re = new RegExp(@regexpString, 'gi')
+    re = new RegExp(@regexpString, 'g')
     re.lastIndex = start
     if [match] = re.exec(text)
       {lastIndex} = re
