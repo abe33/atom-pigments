@@ -65,6 +65,7 @@ describe 'ColorParser', ->
   }).asColor(255, 127, 0, 0.5)
 
   itParses('rgba(green, 0.5)').asColor(0, 128, 0, 0.5)
+  itParses('rgba($c,$a,)').asUndefined()
   itParses('rgba($c,$a)').asInvalid()
   itParses('rgba($c,1)').asInvalid()
   itParses('rgba($c,$a)').withContext({
@@ -73,6 +74,7 @@ describe 'ColorParser', ->
   }).asColor(0, 128, 0, 0.5)
 
   itParses('hsl(200,50%,50%)').asColor(64, 149, 191)
+  itParses('hsl($h,$s,$l,)').asUndefined()
   itParses('hsl($h,$s,$l)').asInvalid()
   itParses('hsl($h,$s,$l)').withContext({
     '$h': '200'
@@ -113,6 +115,7 @@ describe 'ColorParser', ->
 
   itParses('hwb(210,40%,40%)').asColor(102, 128, 153)
   itParses('hwb(210,40%,40%, 0.5)').asColor(102, 128, 153, 0.5)
+  itParses('hwb($h,$w,$b,)').asUndefined()
   itParses('hwb($h,$w,$b)').asInvalid()
   itParses('hwb($h,$w,$b,$a)').asInvalid()
   itParses('hwb($h,$w,$b)').withContext({
@@ -129,6 +132,7 @@ describe 'ColorParser', ->
 
   itParses('gray(100%)').asColor(255, 255, 255)
   itParses('gray(100%, 0.5)').asColor(255, 255, 255, 0.5)
+  itParses('gray($c, $a,)').asUndefined()
   itParses('gray($c, $a)').asInvalid()
   itParses('gray($c, $a)').withContext({
     '$c': '100%'
