@@ -262,7 +262,7 @@ colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
 registry.createExpression 'named_colors', colorRegexp, (match, expression, context) ->
   [_,_,name] = match
 
-  @name = name
+  @colorExpression = @name = name
   @hex = SVGColors.allCases[name].replace('#','')
 
 ##    ######## ##     ## ##    ##  ######

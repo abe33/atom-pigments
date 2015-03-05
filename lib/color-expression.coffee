@@ -11,6 +11,7 @@ class ColorExpression
     return null unless @match(expression)
 
     color = new Color()
+    color.colorExpression = expression
     @handle.call(color, @regexp.exec(expression), expression, context)
     color
 

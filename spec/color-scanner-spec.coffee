@@ -29,3 +29,10 @@ describe 'ColorScanner', ->
 
       it 'returns the first buffer color match', ->
         expect(bufferColor).toBeDefined()
+
+      describe 'successive searches', ->
+        it 'returns a buffer color for each match and then undefined', ->
+          expect(scanner.search()).toBeDefined()
+          expect(scanner.search()).toBeDefined()
+          # expect(scanner.search()).toBeDefined()
+          expect(scanner.search()).toBeUndefined()

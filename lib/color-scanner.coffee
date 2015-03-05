@@ -1,8 +1,11 @@
-[registry, regexpString] = []
+[registry, regexpString, regexp] = []
+ColorParser = require './color-parser'
 
 module.exports =
 class ColorScanner
-  constructor: ({@buffer}) ->
+  constructor: (params) ->
+    {@buffer, @parser} = params
+    @parser ?= new ColorParser
 
   getRegExp: ->
     registry ?= require './expressions'
@@ -10,16 +13,33 @@ class ColorScanner
     .map (e) -> "(#{e.regexpString})"
     .join('|')
 
-    new RegExp(regexpString, 'g')
+    regexp ?= new RegExp(regexpString, 'g')
 
-  search: (start=0) ->
+  search: (start) ->
     text = @buffer.getText()
     regexp = @getRegExp()
-    regexp.lastIndex = start
+    regexp.lastIndex = start ? @lastIndex
 
     if match = regexp.exec(text)
       [matchText] = match
-      {lastIndex} = regexp
+      {@lastIndex} = regexp
 
-      match: matchText
-      range: [lastIndex - matchText.length, lastIndex]
+      color = @parser.parse(matchText)
+
+      if (index = matchText.indexOf(color.colorExpression)) > 0
+        @lastIndex += -matchText.length + index + color.colorExpression.length
+        matchText = color.colorExpression
+
+      properties =
+        color: color
+        match: matchText
+        textRange: [
+          @lastIndex - matchText.length
+          @lastIndex
+        ]
+        bufferRange: [
+          @buffer.positionForCharacterIndex(@lastIndex - matchText.length)
+          @buffer.positionForCharacterIndex(@lastIndex)
+        ]
+      console.log properties
+      properties
