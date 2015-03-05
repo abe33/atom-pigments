@@ -43,9 +43,7 @@ class Color
     Object.defineProperty Color.prototype, component, {
       enumerable: true
       get: -> @[index]
-      set: (component) ->
-        @[index] = component
-        @isInvalid = true if isNaN(component)
+      set: (component) -> @[index] = component
     }
 
   Object.defineProperty Color.prototype, 'rgb', {
@@ -176,6 +174,9 @@ class Color
 
       0.2126 * r + 0.7152 * g + 0.0722 * b
   }
+
+  isValid: ->
+    !@invalid and !isNaN(@red) and !isNaN(@green) and !isNaN(@blue) and !isNaN(@alpha)
 
   clone: -> new Color(@red, @green, @blue, @alpha)
 

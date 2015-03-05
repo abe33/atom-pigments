@@ -10,6 +10,12 @@ beforeEach ->
 
       @actual.every (value,i) -> compare(value, arr[i], precision)
 
+    toBeValid: ->
+      notText = if @isNot then " not" else ""
+      this.message = => "Expected #{jasmine.pp(@actual)} to#{notText} be a valid color"
+
+      @actual.isValid()
+
     toBeColor: (colorOrRed,green=0,blue=0,alpha=1) ->
       color = switch typeof colorOrRed
         when 'object' then colorOrRed

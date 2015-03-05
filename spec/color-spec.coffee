@@ -24,6 +24,21 @@ describe 'Color', ->
     it 'creates the color using its name', ->
       expect(new Color('orange')).toBeColor('#ffa500')
 
+  describe '::isValid', ->
+    it 'returns true when all the color components are valid', ->
+      expect(new Color).toBeValid()
+
+    it 'returns false when one component is NaN', ->
+      expect(new Color NaN, 0, 0, 1).not.toBeValid()
+      expect(new Color 0, NaN, 0, 1).not.toBeValid()
+      expect(new Color 0, 0, NaN, 1).not.toBeValid()
+      expect(new Color 0, 0, 1, NaN).not.toBeValid()
+
+    it 'returns false when the color has the invalid flag', ->
+      color = new Color
+      color.invalid = true
+      expect(color).not.toBeValid()
+
   describe '::rgb', ->
     it 'returns an array with the color components', ->
       expect(color.rgb).toBeComponentArrayCloseTo([
