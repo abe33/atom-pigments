@@ -18,7 +18,7 @@ class ColorScanner
     regexp.lastIndex = start
 
     if match = regexp.exec(text)
-      matchText = match[0]
+      [matchText] = match
       {lastIndex} = regexp
 
       match: matchText
