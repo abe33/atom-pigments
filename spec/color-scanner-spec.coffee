@@ -30,6 +30,19 @@ describe 'ColorScanner', ->
       it 'returns the first buffer color match', ->
         expect(bufferColor).toBeDefined()
 
+      describe 'the resulting buffer color', ->
+        it 'has a text range', ->
+          expect(bufferColor.textRange).toEqual([8,12])
+
+        it 'has a buffer range', ->
+          expect(bufferColor.bufferRange).toEqual([[0, 8],[0, 12]])
+
+        it 'has a color', ->
+          expect(bufferColor.color).toBeColor('#ffffff')
+
+        it 'stores the matched text', ->
+          expect(bufferColor.match).toEqual('#fff')
+
       describe 'successive searches', ->
         it 'returns a buffer color for each match and then undefined', ->
           expect(scanner.search()).toBeDefined()
