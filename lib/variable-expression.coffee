@@ -8,7 +8,7 @@ class VariableExpression
     solver.endParsing(end)
 
   constructor: ({@name, @regexpString, @handle}) ->
-    @regexp = new RegExp("^#{@regexpString}$")
+    @regexp = new RegExp("#{@regexpString}", 'm')
     @handle ?= @constructor.DEFAULT_HANDLE
 
   match: (expression) -> @regexp.test expression
@@ -24,10 +24,12 @@ class VariableExpression
       startIndex = lastIndex - matchText.length
 
       solver =
-        endParsing: (index) -> results.lastIndex = index
+        endParsing: (index) ->
+          results.lastIndex = index
+          results.range = [0,index]
         appendResult: ([name, value, start, end]) ->
           range = [start, end]
-          results.push {name, value, range, type: 'null'}
+          results.push {name, value, range}
 
       @handle(match, solver)
 
