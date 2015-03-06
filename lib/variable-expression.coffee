@@ -1,20 +1,34 @@
 module.exports =
 class VariableExpression
+  @DEFAULT_HANDLE: (match, solver) ->
+    [_, name, value] = match
+    start = _.indexOf(name)
+    end = _.indexOf(value) + value.length
+    solver.appendResult([name, value, start, end])
+    solver.endParsing(end)
+
   constructor: ({@name, @regexpString, @handle}) ->
     @regexp = new RegExp("^#{@regexpString}$")
+    @handle ?= @constructor.DEFAULT_HANDLE
 
   match: (expression) -> @regexp.test expression
 
   parse: (expression) ->
-    results = undefined
-    # match = re.exec(string)
-    #
-    # if match?
-    #   if block?
-    #     block(m, startIndex, lastIndex, solver)
-    #   else
-    #     [_, key, value] = m
-    #     solver.appendResult([key, value, startIndex, lastIndex])
-    #     return lastIndex
+    results = []
+
+    match = @regexp.exec(expression)
+    if match?
+
+      [matchText] = match
+      {lastIndex} = @regexp
+      startIndex = lastIndex - matchText.length
+
+      solver =
+        endParsing: (index) -> results.lastIndex = index
+        appendResult: ([name, value, start, end]) ->
+          range = [start, end]
+          results.push {name, value, range, type: 'null'}
+
+      @handle(match, solver)
 
     results
