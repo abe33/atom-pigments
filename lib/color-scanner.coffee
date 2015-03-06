@@ -1,5 +1,6 @@
 [registry, regexpString, regexp] = []
 ColorParser = require './color-parser'
+BufferColor = require './buffer-color'
 
 module.exports =
 class ColorScanner
@@ -30,7 +31,7 @@ class ColorScanner
         @lastIndex += -matchText.length + index + color.colorExpression.length
         matchText = color.colorExpression
 
-      properties =
+      new BufferColor
         color: color
         match: matchText
         textRange: [
@@ -41,5 +42,3 @@ class ColorScanner
           @buffer.positionForCharacterIndex(@lastIndex - matchText.length)
           @buffer.positionForCharacterIndex(@lastIndex)
         ]
-      console.log properties
-      properties
