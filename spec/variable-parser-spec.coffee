@@ -21,13 +21,6 @@ describe 'VariableParser', ->
 
       this
 
-    withType: (type) ->
-      it "parses '#{expression}' as a variable of type #{type}", ->
-        [{type}] = parser.parse(expression)
-        expect(type).toEqual('non-color')
-
-      this
-
   beforeEach ->
     parser = new VariableParser
 
