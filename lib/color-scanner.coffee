@@ -4,8 +4,8 @@ BufferColor = require './buffer-color'
 
 module.exports =
 class ColorScanner
-  constructor: (params) ->
-    {@buffer, @parser} = params
+  constructor: (params={}) ->
+    {@parser} = params
     @parser ?= new ColorParser
 
   getRegExp: ->
@@ -16,29 +16,24 @@ class ColorScanner
 
     regexp ?= new RegExp(regexpString, 'g')
 
-  search: (start) ->
-    text = @buffer.getText()
+  search: (text, start=0) ->
     regexp = @getRegExp()
-    regexp.lastIndex = start ? @lastIndex
+    regexp.lastIndex = start
 
     if match = regexp.exec(text)
       [matchText] = match
-      {@lastIndex} = regexp
+      {lastIndex} = regexp
 
       color = @parser.parse(matchText)
 
       if (index = matchText.indexOf(color.colorExpression)) > 0
-        @lastIndex += -matchText.length + index + color.colorExpression.length
+        lastIndex += -matchText.length + index + color.colorExpression.length
         matchText = color.colorExpression
 
-      new BufferColor
-        color: color
-        match: matchText
-        textRange: [
-          @lastIndex - matchText.length
-          @lastIndex
-        ]
-        bufferRange: [
-          @buffer.positionForCharacterIndex(@lastIndex - matchText.length)
-          @buffer.positionForCharacterIndex(@lastIndex)
-        ]
+      color: color
+      match: matchText
+      lastIndex: lastIndex
+      range: [
+        lastIndex - matchText.length
+        lastIndex
+      ]

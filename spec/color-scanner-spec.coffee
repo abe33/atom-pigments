@@ -2,13 +2,15 @@ ColorScanner = require '../lib/color-scanner'
 {TextEditor} = require 'atom'
 
 describe 'ColorScanner', ->
-  [scanner, editor, bufferColor] = []
+  [scanner, editor, text, result, lastIndex] = []
 
   withTextEditor = (fixture, block) ->
     describe "with #{fixture} buffer", ->
       beforeEach ->
         waitsForPromise -> atom.workspace.open(fixture)
-        runs -> editor = atom.workspace.getActiveTextEditor()
+        runs ->
+          editor = atom.workspace.getActiveTextEditor()
+          text = editor.getText()
 
       afterEach -> editor = null
 
@@ -16,7 +18,7 @@ describe 'ColorScanner', ->
 
   withScannerForTextEditor = (fixture, block) ->
     withTextEditor fixture, ->
-      beforeEach -> scanner = new ColorScanner(buffer: editor.getBuffer())
+      beforeEach -> scanner = new ColorScanner
 
       afterEach -> scanner = null
 
@@ -25,27 +27,30 @@ describe 'ColorScanner', ->
   describe '::search', ->
     withScannerForTextEditor 'four-variables.styl', ->
       beforeEach ->
-        bufferColor = scanner.search()
+        result = scanner.search(text)
+        {lastIndex} = result
 
       it 'returns the first buffer color match', ->
-        expect(bufferColor).toBeDefined()
+        expect(result).toBeDefined()
 
       describe 'the resulting buffer color', ->
         it 'has a text range', ->
-          expect(bufferColor.textRange).toEqual([8,12])
-
-        it 'has a buffer range', ->
-          expect(bufferColor.bufferRange).toEqual([[0, 8],[0, 12]])
+          expect(result.range).toEqual([8,12])
 
         it 'has a color', ->
-          expect(bufferColor.color).toBeColor('#ffffff')
+          expect(result.color).toBeColor('#ffffff')
 
         it 'stores the matched text', ->
-          expect(bufferColor.match).toEqual('#fff')
+          expect(result.match).toEqual('#fff')
+
+        it 'stores the last index', ->
+          expect(result.lastIndex).toEqual(12)
 
       describe 'successive searches', ->
         it 'returns a buffer color for each match and then undefined', ->
-          expect(scanner.search()).toBeDefined()
-          expect(scanner.search()).toBeDefined()
-          # expect(scanner.search()).toBeDefined()
-          expect(scanner.search()).toBeUndefined()
+          doSearch = -> result = scanner.search(text, result.lastIndex)
+
+          expect(doSearch()).toBeDefined()
+          expect(doSearch()).toBeDefined()
+          # expect(doSearch()).toBeDefined()
+          expect(doSearch()).toBeUndefined()
