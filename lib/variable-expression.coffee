@@ -24,9 +24,11 @@ class VariableExpression
       startIndex = lastIndex - matchText.length
 
       solver =
-        endParsing: (index) ->
-          results.lastIndex = index
-          results.range = [0,index]
+        endParsing: (end) ->
+          start = expression.indexOf(matchText)
+          results.lastIndex = end
+          results.range = [start,end]
+          results.match = matchText[start...end]
         appendResult: ([name, value, start, end]) ->
           range = [start, end]
           results.push {name, value, range}
