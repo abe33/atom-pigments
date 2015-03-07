@@ -188,7 +188,6 @@ describe 'ColorParser', ->
     '@r': '0.5'
   }).asColor(0, 255, 255, 0.5)
 
-
   itParses('opacify(0x7800FFFF, 50%)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
@@ -231,7 +230,6 @@ describe 'ColorParser', ->
     '@c': '#9e3f3f'
     '@r': '0.2'
   }).asColor(136, 85, 85)
-
 
   itParses('grayscale(#9e3f3f)').asColor(111, 111, 111)
   itParses('greyscale(#9e3f3f)').asColor(111, 111, 111)
