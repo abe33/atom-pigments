@@ -1,6 +1,5 @@
 [registry, regexpString, regexp] = []
 ColorParser = require './color-parser'
-BufferColor = require './buffer-color'
 
 module.exports =
 class ColorScanner
