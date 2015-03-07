@@ -25,11 +25,13 @@ class VariableScanner
       {lastIndex} = regexp
 
       result = @parser.parse(matchText)
-      result.lastIndex += index
-      result.range[0] += index
-      result.range[1] += index
-      for v in result
-        v.range[0] += index
-        v.range[1] += index
+
+      if result?
+        result.lastIndex += index
+        result.range[0] += index
+        result.range[1] += index
+        for v in result
+          v.range[0] += index
+          v.range[1] += index
 
       result

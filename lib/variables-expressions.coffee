@@ -51,6 +51,10 @@ registry.createExpression 'stylus_hash', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\
 
     current++
 
-  solver.endParsing(match.length)
+  scope.pop()
+  if scope.length is 0
+    solver.endParsing(current)
+  else
+    solver.abortParsing()
 
 registry.createExpression 'stylus', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*([^\\n;]*);?$'

@@ -14,6 +14,7 @@ class VariableExpression
   match: (expression) -> @regexp.test expression
 
   parse: (expression) ->
+    parsingAborted = false
     results = []
 
     match = @regexp.exec(expression)
@@ -29,10 +30,12 @@ class VariableExpression
           results.lastIndex = end
           results.range = [start,end]
           results.match = matchText[start...end]
+        abortParsing: ->
+          parsingAborted = true
         appendResult: ([name, value, start, end]) ->
           range = [start, end]
           results.push {name, value, range}
 
       @handle(match, solver)
 
-    results
+    if parsingAborted then undefined else results

@@ -75,3 +75,10 @@ describe 'VariableScanner', ->
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeUndefined()
+
+    withScannerForTextEditor 'incomplete-stylus-hash.styl', ->
+      beforeEach ->
+        result = scanner.search(text)
+
+      it 'does not find any variables', ->
+        expect(result).toBeUndefined()
