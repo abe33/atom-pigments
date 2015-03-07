@@ -145,3 +145,198 @@ describe 'ColorParser', ->
   itParses('YellowGreen').asColor('#9acd32')
   itParses('yellow_green').asColor('#9acd32')
   itParses('YELLOW_GREEN').asColor('#9acd32')
+
+  itParses('darken(cyan, 20%)').asColor(0, 153, 153)
+  itParses('darken(#fff, 100%)').asColor(0, 0, 0)
+  itParses('darken(cyan, $r)').asInvalid()
+  itParses('darken($c, $r)').withContext({
+    '$c': 'cyan'
+    '$r': '20%'
+  }).asColor(0, 153, 153)
+  itParses('darken($a, $r)').withContext({
+    '$a': 'rgba($c, 1)'
+    '$c': 'cyan'
+    '$r': '20%'
+  }).asColor(0, 153, 153)
+
+  itParses('lighten(cyan, 20%)').asColor(102, 255, 255)
+  itParses('lighten(#000, 100%)').asColor(255, 255, 255)
+  itParses('lighten(cyan, $r)').asInvalid()
+  itParses('lighten($c, $r)').withContext({
+    '$c': 'cyan'
+    '$r': '20%'
+  }).asColor(102, 255, 255)
+  itParses('lighten($a, $r)').withContext({
+    '$a': 'rgba($c, 1)'
+    '$c': 'cyan'
+    '$r': '20%'
+  }).asColor(102, 255, 255)
+
+  itParses('transparentize(cyan, 50%)').asColor(0, 255, 255, 0.5)
+  itParses('transparentize(cyan, 0.5)').asColor(0, 255, 255, 0.5)
+  itParses('transparentize(cyan, .5)').asColor(0, 255, 255, 0.5)
+  itParses('fadein(cyan, 0.5)').asColor(0, 255, 255, 0.5)
+  itParses('fadein(cyan, .5)').asColor(0, 255, 255, 0.5)
+  itParses('fadein(cyan, @r)').asInvalid()
+  itParses('fadein(@c, @r)').withContext({
+    '@c': 'cyan'
+    '@r': '0.5'
+  }).asColor(0, 255, 255, 0.5)
+  itParses('fadein(@a, @r)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': 'cyan'
+    '@r': '0.5'
+  }).asColor(0, 255, 255, 0.5)
+
+
+  itParses('opacify(0x7800FFFF, 50%)').asColor(0, 255, 255, 1)
+  itParses('opacify(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
+  itParses('opacify(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
+  itParses('fadeout(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
+  itParses('fadeout(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
+  itParses('fadeout(0x7800FFFF, @r)').asInvalid()
+  itParses('fadeout(@c, @r)').withContext({
+    '@c': '0x7800FFFF'
+    '@r': '0.5'
+  }).asColor(0, 255, 255, 1)
+  itParses('fadeout(@a, @r)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': '0x7800FFFF'
+    '@r': '0.5'
+  }).asColor(0, 255, 255, 1)
+
+  itParses('saturate(#855, 20%)').asColor(158, 63, 63)
+  itParses('saturate(#855, 0.2)').asColor(158, 63, 63)
+  itParses('saturate(#855, @r)').asInvalid()
+  itParses('saturate(@c, @r)').withContext({
+    '@c': '#855'
+    '@r': '0.2'
+  }).asColor(158, 63, 63)
+  itParses('saturate(@a, @r)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': '#855'
+    '@r': '0.2'
+  }).asColor(158, 63, 63)
+
+  itParses('desaturate(#9e3f3f, 20%)').asColor(136, 85, 85)
+  itParses('desaturate(#9e3f3f, 0.2)').asColor(136, 85, 85)
+  itParses('desaturate(#9e3f3f, .2)').asColor(136, 85, 85)
+  itParses('desaturate(#9e3f3f, @r)').asInvalid()
+  itParses('desaturate(@c, @r)').withContext({
+    '@c': '#9e3f3f'
+    '@r': '0.2'
+  }).asColor(136, 85, 85)
+  itParses('desaturate(@a, @r)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': '#9e3f3f'
+    '@r': '0.2'
+  }).asColor(136, 85, 85)
+
+
+  itParses('grayscale(#9e3f3f)').asColor(111, 111, 111)
+  itParses('greyscale(#9e3f3f)').asColor(111, 111, 111)
+  itParses('grayscale(@c)').asInvalid()
+  itParses('grayscale(@c)').withContext({
+    '@c': '#9e3f3f'
+  }).asColor(111, 111, 111)
+  itParses('grayscale(@a)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': '#9e3f3f'
+  }).asColor(111, 111, 111)
+
+  itParses('invert(#9e3f3f)').asColor(97, 192, 192)
+  itParses('invert(@c)').asInvalid()
+  itParses('invert(@c)').withContext({
+    '@c': '#9e3f3f'
+  }).asColor(97, 192, 192)
+  itParses('invert(@a)').withContext({
+    '@a': 'rgba(@c, 1)'
+    '@c': '#9e3f3f'
+  }).asColor(97, 192, 192)
+
+  itParses('adjust-hue(#811, 45deg)').asColor(136, 106, 17)
+  itParses('adjust-hue(#811, -45deg)').asColor(136, 17, 106)
+  itParses('adjust-hue(#811, 45%)').asColor(136, 106, 17)
+  itParses('adjust-hue(#811, -45%)').asColor(136, 17, 106)
+  itParses('adjust-hue($c, $r)').asInvalid()
+  itParses('adjust-hue($c, $r)').withContext({
+    '$c': '#811'
+    '$r': '-45deg'
+  }).asColor(136, 17, 106)
+  itParses('adjust-hue($a, $r)').withContext({
+    '$a': 'rgba($c, 0.5)'
+    '$c': '#811'
+    '$r': '-45deg'
+  }).asColor(136, 17, 106, 0.5)
+
+  itParses('mix(red, blue)').asColor(127, 0, 127)
+  itParses('mix(red, blue, 25%)').asColor(63, 0, 191)
+  itParses('mix($a, $b, $r)').asInvalid()
+  itParses('mix($a, $b, $r)').withContext({
+    '$a': 'red'
+    '$b': 'blue'
+    '$r': '25%'
+  }).asColor(63, 0, 191)
+  itParses('mix($c, $d, $r)').withContext({
+    '$a': 'red'
+    '$b': 'blue'
+    '$c': 'rgba($a, 1)'
+    '$d': 'rgba($b, 1)'
+    '$r': '25%'
+  }).asColor(63, 0, 191)
+
+  itParses('tint(#fd0cc7,66%)').asColor(254, 172, 235)
+  itParses('tint($c,$r)').asInvalid()
+  itParses('tint($c,$r)').withContext({
+    '$c': '#fd0cc7'
+    '$r': '66%'
+  }).asColor(254, 172, 235)
+  itParses('tint($c,$r)').withContext({
+    '$a': '#fd0cc7'
+    '$c': 'rgba($a, 0.9)'
+    '$r': '66%'
+  }).asColor(254, 172, 235, 0.966)
+
+  itParses('shade(#fd0cc7,66%)').asColor(86, 4, 67)
+  itParses('shade($c,$r)').asInvalid()
+  itParses('shade($c,$r)').withContext({
+    '$c': '#fd0cc7'
+    '$r': '66%'
+  }).asColor(86, 4, 67)
+  itParses('shade($c,$r)').withContext({
+    '$a': '#fd0cc7'
+    '$c': 'rgba($a, 0.9)'
+    '$r': '66%'
+  }).asColor(86, 4, 67, 0.966)
+
+  itParses('color(#fd0cc7 tint(66%))').asColor(254, 172, 236)
+
+  itParses('adjust-color(#102030, $red: -5, $blue: 5)', 11, 32, 53)
+  itParses('adjust-color(hsl(25, 100%, 80%), $lightness: -30%, $alpha: -0.4)', 255, 106, 0, 0.6)
+  itParses('adjust-color($c, $red: $a, $blue: $b)').asInvalid()
+  itParses('adjust-color($c, $red: $a, $blue: $b)').withContext({
+    '$a': '-5'
+    '$b': '5'
+    '$c': '#102030'
+  }).asColor(11, 32, 53)
+  itParses('adjust-color($d, $red: $a, $blue: $b)').withContext({
+    '$a': '-5'
+    '$b': '5'
+    '$c': '#102030'
+    '$d': 'rgba($c, 1)'
+  }).asColor(11, 32, 53)
+
+  itParses('scale-color(rgb(200, 150, 170), $green: -40%, $blue: 70%)').asColor(200, 90, 230)
+  itParses('change-color(rgb(200, 150, 170), $green: 40, $blue: 70)').asColor(200, 40, 70)
+  itParses('scale-color($c, $green: $a, $blue: $b)').asInvalid()
+  itParses('scale-color($c, $green: $a, $blue: $b)').withContext({
+    '$a': '-40%'
+    '$b': '70%'
+    '$c': 'rgb(200, 150, 170)'
+  }).asColor(200, 90, 230)
+  itParses('scale-color($d, $green: $a, $blue: $b)').withContext({
+    '$a': '-40%'
+    '$b': '70%'
+    '$c': 'rgb(200, 150, 170)'
+    '$d': 'rgba($c, 1)'
+  }).asColor(200, 90, 230)

@@ -1,3 +1,5 @@
+cssColor = require 'css-color-function'
+
 {
   int
   float
@@ -15,6 +17,7 @@
 
 {
   strip
+  split
   clamp
   clampInt
 } = require './utils'
@@ -22,6 +25,36 @@
 ExpressionsRegistry = require './expressions-registry'
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
+Color = require './color'
+
+MAX_PER_COMPONENT =
+  red: 255
+  green: 255
+  blue: 255
+  alpha: 1
+  hue: 360
+  saturation: 100
+  lightness: 100
+
+mixColors = (color1, color2, amount=0.5) ->
+  inverse = 1 - amount
+  color = new Color
+
+  color.rgba = [
+    Math.floor(color1.red * amount) + Math.floor(color2.red * inverse)
+    Math.floor(color1.green * amount) + Math.floor(color2.green * inverse)
+    Math.floor(color1.blue * amount) + Math.floor(color2.blue * inverse)
+    color1.alpha * amount + color2.alpha * inverse
+  ]
+
+  color
+
+readParam = (param, block) ->
+  re = ///\$(\w+):\s*((-?#{float})|#{variables})///
+  if re.test(param)
+    [_, name, value] = re.exec(param)
+
+    block(name, value)
 
 module.exports = registry = new ExpressionsRegistry(ColorExpression)
 
@@ -199,7 +232,6 @@ registry.createExpression 'hsva', strip("
   ]
   @alpha = context.readFloat(a)
 
-
 # vec4(0.2, 0.5, 0.9, 0.7)
 registry.createExpression 'vec4', strip("
   vec4#{ps}\\s*
@@ -272,3 +304,240 @@ registry.createExpression 'named_colors', colorRegexp, (match, expression, conte
 ##    ##       ##     ## ##  #### ##
 ##    ##       ##     ## ##   ### ##    ##
 ##    ##        #######  ##    ##  ######
+
+# darken(#666666, 20%)
+registry.createExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloat(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [h, s, clampInt(l - amount)]
+  @alpha = baseColor.alpha
+
+# lighten(#666666, 20%)
+registry.createExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloat(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [h, s, clampInt(l + amount)]
+  @alpha = baseColor.alpha
+
+# transparentize(#ffffff, 0.5)
+# transparentize(#ffffff, 50%)
+# fadein(#ffffff, 0.5)
+registry.createExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, _, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  @rgb = baseColor.rgb
+  @alpha = clamp(baseColor.alpha - amount)
+
+# opacify(0x78ffffff, 0.5)
+# opacify(0x78ffffff, 50%)
+# fadeout(0x78ffffff, 0.5)
+registry.createExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, _, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  @rgb = baseColor.rgb
+  @alpha = clamp(baseColor.alpha + amount)
+
+# adjust-hue(#855, 60deg)
+registry.createExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloat(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [(h + amount) % 360, s, l]
+  @alpha = baseColor.alpha
+
+# mix(#f00, #00F, 25%)
+# mix(#f00, #00F)
+registry.createExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (match, expression, context) ->
+  [_, _, color1A, color2A, amount, _, _, color1B, color2B] = match
+
+  if color1A?
+    color1 = color1A
+    color2 = color2A
+    amount = context.readFloatOrPercent(amount)
+  else
+    color1 = color1B
+    color2 = color2B
+    amount = 0.5
+
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true unless baseColor1? and baseColor2?
+
+  @rgba = mixColors(baseColor1, baseColor2, amount).rgba
+
+# tint(red, 50%)
+registry.createExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  white = new Color(255, 255, 255)
+
+  @rgba = mixColors(white, baseColor, amount).rgba
+
+# shade(red, 50%)
+registry.createExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  black = new Color(0,0,0)
+
+  @rgba = mixColors(black, baseColor, amount).rgba
+
+# desaturate(#855, 20%)
+# desaturate(#855, 0.2)
+registry.createExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [h, clampInt(s - amount * 100), l]
+  @alpha = baseColor.alpha
+
+# saturate(#855, 20%)
+# saturate(#855, 0.2)
+registry.createExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [h, clampInt(s + amount * 100), l]
+  @alpha = baseColor.alpha
+
+# grayscale(red)
+# greyscale(red)
+registry.createExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+  [_, _, subexpr] = match
+
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [h,s,l] = baseColor.hsl
+
+  @hsl = [h, 0, l]
+  @alpha = baseColor.alpha
+
+# invert(green)
+registry.createExpression 'invert', "invert#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+  [_, subexpr] = match
+
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true unless baseColor?
+
+  [r,g,b] = baseColor.rgb
+
+  @rgb = [255 - r, 255 - g, 255 - b]
+  @alpha = baseColor.alpha
+
+# color(green tint(50%))
+registry.createExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+  try
+    rgba = cssColor.convert(expression)
+    @rgba = context.readColor(rgba).rgba
+  catch e
+    @invalid = true
+
+# adjust-color(red, $lightness: 30%)
+registry.createExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+  [_, subexpr] = match
+  [subject, params...] = split(subexpr)
+
+  baseColor = context.readColor(subject)
+
+  return @invalid = true unless baseColor?
+
+  for param in params
+    readParam param, (name, value) ->
+      baseColor[name] += context.readFloat(value)
+
+  @rgba = baseColor.rgba
+
+# scale-color(red, $lightness: 30%)
+registry.createExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+
+  [_, subexpr] = match
+  [subject, params...] = split(subexpr)
+
+  baseColor = context.readColor(subject)
+
+  return @invalid = true unless baseColor?
+
+  for param in params
+    readParam param, (name, value) ->
+      value = context.readFloat(value) / 100
+
+      result = if value > 0
+        dif = MAX_PER_COMPONENT[name] - baseColor[name]
+        result = baseColor[name] + dif * value
+      else
+        result = baseColor[name] * (1 + value)
+
+      baseColor[name] = result
+
+  @rgba = baseColor.rgba
+
+# change-color(red, $lightness: 30%)
+registry.createExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+  [_, subexpr] = match
+  [subject, params...] = split(subexpr)
+
+  baseColor = context.readColor(subject)
+
+  return @invalid = true unless baseColor?
+
+  for param in params
+    readParam param, (name, value) ->
+      baseColor[name] = context.readFloat(value)
+
+  @rgba = baseColor.rgba

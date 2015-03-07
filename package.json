@@ -9,5 +9,6 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
+    "css-color-function": "0.1.x"
   }
 }

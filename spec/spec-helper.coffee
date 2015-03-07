@@ -54,4 +54,4 @@ beforeEach ->
       Math.round(@actual.red) is color.red and
       Math.round(@actual.green) is color.green and
       Math.round(@actual.blue) is color.blue and
-      compare(@actual.alpha, color.alpha, 2)
+      compare(@actual.alpha, color.alpha, 1)

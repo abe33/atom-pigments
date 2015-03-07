@@ -51,5 +51,5 @@ describe 'ColorScanner', ->
 
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeDefined()
-          # expect(doSearch()).toBeDefined()
+          expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeUndefined()
