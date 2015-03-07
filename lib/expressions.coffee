@@ -306,7 +306,13 @@ registry.createExpression 'named_colors', colorRegexp, (match, expression, conte
 ##    ##        #######  ##    ##  ######
 
 # darken(#666666, 20%)
-registry.createExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'darken', strip("
+  darken#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{percent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloat(amount)
@@ -320,7 +326,13 @@ registry.createExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}
   @alpha = baseColor.alpha
 
 # lighten(#666666, 20%)
-registry.createExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'lighten', strip("
+  lighten#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{percent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloat(amount)
@@ -336,7 +348,13 @@ registry.createExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percen
 # transparentize(#ffffff, 0.5)
 # transparentize(#ffffff, 50%)
 # fadein(#ffffff, 0.5)
-registry.createExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'transparentize', strip("
+  (transparentize|fadein)#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, _, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -350,7 +368,13 @@ registry.createExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQ
 # opacify(0x78ffffff, 0.5)
 # opacify(0x78ffffff, 50%)
 # fadeout(0x78ffffff, 0.5)
-registry.createExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'opacify', strip("
+  (opacify|fadeout)#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, _, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -362,7 +386,13 @@ registry.createExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma
   @alpha = clamp(baseColor.alpha + amount)
 
 # adjust-hue(#855, 60deg)
-registry.createExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (match, expression, context) ->
+registry.createExpression 'adjust-hue', strip("
+  adjust-hue#{ps}
+    (#{notQuote})
+    #{comma}
+    (-?#{int}deg|#{variables}|-?#{percent})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloat(amount)
@@ -377,7 +407,21 @@ registry.createExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?
 
 # mix(#f00, #00F, 25%)
 # mix(#f00, #00F)
-registry.createExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (match, expression, context) ->
+registry.createExpression 'mix', strip("
+  mix#{ps}
+    (
+      (#{notQuote})
+      #{comma}
+      (#{notQuote})
+      #{comma}
+      (#{floatOrPercent}|#{variables})
+    |
+      (#{notQuote})
+      #{comma}
+      (#{notQuote})
+    )
+  #{pe}
+"), (match, expression, context) ->
   [_, _, color1A, color2A, amount, _, _, color1B, color2B] = match
 
   if color1A?
@@ -398,7 +442,13 @@ registry.createExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{
   @rgba = mixColors(baseColor1, baseColor2, amount).rgba
 
 # tint(red, 50%)
-registry.createExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'tint', strip("
+  tint#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -411,7 +461,13 @@ registry.createExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPerce
   @rgba = mixColors(white, baseColor, amount).rgba
 
 # shade(red, 50%)
-registry.createExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'shade', strip("
+  shade#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -440,7 +496,13 @@ registry.createExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{
 
 # saturate(#855, 20%)
 # saturate(#855, 0.2)
-registry.createExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'saturate', strip("
+  saturate#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
