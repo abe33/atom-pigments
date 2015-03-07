@@ -28,7 +28,6 @@ describe 'ColorScanner', ->
     withScannerForTextEditor 'four-variables.styl', ->
       beforeEach ->
         result = scanner.search(text)
-        {lastIndex} = result
 
       it 'returns the first buffer color match', ->
         expect(result).toBeDefined()
