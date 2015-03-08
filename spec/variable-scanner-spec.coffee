@@ -35,36 +35,36 @@ describe 'VariableScanner', ->
 
       describe 'the result object', ->
         it 'has a match string', ->
-          expect(result.match).toEqual('color = #fff')
+          expect(result.match).toEqual('base-color = #fff')
 
         it 'has a lastIndex property', ->
-          expect(result.lastIndex).toEqual(12)
+          expect(result.lastIndex).toEqual(17)
 
         it 'has a range property', ->
-          expect(result.range).toEqual([0,12])
+          expect(result.range).toEqual([0,17])
 
         it 'has a variable result', ->
-          expect(result[0].name).toEqual('color')
+          expect(result[0].name).toEqual('base-color')
           expect(result[0].value).toEqual('#fff')
-          expect(result[0].range).toEqual([0,12])
+          expect(result[0].range).toEqual([0,17])
 
       describe 'the second result object', ->
         beforeEach ->
           result = scanner.search(text, result.lastIndex)
 
         it 'has a match string', ->
-          expect(result.match).toEqual('other-color = transparentize(color, 50%)')
+          expect(result.match).toEqual('other-color = transparentize(base-color, 50%)')
 
         it 'has a lastIndex property', ->
-          expect(result.lastIndex).toEqual(54)
+          expect(result.lastIndex).toEqual(64)
 
         it 'has a range property', ->
-          expect(result.range).toEqual([14,54])
+          expect(result.range).toEqual([19,64])
 
         it 'has a variable result', ->
           expect(result[0].name).toEqual('other-color')
-          expect(result[0].value).toEqual('transparentize(color, 50%)')
-          expect(result[0].range).toEqual([14,54])
+          expect(result[0].value).toEqual('transparentize(base-color, 50%)')
+          expect(result[0].range).toEqual([19,64])
 
       describe 'successive searches', ->
         it 'returns a result for each match and then undefined', ->

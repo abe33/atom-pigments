@@ -34,7 +34,7 @@ describe 'ColorScanner', ->
 
       describe 'the resulting buffer color', ->
         it 'has a text range', ->
-          expect(result.range).toEqual([8,12])
+          expect(result.range).toEqual([13,17])
 
         it 'has a color', ->
           expect(result.color).toBeColor('#ffffff')
@@ -43,7 +43,7 @@ describe 'ColorScanner', ->
           expect(result.match).toEqual('#fff')
 
         it 'stores the last index', ->
-          expect(result.lastIndex).toEqual(12)
+          expect(result.lastIndex).toEqual(17)
 
       describe 'successive searches', ->
         it 'returns a buffer color for each match and then undefined', ->
