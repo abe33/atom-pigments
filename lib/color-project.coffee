@@ -1,11 +1,9 @@
+PathLoader = require './path-loader'
 
 module.exports =
 class ColorProject
-  constructor: ({@project, @ignores}) ->
+  constructor: ({@ignores}) ->
 
   loadPaths: ->
-    new Promise (resolve, reject) ->
-      resolve [
-        'styles/buttons.styl'
-        'styles/variables.styl'
-      ]
+    new Promise (resolve, reject) =>
+      PathLoader.startTask this, (results) -> resolve(results)

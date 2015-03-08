@@ -1,14 +1,19 @@
 ColorProject = require '../lib/color-project'
 
 describe 'ColorProject', ->
-  [project, promise, paths] = []
+  [project, promise, rootPath, paths] = []
 
   beforeEach ->
+    atom.config.set 'pigments.sourceNames', [
+      '*.styl'
+      '*.less'
+    ]
+
     [fixturesPath] = atom.project.getPaths()
-    atom.project.setPaths(["#{fixturesPath}/project"])
+    rootPath = "#{fixturesPath}/project"
+    atom.project.setPaths([rootPath])
 
     project = new ColorProject({
-      project: atom.project
       ignores: ['vendor/*']
     })
 
@@ -20,6 +25,6 @@ describe 'ColorProject', ->
 
     it 'returns the paths for where to look for project variables', ->
       expect(paths).toEqual([
-        'styles/buttons.styl'
-        'styles/variables.styl'
+        "#{rootPath}/styles/buttons.styl"
+        "#{rootPath}/styles/variables.styl"
       ])
