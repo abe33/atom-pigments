@@ -1,7 +1,7 @@
 ColorProject = require '../lib/color-project'
 
 describe 'ColorProject', ->
-  [project, promise, rootPath, paths] = []
+  [project, promise, rootPath, paths, eventSpy] = []
 
   beforeEach ->
     atom.config.set 'pigments.sourceNames', [
@@ -19,6 +19,9 @@ describe 'ColorProject', ->
 
   describe '::loadPaths', ->
     beforeEach ->
+      eventSpy = jasmine.createSpy('did-load-paths')
+      project.onDidLoadPaths(eventSpy)
+
       promise = project.loadPaths().then (p) -> paths = p
 
       waitsForPromise -> promise
@@ -35,6 +38,9 @@ describe 'ColorProject', ->
         "#{rootPath}/styles/variables.styl"
       ])
 
+    it 'dispatches a did-load-paths event', ->
+      expect(eventSpy).toHaveBeenCalled()
+
   describe '::resetPaths', ->
     beforeEach ->
       promise = project.loadPaths()
@@ -47,12 +53,17 @@ describe 'ColorProject', ->
 
   describe '::loadVariables', ->
     beforeEach ->
+      eventSpy = jasmine.createSpy('did-load-variables')
+      project.onDidLoadVariables(eventSpy)
       promise = project.loadVariables()
       waitsForPromise -> promise
 
     it 'scans the loaded paths to retrieve the variables', ->
       expect(project.variables).toBeDefined()
       expect(project.variables.length).toEqual(12)
+
+    it 'dispatches a did-load-variables event', ->
+      expect(eventSpy).toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######     ##    ##  #######  ########
   ##    ##     ##   ## ##   ##     ## ##    ##    ###   ## ##     ##    ##
@@ -72,8 +83,11 @@ describe 'ColorProject', ->
 
   describe 'when the variables have not been loaded yet', ->
     describe '::serialize', ->
-      it 'returns an empty object', ->
-        expect(project.serialize()).toEqual({deserializer: 'ColorProject'})
+      it 'returns an object without paths nor variables', ->
+        expect(project.serialize()).toEqual({
+          deserializer: 'ColorProject'
+          ignores: ['vendor/*']
+        })
 
     describe '::getVariablesForFile', ->
       it 'returns undefined', ->
@@ -125,6 +139,7 @@ describe 'ColorProject', ->
       it 'returns an object with project properties', ->
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
+          ignores: ['vendor/*']
           loadedPaths: [
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
@@ -159,6 +174,8 @@ describe 'ColorProject', ->
     describe '::reloadVariablesForFile', ->
       describe 'for a file that is part of the loaded paths', ->
         beforeEach ->
+          eventSpy = jasmine.createSpy('did-reload-file-variables')
+          project.onDidReloadFileVariables(eventSpy)
           spyOn(project, 'deleteVariablesForFile').andCallThrough()
           waitsForPromise -> project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
 
@@ -167,6 +184,9 @@ describe 'ColorProject', ->
 
         it 'scans again the file to find variables', ->
           expect(project.variables.length).toEqual(12)
+
+        it 'dispatches a did-reload-file-variables event', ->
+          expect(eventSpy).toHaveBeenCalled()
 
       describe 'for a file that is not part of the loaded paths', ->
         beforeEach ->

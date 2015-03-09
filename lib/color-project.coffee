@@ -1,3 +1,4 @@
+{Emitter} = require 'atom'
 PathLoader = require './path-loader'
 PathsScanner = require './paths-scanner'
 ColorContext = require './color-context'
@@ -12,6 +13,16 @@ class ColorProject
 
   constructor: (state={}) ->
     {@ignores, @variables, @loadedPaths} = state
+    @emitter = new Emitter
+
+  onDidLoadPaths: (callback) ->
+    @emitter.on 'did-load-paths', callback
+
+  onDidLoadVariables: (callback) ->
+    @emitter.on 'did-load-variables', callback
+
+  onDidReloadFileVariables: (callback) ->
+    @emitter.on 'did-reload-file-variables', callback
 
   loadPaths: ->
     return Promise.resolve(@loadedPaths) if @loadedPaths?
@@ -19,6 +30,7 @@ class ColorProject
     new Promise (resolve, reject) =>
       PathLoader.startTask this, (results) =>
         @loadedPaths = results
+        @emitter.emit 'did-load-paths', results
         resolve(results)
 
   resetPaths: ->
@@ -29,6 +41,7 @@ class ColorProject
       @loadPaths().then (paths) =>
         @scanPathsForVariables paths, (results) =>
           @variables = results.map(@createProjectVariable)
+          @emitter.emit 'did-load-variables', @variables.slice()
           resolve(results)
 
   getVariablesForFile: (path) ->
@@ -50,14 +63,16 @@ class ColorProject
       return Promise.reject("Can't reload a path that is not legible")
 
     @deleteVariablesForFile(path)
-    @loadVariablesForFile(path)
+    @loadVariablesForFile(path).then (results) =>
+      @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   loadVariablesForFile: (path) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables [path], (results) =>
-        @variables = @variables.concat(results.map(@createProjectVariable))
+        fileVariables = results.map(@createProjectVariable)
+        @variables = @variables.concat(fileVariables)
 
-        resolve(results)
+        resolve(fileVariables)
 
   scanPathsForVariables: (paths, callback) ->
     PathsScanner.startTask paths, (results) ->
@@ -82,10 +97,12 @@ class ColorProject
     new Palette(colors)
 
   serialize: ->
-    result = {deserializer: 'ColorProject'}
+    data = {deserializer: 'ColorProject'}
+
+    data.ignores = @ignores if @ignores?
+    data.loadedPaths = @loadedPaths if @loadedPaths?
 
     if @variables?
-      result.loadedPaths = @loadedPaths
-      result.variables = @variables.map (variable) -> variable.serialize()
+      data.variables = @variables.map (variable) -> variable.serialize()
 
-    result
+    data
