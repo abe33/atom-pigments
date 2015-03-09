@@ -69,3 +69,12 @@ describe 'ColorProject', ->
       describe 'for a file that was ignored in the scanning process', ->
         it 'returns undefined', ->
           expect(project.getVariablesForFile('vendor/css/variables.less')).toEqual([])
+
+  describe '::deleteVariablesForFile', ->
+    beforeEach ->
+      waitsForPromise -> project.loadVariables()
+
+    it 'removes all the variables coming from the specified file', ->
+      project.deleteVariablesForFile('styles/variables.styl')
+
+      expect(project.getVariablesForFile('styles/variables.styl')).toEqual([])
