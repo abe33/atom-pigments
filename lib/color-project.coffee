@@ -21,7 +21,7 @@ class ColorProject
   loadVariables: ->
     new Promise (resolve, reject) =>
       @loadPaths().then (paths) =>
-        @scanPaths paths, (results) =>
+        @scanPathsForVariables paths, (results) =>
           @variables = results
           resolve(results)
 
@@ -49,11 +49,11 @@ class ColorProject
 
   loadVariablesForFile: (path) ->
     new Promise (resolve, reject) =>
-      @scanPaths [path], (results) =>
+      @scanPathsForVariables [path], (results) =>
         @variables = @variables.concat(results)
         resolve(results)
 
-  scanPaths: (paths, callback) ->
+  scanPathsForVariables: (paths, callback) ->
     PathsScanner.startTask paths, (results) ->
       res.relativePath = atom.project.relativize(res.path) for res in results
       callback(results)
