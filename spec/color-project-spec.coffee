@@ -44,3 +44,12 @@ describe 'ColorProject', ->
       project.resetPaths()
 
       expect(project.loadedPaths).toBeUndefined()
+
+  describe '::loadVariables', ->
+    beforeEach ->
+      promise = project.loadVariables()
+      waitsForPromise -> promise
+
+    it 'scans loaded paths to retrieve the variables', ->
+      expect(project.variables).toBeDefined()
+      expect(project.variables.length).toEqual(4)
