@@ -32,12 +32,6 @@ describe 'ColorProject', ->
         "#{rootPath}/styles/variables.styl"
       ])
 
-    it 'stores the loaded paths for later use', ->
-      expect(project.loadedPaths).toEqual([
-        "#{rootPath}/styles/buttons.styl"
-        "#{rootPath}/styles/variables.styl"
-      ])
-
     it 'dispatches a did-load-paths event', ->
       expect(eventSpy).toHaveBeenCalled()
 
