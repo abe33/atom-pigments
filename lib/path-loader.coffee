@@ -3,7 +3,7 @@
 module.exports =
   startTask: (project, callback) ->
     projectPaths = []
-    taskPath = require.resolve('./load-paths-handler')
+    taskPath = require.resolve('./tasks/load-paths-handler')
     traverseIntoSymlinkDirectories = atom.config.get 'pigments.traverseIntoSymlinkDirectories'
     sourceNames = atom.config.get('pigments.sourceNames') ? []
 
