@@ -7,10 +7,12 @@ class ColorContext
     unless @parser?
       ColorParser = require './color-parser'
       @parser = new ColorParser
-    
+
     @usedVariables = []
 
   getVariablesNames: -> Object.keys(@vars)
+
+  getVariablesCount: -> @getVariablesNames().length
 
   readColorExpression: (value) ->
     if @vars[value]?

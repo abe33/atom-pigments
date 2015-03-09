@@ -1,5 +1,6 @@
 PathLoader = require './path-loader'
 PathsScanner = require './paths-scanner'
+ColorContext = require './color-context'
 
 module.exports =
 class ColorProject
@@ -36,3 +37,5 @@ class ColorProject
 
     @variables = @variables.filter (variable) ->
       variable.relativePath isnt path and variable.path isnt path
+
+  getContext: -> new ColorContext @variables ? {}

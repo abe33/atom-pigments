@@ -78,3 +78,17 @@ describe 'ColorProject', ->
       project.deleteVariablesForFile('styles/variables.styl')
 
       expect(project.getVariablesForFile('styles/variables.styl')).toEqual([])
+
+  describe '::getContext', ->
+    describe 'when the variables have not been loaded yet', ->
+      it 'returns an empty context', ->
+        expect(project.getContext()).toBeDefined()
+        expect(project.getContext().getVariablesCount()).toEqual(0)
+
+    describe 'when the variables have been loaded', ->
+      beforeEach ->
+        waitsForPromise -> project.loadVariables()
+
+      it 'returns a context with the project variables', ->
+        expect(project.getContext()).toBeDefined()
+        expect(project.getContext().getVariablesCount()).toEqual(10)
