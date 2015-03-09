@@ -31,8 +31,8 @@ describe 'ColorParser', ->
           expect(parser.parse(expression, context)).not.toBeValid()
 
     withContext: (variables) ->
-      ctx = {}
-      ctx[key] = {value} for key,value of variables
+      ctx = []
+      ctx.push {name, value} for name,value of variables
       @context = new ColorContext(ctx)
       @description = "with variables context #{jasmine.pp variables} "
 

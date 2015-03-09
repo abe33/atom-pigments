@@ -54,13 +54,14 @@ describe 'ColorContext', ->
 
   describe 'with a variables hash', ->
     beforeEach ->
-      createVar = (value) -> {value}
+      createVar = (name, value) -> {value, name}
 
-      variables =
-        x: createVar '10'
-        y: createVar '0.1'
-        z: createVar '10%'
-        c: createVar 'rgb(255,127,0)'
+      variables =[
+        createVar 'x', '10'
+        createVar 'y', '0.1'
+        createVar 'z', '10%'
+        createVar 'c', 'rgb(255,127,0)'
+      ]
 
       context = new ColorContext(variables)
 

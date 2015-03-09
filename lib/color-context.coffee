@@ -3,7 +3,10 @@ ColorParser = null
 
 module.exports =
 class ColorContext
-  constructor: (@vars={}, @parser) ->
+  constructor: (vars=[], @parser) ->
+    @vars = {}
+    @vars[v.name] = v for v in vars
+
     unless @parser?
       ColorParser = require './color-parser'
       @parser = new ColorParser

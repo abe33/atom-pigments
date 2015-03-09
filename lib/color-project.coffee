@@ -61,15 +61,10 @@ class ColorProject
     PathsScanner.startTask paths, (results) ->
       callback(results)
 
+  createProjectVariable: (result) => new ProjectVariable(result, this)
+
   getContext: ->
-    new ColorContext(@getVariablesObject())
-
-  getVariablesObject: ->
-    return {} unless @variables?
-
-    variablesObject = {}
-    variablesObject[variable.name] = variable for variable in @variables
-    variablesObject
+    new ColorContext(@variables)
 
   getColorVariables: ->
     context = @getContext()
