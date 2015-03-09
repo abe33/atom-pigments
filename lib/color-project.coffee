@@ -39,8 +39,7 @@ class ColorProject
   deleteVariablesForFile: (path) ->
     return unless @variables?
 
-    @variables = @variables.filter (variable) ->
-      variable.relativePath isnt path and variable.path isnt path
+    @variables = @variables.filter (variable) -> variable.path isnt path
 
   reloadVariablesForFile: (path) ->
     unless @variables?
@@ -60,7 +59,6 @@ class ColorProject
 
   scanPathsForVariables: (paths, callback) ->
     PathsScanner.startTask paths, (results) ->
-      res.relativePath = atom.project.relativize(res.path) for res in results
       callback(results)
 
   getContext: ->
