@@ -14,6 +14,10 @@ describe 'ColorParser', ->
         it "parses '#{expression}' as a color", ->
           expect(parser.parse(expression, context)).toBeColor(args...)
 
+        if context?
+          it 'stores the variables used by the color in property', ->
+            expect(parser.parse(expression, context).variables.sort()).toEqual(context.getVariablesNames().sort())
+
     asUndefined: ->
       context = @context
       describe @description, ->

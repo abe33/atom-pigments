@@ -5,6 +5,8 @@ class ColorContext
   constructor: (@parser, @vars={}) ->
     @usedVariables = []
 
+  getVariablesNames: -> Object.keys(@vars)
+
   readColorExpression: (value) ->
     if @vars[value]?
       @usedVariables.push(value)
