@@ -71,6 +71,10 @@ describe 'ColorProject', ->
   ##    ########  #######  ##     ## ########  ######## ########
 
   describe 'when the variables have not been loaded yet', ->
+    describe '::serialize', ->
+      it 'returns an empty object', ->
+        expect(project.serialize()).toEqual({deserializer: 'ColorProject'})
+
     describe '::getVariablesForFile', ->
       it 'returns undefined', ->
         expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toBeUndefined()
@@ -116,6 +120,17 @@ describe 'ColorProject', ->
   describe 'when the variables have been loaded', ->
     beforeEach ->
       waitsForPromise -> project.loadVariables()
+
+    describe '::serialize', ->
+      it 'returns an object with project properties', ->
+        expect(project.serialize()).toEqual({
+          deserializer: 'ColorProject'
+          loadedPaths: [
+            "#{rootPath}/styles/buttons.styl"
+            "#{rootPath}/styles/variables.styl"
+          ]
+          variables: project.variables
+        })
 
     describe '::getVariablesForFile', ->
       it 'returns the variables defined in the file', ->

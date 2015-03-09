@@ -5,7 +5,12 @@ Palette = require './palette'
 
 module.exports =
 class ColorProject
-  constructor: ({@ignores}) ->
+  atom.deserializers.add(this)
+
+  @deserialize: (state) -> new ColorProject(state)
+
+  constructor: (state={}) ->
+    {@ignores, @variables, @loadedPaths} = state
 
   loadPaths: ->
     return Promise.resolve(@loadedPaths) if @loadedPaths?
@@ -84,3 +89,12 @@ class ColorProject
     @getColorVariables().forEach (variable) -> colors[variable.name] = variable
 
     new Palette(colors)
+
+  serialize: ->
+    result = {deserializer: 'ColorProject'}
+
+    if @variables?
+      result.loadedPaths = @loadedPaths
+      result.variables = @variables
+
+    result
