@@ -43,7 +43,7 @@ class ColorProject
     new ColorContext(@getVariablesObject())
 
   getVariablesObject: ->
-    return {} unless @variables
+    return {} unless @variables?
 
     variablesObject = {}
     variablesObject[variable.name] = variable for variable in @variables
