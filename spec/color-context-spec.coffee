@@ -32,7 +32,7 @@ describe 'ColorContext', ->
 
   describe 'created without any variables', ->
     beforeEach ->
-      context = new ColorContext(new ColorParser)
+      context = new ColorContext
 
     itParses('10').asInt(10)
 
@@ -62,7 +62,7 @@ describe 'ColorContext', ->
         z: createVar '10%'
         c: createVar 'rgb(255,127,0)'
 
-      context = new ColorContext(new ColorParser, variables)
+      context = new ColorContext(variables)
 
     itParses('x').asInt(10)
     itParses('y').asFloat(0.1)

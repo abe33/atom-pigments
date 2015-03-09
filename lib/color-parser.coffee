@@ -1,7 +1,7 @@
 
 Color = require './color'
 ColorExpression = require './color-expression'
-ColorContext = require './color-context'
+ColorContext = null
 
 registry = require './expressions'
 
@@ -10,7 +10,9 @@ class ColorParser
   constructor: ->
 
   parse: (expression, context) ->
-    context ?= new ColorContext
+    unless context?
+      ColorContext ?= require './color-context'
+      context = new ColorContext
     context.parser ?= this
 
     for e in registry.getExpressions()

@@ -1,8 +1,13 @@
 Color = require './color'
+ColorParser = null
 
 module.exports =
 class ColorContext
-  constructor: (@parser, @vars={}) ->
+  constructor: (@vars={}, @parser) ->
+    unless @parser?
+      ColorParser = require './color-parser'
+      @parser = new ColorParser
+    
     @usedVariables = []
 
   getVariablesNames: -> Object.keys(@vars)

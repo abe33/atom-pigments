@@ -33,7 +33,7 @@ describe 'ColorParser', ->
     withContext: (variables) ->
       ctx = {}
       ctx[key] = {value} for key,value of variables
-      @context = new ColorContext(undefined, ctx)
+      @context = new ColorContext(ctx)
       @description = "with variables context #{jasmine.pp variables} "
 
       return this
