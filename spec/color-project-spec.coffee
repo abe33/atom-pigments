@@ -50,6 +50,6 @@ describe 'ColorProject', ->
       promise = project.loadVariables()
       waitsForPromise -> promise
 
-    it 'scans loaded paths to retrieve the variables', ->
+    it 'scans the loaded paths to retrieve the variables', ->
       expect(project.variables).toBeDefined()
-      expect(project.variables.length).toEqual(4)
+      expect(project.variables.length).toEqual(10)

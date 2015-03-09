@@ -22,16 +22,16 @@ class PathScanner
       index = lastIndex
 
       while result = @scanner.search(currentChunk, lastIndex)
-        result.lastIndex += index
         result.range[0] += index
         result.range[1] += index
-        result.path = @path
+
         for v in result
           v.path = @path
           v.range[0] += index
           v.range[1] += index
+          v.definitionRange = result.range
 
-        results.push result
+        results = results.concat(result)
         {lastIndex} = result
 
       if result?
