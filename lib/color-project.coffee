@@ -2,6 +2,7 @@ PathLoader = require './path-loader'
 PathsScanner = require './paths-scanner'
 ColorContext = require './color-context'
 Palette = require './palette'
+ProjectVariable = require './project-variable'
 
 module.exports =
 class ColorProject
@@ -27,7 +28,7 @@ class ColorProject
     new Promise (resolve, reject) =>
       @loadPaths().then (paths) =>
         @scanPathsForVariables paths, (results) =>
-          @variables = results
+          @variables = results.map(@createProjectVariable)
           resolve(results)
 
   getVariablesForFile: (path) ->
@@ -54,7 +55,8 @@ class ColorProject
   loadVariablesForFile: (path) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables [path], (results) =>
-        @variables = @variables.concat(results)
+        @variables = @variables.concat(results.map(@createProjectVariable))
+
         resolve(results)
 
   scanPathsForVariables: (paths, callback) ->
@@ -69,11 +71,7 @@ class ColorProject
   getColorVariables: ->
     context = @getContext()
 
-    @variables.filter (variable) ->
-      color = variable.color ? context.readColor(variable.value)
-      variable.color ?= color if color? and !variable.color?
-
-      color?
+    @variables.filter (variable) -> variable.isColor()
 
   getPalette: ->
     return new Palette unless @variables?
@@ -88,6 +86,6 @@ class ColorProject
 
     if @variables?
       result.loadedPaths = @loadedPaths
-      result.variables = @variables
+      result.variables = @variables.map (variable) -> variable.serialize()
 
     result

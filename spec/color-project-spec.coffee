@@ -129,7 +129,7 @@ describe 'ColorProject', ->
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
           ]
-          variables: project.variables
+          variables: project.variables.map (v) -> v.serialize()
         })
 
     describe '::getVariablesForFile', ->
