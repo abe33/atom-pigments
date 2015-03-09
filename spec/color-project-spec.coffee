@@ -53,3 +53,19 @@ describe 'ColorProject', ->
     it 'scans the loaded paths to retrieve the variables', ->
       expect(project.variables).toBeDefined()
       expect(project.variables.length).toEqual(10)
+
+  describe '::getVariablesForFile', ->
+    describe 'when the variables have not been loaded yet', ->
+      it 'returns undefined', ->
+        expect(project.getVariablesForFile('styles/variables.styl')).toBeUndefined()
+
+    describe 'when the variables have been loaded', ->
+      beforeEach ->
+        waitsForPromise -> project.loadVariables()
+
+      it 'returns the variables defined in the file', ->
+        expect(project.getVariablesForFile('styles/variables.styl').length).toEqual(10)
+
+      describe 'for a file that was ignored in the scanning process', ->
+        it 'returns undefined', ->
+          expect(project.getVariablesForFile('vendor/css/variables.less')).toEqual([])
