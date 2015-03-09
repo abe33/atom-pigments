@@ -49,16 +49,19 @@ class ColorProject
     variablesObject[variable.name] = variable for variable in @variables
     variablesObject
 
+  getColorVariables: ->
+    context = @getContext()
+
+    @variables.filter (variable) ->
+      color = variable.color ? context.readColor(variable.value)
+      variable.color ?= color if color? and !variable.color?
+
+      color?
+
   getPalette: ->
     return new Palette unless @variables?
 
-    context = @getContext()
     colors = {}
-
-    @variables.forEach (variable) ->
-      color = variable.color ? context.readColor(variable.value)
-      if color?
-        variable.color ?= color
-        colors[variable.name] = color
+    @getColorVariables().forEach (variable) -> colors[variable.name] = variable
 
     new Palette(colors)
