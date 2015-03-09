@@ -12,8 +12,10 @@ class ColorProject
   @deserialize: (state) -> new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignores, @variables, @loadedPaths} = state
+    {@ignores, variables, @paths} = state
     @emitter = new Emitter
+
+    @variables = variables.map(@createProjectVariable) if variables?
 
   onDidLoadPaths: (callback) ->
     @emitter.on 'did-load-paths', callback
@@ -24,17 +26,38 @@ class ColorProject
   onDidReloadFileVariables: (callback) ->
     @emitter.on 'did-reload-file-variables', callback
 
+
+  getPaths: -> @paths?.slice()
+
   loadPaths: ->
-    return Promise.resolve(@loadedPaths) if @loadedPaths?
+    return Promise.resolve(@paths) if @paths?
 
     new Promise (resolve, reject) =>
       PathLoader.startTask this, (results) =>
-        @loadedPaths = results
+        @paths = results
         @emitter.emit 'did-load-paths', results
         resolve(results)
 
   resetPaths: ->
-    delete @loadedPaths
+    delete @paths
+
+
+  getPalette: ->
+    return new Palette unless @variables?
+
+    colors = {}
+    @getColorVariables().forEach (variable) -> colors[variable.name] = variable
+
+    new Palette(colors)
+
+  getContext: -> new ColorContext(@variables)
+
+  getVariables: -> @variables?.slice()
+
+  getColorVariables: ->
+    context = @getContext()
+
+    @variables.filter (variable) -> variable.isColor()
 
   loadVariables: ->
     new Promise (resolve, reject) =>
@@ -59,7 +82,7 @@ class ColorProject
     unless @variables?
       return Promise.reject("Can't reload a path that haven't been loaded yet")
 
-    unless path in @loadedPaths
+    unless path in @paths
       return Promise.reject("Can't reload a path that is not legible")
 
     @deleteVariablesForFile(path)
@@ -80,27 +103,12 @@ class ColorProject
 
   createProjectVariable: (result) => new ProjectVariable(result, this)
 
-  getContext: ->
-    new ColorContext(@variables)
-
-  getColorVariables: ->
-    context = @getContext()
-
-    @variables.filter (variable) -> variable.isColor()
-
-  getPalette: ->
-    return new Palette unless @variables?
-
-    colors = {}
-    @getColorVariables().forEach (variable) -> colors[variable.name] = variable
-
-    new Palette(colors)
-
   serialize: ->
     data = {deserializer: 'ColorProject'}
 
     data.ignores = @ignores if @ignores?
-    data.loadedPaths = @loadedPaths if @loadedPaths?
+
+    data.paths = @paths if @paths?
 
     if @variables?
       data.variables = @variables.map (variable) -> variable.serialize()

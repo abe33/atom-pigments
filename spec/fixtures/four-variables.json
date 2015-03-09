@@ -1,0 +1,120 @@
+{
+  "deserializer": "ColorProject",
+  "ignores": [
+    "vendor/*"
+  ],
+  "paths": [
+    "#{root}/styles/buttons.styl",
+    "#{root}/styles/variables.styl"
+  ],
+  "variables": [
+    {
+      "name": "colors.red",
+      "value": "#BF616A",
+      "range": [
+        13,
+        25
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.yellow",
+      "value": "#EBCB8B",
+      "range": [
+        28,
+        43
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.green",
+      "value": "#A3BE8C",
+      "range": [
+        46,
+        60
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.blue",
+      "value": "#8FA1B3",
+      "range": [
+        63,
+        76
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.cyan",
+      "value": "#96B5B4",
+      "range": [
+        79,
+        92
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.light.base",
+      "value": "#EFF1F5",
+      "range": [
+        109,
+        122
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "colors.dark.base",
+      "value": "#4F5B66",
+      "range": [
+        141,
+        154
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "text-color",
+      "value": "colors.light.base",
+      "range": [
+        162,
+        192
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "background-color",
+      "value": "colors.dark.base",
+      "range": [
+        193,
+        228
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "button-color",
+      "value": "colors.blue",
+      "range": [
+        229,
+        255
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "button-padding",
+      "value": "6px 8px",
+      "range": [
+        257,
+        281
+      ],
+      "path": "#{root}/styles/variables.styl"
+    },
+    {
+      "name": "button-radius",
+      "value": "3px",
+      "range": [
+        282,
+        301
+      ],
+      "path": "#{root}/styles/variables.styl"
+    }
+  ]
+}

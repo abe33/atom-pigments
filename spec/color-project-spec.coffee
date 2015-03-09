@@ -1,4 +1,7 @@
+fs = require 'fs'
+path = require 'path'
 ColorProject = require '../lib/color-project'
+ProjectVariable = require '../lib/project-variable'
 
 describe 'ColorProject', ->
   [project, promise, rootPath, paths, eventSpy] = []
@@ -16,6 +19,22 @@ describe 'ColorProject', ->
     project = new ColorProject({
       ignores: ['vendor/*']
     })
+
+  describe '.deserialize', ->
+    it 'restores the project in its previous state', ->
+      jsonPath = path.resolve(__dirname, "./fixtures/four-variables.json")
+      json = fs.readFileSync(jsonPath).toString()
+      json = json.replace(/#\{root\}/g, rootPath)
+
+      project = ColorProject.deserialize(JSON.parse(json))
+
+      expect(project).toBeDefined()
+      expect(project.getPaths()).toEqual([
+        "#{rootPath}/styles/buttons.styl"
+        "#{rootPath}/styles/variables.styl"
+      ])
+      expect(project.getVariables().length).toEqual(12)
+      expect(project.getColorVariables().length).toEqual(10)
 
   describe '::loadPaths', ->
     beforeEach ->
@@ -43,7 +62,7 @@ describe 'ColorProject', ->
     it 'removes the cached loaded paths', ->
       project.resetPaths()
 
-      expect(project.loadedPaths).toBeUndefined()
+      expect(project.getPaths()).toBeUndefined()
 
   describe '::loadVariables', ->
     beforeEach ->
@@ -134,7 +153,7 @@ describe 'ColorProject', ->
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
           ignores: ['vendor/*']
-          loadedPaths: [
+          paths: [
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
           ]
