@@ -28,3 +28,19 @@ describe 'ColorProject', ->
         "#{rootPath}/styles/buttons.styl"
         "#{rootPath}/styles/variables.styl"
       ])
+
+    it 'stores the loaded paths for later use', ->
+      expect(project.loadedPaths).toEqual([
+        "#{rootPath}/styles/buttons.styl"
+        "#{rootPath}/styles/variables.styl"
+      ])
+
+  describe '::resetPaths', ->
+    beforeEach ->
+      promise = project.loadPaths()
+      waitsForPromise -> promise
+
+    it 'removes the cached loaded paths', ->
+      project.resetPaths()
+
+      expect(project.loadedPaths).toBeUndefined()
