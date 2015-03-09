@@ -1,6 +1,7 @@
 PathLoader = require './path-loader'
 PathsScanner = require './paths-scanner'
 ColorContext = require './color-context'
+Palette = require './palette'
 
 module.exports =
 class ColorProject
@@ -38,4 +39,26 @@ class ColorProject
     @variables = @variables.filter (variable) ->
       variable.relativePath isnt path and variable.path isnt path
 
-  getContext: -> new ColorContext @variables ? {}
+  getContext: ->
+    new ColorContext(@getVariablesObject())
+
+  getVariablesObject: ->
+    return {} unless @variables
+
+    variablesObject = {}
+    variablesObject[variable.name] = variable for variable in @variables
+    variablesObject
+
+  getPalette: ->
+    return new Palette unless @variables?
+
+    context = @getContext()
+    colors = {}
+
+    @variables.forEach (variable) ->
+      color = variable.color ? context.readColor(variable.value)
+      if color?
+        variable.color ?= color
+        colors[variable.name] = color
+
+    new Palette(colors)

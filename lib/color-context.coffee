@@ -10,9 +10,11 @@ class ColorContext
 
     @usedVariables = []
 
-  getVariablesNames: -> Object.keys(@vars)
+  containsVariable: (variableName) -> variableName in @getVariablesNames()
 
-  getVariablesCount: -> @getVariablesNames().length
+  getVariablesNames: -> @varNames ?= Object.keys(@vars)
+
+  getVariablesCount: -> @varCount ?= @getVariablesNames().length
 
   readColorExpression: (value) ->
     if @vars[value]?
