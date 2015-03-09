@@ -21,9 +21,7 @@ class ColorProject
   loadVariables: ->
     new Promise (resolve, reject) =>
       @loadPaths().then (paths) =>
-        PathsScanner.startTask paths, (results) =>
-          for res in results
-            res.relativePath = atom.project.relativize(res.path)
+        @scanPaths paths, (results) =>
           @variables = results
           resolve(results)
 
@@ -38,6 +36,27 @@ class ColorProject
 
     @variables = @variables.filter (variable) ->
       variable.relativePath isnt path and variable.path isnt path
+
+  reloadVariablesForFile: (path) ->
+    unless @variables?
+      return Promise.reject("Can't reload a path that haven't been loaded yet")
+
+    unless path in @loadedPaths
+      return Promise.reject("Can't reload a path that is not legible")
+
+    @deleteVariablesForFile(path)
+    @loadVariablesForFile(path)
+
+  loadVariablesForFile: (path) ->
+    new Promise (resolve, reject) =>
+      @scanPaths [path], (results) =>
+        @variables = @variables.concat(results)
+        resolve(results)
+
+  scanPaths: (paths, callback) ->
+    PathsScanner.startTask paths, (results) ->
+      res.relativePath = atom.project.relativize(res.path) for res in results
+      callback(results)
 
   getContext: ->
     new ColorContext(@getVariablesObject())

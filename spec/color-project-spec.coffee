@@ -73,7 +73,7 @@ describe 'ColorProject', ->
   describe 'when the variables have not been loaded yet', ->
     describe '::getVariablesForFile', ->
       it 'returns undefined', ->
-        expect(project.getVariablesForFile('styles/variables.styl')).toBeUndefined()
+        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toBeUndefined()
 
     describe '::getContext', ->
       it 'returns an empty context', ->
@@ -84,6 +84,18 @@ describe 'ColorProject', ->
       it 'returns an empty palette', ->
         expect(project.getPalette()).toBeDefined()
         expect(project.getPalette().getColorsCount()).toEqual(0)
+
+    describe '::reloadVariablesForFile', ->
+      beforeEach ->
+        spyOn(project, 'deleteVariablesForFile').andCallThrough()
+        spyOn(project, 'loadVariablesForFile').andCallThrough()
+
+        waitsForPromise shouldReject: true, ->
+          project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
+
+      it 'returns a rejected promise', ->
+        expect(project.deleteVariablesForFile).not.toHaveBeenCalled()
+        expect(project.loadVariablesForFile).not.toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
@@ -107,17 +119,17 @@ describe 'ColorProject', ->
 
     describe '::getVariablesForFile', ->
       it 'returns the variables defined in the file', ->
-        expect(project.getVariablesForFile('styles/variables.styl').length).toEqual(12)
+        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl").length).toEqual(12)
 
       describe 'for a file that was ignored in the scanning process', ->
         it 'returns undefined', ->
-          expect(project.getVariablesForFile('vendor/css/variables.less')).toEqual([])
+          expect(project.getVariablesForFile("#{rootPath}/vendor/css/variables.less")).toEqual([])
 
     describe '::deleteVariablesForFile', ->
       it 'removes all the variables coming from the specified file', ->
-        project.deleteVariablesForFile('styles/variables.styl')
+        project.deleteVariablesForFile("#{rootPath}/styles/variables.styl")
 
-        expect(project.getVariablesForFile('styles/variables.styl')).toEqual([])
+        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toEqual([])
 
     describe '::getContext', ->
       it 'returns a context with the project variables', ->
@@ -128,3 +140,27 @@ describe 'ColorProject', ->
       it 'returns a palette with the colors from the project', ->
         expect(project.getPalette()).toBeDefined()
         expect(project.getPalette().getColorsCount()).toEqual(10)
+
+    describe '::reloadVariablesForFile', ->
+      describe 'for a file that is part of the loaded paths', ->
+        beforeEach ->
+          spyOn(project, 'deleteVariablesForFile').andCallThrough()
+          waitsForPromise -> project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
+
+        it 'deletes the previous variables found for the file', ->
+          expect(project.deleteVariablesForFile).toHaveBeenCalled()
+
+        it 'scans again the file to find variables', ->
+          expect(project.variables.length).toEqual(12)
+
+      describe 'for a file that is not part of the loaded paths', ->
+        beforeEach ->
+          spyOn(project, 'deleteVariablesForFile').andCallThrough()
+          spyOn(project, 'loadVariablesForFile').andCallThrough()
+
+          waitsForPromise shouldReject: true, ->
+            project.reloadVariablesForFile("#{rootPath}/vendor/css/variables.less")
+
+        it 'does nothing', ->
+          expect(project.deleteVariablesForFile).not.toHaveBeenCalled()
+          expect(project.loadVariablesForFile).not.toHaveBeenCalled()
