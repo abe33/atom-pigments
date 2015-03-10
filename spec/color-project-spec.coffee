@@ -22,9 +22,13 @@ describe 'ColorProject', ->
 
   describe '.deserialize', ->
     it 'restores the project in its previous state', ->
+      data =
+        root: rootPath
+        timestamp: new Date().toJSON()
+
       jsonPath = path.resolve(__dirname, "./fixtures/four-variables.json")
       json = fs.readFileSync(jsonPath).toString()
-      json = json.replace(/#\{root\}/g, rootPath)
+      json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
 
       project = ColorProject.deserialize(JSON.parse(json))
 
@@ -212,3 +216,29 @@ describe 'ColorProject', ->
         it 'does nothing', ->
           expect(project.deleteVariablesForFile).not.toHaveBeenCalled()
           expect(project.loadVariablesForFile).not.toHaveBeenCalled()
+
+  ##    ########  ########  ######  ########  #######  ########  ########
+  ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
+  ##    ##     ## ##       ##          ##    ##     ## ##     ## ##
+  ##    ########  ######    ######     ##    ##     ## ########  ######
+  ##    ##   ##   ##             ##    ##    ##     ## ##   ##   ##
+  ##    ##    ##  ##       ##    ##    ##    ##     ## ##    ##  ##
+  ##    ##     ## ########  ######     ##     #######  ##     ## ########
+
+  describe 'when restored', ->
+    createProject = (params) ->
+      data =
+        root: params.root ? rootPath
+        timestamp: params.timestamp.toJSON() ? new Date().toJSON()
+
+      jsonPath = path.resolve(__dirname, "./fixtures/four-variables.json")
+      json = fs.readFileSync(jsonPath).toString()
+      json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
+
+      ColorProject.deserialize(JSON.parse(json))
+
+    describe 'with a timestamp older than the files last modification date', ->
+      beforeEach ->
+        project = createProject timestamp: new Date(0)
+
+      it '', ->
