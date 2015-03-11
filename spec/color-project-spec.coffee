@@ -101,8 +101,11 @@ describe 'ColorProject', ->
   describe 'when the variables have not been loaded yet', ->
     describe '::serialize', ->
       it 'returns an object without paths nor variables', ->
+        date = new Date
+        spyOn(project, 'getTimestamp').andCallFake -> date
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
+          timestamp: date
           ignores: ['vendor/*']
         })
 
@@ -154,9 +157,12 @@ describe 'ColorProject', ->
 
     describe '::serialize', ->
       it 'returns an object with project properties', ->
+        date = new Date
+        spyOn(project, 'getTimestamp').andCallFake -> date
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
           ignores: ['vendor/*']
+          timestamp: date
           paths: [
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"

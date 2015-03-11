@@ -103,8 +103,10 @@ class ColorProject
 
   createProjectVariable: (result) => new ProjectVariable(result, this)
 
+  getTimestamp: -> new Date()
+
   serialize: ->
-    data = {deserializer: 'ColorProject'}
+    data = {deserializer: 'ColorProject', timestamp: @getTimestamp()}
 
     data.ignores = @ignores if @ignores?
 
