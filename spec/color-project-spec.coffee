@@ -29,7 +29,7 @@ describe 'ColorProject', ->
         root: rootPath
         timestamp: new Date().toJSON()
 
-      jsonPath = path.resolve(__dirname, "./fixtures/four-variables.json")
+      jsonPath = path.resolve(__dirname, "./fixtures/base-project.json")
       json = fs.readFileSync(jsonPath).toString()
       json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
 
@@ -262,7 +262,7 @@ describe 'ColorProject', ->
         root: params.root ? rootPath
         timestamp: params.timestamp.toJSON() ? new Date().toJSON()
 
-      jsonPath = path.resolve(__dirname, "./fixtures/four-variables.json")
+      jsonPath = path.resolve(__dirname, params.stateFixture)
       json = fs.readFileSync(jsonPath).toString()
       json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
 
@@ -270,6 +270,10 @@ describe 'ColorProject', ->
 
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->
-        project = createProject timestamp: new Date(0)
+        loadPathsSpy = jasmine.createSpy('did-load-paths')
+        project = createProject
+          timestamp: new Date(0)
+          stateFixture: "./fixtures/empty-project.json"
 
       it 'scans again all the files that have a more recent modification date', ->
+        

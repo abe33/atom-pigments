@@ -1,0 +1,22 @@
+{
+  "deserializer": "ColorProject",
+  "timestamp": "#{time}",
+  "ignores": [
+    "vendor/*"
+  ],
+  "paths": [
+    "#{root}/styles/buttons.styl",
+    "#{root}/styles/variables.styl"
+  ],
+  "variables": [
+    {
+      "name": "colors.red",
+      "value": "#BF616A",
+      "range": [
+        13,
+        25
+      ],
+      "path": "#{root}/styles/variables.styl"
+    }
+  ]
+}
