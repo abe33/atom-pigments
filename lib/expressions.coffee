@@ -58,6 +58,25 @@ readParam = (param, block) ->
 
 module.exports = registry = new ExpressionsRegistry(ColorExpression)
 
+registry.consumeServiceProviders = (hub) ->
+  @consumerSubscription = hub.consume(
+    'pigments.color-expression-provider',
+    '>=0.1.0',
+    (provider) ->
+      registerProvider = (o) ->
+        {name, regexp, handler} = o
+        registry.createExpression(name, regexp, handler)
+
+      if Array.isArray(provider)
+        registerProvider(p) for p in provider
+      else
+        registerProvider(provider)
+  )
+
+registry.disposeServiceConsumer = ->
+  @consumerSubscription?.dispose()
+  @consumerSubscription = null
+
 ##    ##       #### ######## ######## ########     ###    ##
 ##    ##        ##     ##    ##       ##     ##   ## ##   ##
 ##    ##        ##     ##    ##       ##     ##  ##   ##  ##
