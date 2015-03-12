@@ -70,13 +70,16 @@ class ColorProject
   getVariablesForFile: (path) ->
     return undefined unless @variables?
 
-    @variables.filter (variable) ->
-      variable.relativePath is path or variable.path is path
+    @variables.filter (variable) -> variable.path is path
 
   deleteVariablesForFile: (path) ->
     return unless @variables?
 
-    @variables = @variables.filter (variable) -> variable.path isnt path
+    @variables = @variables.filter (variable) ->
+      if variable.path is path
+        variable.destroy()
+        return false
+      return true
 
   reloadVariablesForFile: (path) ->
     unless @variables?

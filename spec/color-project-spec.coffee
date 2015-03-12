@@ -184,6 +184,12 @@ describe 'ColorProject', ->
 
         expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toEqual([])
 
+      it 'destroys the removed variables', ->
+        spyOn(ProjectVariable.prototype, 'destroy').andCallThrough()
+        project.deleteVariablesForFile("#{rootPath}/styles/variables.styl")
+
+        expect(ProjectVariable::destroy).toHaveBeenCalled()
+
     describe '::getContext', ->
       it 'returns a context with the project variables', ->
         expect(project.getContext()).toBeDefined()
