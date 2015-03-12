@@ -1,7 +1,7 @@
 VariableScanner = require '../lib/variable-scanner'
 
 describe 'VariableScanner', ->
-  [scanner, editor, text, bufferColor] = []
+  [scanner, editor, text] = []
 
   withTextEditor = (fixture, block) ->
     describe "with #{fixture} buffer", ->
