@@ -60,45 +60,52 @@ class ColorProject
     @variables.filter (variable) -> variable.isColor()
 
   loadVariables: ->
+    @loadPaths().then (paths) =>
+      @loadVariablesForFiles(paths)
+    .then (results) =>
+      @emitter.emit 'did-load-variables', @variables.slice()
+      results
+
+  loadVariablesForFile: (path) -> @loadVariablesForFiles [path]
+
+  loadVariablesForFiles: (paths) ->
     new Promise (resolve, reject) =>
-      @loadPaths().then (paths) =>
-        @scanPathsForVariables paths, (results) =>
-          @variables = results.map(@createProjectVariable)
-          @emitter.emit 'did-load-variables', @variables.slice()
-          resolve(results)
+      @scanPathsForVariables paths, (results) =>
+        @variables ?= []
+
+        filesVariables = results.map(@createProjectVariable)
+        @variables = @variables.concat(filesVariables)
+
+        resolve(filesVariables)
 
   getVariablesForFile: (path) ->
     return undefined unless @variables?
 
     @variables.filter (variable) -> variable.path is path
 
-  deleteVariablesForFile: (path) ->
+  deleteVariablesForFile: (path) -> @deleteVariablesForFiles [path]
+
+  deleteVariablesForFiles: (paths) ->
     return unless @variables?
 
     @variables = @variables.filter (variable) ->
-      if variable.path is path
+      if variable.path in paths
         variable.destroy()
         return false
       return true
 
-  reloadVariablesForFile: (path) ->
+  reloadVariablesForFile: (path) -> @reloadVariablesForFiles [path]
+
+  reloadVariablesForFiles: (paths) ->
     unless @variables?
-      return Promise.reject("Can't reload a path that haven't been loaded yet")
+      return Promise.reject("Can't reload paths that haven't been loaded yet")
 
-    unless path in @paths
-      return Promise.reject("Can't reload a path that is not legible")
+    if paths.some((path) => path not in @paths)
+      return Promise.reject("Can't reload paths that are not legible")
 
-    @deleteVariablesForFile(path)
-    @loadVariablesForFile(path).then (results) =>
+    @deleteVariablesForFiles(paths)
+    @loadVariablesForFiles(paths).then (results) =>
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
-
-  loadVariablesForFile: (path) ->
-    new Promise (resolve, reject) =>
-      @scanPathsForVariables [path], (results) =>
-        fileVariables = results.map(@createProjectVariable)
-        @variables = @variables.concat(fileVariables)
-
-        resolve(fileVariables)
 
   scanPathsForVariables: (paths, callback) ->
     PathsScanner.startTask paths, (results) ->

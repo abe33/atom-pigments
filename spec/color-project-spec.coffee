@@ -3,6 +3,9 @@ path = require 'path'
 ColorProject = require '../lib/color-project'
 ProjectVariable = require '../lib/project-variable'
 
+TOTAL_VARIABLES_IN_PROJECT = 12
+TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
+
 describe 'ColorProject', ->
   [project, promise, rootPath, paths, eventSpy] = []
 
@@ -37,8 +40,8 @@ describe 'ColorProject', ->
         "#{rootPath}/styles/buttons.styl"
         "#{rootPath}/styles/variables.styl"
       ])
-      expect(project.getVariables().length).toEqual(12)
-      expect(project.getColorVariables().length).toEqual(10)
+      expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+      expect(project.getColorVariables().length).toEqual(TOTAL_COLORS_VARIABLES_IN_PROJECT)
 
   describe '::loadPaths', ->
     beforeEach ->
@@ -77,7 +80,7 @@ describe 'ColorProject', ->
 
     it 'scans the loaded paths to retrieve the variables', ->
       expect(project.variables).toBeDefined()
-      expect(project.variables.length).toEqual(12)
+      expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
     it 'dispatches a did-load-variables event', ->
       expect(eventSpy).toHaveBeenCalled()
@@ -125,14 +128,12 @@ describe 'ColorProject', ->
 
     describe '::reloadVariablesForFile', ->
       beforeEach ->
-        spyOn(project, 'deleteVariablesForFile').andCallThrough()
         spyOn(project, 'loadVariablesForFile').andCallThrough()
 
         waitsForPromise shouldReject: true, ->
           project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
 
       it 'returns a rejected promise', ->
-        expect(project.deleteVariablesForFile).not.toHaveBeenCalled()
         expect(project.loadVariablesForFile).not.toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######
@@ -172,7 +173,7 @@ describe 'ColorProject', ->
 
     describe '::getVariablesForFile', ->
       it 'returns the variables defined in the file', ->
-        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl").length).toEqual(12)
+        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl").length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
       describe 'for a file that was ignored in the scanning process', ->
         it 'returns undefined', ->
@@ -193,7 +194,7 @@ describe 'ColorProject', ->
     describe '::getContext', ->
       it 'returns a context with the project variables', ->
         expect(project.getContext()).toBeDefined()
-        expect(project.getContext().getVariablesCount()).toEqual(12)
+        expect(project.getContext().getVariablesCount()).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
     describe '::getPalette', ->
       it 'returns a palette with the colors from the project', ->
@@ -205,28 +206,46 @@ describe 'ColorProject', ->
         beforeEach ->
           eventSpy = jasmine.createSpy('did-reload-file-variables')
           project.onDidReloadFileVariables(eventSpy)
-          spyOn(project, 'deleteVariablesForFile').andCallThrough()
+          spyOn(project, 'deleteVariablesForFiles').andCallThrough()
           waitsForPromise -> project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
 
         it 'deletes the previous variables found for the file', ->
-          expect(project.deleteVariablesForFile).toHaveBeenCalled()
+          expect(project.deleteVariablesForFiles).toHaveBeenCalled()
 
         it 'scans again the file to find variables', ->
-          expect(project.variables.length).toEqual(12)
+          expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+        it 'dispatches a did-reload-file-variables event', ->
+          expect(eventSpy).toHaveBeenCalled()
+
+    describe '::reloadVariablesForFiles', ->
+      describe 'for a file that is part of the loaded paths', ->
+        beforeEach ->
+          eventSpy = jasmine.createSpy('did-reload-file-variables')
+          project.onDidReloadFileVariables(eventSpy)
+          spyOn(project, 'deleteVariablesForFiles').andCallThrough()
+          waitsForPromise -> project.reloadVariablesForFiles([
+            "#{rootPath}/styles/variables.styl"
+            "#{rootPath}/styles/buttons.styl"
+          ])
+
+        it 'deletes the previous variables found for the file', ->
+          expect(project.deleteVariablesForFiles).toHaveBeenCalled()
+
+        it 'scans again the file to find variables', ->
+          expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
         it 'dispatches a did-reload-file-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
       describe 'for a file that is not part of the loaded paths', ->
         beforeEach ->
-          spyOn(project, 'deleteVariablesForFile').andCallThrough()
           spyOn(project, 'loadVariablesForFile').andCallThrough()
 
           waitsForPromise shouldReject: true, ->
             project.reloadVariablesForFile("#{rootPath}/vendor/css/variables.less")
 
         it 'does nothing', ->
-          expect(project.deleteVariablesForFile).not.toHaveBeenCalled()
           expect(project.loadVariablesForFile).not.toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
@@ -253,4 +272,4 @@ describe 'ColorProject', ->
       beforeEach ->
         project = createProject timestamp: new Date(0)
 
-      it '', ->
+      it 'scans again all the files that have a more recent modification date', ->
