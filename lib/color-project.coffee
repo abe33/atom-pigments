@@ -33,7 +33,8 @@ class ColorProject
     return Promise.resolve(@paths) if @paths?
 
     new Promise (resolve, reject) =>
-      PathLoader.startTask this, (results) =>
+      config ={@ignores, paths: atom.project.getPaths()}
+      PathLoader.startTask config, (results) =>
         @paths = results
         @emitter.emit 'did-load-paths', results
         resolve(results)
