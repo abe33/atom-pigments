@@ -6,10 +6,14 @@ describe 'color expressions service', ->
     initialConsumersCount = atom.packages.serviceHub.consumers.length
 
     registry = require '../lib/expressions'
-    registry.consumeServiceProviders(atom.packages.serviceHub)
+    registry.registerServiceConsumer()
+
     initialCount = registry.getExpressions().length
 
     expect(atom.packages.serviceHub.consumers.length).toEqual(initialConsumersCount + 1)
+
+  afterEach ->
+    registry.disposeServiceConsumer()
 
   describe 'with a service providing a single expression', ->
     beforeEach ->
