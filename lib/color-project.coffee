@@ -61,14 +61,14 @@ class ColorProject
 
   loadVariables: ->
     @loadPaths().then (paths) =>
-      @loadVariablesForFiles(paths)
+      @loadVariablesForPaths(paths)
     .then (results) =>
       @emitter.emit 'did-load-variables', @variables.slice()
       results
 
-  loadVariablesForFile: (path) -> @loadVariablesForFiles [path]
+  loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 
-  loadVariablesForFiles: (paths) ->
+  loadVariablesForPaths: (paths) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables paths, (results) =>
         @variables ?= []
@@ -78,14 +78,16 @@ class ColorProject
 
         resolve(filesVariables)
 
-  getVariablesForFile: (path) ->
+  getVariablesForPath: (path) -> @getVariablesForPaths [path]
+
+  getVariablesForPaths: (paths) ->
     return undefined unless @variables?
 
-    @variables.filter (variable) -> variable.path is path
+    @variables.filter (variable) -> variable.path in paths
 
-  deleteVariablesForFile: (path) -> @deleteVariablesForFiles [path]
+  deleteVariablesForPath: (path) -> @deleteVariablesForPaths [path]
 
-  deleteVariablesForFiles: (paths) ->
+  deleteVariablesForPaths: (paths) ->
     return unless @variables?
 
     @variables = @variables.filter (variable) ->
@@ -94,17 +96,17 @@ class ColorProject
         return false
       return true
 
-  reloadVariablesForFile: (path) -> @reloadVariablesForFiles [path]
+  reloadVariablesForPath: (path) -> @reloadVariablesForPaths [path]
 
-  reloadVariablesForFiles: (paths) ->
+  reloadVariablesForPaths: (paths) ->
     unless @variables?
       return Promise.reject("Can't reload paths that haven't been loaded yet")
 
     if paths.some((path) => path not in @paths)
       return Promise.reject("Can't reload paths that are not legible")
 
-    @deleteVariablesForFiles(paths)
-    @loadVariablesForFiles(paths).then (results) =>
+    @deleteVariablesForPaths(paths)
+    @loadVariablesForPaths(paths).then (results) =>
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->

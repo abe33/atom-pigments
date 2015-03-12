@@ -112,9 +112,9 @@ describe 'ColorProject', ->
           ignores: ['vendor/*']
         })
 
-    describe '::getVariablesForFile', ->
+    describe '::getVariablesForPath', ->
       it 'returns undefined', ->
-        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toBeUndefined()
+        expect(project.getVariablesForPath("#{rootPath}/styles/variables.styl")).toBeUndefined()
 
     describe '::getContext', ->
       it 'returns an empty context', ->
@@ -126,15 +126,15 @@ describe 'ColorProject', ->
         expect(project.getPalette()).toBeDefined()
         expect(project.getPalette().getColorsCount()).toEqual(0)
 
-    describe '::reloadVariablesForFile', ->
+    describe '::reloadVariablesForPath', ->
       beforeEach ->
-        spyOn(project, 'loadVariablesForFile').andCallThrough()
+        spyOn(project, 'loadVariablesForPath').andCallThrough()
 
         waitsForPromise shouldReject: true, ->
-          project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
+          project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
 
       it 'returns a rejected promise', ->
-        expect(project.loadVariablesForFile).not.toHaveBeenCalled()
+        expect(project.loadVariablesForPath).not.toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
@@ -171,23 +171,23 @@ describe 'ColorProject', ->
           variables: project.variables.map (v) -> v.serialize()
         })
 
-    describe '::getVariablesForFile', ->
+    describe '::getVariablesForPath', ->
       it 'returns the variables defined in the file', ->
-        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl").length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+        expect(project.getVariablesForPath("#{rootPath}/styles/variables.styl").length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
       describe 'for a file that was ignored in the scanning process', ->
         it 'returns undefined', ->
-          expect(project.getVariablesForFile("#{rootPath}/vendor/css/variables.less")).toEqual([])
+          expect(project.getVariablesForPath("#{rootPath}/vendor/css/variables.less")).toEqual([])
 
-    describe '::deleteVariablesForFile', ->
+    describe '::deleteVariablesForPath', ->
       it 'removes all the variables coming from the specified file', ->
-        project.deleteVariablesForFile("#{rootPath}/styles/variables.styl")
+        project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
 
-        expect(project.getVariablesForFile("#{rootPath}/styles/variables.styl")).toEqual([])
+        expect(project.getVariablesForPath("#{rootPath}/styles/variables.styl")).toEqual([])
 
       it 'destroys the removed variables', ->
         spyOn(ProjectVariable.prototype, 'destroy').andCallThrough()
-        project.deleteVariablesForFile("#{rootPath}/styles/variables.styl")
+        project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
 
         expect(ProjectVariable::destroy).toHaveBeenCalled()
 
@@ -201,16 +201,16 @@ describe 'ColorProject', ->
         expect(project.getPalette()).toBeDefined()
         expect(project.getPalette().getColorsCount()).toEqual(10)
 
-    describe '::reloadVariablesForFile', ->
+    describe '::reloadVariablesForPath', ->
       describe 'for a file that is part of the loaded paths', ->
         beforeEach ->
           eventSpy = jasmine.createSpy('did-reload-file-variables')
           project.onDidReloadFileVariables(eventSpy)
-          spyOn(project, 'deleteVariablesForFiles').andCallThrough()
-          waitsForPromise -> project.reloadVariablesForFile("#{rootPath}/styles/variables.styl")
+          spyOn(project, 'deleteVariablesForPaths').andCallThrough()
+          waitsForPromise -> project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
 
         it 'deletes the previous variables found for the file', ->
-          expect(project.deleteVariablesForFiles).toHaveBeenCalled()
+          expect(project.deleteVariablesForPaths).toHaveBeenCalled()
 
         it 'scans again the file to find variables', ->
           expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
@@ -218,19 +218,19 @@ describe 'ColorProject', ->
         it 'dispatches a did-reload-file-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
-    describe '::reloadVariablesForFiles', ->
+    describe '::reloadVariablesForPaths', ->
       describe 'for a file that is part of the loaded paths', ->
         beforeEach ->
           eventSpy = jasmine.createSpy('did-reload-file-variables')
           project.onDidReloadFileVariables(eventSpy)
-          spyOn(project, 'deleteVariablesForFiles').andCallThrough()
-          waitsForPromise -> project.reloadVariablesForFiles([
+          spyOn(project, 'deleteVariablesForPaths').andCallThrough()
+          waitsForPromise -> project.reloadVariablesForPaths([
             "#{rootPath}/styles/variables.styl"
             "#{rootPath}/styles/buttons.styl"
           ])
 
         it 'deletes the previous variables found for the file', ->
-          expect(project.deleteVariablesForFiles).toHaveBeenCalled()
+          expect(project.deleteVariablesForPaths).toHaveBeenCalled()
 
         it 'scans again the file to find variables', ->
           expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
@@ -240,13 +240,13 @@ describe 'ColorProject', ->
 
       describe 'for a file that is not part of the loaded paths', ->
         beforeEach ->
-          spyOn(project, 'loadVariablesForFile').andCallThrough()
+          spyOn(project, 'loadVariablesForPath').andCallThrough()
 
           waitsForPromise shouldReject: true, ->
-            project.reloadVariablesForFile("#{rootPath}/vendor/css/variables.less")
+            project.reloadVariablesForPath("#{rootPath}/vendor/css/variables.less")
 
         it 'does nothing', ->
-          expect(project.loadVariablesForFile).not.toHaveBeenCalled()
+          expect(project.loadVariablesForPath).not.toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
