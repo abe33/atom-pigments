@@ -1,4 +1,5 @@
 {CompositeDisposable} = require 'atom'
+ColorProject = null
 
 module.exports =
   config:
@@ -18,5 +19,12 @@ module.exports =
       default: []
 
   activate: (state) ->
+    ColorProject = require './color-project'
+
+    @project = new ColorProject(state ? {})
 
   deactivate: ->
+
+  serialize: -> @project.serialize()
+
+  getProject: -> @project
