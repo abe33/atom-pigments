@@ -43,46 +43,24 @@ describe 'ColorProject', ->
       expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
       expect(project.getColorVariables().length).toEqual(TOTAL_COLORS_VARIABLES_IN_PROJECT)
 
-  describe '::loadPaths', ->
+  describe '::initialize', ->
     beforeEach ->
-      eventSpy = jasmine.createSpy('did-load-paths')
-      project.onDidLoadPaths(eventSpy)
-
-      promise = project.loadPaths().then (p) -> paths = p
-
+      eventSpy = jasmine.createSpy('did-initialize')
+      project.onDidInitialize(eventSpy)
+      promise = project.initialize()
       waitsForPromise -> promise
 
-    it 'returns the paths for where to look for project variables', ->
-      expect(paths).toEqual([
+    it 'loads the paths to scan in the project', ->
+      expect(project.getPaths()).toEqual([
         "#{rootPath}/styles/buttons.styl"
         "#{rootPath}/styles/variables.styl"
       ])
-
-    it 'dispatches a did-load-paths event', ->
-      expect(eventSpy).toHaveBeenCalled()
-
-  describe '::resetPaths', ->
-    beforeEach ->
-      promise = project.loadPaths()
-      waitsForPromise -> promise
-
-    it 'removes the cached loaded paths', ->
-      project.resetPaths()
-
-      expect(project.getPaths()).toBeUndefined()
-
-  describe '::loadVariables', ->
-    beforeEach ->
-      eventSpy = jasmine.createSpy('did-load-variables')
-      project.onDidLoadVariables(eventSpy)
-      promise = project.loadVariables()
-      waitsForPromise -> promise
 
     it 'scans the loaded paths to retrieve the variables', ->
       expect(project.variables).toBeDefined()
       expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
-    it 'dispatches a did-load-variables event', ->
+    it 'dispatches a did-initialize event', ->
       expect(eventSpy).toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######     ##    ##  #######  ########
@@ -154,7 +132,7 @@ describe 'ColorProject', ->
 
   describe 'when the variables have been loaded', ->
     beforeEach ->
-      waitsForPromise -> project.loadVariables()
+      waitsForPromise -> project.initialize()
 
     describe '::serialize', ->
       it 'returns an object with project properties', ->
@@ -256,17 +234,28 @@ describe 'ColorProject', ->
   ##    ##    ##  ##       ##    ##    ##    ##     ## ##    ##  ##
   ##    ##     ## ########  ######     ##     #######  ##     ## ########
 
-  describe 'when restored', ->
+  fdescribe 'when restored', ->
     createProject = (params) ->
       data =
         root: params.root ? rootPath
-        timestamp: params.timestamp.toJSON() ? new Date().toJSON()
+        timestamp: params.timestamp?.toJSON() ? new Date().toJSON()
 
       jsonPath = path.resolve(__dirname, params.stateFixture)
       json = fs.readFileSync(jsonPath).toString()
       json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
 
       ColorProject.deserialize(JSON.parse(json))
+
+    describe 'with a timestamp more recent than the files last modification date', ->
+      beforeEach ->
+        loadPathsSpy = jasmine.createSpy('did-load-paths')
+        project = createProject
+          stateFixture: "./fixtures/empty-project.json"
+
+        waitsForPromise -> project.initialize()
+
+      it 'does not rescans the files', ->
+        expect(project.getVariables().length).toEqual(1)
 
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->
@@ -275,5 +264,7 @@ describe 'ColorProject', ->
           timestamp: new Date(0)
           stateFixture: "./fixtures/empty-project.json"
 
+        waitsForPromise -> project.initialize()
+
       it 'scans again all the files that have a more recent modification date', ->
-        
+        expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)

@@ -1,5 +1,6 @@
 {Emitter} = require 'atom'
-PathLoader = require './path-loader'
+PathsLoader = require './paths-loader'
+DirtyPathsLoader = require './dirty-paths-loader'
 PathsScanner = require './paths-scanner'
 ColorContext = require './color-context'
 Palette = require './palette'
@@ -17,15 +18,30 @@ class ColorProject
 
     @variables = variables.map(@createProjectVariable) if variables?
 
-  onDidLoadPaths: (callback) ->
-    @emitter.on 'did-load-paths', callback
+    @initialize() if @paths? and @variables?
 
-  onDidLoadVariables: (callback) ->
-    @emitter.on 'did-load-variables', callback
+  onDidInitialize: (callback) ->
+    @emitter.on 'did-initialize', callback
 
   onDidReloadFileVariables: (callback) ->
     @emitter.on 'did-reload-file-variables', callback
 
+  initialize: ->
+    @checkTimestamp(@paths)
+    .then (dirtyPaths) =>
+      if dirtyPaths.length > 0
+        @deleteVariablesForPaths(dirtyPaths)
+        return dirtyPaths
+      else
+        @loadPaths()
+    .then (paths) =>
+      @loadVariablesForPaths(paths)
+    .then (results) =>
+      @emitter.emit 'did-initialize', @variables.slice()
+      results
+
+  checkTimestamp: (paths) ->
+    Promise.resolve([])
 
   getPaths: -> @paths?.slice()
 
@@ -34,14 +50,12 @@ class ColorProject
 
     new Promise (resolve, reject) =>
       config ={@ignores, paths: atom.project.getPaths()}
-      PathLoader.startTask config, (results) =>
+      PathsLoader.startTask config, (results) =>
         @paths = results
-        @emitter.emit 'did-load-paths', results
         resolve(results)
 
   resetPaths: ->
     delete @paths
-
 
   getPalette: ->
     return new Palette unless @variables?
@@ -59,13 +73,6 @@ class ColorProject
     context = @getContext()
 
     @variables.filter (variable) -> variable.isColor()
-
-  loadVariables: ->
-    @loadPaths().then (paths) =>
-      @loadVariablesForPaths(paths)
-    .then (results) =>
-      @emitter.emit 'did-load-variables', @variables.slice()
-      results
 
   loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 

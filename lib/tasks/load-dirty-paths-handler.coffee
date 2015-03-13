@@ -6,8 +6,10 @@ path = require 'path'
 
 PathsChunkSize = 100
 
-class PathsLoader
-  constructor: (@rootPath, @sourceNames, ignoreVcsIgnores, @traverseSymlinkDirectories, @ignoredNames) ->
+class DirtyPathsLoader
+  constructor: (config) ->
+    {@rootPath, @timestamp, @sourceNames, ignoreVcsIgnores, @traverseSymlinkDirectories, @ignoredNames} = config
+    
     @paths = []
     @repo = null
     if ignoreVcsIgnores
