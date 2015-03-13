@@ -1,6 +1,6 @@
 {
   "deserializer": "ColorProject",
-  "timestamp": "#{time}",
+  "timestamp": "#{timestamp}",
   "ignores": [
     "vendor/*"
   ],

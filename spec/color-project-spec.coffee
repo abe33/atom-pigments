@@ -47,8 +47,7 @@ describe 'ColorProject', ->
     beforeEach ->
       eventSpy = jasmine.createSpy('did-initialize')
       project.onDidInitialize(eventSpy)
-      promise = project.initialize()
-      waitsForPromise -> promise
+      waitsForPromise -> project.initialize()
 
     it 'loads the paths to scan in the project', ->
       expect(project.getPaths()).toEqual([
@@ -234,7 +233,7 @@ describe 'ColorProject', ->
   ##    ##    ##  ##       ##    ##    ##    ##     ## ##    ##  ##
   ##    ##     ## ########  ######     ##     #######  ##     ## ########
 
-  fdescribe 'when restored', ->
+  describe 'when restored', ->
     createProject = (params) ->
       data =
         root: params.root ? rootPath

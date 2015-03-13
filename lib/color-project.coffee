@@ -1,6 +1,5 @@
 {Emitter} = require 'atom'
 PathsLoader = require './paths-loader'
-DirtyPathsLoader = require './dirty-paths-loader'
 PathsScanner = require './paths-scanner'
 ColorContext = require './color-context'
 Palette = require './palette'
@@ -13,10 +12,11 @@ class ColorProject
   @deserialize: (state) -> new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignores, variables, @paths} = state
+    {@ignores, @paths, variables, timestamp} = state
     @emitter = new Emitter
 
     @variables = variables.map(@createProjectVariable) if variables?
+    @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
     @initialize() if @paths? and @variables?
 
@@ -27,32 +27,35 @@ class ColorProject
     @emitter.on 'did-reload-file-variables', callback
 
   initialize: ->
-    @checkTimestamp(@paths)
-    .then (dirtyPaths) =>
-      if dirtyPaths.length > 0
-        @deleteVariablesForPaths(dirtyPaths)
-        return dirtyPaths
+    return @initializePromise if @initializePromise?
+
+    @initializePromise = @loadPaths()
+    .then (paths) =>
+      if @paths? and paths.length > 0
+        @deleteVariablesForPaths(paths)
+        @paths.push path for path in paths when path not in @paths
+        paths
+      else unless @paths?
+        @paths = paths
       else
-        @loadPaths()
+        []
     .then (paths) =>
       @loadVariablesForPaths(paths)
     .then (results) =>
       @emitter.emit 'did-initialize', @variables.slice()
       results
 
-  checkTimestamp: (paths) ->
-    Promise.resolve([])
-
   getPaths: -> @paths?.slice()
 
   loadPaths: ->
-    return Promise.resolve(@paths) if @paths?
-
     new Promise (resolve, reject) =>
-      config ={@ignores, paths: atom.project.getPaths()}
-      PathsLoader.startTask config, (results) =>
-        @paths = results
-        resolve(results)
+      config = {
+        @ignores
+        @timestamp
+        knownPaths: @paths
+        paths: atom.project.getPaths()
+      }
+      PathsLoader.startTask config, (results) -> resolve(results)
 
   resetPaths: ->
     delete @paths
