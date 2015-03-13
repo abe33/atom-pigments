@@ -1,5 +1,5 @@
 
-registry = require './variables-expressions'
+registry = require './variable-expressions'
 
 module.exports =
 class VariableParser

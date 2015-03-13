@@ -3,7 +3,7 @@ Color = require './color'
 ColorExpression = require './color-expression'
 ColorContext = null
 
-registry = require './expressions'
+registry = require './color-expressions'
 
 module.exports =
 class ColorParser

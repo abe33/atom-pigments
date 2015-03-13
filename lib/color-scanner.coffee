@@ -8,7 +8,7 @@ class ColorScanner
     @parser ?= new ColorParser
 
   getRegExp: ->
-    registry ?= require './expressions'
+    registry ?= require './color-expressions'
     regexpString ?= registry.getExpressions()
     .map (e) -> "(#{e.regexpString})"
     .join('|')

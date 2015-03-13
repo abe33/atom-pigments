@@ -5,7 +5,7 @@ describe 'color expressions service', ->
   beforeEach ->
     initialConsumersCount = atom.packages.serviceHub.consumers.length
 
-    registry = require '../lib/expressions'
+    registry = require '../lib/color-expressions'
     registry.registerServiceConsumer()
 
     initialCount = registry.getExpressions().length
@@ -73,7 +73,7 @@ describe 'variable expressions service', ->
   beforeEach ->
     initialConsumersCount = atom.packages.serviceHub.consumers.length
 
-    registry = require '../lib/variables-expressions'
+    registry = require '../lib/variable-expressions'
     registry.registerServiceConsumer()
 
     initialCount = registry.getExpressions().length

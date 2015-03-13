@@ -8,7 +8,7 @@ class VariableScanner
     @parser ?= new VariableParser
 
   getRegExp: ->
-    registry ?= require './variables-expressions'
+    registry ?= require './variable-expressions'
     regexpString ?= registry.getExpressions()
     .map (e) -> "(#{e.regexpString})"
     .join('|')
