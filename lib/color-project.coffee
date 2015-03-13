@@ -26,13 +26,18 @@ class ColorProject
   onDidReloadFileVariables: (callback) ->
     @emitter.on 'did-reload-file-variables', callback
 
+  isInitialized: -> @initialized
+
   initialize: ->
+    return Promise.resolve() if @isInitialized()
     return @initializePromise if @initializePromise?
 
     @initializePromise = @loadPaths()
     .then (paths) =>
       if @paths? and paths.length > 0
+        console.log @variables, paths
         @deleteVariablesForPaths(paths)
+        console.log @variables
         @paths.push path for path in paths when path not in @paths
         paths
       else unless @paths?
@@ -42,6 +47,7 @@ class ColorProject
     .then (paths) =>
       @loadVariablesForPaths(paths)
     .then (results) =>
+      @initialized = true
       @emitter.emit 'did-initialize', @variables.slice()
       results
 
@@ -61,7 +67,7 @@ class ColorProject
     delete @paths
 
   getPalette: ->
-    return new Palette unless @variables?
+    return new Palette unless @isInitialized()
 
     colors = {}
     @getColorVariables().forEach (variable) -> colors[variable.name] = variable
@@ -92,7 +98,7 @@ class ColorProject
   getVariablesForPath: (path) -> @getVariablesForPaths [path]
 
   getVariablesForPaths: (paths) ->
-    return undefined unless @variables?
+    return unless @isInitialized()
 
     @variables.filter (variable) -> variable.path in paths
 
@@ -110,7 +116,7 @@ class ColorProject
   reloadVariablesForPath: (path) -> @reloadVariablesForPaths [path]
 
   reloadVariablesForPaths: (paths) ->
-    unless @variables?
+    unless @isInitialized()
       return Promise.reject("Can't reload paths that haven't been loaded yet")
 
     if paths.some((path) => path not in @paths)
@@ -133,9 +139,8 @@ class ColorProject
 
     data.ignores = @ignores if @ignores?
 
-    data.paths = @paths if @paths?
-
-    if @variables?
+    if @isInitialized()
+      data.paths = @paths
       data.variables = @variables.map (variable) -> variable.serialize()
 
     data
