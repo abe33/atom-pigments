@@ -247,7 +247,6 @@ describe 'ColorProject', ->
 
     describe 'with a timestamp more recent than the files last modification date', ->
       beforeEach ->
-        loadPathsSpy = jasmine.createSpy('did-load-paths')
         project = createProject
           stateFixture: "./fixtures/empty-project.json"
 
@@ -258,7 +257,6 @@ describe 'ColorProject', ->
 
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->
-        loadPathsSpy = jasmine.createSpy('did-load-paths')
         project = createProject
           timestamp: new Date(0)
           stateFixture: "./fixtures/empty-project.json"
@@ -267,3 +265,13 @@ describe 'ColorProject', ->
 
       it 'scans again all the files that have a more recent modification date', ->
         expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+    describe 'with some files not saved in the project state', ->
+      beforeEach ->
+        project = createProject
+          stateFixture: "./fixtures/partial-project.json"
+
+        waitsForPromise -> project.initialize()
+
+      it 'detects the new files and scans them', ->
+        expect(project.getVariables().length).toEqual(12)

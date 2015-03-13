@@ -1,0 +1,11 @@
+{
+  "deserializer": "ColorProject",
+  "timestamp": "#{timestamp}",
+  "ignores": [
+    "vendor/*"
+  ],
+  "paths": [
+    "#{root}/styles/buttons.styl"
+  ],
+  "variables": []
+}
