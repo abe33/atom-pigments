@@ -25,7 +25,9 @@ class Color
   ]
 
   constructor: (r=0,g=0,b=0,a=1) ->
-    if typeof r is 'string'
+    if typeof r is 'object'
+      @[k] = v for k,v of r
+    else if typeof r is 'string'
       if r of SVGColors.allCases
         @name = r
         r = SVGColors.allCases[r]

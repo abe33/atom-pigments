@@ -101,7 +101,7 @@ module.exports = (config) ->
     catch error
       console.warn "Error parsing source pattern (#{source}): #{error.message}"
 
-  for ignore in config.ignores when ignore
+  for ignore in config.ignoredNames when ignore
     try
       newConf.ignoredNames.push(new Minimatch(ignore, matchBase: true, dot: true))
     catch error

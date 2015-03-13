@@ -21,8 +21,8 @@ class ColorProject
     @variables = variables.map(@createProjectVariable) if variables?
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
-    @initializeBuffers(buffers)
     @initialize() if @paths? and @variables?
+    @initializeBuffers(buffers)
 
   onDidInitialize: (callback) ->
     @emitter.on 'did-initialize', callback
@@ -95,7 +95,6 @@ class ColorProject
         paths: atom.project.getPaths()
       }
       PathsLoader.startTask config, (results) -> resolve(results)
-
 
   getPalette: ->
     return new Palette unless @isInitialized()
