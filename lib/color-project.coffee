@@ -1,8 +1,9 @@
-{Emitter} = require 'atom'
-PathsLoader = require './paths-loader'
-PathsScanner = require './paths-scanner'
+{Emitter, CompositeDisposable} = require 'atom'
+ColorBuffer = require './color-buffer'
 ColorContext = require './color-context'
 Palette = require './palette'
+PathsLoader = require './paths-loader'
+PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 
 module.exports =
@@ -12,12 +13,15 @@ class ColorProject
   @deserialize: (state) -> new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignores, @paths, variables, timestamp} = state
+    {@ignores, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
+    @subscriptions = new CompositeDisposable
+    @colorBuffersByEditorId = {}
 
     @variables = variables.map(@createProjectVariable) if variables?
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
+    @initializeBuffers(buffers)
     @initialize() if @paths? and @variables?
 
   onDidInitialize: (callback) ->
@@ -49,6 +53,37 @@ class ColorProject
       @emitter.emit 'did-initialize', @variables.slice()
       results
 
+  ##    ########  ##     ## ######## ######## ######## ########   ######
+  ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
+  ##    ##     ## ##     ## ##       ##       ##       ##     ## ##
+  ##    ########  ##     ## ######   ######   ######   ########   ######
+  ##    ##     ## ##     ## ##       ##       ##       ##   ##         ##
+  ##    ##     ## ##     ## ##       ##       ##       ##    ##  ##    ##
+  ##    ########   #######  ##       ##       ######## ##     ##  ######
+
+  initializeBuffers: (buffers) ->
+    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+      @colorBufferForEditor(editor)
+
+  colorBufferForEditor: (editor) ->
+    return unless editor?
+    return @colorBuffersByEditorId[editor.id] if @colorBuffersByEditorId[editor.id]?
+
+    @colorBuffersByEditorId[editor.id] = buffer = new ColorBuffer({editor, project: this})
+
+    @subscriptions.add subscription = buffer.onDidDestroy =>
+      @subscriptions.remove(subscription)
+      subscription.dispose()
+      delete @colorBuffersByEditorId[editor.id]
+
+  ##    ##     ##    ###    ########   ######
+  ##    ##     ##   ## ##   ##     ## ##    ##
+  ##    ##     ##  ##   ##  ##     ## ##
+  ##    ##     ## ##     ## ########   ######
+  ##     ##   ##  ######### ##   ##         ##
+  ##      ## ##   ##     ## ##    ##  ##    ##
+  ##       ###    ##     ## ##     ##  ######
+
   getPaths: -> @paths?.slice()
 
   loadPaths: ->
@@ -61,8 +96,6 @@ class ColorProject
       }
       PathsLoader.startTask config, (results) -> resolve(results)
 
-  resetPaths: ->
-    delete @paths
 
   getPalette: ->
     return new Palette unless @isInitialized()
@@ -125,8 +158,7 @@ class ColorProject
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->
-    PathsScanner.startTask paths, (results) ->
-      callback(results)
+    PathsScanner.startTask paths, (results) -> callback(results)
 
   createProjectVariable: (result) => new ProjectVariable(result, this)
 
@@ -136,9 +168,16 @@ class ColorProject
     data = {deserializer: 'ColorProject', timestamp: @getTimestamp()}
 
     data.ignores = @ignores if @ignores?
+    data.buffers = @serializeBuffers()
 
     if @isInitialized()
       data.paths = @paths
       data.variables = @variables.map (variable) -> variable.serialize()
 
     data
+
+  serializeBuffers: ->
+    out = {}
+    for id,colorBuffer of @colorBuffersByEditorId
+      out[id] = colorBuffer.serialize()
+    out

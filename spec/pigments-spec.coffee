@@ -24,4 +24,5 @@ describe "Pigments", ->
     expect(pigments.serialize()).toEqual({
       deserializer: 'ColorProject'
       timestamp: date
+      buffers: {}
     })

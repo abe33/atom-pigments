@@ -86,6 +86,7 @@ describe 'ColorProject', ->
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
           timestamp: date
+          buffers: {}
           ignores: ['vendor/*']
         })
 
@@ -145,6 +146,7 @@ describe 'ColorProject', ->
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
           ]
+          buffers: {}
           variables: project.variables.map (v) -> v.serialize()
         })
 
@@ -238,6 +240,7 @@ describe 'ColorProject', ->
       data =
         root: params.root ? rootPath
         timestamp: params.timestamp?.toJSON() ? new Date().toJSON()
+        editorId: params.editorId
 
       jsonPath = path.resolve(__dirname, params.stateFixture)
       json = fs.readFileSync(jsonPath).toString()
@@ -275,3 +278,19 @@ describe 'ColorProject', ->
 
       it 'detects the new files and scans them', ->
         expect(project.getVariables().length).toEqual(12)
+
+    describe 'with an open editor and the corresponding buffer state', ->
+      [editor] = []
+      beforeEach ->
+        workspaceElement = atom.views.getView(atom.workspace)
+
+        waitsForPromise ->
+          atom.workspace.open('four-variables.styl').then (o) -> editor = o
+
+        runs ->
+          project = createProject
+            stateFixture: "./fixtures/open-buffer-project.json"
+            editorId: editor.id
+
+      it 'restores the color buffer', ->
+        expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()
