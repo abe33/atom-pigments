@@ -182,6 +182,12 @@ class Color
 
   clone: -> new Color(@red, @green, @blue, @alpha)
 
+  isEqual: (color) ->
+    color.red is @red and
+    color.green is @green and
+    color.blue is @blue and
+    color.alpha is @alpha
+
   interpolate: (col, ratio, preserveAlpha=true) ->
     iratio = 1 - ratio
 

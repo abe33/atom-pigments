@@ -1,6 +1,6 @@
 ColorBuffer = require '../lib/color-buffer'
 
-describe 'ColorBuffer', ->
+fdescribe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
 
   beforeEach ->
@@ -25,6 +25,22 @@ describe 'ColorBuffer', ->
 
     it 'creates the corresponding markers in the text editor', ->
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+
+    describe 'when the project variables becomes available', ->
+      [updateSpy] = []
+      beforeEach ->
+        updateSpy = jasmine.createSpy('did-update-markers')
+        colorBuffer.onDidUpdateMarkers(updateSpy)
+        waitsFor -> updateSpy.callCount > 0
+
+      it 'replaces the invalid markers that are now valid', ->
+        expect(colorBuffer.getValidColorMarkers().length).toEqual(4)
+        expect(updateSpy.argsForCall[0][0].created.length).toEqual(1)
+        expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
+
+      it 'destroys the text editor markers', ->
+        expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+        
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->

@@ -13,14 +13,24 @@ class ColorBuffer
 
     @initialize()
 
+  onDidUpdateMarkers: (callback) ->
+    @emitter.on 'did-update-markers', callback
+
   onDidDestroy: (callback) ->
     @emitter.on 'did-destroy', callback
 
   initialize: ->
     return @initializePromise if @initializePromise?
 
-    # @project.initialize().then => @scanBuffer()
-    @initializePromise = @scanBuffer().then (results) => @createMarkers(results)
+    @initializePromise = @scanBuffer().then (results) =>
+      @markers = @createMarkers(results)
+
+    @project.initialize().then =>
+      return if @destroyed
+
+      @scanBuffer().then (results) => @updateMarkers(results)
+
+    @initializePromise
 
   destroy: ->
     @subscriptions.dispose()
@@ -33,22 +43,44 @@ class ColorBuffer
 
   createMarkers: (results) ->
     return if @destroyed
-    @markers = results.map (result) =>
-      range = [
-        @editor.getBuffer().positionForCharacterIndex(result.range[0])
-        @editor.getBuffer().positionForCharacterIndex(result.range[1])
-      ]
-      marker = @editor.markBufferRange(range, type: 'pigments-color')
-      new ColorMarker {marker, color: result.color}
+    results.map (result) =>
+      marker = @editor.markBufferRange(result.bufferRange, type: 'pigments-color')
+      new ColorMarker {marker, color: result.color, text: result.match}
+
+  updateMarkers: (results) ->
+    newMarkers = []
+    toCreate = []
+    for result in results
+      if marker = @findMarker(result)
+        newMarkers.push(marker)
+      else
+        toCreate.push(result)
+
+    createdMarkers = @createMarkers(toCreate)
+    newMarkers = newMarkers.concat(createdMarkers)
+
+    toDestroy = @markers.filter (marker) -> marker not in newMarkers
+    toDestroy.forEach (marker) -> marker.destroy()
+
+    @markers = newMarkers
+    @emitter.emit 'did-update-markers', {
+      created: createdMarkers
+      destroyed: toDestroy
+    }
+
+  findMarker: (properties) ->
+    for marker in @markers
+      return marker if marker.match(properties)
 
   scanBuffer: ->
     return if @destroyed
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-handler')
-
+    buffer = @editor.getBuffer()
     config =
       buffer: @editor.getText()
       variables: @project.getVariables()?.map (v) -> v.serialize()
+
 
     new Promise (resolve, reject) ->
       task = Task.once(
@@ -60,6 +92,10 @@ class ColorBuffer
       task.on 'scan-buffer:colors-found', (colors) ->
         results = results.concat colors.map (res) ->
           res.color = new Color(res.color)
+          res.bufferRange = [
+            buffer.positionForCharacterIndex(res.range[0])
+            buffer.positionForCharacterIndex(res.range[1])
+          ]
           res
 
   serialize: -> {editorId: @editor.id}
