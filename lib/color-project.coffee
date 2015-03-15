@@ -76,6 +76,10 @@ class ColorProject
       subscription.dispose()
       delete @colorBuffersByEditorId[editor.id]
 
+  colorBufferForPath: (path) ->
+    for id,colorBuffer of @colorBuffersByEditorId
+      return colorBuffer if colorBuffer.editor.getPath() is path
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
@@ -157,7 +161,10 @@ class ColorProject
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->
-    PathsScanner.startTask paths, (results) -> callback(results)
+    if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
+      colorBuffer.scanBufferForVariables().then (results) -> callback(results)
+    else
+      PathsScanner.startTask paths, (results) -> callback(results)
 
   createProjectVariable: (result) => new ProjectVariable(result, this)
 

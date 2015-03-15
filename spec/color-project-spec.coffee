@@ -217,6 +217,29 @@ describe 'ColorProject', ->
         it 'dispatches a did-reload-file-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
+      describe 'when a buffer with variables is open', ->
+        [editor, colorBuffer] = []
+        beforeEach ->
+          eventSpy = jasmine.createSpy('did-reload-file-variables')
+          project.onDidReloadFileVariables(eventSpy)
+
+          waitsForPromise ->
+            atom.workspace.open('styles/variables.styl').then (o) -> editor = o
+
+          runs ->
+            colorBuffer = project.colorBufferForEditor(editor)
+            spyOn(colorBuffer, 'scanBufferForVariables').andCallThrough()
+
+          waitsForPromise ->
+            project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
+
+        it 'reloads the variables with the buffer instead of the file', ->
+          expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+        it 'dispatches a did-reload-file-variables event', ->
+          expect(eventSpy).toHaveBeenCalled()
+
       describe 'for a file that is not part of the loaded paths', ->
         beforeEach ->
           spyOn(project, 'loadVariablesForPath').andCallThrough()
@@ -282,8 +305,6 @@ describe 'ColorProject', ->
     describe 'with an open editor and the corresponding buffer state', ->
       [editor] = []
       beforeEach ->
-        workspaceElement = atom.views.getView(atom.workspace)
-
         waitsForPromise ->
           atom.workspace.open('four-variables.styl').then (o) -> editor = o
 

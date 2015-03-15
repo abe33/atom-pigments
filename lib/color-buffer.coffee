@@ -31,6 +31,7 @@ class ColorBuffer
 
     @project.initialize().then (results) =>
       return if @destroyed
+      return unless results?
 
       resultsForBuffer = results.filter (r) => r.path is @editor.getPath()
       @variableMarkers = @createVariableMarkers(resultsForBuffer)
@@ -129,6 +130,24 @@ class ColorBuffer
     for marker in @colorMarkers
       return marker if marker.match(properties)
 
+  scanBufferForVariables: ->
+    return if @destroyed
+    results = []
+    taskPath = require.resolve('./tasks/scan-buffer-variables-handler')
+    buffer = @editor.getBuffer()
+    config =
+      buffer: @editor.getText()
+
+    new Promise (resolve, reject) ->
+      task = Task.once(
+        taskPath,
+        config,
+        -> resolve(results)
+      )
+
+      task.on 'scan-buffer:variables-found', (variables) ->
+        results = results.concat variables
+
   scanBufferForColors: ->
     return if @destroyed
     results = []
@@ -137,7 +156,6 @@ class ColorBuffer
     config =
       buffer: @editor.getText()
       variables: @project.getVariables()?.map (v) -> v.serialize()
-
 
     new Promise (resolve, reject) ->
       task = Task.once(
