@@ -1,6 +1,6 @@
 ColorBuffer = require '../lib/color-buffer'
 
-fdescribe 'ColorBuffer', ->
+describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
 
   beforeEach ->
@@ -40,7 +40,9 @@ fdescribe 'ColorBuffer', ->
 
       it 'destroys the text editor markers', ->
         expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
-        
+
+      it 'creates markers for variables in the buffer', ->
+        expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->

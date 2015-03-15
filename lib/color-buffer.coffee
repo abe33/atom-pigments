@@ -1,6 +1,7 @@
 {Emitter, CompositeDisposable, Task} = require 'atom'
 Color = require './color'
 ColorMarker = require './color-marker'
+VariableMarker = require './variable-marker'
 
 module.exports =
 class ColorBuffer
@@ -23,12 +24,15 @@ class ColorBuffer
     return @initializePromise if @initializePromise?
 
     @initializePromise = @scanBuffer().then (results) =>
-      @markers = @createMarkers(results)
+      @colorMarkers = @createColorMarkers(results)
 
-    @project.initialize().then =>
+    @project.initialize().then (results) =>
       return if @destroyed
 
-      @scanBuffer().then (results) => @updateMarkers(results)
+      resultsForBuffer = results.filter (r) => r.path is @editor.getPath()
+      @variableMarkers = @createVariableMarkers(resultsForBuffer)
+
+      @scanBuffer().then (results) => @updateColorMarkers(results)
 
     @initializePromise
 
@@ -37,39 +41,83 @@ class ColorBuffer
     @emitter.emit 'did-destroy'
     @destroyed = true
 
-  getColorMarkers: -> @markers
+  ##    ##     ##    ###    ########
+  ##    ##     ##   ## ##   ##     ##
+  ##    ##     ##  ##   ##  ##     ##
+  ##    ##     ## ##     ## ########
+  ##     ##   ##  ######### ##   ##
+  ##      ## ##   ##     ## ##    ##
+  ##       ###    ##     ## ##     ##
+  ##
+  ##    ##     ##    ###    ########  ##    ## ######## ########   ######
+  ##    ###   ###   ## ##   ##     ## ##   ##  ##       ##     ## ##    ##
+  ##    #### ####  ##   ##  ##     ## ##  ##   ##       ##     ## ##
+  ##    ## ### ## ##     ## ########  #####    ######   ########   ######
+  ##    ##     ## ######### ##   ##   ##  ##   ##       ##   ##         ##
+  ##    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
+  ##    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
+
+  getVariableMarkers: -> @variableMarkers
+
+  createVariableMarkers: (results) ->
+    return if @destroyed
+    results.map (result) =>
+      bufferRange = [
+        @editor.getBuffer().positionForCharacterIndex(result.range[0])
+        @editor.getBuffer().positionForCharacterIndex(result.range[1])
+      ]
+      marker = @editor.markBufferRange(bufferRange, type: 'pigments-variable')
+      new VariableMarker {marker, variable: result}
+
+  ##     ######   #######  ##        #######  ########
+  ##    ##    ## ##     ## ##       ##     ## ##     ##
+  ##    ##       ##     ## ##       ##     ## ##     ##
+  ##    ##       ##     ## ##       ##     ## ########
+  ##    ##       ##     ## ##       ##     ## ##   ##
+  ##    ##    ## ##     ## ##       ##     ## ##    ##
+  ##     ######   #######  ########  #######  ##     ##
+  ##
+  ##    ##     ##    ###    ########  ##    ## ######## ########   ######
+  ##    ###   ###   ## ##   ##     ## ##   ##  ##       ##     ## ##    ##
+  ##    #### ####  ##   ##  ##     ## ##  ##   ##       ##     ## ##
+  ##    ## ### ## ##     ## ########  #####    ######   ########   ######
+  ##    ##     ## ######### ##   ##   ##  ##   ##       ##   ##         ##
+  ##    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
+  ##    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
+
+  getColorMarkers: -> @colorMarkers
 
   getValidColorMarkers: -> @getColorMarkers().filter (m) -> m.color.isValid()
 
-  createMarkers: (results) ->
+  createColorMarkers: (results) ->
     return if @destroyed
     results.map (result) =>
       marker = @editor.markBufferRange(result.bufferRange, type: 'pigments-color')
       new ColorMarker {marker, color: result.color, text: result.match}
 
-  updateMarkers: (results) ->
+  updateColorMarkers: (results) ->
     newMarkers = []
     toCreate = []
     for result in results
-      if marker = @findMarker(result)
+      if marker = @findColorMarker(result)
         newMarkers.push(marker)
       else
         toCreate.push(result)
 
-    createdMarkers = @createMarkers(toCreate)
+    createdMarkers = @createColorMarkers(toCreate)
     newMarkers = newMarkers.concat(createdMarkers)
 
-    toDestroy = @markers.filter (marker) -> marker not in newMarkers
+    toDestroy = @colorMarkers.filter (marker) -> marker not in newMarkers
     toDestroy.forEach (marker) -> marker.destroy()
 
-    @markers = newMarkers
+    @colorMarkers = newMarkers
     @emitter.emit 'did-update-markers', {
       created: createdMarkers
       destroyed: toDestroy
     }
 
-  findMarker: (properties) ->
-    for marker in @markers
+  findColorMarker: (properties) ->
+    for marker in @colorMarkers
       return marker if marker.match(properties)
 
   scanBuffer: ->
