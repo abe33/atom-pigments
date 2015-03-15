@@ -56,8 +56,8 @@ describe 'ColorProject', ->
       ])
 
     it 'scans the loaded paths to retrieve the variables', ->
-      expect(project.variables).toBeDefined()
-      expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+      expect(project.getVariables()).toBeDefined()
+      expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
     it 'dispatches a did-initialize event', ->
       expect(eventSpy).toHaveBeenCalled()
@@ -147,7 +147,7 @@ describe 'ColorProject', ->
             "#{rootPath}/styles/variables.styl"
           ]
           buffers: {}
-          variables: project.variables.map (v) -> v.serialize()
+          variables: project.getVariables().map (v) -> v.serialize()
         })
 
     describe '::getVariablesForPath', ->
@@ -192,7 +192,7 @@ describe 'ColorProject', ->
           expect(project.deleteVariablesForPaths).toHaveBeenCalled()
 
         it 'scans again the file to find variables', ->
-          expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
         it 'dispatches a did-reload-file-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
@@ -212,7 +212,7 @@ describe 'ColorProject', ->
           expect(project.deleteVariablesForPaths).toHaveBeenCalled()
 
         it 'scans again the file to find variables', ->
-          expect(project.variables.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
         it 'dispatches a did-reload-file-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
