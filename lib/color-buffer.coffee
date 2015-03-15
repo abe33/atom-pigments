@@ -26,7 +26,7 @@ class ColorBuffer
   initialize: ->
     return @initializePromise if @initializePromise?
 
-    @initializePromise = @scanBuffer().then (results) =>
+    @initializePromise = @scanBufferForColors().then (results) =>
       @colorMarkers = @createColorMarkers(results)
 
     @project.initialize().then (results) =>
@@ -35,7 +35,7 @@ class ColorBuffer
       resultsForBuffer = results.filter (r) => r.path is @editor.getPath()
       @variableMarkers = @createVariableMarkers(resultsForBuffer)
 
-      @scanBuffer().then (results) => @updateColorMarkers(results)
+      @scanBufferForColors().then (results) => @updateColorMarkers(results)
 
     @initializePromise
 
@@ -129,10 +129,10 @@ class ColorBuffer
     for marker in @colorMarkers
       return marker if marker.match(properties)
 
-  scanBuffer: ->
+  scanBufferForColors: ->
     return if @destroyed
     results = []
-    taskPath = require.resolve('./tasks/scan-buffer-handler')
+    taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()
     config =
       buffer: @editor.getText()

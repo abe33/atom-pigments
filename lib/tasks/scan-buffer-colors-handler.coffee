@@ -3,7 +3,7 @@ ColorContext = require '../color-context'
 
 ColorsChunkSize = 100
 
-class BufferScanner
+class BufferColorsScanner
   constructor: (config) ->
     {@buffer, variables} = config
     @context = new ColorContext(variables)
@@ -25,4 +25,4 @@ class BufferScanner
     @results = []
 
 module.exports = (config) ->
-  new BufferScanner(config).scan()
+  new BufferColorsScanner(config).scan()
