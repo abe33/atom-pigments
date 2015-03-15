@@ -14,8 +14,11 @@ class ColorBuffer
 
     @initialize()
 
-  onDidUpdateMarkers: (callback) ->
-    @emitter.on 'did-update-markers', callback
+  onDidUpdateColorMarkers: (callback) ->
+    @emitter.on 'did-update-color-markers', callback
+
+  onDidUpdateVariableMarkers: (callback) ->
+    @emitter.on 'did-update-variable-markers', callback
 
   onDidDestroy: (callback) ->
     @emitter.on 'did-destroy', callback
@@ -66,7 +69,10 @@ class ColorBuffer
         @editor.getBuffer().positionForCharacterIndex(result.range[0])
         @editor.getBuffer().positionForCharacterIndex(result.range[1])
       ]
-      marker = @editor.markBufferRange(bufferRange, type: 'pigments-variable')
+      marker = @editor.markBufferRange(bufferRange, {
+        type: 'pigments-variable'
+        invalidate: 'touch'
+      })
       new VariableMarker {marker, variable: result}
 
   ##     ######   #######  ##        #######  ########
@@ -92,7 +98,10 @@ class ColorBuffer
   createColorMarkers: (results) ->
     return if @destroyed
     results.map (result) =>
-      marker = @editor.markBufferRange(result.bufferRange, type: 'pigments-color')
+      marker = @editor.markBufferRange(result.bufferRange, {
+        type: 'pigments-color'
+        invalidate: 'touch'
+      })
       new ColorMarker {marker, color: result.color, text: result.match}
 
   updateColorMarkers: (results) ->
@@ -111,7 +120,7 @@ class ColorBuffer
     toDestroy.forEach (marker) -> marker.destroy()
 
     @colorMarkers = newMarkers
-    @emitter.emit 'did-update-markers', {
+    @emitter.emit 'did-update-color-markers', {
       created: createdMarkers
       destroyed: toDestroy
     }

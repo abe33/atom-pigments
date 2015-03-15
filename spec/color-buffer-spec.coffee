@@ -3,6 +3,19 @@ ColorBuffer = require '../lib/color-buffer'
 describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
 
+  editBuffer = (text, options) ->
+
+    if options.start?
+      if options.end?
+        range = [options.start, options.end]
+      else
+        range = [options.start, options.start]
+
+      editor.setSelectedBufferRange(range)
+
+    editor.insertText(text)
+    editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
+
   beforeEach ->
     waitsForPromise ->
       atom.workspace.open('four-variables.styl').then (o) -> editor = o
@@ -29,8 +42,8 @@ describe 'ColorBuffer', ->
     describe 'when the project variables becomes available', ->
       [updateSpy] = []
       beforeEach ->
-        updateSpy = jasmine.createSpy('did-update-markers')
-        colorBuffer.onDidUpdateMarkers(updateSpy)
+        updateSpy = jasmine.createSpy('did-update-color-markers')
+        colorBuffer.onDidUpdateColorMarkers(updateSpy)
         waitsFor -> updateSpy.callCount > 0
 
       it 'replaces the invalid markers that are now valid', ->
@@ -42,7 +55,18 @@ describe 'ColorBuffer', ->
         expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
       it 'creates markers for variables in the buffer', ->
+        expect(colorBuffer.getVariableMarkers().length).toEqual(4)
         expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
+
+      xdescribe 'when a variable marker is edited', ->
+        beforeEach ->
+          updateSpy = jasmine.createSpy('did-update-variable-markers')
+          colorBuffer.onDidUpdateVariableMarkers(updateSpy)
+          editBuffer '#336699', start: [0,13], end: [0,17]
+          waitsFor -> updateSpy.callCount > 0
+
+        it 'updates the modified variable marker', ->
+
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->
