@@ -30,7 +30,7 @@ class PathLoader
       return true if sourceName.match(relativePath)
 
   isIgnored: (loadedPath, stats) ->
-    console.log "in isIgnored: #{loadPaths}, #{stats}"
+    console.log "in isIgnored: #{loadedPath}, #{stats}"
     relativePath = path.relative(@rootPath, loadedPath)
     if @repo?.isPathIgnored(relativePath)
       console.log "is git ignored"
