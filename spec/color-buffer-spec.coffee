@@ -17,6 +17,11 @@ describe 'ColorBuffer', ->
     editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
 
   beforeEach ->
+    atom.config.set 'pigments.sourceNames', [
+      '*.styl'
+      '*.less'
+    ]
+    
     waitsForPromise ->
       atom.workspace.open('four-variables.styl').then (o) -> editor = o
 
