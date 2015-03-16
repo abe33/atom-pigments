@@ -1,10 +1,13 @@
 {Emitter, Range} = require 'atom'
 
+nextId = 1
+
 module.exports =
 class ProjectVariable
+
   constructor: (params={}, @project=null) ->
-    {@name, @value, range, @path} = params
-    @range = Range.fromObject(range)
+    {@name, @value, @range, @path} = params
+    @id = nextId++
     @emitter = new Emitter
 
   onDidDestroy: (callback) ->
@@ -17,14 +20,15 @@ class ProjectVariable
   readColor: -> @project.getContext().readColor(@value)
 
   destroy: ->
-    {@name, @value, @range, @path, @project, @color} = {}
     @emitter.emit('did-destroy')
+    {@name, @value, @range, @path, @project, @color} = {}
 
   isEqual: (variable) ->
     @name is variable.name and
     @value is variable.value and
     @path is variable.path and
-    @range.isEqual(variable.range)
+    @range[0] is variable.range[0] and
+    @range[1] is variable.range[1]
 
   serialize: ->
     {@name, @value, @range, @path}

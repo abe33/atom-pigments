@@ -11,6 +11,10 @@ class ColorBuffer
     @subscriptions = new CompositeDisposable
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
+    @subscriptions.add @project.onDidUpdateVariables =>
+      resultsForBuffer = @project.getVariables().filter (r) =>
+        r.path is @editor.getPath()
+      @updateVariableMarkers(resultsForBuffer)
 
     @initialize()
 
@@ -43,6 +47,8 @@ class ColorBuffer
   destroy: ->
     @subscriptions.dispose()
     @emitter.emit 'did-destroy'
+    @variableMarkers?.forEach (marker) -> marker.destroy()
+    @colorMarkers?.forEach (marker) -> marker.destroy()
     @destroyed = true
 
   ##    ##     ##    ###    ########
@@ -75,6 +81,32 @@ class ColorBuffer
         invalidate: 'touch'
       })
       new VariableMarker {marker, variable: result}
+
+  updateVariableMarkers: (results) ->
+    newMarkers = []
+    toCreate = []
+    for result in results
+      if marker = @findVariableMarker(variable: result)
+        newMarkers.push(marker)
+      else
+        toCreate.push(result)
+
+    createdMarkers = @createVariableMarkers(toCreate)
+    newMarkers = newMarkers.concat(createdMarkers)
+
+    toDestroy = @variableMarkers.filter (marker) -> marker not in newMarkers
+
+    toDestroy.forEach (marker) -> marker.destroy()
+
+    @variableMarkers = newMarkers
+    @emitter.emit 'did-update-variable-markers', {
+      created: createdMarkers
+      destroyed: toDestroy
+    }
+
+  findVariableMarker: (properties) ->
+    for marker in @variableMarkers
+      return marker if marker.match(properties)
 
   ##     ######   #######  ##        #######  ########
   ##    ##    ## ##     ## ##       ##     ## ##     ##
@@ -134,6 +166,7 @@ class ColorBuffer
     return if @destroyed
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-variables-handler')
+    editor = @editor
     buffer = @editor.getBuffer()
     config =
       buffer: @editor.getText()
@@ -146,7 +179,9 @@ class ColorBuffer
       )
 
       task.on 'scan-buffer:variables-found', (variables) ->
-        results = results.concat variables
+        results = results.concat variables.map (variable) ->
+          variable.path = editor.getPath()
+          variable
 
   scanBufferForColors: ->
     return if @destroyed

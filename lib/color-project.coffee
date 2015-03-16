@@ -16,9 +16,14 @@ class ColorProject
     {@ignores, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
+    @variablesSubscriptionsById = {}
     @colorBuffersByEditorId = {}
 
-    @variables = variables.map(@createProjectVariable) if variables?
+    if variables?
+      @variables = variables.map (v) =>
+        variable = @createProjectVariable(v)
+        @createProjectVariableSubscriptions(variable)
+        variable
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
     @initialize() if @paths? and @variables?
@@ -51,6 +56,9 @@ class ColorProject
     .then (results) =>
       @variables ?= []
       @variables = @variables.concat(results)
+      results.forEach (variable) =>
+        @createProjectVariableSubscriptions(variable)
+
       @initialized = true
 
       variables = @variables.slice()
@@ -121,8 +129,8 @@ class ColorProject
 
     @variables.filter (variable) -> variable.isColor()
 
-  updateVariables: (results) ->
-    newVariables = []
+  updateVariables: (paths, results) ->
+    newVariables = @variables.filter (variable) -> variable.path not in paths
     toCreate = []
     for result in results
       if variable = @findVariable(result)
@@ -132,8 +140,11 @@ class ColorProject
 
     newVariables = newVariables.concat(toCreate)
 
+    toCreate.forEach (variable) => @createProjectVariableSubscriptions(variable)
     toDestroy = @variables.filter (variable) -> variable not in newVariables
-    toDestroy.forEach (variable) -> variable.destroy()
+    toDestroy.forEach (variable) =>
+      @clearProjectVariableSubscriptions(variable)
+      variable.destroy()
 
     if toDestroy.length > 0 or toCreate.length > 0
       @variables = newVariables
@@ -180,7 +191,7 @@ class ColorProject
     if paths.some((path) => path not in @paths)
       return Promise.reject("Can't reload paths that are not legible")
 
-    @loadVariablesForPaths(paths).then (results) => @updateVariables(results)
+    @loadVariablesForPaths(paths).then (results) => @updateVariables(paths, results)
 
   scanPathsForVariables: (paths, callback) ->
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
@@ -189,6 +200,20 @@ class ColorProject
       PathsScanner.startTask paths, (results) -> callback(results)
 
   createProjectVariable: (result) => new ProjectVariable(result, this)
+
+  removeProjectVariable: (variable) ->
+    @variables = @variables.filter (v) -> v isnt variable
+    @clearProjectVariableSubscriptions(variable)
+
+  createProjectVariableSubscriptions: (variable) ->
+    unless @variablesSubscriptionsById[variable.id]?
+      @variablesSubscriptionsById[variable.id] = variable.onDidDestroy =>
+        @removeProjectVariable(variable)
+        @reloadVariablesForPath(variable.path)
+
+  clearProjectVariableSubscriptions: (variable) ->
+    @variablesSubscriptionsById[variable.id].dispose()
+    delete @variablesSubscriptionsById[variable.id]
 
   getTimestamp: -> new Date()
 
