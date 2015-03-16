@@ -162,6 +162,7 @@ class ColorProject
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->
+    console.log paths
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
