@@ -292,7 +292,7 @@ describe 'ColorProject', ->
           expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
         it 'uses the buffer ranges to detect which variables were really changed', ->
-          expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(0)
+          expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(1)
           expect(eventSpy.argsForCall[0][0].created.length).toEqual(1)
 
         it 'updates the text range of the other variables', ->

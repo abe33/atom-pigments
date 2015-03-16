@@ -4,16 +4,23 @@ module.exports =
 class ColorMarker
   constructor: ({@marker, @color, @text}) ->
     @subscriptions = new CompositeDisposable
-    @subscriptions = @marker.onDidDestroy => @destroyed()
+    @subscriptions.add @marker.onDidDestroy => @destroyed()
+    @subscriptions.add @marker.onDidChange =>
+      @destroy() unless @marker.isValid()
 
   destroy: ->
+    return if @wasDestroyed
     @marker.destroy()
 
   destroyed: ->
+    return if @wasDestroyed
     @subscriptions.dispose()
     {@marker, @color, @text} = {}
+    @wasDestroyed = true
 
   match: (properties) ->
+    return false if @wasDestroyed
+    
     bool = true
 
     if properties.bufferRange?

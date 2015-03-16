@@ -11,6 +11,10 @@ class ColorBuffer
     @subscriptions = new CompositeDisposable
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
+    @subscriptions.add @editor.onDidStopChanging =>
+      @project.reloadVariablesForPath(@editor.getPath()).then =>
+        @scanBufferForColors().then (results) => @updateColorMarkers(results)
+
     @subscriptions.add @project.onDidUpdateVariables =>
       resultsForBuffer = @project.getVariables().filter (r) =>
         r.path is @editor.getPath()
@@ -33,7 +37,12 @@ class ColorBuffer
     @initializePromise = @scanBufferForColors().then (results) =>
       @colorMarkers = @createColorMarkers(results)
 
-    @project.initialize().then (results) =>
+    @variablesAvailable()
+    @initializePromise
+
+  variablesAvailable: ->
+    return @variablesPromise if @variablesPromise?
+    @variablesPromise = @project.initialize().then (results) =>
       return if @destroyed
       return unless results?
 
@@ -41,8 +50,6 @@ class ColorBuffer
       @variableMarkers = @createVariableMarkers(resultsForBuffer)
 
       @scanBufferForColors().then (results) => @updateColorMarkers(results)
-
-    @initializePromise
 
   destroy: ->
     @subscriptions.dispose()
@@ -116,6 +123,31 @@ class ColorBuffer
     for marker in @variableMarkers
       return marker if marker.match(properties)
 
+  scanBufferForVariables: ->
+    return if @destroyed
+    results = []
+    taskPath = require.resolve('./tasks/scan-buffer-variables-handler')
+    editor = @editor
+    buffer = @editor.getBuffer()
+    config =
+      buffer: @editor.getText()
+
+    new Promise (resolve, reject) ->
+      task = Task.once(
+        taskPath,
+        config,
+        -> resolve(results)
+      )
+
+      task.on 'scan-buffer:variables-found', (variables) ->
+        results = results.concat variables.map (variable) ->
+          variable.path = editor.getPath()
+          variable.bufferRange = Range.fromObject [
+            buffer.positionForCharacterIndex(variable.range[0])
+            buffer.positionForCharacterIndex(variable.range[1])
+          ]
+          variable
+
   ##     ######   #######  ##        #######  ########
   ##    ##    ## ##     ## ##       ##     ## ##     ##
   ##    ##       ##     ## ##       ##     ## ##     ##
@@ -168,32 +200,7 @@ class ColorBuffer
 
   findColorMarker: (properties) ->
     for marker in @colorMarkers
-      return marker if marker.match(properties)
-
-  scanBufferForVariables: ->
-    return if @destroyed
-    results = []
-    taskPath = require.resolve('./tasks/scan-buffer-variables-handler')
-    editor = @editor
-    buffer = @editor.getBuffer()
-    config =
-      buffer: @editor.getText()
-
-    new Promise (resolve, reject) ->
-      task = Task.once(
-        taskPath,
-        config,
-        -> resolve(results)
-      )
-
-      task.on 'scan-buffer:variables-found', (variables) ->
-        results = results.concat variables.map (variable) ->
-          variable.path = editor.getPath()
-          variable.bufferRange = Range.fromObject [
-            buffer.positionForCharacterIndex(variable.range[0])
-            buffer.positionForCharacterIndex(variable.range[1])
-          ]
-          variable
+      return marker if marker?.match(properties)
 
   scanBufferForColors: ->
     return if @destroyed

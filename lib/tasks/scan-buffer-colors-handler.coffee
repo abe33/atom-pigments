@@ -1,6 +1,7 @@
 ColorScanner = require '../color-scanner'
 ColorContext = require '../color-context'
-
+registry = require '../color-expressions'
+{namePrefixes} = require '../regexes'
 ColorsChunkSize = 100
 
 class BufferColorsScanner
@@ -9,6 +10,17 @@ class BufferColorsScanner
     @context = new ColorContext(variables)
     @scanner = new ColorScanner({@context})
     @results = []
+
+    if variables?.length > 0
+      variableNames = variables.map (v) ->
+        v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+      .join('|')
+
+      paletteRegexpString = "(#{namePrefixes})(#{variableNames})(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"
+
+      registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
+        [d,d,name] = match
+        @rgba = context.readColor(name).rgba
 
   scan: ->
     lastIndex = 0

@@ -24,6 +24,7 @@ class ColorProject
         variable = @createProjectVariable(v)
         @createProjectVariableSubscriptions(variable)
         variable
+
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
     @initialize() if @paths? and @variables?

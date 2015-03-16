@@ -49,7 +49,7 @@ describe 'ColorBuffer', ->
       beforeEach ->
         updateSpy = jasmine.createSpy('did-update-color-markers')
         colorBuffer.onDidUpdateColorMarkers(updateSpy)
-        waitsFor -> updateSpy.callCount > 0
+        waitsForPromise -> colorBuffer.variablesAvailable()
 
       it 'replaces the invalid markers that are now valid', ->
         expect(colorBuffer.getValidColorMarkers().length).toEqual(4)
@@ -80,11 +80,51 @@ describe 'ColorBuffer', ->
           expect(colorBuffer.getVariableMarkers().length).toEqual(4)
           expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
 
-        it 'updates the modifed colors', ->
+        it 'updates the modified colors', ->
           waitsFor -> colorsUpdateSpy.callCount > 0
           runs ->
             expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(2)
             expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(2)
+
+    describe 'with a buffer with only colors', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('buttons.styl').then (o) -> editor = o
+
+        runs ->
+          colorBuffer = project.colorBufferForEditor(editor)
+
+      it 'creates the color markers for the variables used in the buffer', ->
+        waitsForPromise -> colorBuffer.initialize()
+        runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
+
+      it 'creates the color markers for the variables used in the buffer', ->
+        waitsForPromise -> colorBuffer.variablesAvailable()
+        runs -> expect(colorBuffer.getColorMarkers().length).toEqual(3)
+
+      describe 'when a color marker is edited', ->
+        [colorsUpdateSpy] = []
+
+        beforeEach ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+
+          runs ->
+            colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+            colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+            editBuffer '#336699', start: [1,13], end: [1,23]
+            waitsFor -> colorsUpdateSpy.callCount > 0
+
+        it 'updates the modified color marker', ->
+          markers = colorBuffer.getColorMarkers()
+          marker = markers[markers.length-1]
+          expect(marker.color).toBeColor('#336699')
+
+        it 'updates only the affected marker', ->
+          expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
+          expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(1)
+
+        it 'removes the previous editor markers', ->
+          expect(editor.findMarkers(type: 'pigments-color').length).toEqual(3)
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->
