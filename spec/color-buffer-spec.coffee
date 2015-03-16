@@ -39,7 +39,7 @@ describe 'ColorBuffer', ->
     it 'creates the corresponding markers in the text editor', ->
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
-    describe 'when the project variables becomes available', ->
+    fdescribe 'when the project variables becomes available', ->
       [updateSpy] = []
       beforeEach ->
         updateSpy = jasmine.createSpy('did-update-color-markers')

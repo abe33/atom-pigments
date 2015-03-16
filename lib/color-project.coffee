@@ -52,6 +52,7 @@ class ColorProject
       @initialized = true
       variables = @variables.slice()
       @emitter.emit 'did-initialize', variables
+      console.log "project variables initialized #{variables}"
       variables
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
@@ -123,6 +124,7 @@ class ColorProject
   loadVariablesForPaths: (paths) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables paths, (results) =>
+        console.log "scanning results #{results}"
         @variables ?= []
 
         filesVariables = results.map(@createProjectVariable)
@@ -162,7 +164,7 @@ class ColorProject
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->
-    console.log paths
+    console.log "scanning paths #{paths}"
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
