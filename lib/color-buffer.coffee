@@ -30,7 +30,6 @@ class ColorBuffer
       @colorMarkers = @createColorMarkers(results)
 
     @project.initialize().then (results) =>
-      console.log results
       return if @destroyed
       return unless results?
 

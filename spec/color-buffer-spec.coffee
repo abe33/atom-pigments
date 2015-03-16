@@ -21,7 +21,7 @@ describe 'ColorBuffer', ->
       '*.styl'
       '*.less'
     ]
-    
+
     waitsForPromise ->
       atom.workspace.open('four-variables.styl').then (o) -> editor = o
 
@@ -44,7 +44,7 @@ describe 'ColorBuffer', ->
     it 'creates the corresponding markers in the text editor', ->
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
-    fdescribe 'when the project variables becomes available', ->
+    describe 'when the project variables becomes available', ->
       [updateSpy] = []
       beforeEach ->
         updateSpy = jasmine.createSpy('did-update-color-markers')

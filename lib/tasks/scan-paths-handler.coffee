@@ -19,7 +19,6 @@ class PathScanner
 
     readStream.on 'data', (chunk) =>
       currentChunk += chunk.toString()
-      console.log currentChunk
 
       index = lastIndex
 

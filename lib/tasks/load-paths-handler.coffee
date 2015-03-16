@@ -44,7 +44,6 @@ class PathLoader
 
   pathLoaded: (loadedPath, stats, done) ->
     if @isSource(loadedPath) and !@isIgnored(loadedPath, stats)
-      console.log "#{loadedPath} was not ignored"
       @paths.push(loadedPath)
 
     if @paths.length is PathsChunkSize

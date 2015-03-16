@@ -38,7 +38,6 @@ class ColorProject
 
     @initializePromise = @loadPaths()
     .then (paths) =>
-      console.log "paths found #{paths.length}"
       if @paths? and paths.length > 0
         @deleteVariablesForPaths(paths)
         @paths.push path for path in paths when path not in @paths
@@ -53,7 +52,6 @@ class ColorProject
       @initialized = true
       variables = @variables.slice()
       @emitter.emit 'did-initialize', variables
-      console.log "project variables initialized #{variables.length}"
       variables
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
@@ -94,8 +92,6 @@ class ColorProject
   getPaths: -> @paths?.slice()
 
   loadPaths: ->
-    console.log @paths
-    console.log atom.project.getPaths() 
     new Promise (resolve, reject) =>
       config = {
         @ignores
@@ -127,7 +123,6 @@ class ColorProject
   loadVariablesForPaths: (paths) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables paths, (results) =>
-        console.log "scanning results #{results.length}"
         @variables ?= []
 
         filesVariables = results.map(@createProjectVariable)
@@ -167,7 +162,6 @@ class ColorProject
       @emitter.emit 'did-reload-file-variables', {path, variables: results}
 
   scanPathsForVariables: (paths, callback) ->
-    console.log "scanning paths #{paths.length}"
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
