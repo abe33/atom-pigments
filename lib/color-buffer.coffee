@@ -104,6 +104,8 @@ class ColorBuffer
       destroyed: toDestroy
     }
 
+    @scanBufferForColors().then (results) => @updateColorMarkers(results)
+
   findVariableMarker: (properties) ->
     for marker in @variableMarkers
       return marker if marker.match(properties)

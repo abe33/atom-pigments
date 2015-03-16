@@ -64,9 +64,12 @@ describe 'ColorBuffer', ->
         expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
 
       describe 'when a variable marker is edited', ->
+        [colorsUpdateSpy] = []
         beforeEach ->
           updateSpy = jasmine.createSpy('did-update-variable-markers')
+          colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
           colorBuffer.onDidUpdateVariableMarkers(updateSpy)
+          colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
           editBuffer '#336699', start: [0,13], end: [0,17]
           waitsFor -> updateSpy.callCount > 0
 
@@ -76,6 +79,12 @@ describe 'ColorBuffer', ->
         it 'has the same number of variables than before', ->
           expect(colorBuffer.getVariableMarkers().length).toEqual(4)
           expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
+
+        it 'updates the modifed colors', ->
+          waitsFor -> colorsUpdateSpy.callCount > 0
+          runs ->
+            expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(2)
+            expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(2)
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->
