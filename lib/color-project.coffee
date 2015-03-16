@@ -94,6 +94,7 @@ class ColorProject
   getPaths: -> @paths?.slice()
 
   loadPaths: ->
+    console.log @paths, atom.project.getPaths() 
     new Promise (resolve, reject) =>
       config = {
         @ignores
