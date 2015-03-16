@@ -38,6 +38,7 @@ class ColorProject
 
     @initializePromise = @loadPaths()
     .then (paths) =>
+      console.log "paths found #{paths.length}"
       if @paths? and paths.length > 0
         @deleteVariablesForPaths(paths)
         @paths.push path for path in paths when path not in @paths
