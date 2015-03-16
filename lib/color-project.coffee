@@ -27,8 +27,8 @@ class ColorProject
   onDidInitialize: (callback) ->
     @emitter.on 'did-initialize', callback
 
-  onDidReloadFileVariables: (callback) ->
-    @emitter.on 'did-reload-file-variables', callback
+  onDidUpdateVariables: (callback) ->
+    @emitter.on 'did-update-variables', callback
 
   isInitialized: -> @initialized
 
@@ -39,7 +39,6 @@ class ColorProject
     @initializePromise = @loadPaths()
     .then (paths) =>
       if @paths? and paths.length > 0
-        @deleteVariablesForPaths(paths)
         @paths.push path for path in paths when path not in @paths
         paths
       else unless @paths?
@@ -47,9 +46,13 @@ class ColorProject
       else
         []
     .then (paths) =>
+      @deleteVariablesForPaths(paths)
       @loadVariablesForPaths(paths)
-    .then =>
+    .then (results) =>
+      @variables ?= []
+      @variables = @variables.concat(results)
       @initialized = true
+
       variables = @variables.slice()
       @emitter.emit 'did-initialize', variables
       variables
@@ -118,17 +121,37 @@ class ColorProject
 
     @variables.filter (variable) -> variable.isColor()
 
+  updateVariables: (results) ->
+    newVariables = []
+    toCreate = []
+    for result in results
+      if variable = @findVariable(result)
+        newVariables.push(variable)
+      else
+        toCreate.push(result)
+
+    newVariables = newVariables.concat(toCreate)
+
+    toDestroy = @variables.filter (variable) -> variable not in newVariables
+    toDestroy.forEach (variable) -> variable.destroy()
+
+    if toDestroy.length > 0 or toCreate.length > 0
+      @variables = newVariables
+      @emitter.emit 'did-update-variables', {
+        created: toCreate
+        destroyed: toDestroy
+      }
+
+  findVariable: (result) ->
+    for variable in @variables
+      return variable if variable.isEqual(result)
+
   loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 
   loadVariablesForPaths: (paths) ->
     new Promise (resolve, reject) =>
       @scanPathsForVariables paths, (results) =>
-        @variables ?= []
-
-        filesVariables = results.map(@createProjectVariable)
-        @variables = @variables.concat(filesVariables)
-
-        resolve(filesVariables)
+        resolve(results.map(@createProjectVariable))
 
   getVariablesForPath: (path) -> @getVariablesForPaths [path]
 
@@ -157,9 +180,7 @@ class ColorProject
     if paths.some((path) => path not in @paths)
       return Promise.reject("Can't reload paths that are not legible")
 
-    @deleteVariablesForPaths(paths)
-    @loadVariablesForPaths(paths).then (results) =>
-      @emitter.emit 'did-reload-file-variables', {path, variables: results}
+    @loadVariablesForPaths(paths).then (results) => @updateVariables(results)
 
   scanPathsForVariables: (paths, callback) ->
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])

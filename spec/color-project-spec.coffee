@@ -182,46 +182,72 @@ describe 'ColorProject', ->
 
     describe '::reloadVariablesForPath', ->
       describe 'for a file that is part of the loaded paths', ->
-        beforeEach ->
-          eventSpy = jasmine.createSpy('did-reload-file-variables')
-          project.onDidReloadFileVariables(eventSpy)
-          spyOn(project, 'deleteVariablesForPaths').andCallThrough()
-          waitsForPromise -> project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
+        describe 'where the reload finds new variables', ->
+          beforeEach ->
+            project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
 
-        it 'deletes the previous variables found for the file', ->
-          expect(project.deleteVariablesForPaths).toHaveBeenCalled()
+            eventSpy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(eventSpy)
+            waitsForPromise -> project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
 
-        it 'scans again the file to find variables', ->
-          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+          it 'scans again the file to find variables', ->
+            expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
-        it 'dispatches a did-reload-file-variables event', ->
-          expect(eventSpy).toHaveBeenCalled()
+          it 'dispatches a did-update-variables event', ->
+            expect(eventSpy).toHaveBeenCalled()
+
+        describe 'where the reload finds nothing new', ->
+          beforeEach ->
+            eventSpy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(eventSpy)
+            waitsForPromise -> project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
+
+          it 'leaves the file variables intact', ->
+            expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+          it 'does not dispatch a did-update-variables event', ->
+            expect(eventSpy).not.toHaveBeenCalled()
 
     describe '::reloadVariablesForPaths', ->
       describe 'for a file that is part of the loaded paths', ->
-        beforeEach ->
-          eventSpy = jasmine.createSpy('did-reload-file-variables')
-          project.onDidReloadFileVariables(eventSpy)
-          spyOn(project, 'deleteVariablesForPaths').andCallThrough()
-          waitsForPromise -> project.reloadVariablesForPaths([
-            "#{rootPath}/styles/variables.styl"
-            "#{rootPath}/styles/buttons.styl"
-          ])
+        describe 'where the reload finds new variables', ->
+          beforeEach ->
+            project.deleteVariablesForPaths([
+              "#{rootPath}/styles/variables.styl", "#{rootPath}/styles/buttons.styl"
+            ])
+            eventSpy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(eventSpy)
+            waitsForPromise -> project.reloadVariablesForPaths([
+              "#{rootPath}/styles/variables.styl"
+              "#{rootPath}/styles/buttons.styl"
+            ])
 
-        it 'deletes the previous variables found for the file', ->
-          expect(project.deleteVariablesForPaths).toHaveBeenCalled()
+          it 'scans again the file to find variables', ->
+            expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
-        it 'scans again the file to find variables', ->
-          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+          it 'dispatches a did-update-variables event', ->
+            expect(eventSpy).toHaveBeenCalled()
 
-        it 'dispatches a did-reload-file-variables event', ->
-          expect(eventSpy).toHaveBeenCalled()
+        describe 'where the reload finds nothing new', ->
+          beforeEach ->
+            eventSpy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(eventSpy)
+            waitsForPromise -> project.reloadVariablesForPaths([
+              "#{rootPath}/styles/variables.styl"
+              "#{rootPath}/styles/buttons.styl"
+            ])
+
+          it 'leaves the file variables intact', ->
+            expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+          it 'does not dispatch a did-update-variables event', ->
+            expect(eventSpy).not.toHaveBeenCalled()
 
       describe 'when a buffer with variables is open', ->
         [editor, colorBuffer] = []
         beforeEach ->
-          eventSpy = jasmine.createSpy('did-reload-file-variables')
-          project.onDidReloadFileVariables(eventSpy)
+          eventSpy = jasmine.createSpy('did-update-variables')
+          project.onDidUpdateVariables(eventSpy)
 
           waitsForPromise ->
             atom.workspace.open('styles/variables.styl').then (o) -> editor = o
@@ -237,7 +263,7 @@ describe 'ColorProject', ->
           expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
           expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
-        it 'dispatches a did-reload-file-variables event', ->
+        it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
       describe 'for a file that is not part of the loaded paths', ->
