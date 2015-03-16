@@ -38,7 +38,7 @@ class ColorProject
   isInitialized: -> @initialized
 
   initialize: ->
-    return Promise.resolve() if @isInitialized()
+    return Promise.resolve(@variables.slice()) if @isInitialized()
     return @initializePromise if @initializePromise?
 
     @initializePromise = @loadPaths()
@@ -154,6 +154,7 @@ class ColorProject
       }
 
   findVariable: (result) ->
+    return unless @variables?
     for variable in @variables
       return variable if variable.isEqual(result)
 

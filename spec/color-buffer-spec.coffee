@@ -74,7 +74,7 @@ describe 'ColorBuffer', ->
           waitsFor -> updateSpy.callCount > 0
 
         it 'updates the modified variable marker', ->
-          expect(colorBuffer.getVariableMarkers()[0].variable.value).toEqual('#336699')
+          expect(colorBuffer.getVariableMarkerByName('base-color').variable.value).toEqual('#336699')
 
         it 'has the same number of variables than before', ->
           expect(colorBuffer.getVariableMarkers().length).toEqual(4)

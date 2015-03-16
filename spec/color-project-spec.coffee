@@ -246,8 +246,6 @@ describe 'ColorProject', ->
       describe 'when a buffer with variables is open', ->
         [editor, colorBuffer] = []
         beforeEach ->
-          project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
-          
           eventSpy = jasmine.createSpy('did-update-variables')
           project.onDidUpdateVariables(eventSpy)
 
@@ -258,15 +256,32 @@ describe 'ColorProject', ->
             colorBuffer = project.colorBufferForEditor(editor)
             spyOn(colorBuffer, 'scanBufferForVariables').andCallThrough()
 
-          waitsForPromise ->
-            project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
+          waitsForPromise -> colorBuffer.initialize()
+          waitsFor -> colorBuffer.getVariableMarkers()
 
-        it 'reloads the variables with the buffer instead of the file', ->
-          expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
-          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+        it 'updates the project variable with the buffer ranges', ->
+          for variable in project.getVariables()
+            expect(variable.bufferRange).toBeDefined()
 
-        it 'dispatches a did-update-variables event', ->
-          expect(eventSpy).toHaveBeenCalled()
+        describe 'when a color is modified and affects other variables ranges', ->
+          beforeEach ->
+            runs ->
+              editor.setSelectedBufferRange([[1,7],[1,14]])
+              editor.insertText('#336')
+              editor.getBuffer().emitter.emit('did-stop-changing')
+
+            waitsFor -> eventSpy.callCount > 0
+
+          it 'reloads the variables with the buffer instead of the file', ->
+            expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
+            expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+          it 'uses the buffer ranges to detect which variables were really changed', ->
+            expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(0)
+            expect(eventSpy.argsForCall[0][0].created.length).toEqual(1)
+
+          it 'dispatches a did-update-variables event', ->
+            expect(eventSpy).toHaveBeenCalled()
 
       describe 'for a file that is not part of the loaded paths', ->
         beforeEach ->

@@ -1,4 +1,4 @@
-{Emitter, CompositeDisposable, Task} = require 'atom'
+{Emitter, CompositeDisposable, Task, Range} = require 'atom'
 Color = require './color'
 ColorMarker = require './color-marker'
 VariableMarker = require './variable-marker'
@@ -69,13 +69,19 @@ class ColorBuffer
 
   getVariableMarkers: -> @variableMarkers
 
+  getVariableMarkerByName: (name) ->
+    return unless @variableMarkers?
+    for marker in @variableMarkers
+      return marker if marker.variable.name is name
+
   createVariableMarkers: (results) ->
     return if @destroyed
     results.map (result) =>
-      bufferRange = [
+      bufferRange = Range.fromObject [
         @editor.getBuffer().positionForCharacterIndex(result.range[0])
         @editor.getBuffer().positionForCharacterIndex(result.range[1])
       ]
+      result.bufferRange ?= bufferRange
       marker = @editor.markBufferRange(bufferRange, {
         type: 'pigments-variable'
         invalidate: 'touch'
@@ -183,6 +189,10 @@ class ColorBuffer
       task.on 'scan-buffer:variables-found', (variables) ->
         results = results.concat variables.map (variable) ->
           variable.path = editor.getPath()
+          variable.bufferRange = Range.fromObject [
+            buffer.positionForCharacterIndex(variable.range[0])
+            buffer.positionForCharacterIndex(variable.range[1])
+          ]
           variable
 
   scanBufferForColors: ->
@@ -204,7 +214,7 @@ class ColorBuffer
       task.on 'scan-buffer:colors-found', (colors) ->
         results = results.concat colors.map (res) ->
           res.color = new Color(res.color)
-          res.bufferRange = [
+          res.bufferRange = Range.fromObject [
             buffer.positionForCharacterIndex(res.range[0])
             buffer.positionForCharacterIndex(res.range[1])
           ]

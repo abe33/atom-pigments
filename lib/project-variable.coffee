@@ -6,7 +6,7 @@ module.exports =
 class ProjectVariable
 
   constructor: (params={}, @project=null) ->
-    {@name, @value, @range, @path} = params
+    {@name, @value, @range, @path, @bufferRange} = params
     @id = nextId++
     @emitter = new Emitter
 
@@ -24,11 +24,16 @@ class ProjectVariable
     {@name, @value, @range, @path, @project, @color} = {}
 
   isEqual: (variable) ->
-    @name is variable.name and
+    bool = @name is variable.name and
     @value is variable.value and
-    @path is variable.path and
-    @range[0] is variable.range[0] and
-    @range[1] is variable.range[1]
+    @path is variable.path
+
+    bool &&= if @bufferRange? and variable.bufferRange?
+      @bufferRange.isEqual(variable.bufferRange)
+    else
+      @range[0] is variable.range[0] and @range[1] is variable.range[1]
+
+    bool
 
   serialize: ->
     {@name, @value, @range, @path}
