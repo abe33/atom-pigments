@@ -274,8 +274,13 @@ describe 'ColorProject', ->
           expect(variable.bufferRange).toBeDefined()
 
       describe 'when a color is modified and affects other variables ranges', ->
+        [variablesTextRanges] = []
         beforeEach ->
           runs ->
+            variablesTextRanges = {}
+            colorBuffer.getVariableMarkers().forEach (marker) ->
+              variablesTextRanges[marker.variable.name] = marker.variable.range
+
             editor.setSelectedBufferRange([[1,7],[1,14]])
             editor.insertText('#336')
             editor.getBuffer().emitter.emit('did-stop-changing')
@@ -289,6 +294,12 @@ describe 'ColorProject', ->
         it 'uses the buffer ranges to detect which variables were really changed', ->
           expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(0)
           expect(eventSpy.argsForCall[0][0].created.length).toEqual(1)
+
+        it 'updates the text range of the other variables', ->
+          project.getVariablesForPath("#{rootPath}/styles/variables.styl").forEach (variable) ->
+            if variable.name isnt 'colors.red'
+              expect(variable.range[0]).toEqual(variablesTextRanges[variable.name][0] - 3)
+              expect(variable.range[1]).toEqual(variablesTextRanges[variable.name][1] - 3)
 
         it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()

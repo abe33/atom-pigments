@@ -134,6 +134,11 @@ class ColorProject
     toCreate = []
     for result in results
       if variable = @findVariable(result)
+        # This is a special case, if both variables have a buffer range, they
+        # can be equals and at the same time having a different text range.
+        # In that case we always use the most recent range.
+        if variable.range[0] isnt result.range[0] or variable.range[1] isnt result.range[1]
+          variable.range = result.range
         newVariables.push(variable)
       else
         toCreate.push(result)
