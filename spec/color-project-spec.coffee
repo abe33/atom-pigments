@@ -246,6 +246,8 @@ describe 'ColorProject', ->
       describe 'when a buffer with variables is open', ->
         [editor, colorBuffer] = []
         beforeEach ->
+          project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
+          
           eventSpy = jasmine.createSpy('did-update-variables')
           project.onDidUpdateVariables(eventSpy)
 
