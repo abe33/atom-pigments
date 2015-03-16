@@ -48,10 +48,11 @@ class ColorProject
         []
     .then (paths) =>
       @loadVariablesForPaths(paths)
-    .then (results) =>
+    .then =>
       @initialized = true
-      @emitter.emit 'did-initialize', @variables.slice()
-      results
+      variables = @variables.slice()
+      @emitter.emit 'did-initialize', variables
+      variables
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
