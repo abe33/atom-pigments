@@ -14,10 +14,12 @@ class PathScanner
 
     results = []
 
+
     readStream = fs.createReadStream(@path)
 
     readStream.on 'data', (chunk) =>
       currentChunk += chunk.toString()
+      console.log currentChunk
 
       index = lastIndex
 
