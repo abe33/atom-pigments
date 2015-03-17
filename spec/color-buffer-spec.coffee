@@ -52,6 +52,20 @@ describe 'ColorBuffer', ->
     it 'creates the corresponding markers in the text editor', ->
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
+    describe 'when the editor is destroyed', ->
+      it 'destroys the color buffer at the same time', ->
+        editor.destroy()
+
+        expect(project.colorBuffersByEditorId[editor.id]).toBeUndefined()
+
+    ##    ##     ##    ###    ########   ######
+    ##    ##     ##   ## ##   ##     ## ##    ##
+    ##    ##     ##  ##   ##  ##     ## ##
+    ##    ##     ## ##     ## ########   ######
+    ##     ##   ##  ######### ##   ##         ##
+    ##      ## ##   ##     ## ##    ##  ##    ##
+    ##       ###    ##     ## ##     ##  ######
+
     describe 'when the project variables becomes available', ->
       [updateSpy] = []
       beforeEach ->
@@ -149,6 +163,14 @@ describe 'ColorBuffer', ->
           }
           expect(colorBuffer.serialize()).toEqual(expected)
 
+    ##     ######   #######  ##        #######  ########   ######
+    ##    ##    ## ##     ## ##       ##     ## ##     ## ##    ##
+    ##    ##       ##     ## ##       ##     ## ##     ## ##
+    ##    ##       ##     ## ##       ##     ## ########   ######
+    ##    ##       ##     ## ##       ##     ## ##   ##         ##
+    ##    ##    ## ##     ## ##       ##     ## ##    ##  ##    ##
+    ##     ######   #######  ########  #######  ##     ##  ######
+
     describe 'with a buffer with only colors', ->
       beforeEach ->
         waitsForPromise ->
@@ -234,9 +256,3 @@ describe 'ColorBuffer', ->
 
         it 'removes the previous editor markers', ->
           expect(editor.findMarkers(type: 'pigments-color').length).toEqual(2)
-
-  describe 'when the editor is destroyed', ->
-    it 'destroys the color buffer at the same time', ->
-      editor.destroy()
-
-      expect(project.colorBuffersByEditorId[editor.id]).toBeUndefined()
