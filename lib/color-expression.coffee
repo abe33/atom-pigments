@@ -12,7 +12,6 @@ class ColorExpression
 
     color = new Color()
     color.colorExpression = expression
-    color.variables = context.usedVariables.slice()
     @handle.call(color, @regexp.exec(expression), expression, context)
     color
 

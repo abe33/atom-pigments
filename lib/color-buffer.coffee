@@ -7,6 +7,7 @@ module.exports =
 class ColorBuffer
   constructor: (params={}) ->
     {@editor, @project} = params
+    {@id} = @editor
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
 
@@ -227,4 +228,9 @@ class ColorBuffer
           ]
           res
 
-  serialize: -> {editorId: @editor.id}
+  serialize: ->
+    {
+      @id
+      variableMarkers: @variableMarkers?.map (marker) -> marker.serialize()
+      colorMarkers: @colorMarkers?.map (marker) -> marker.serialize()
+    }

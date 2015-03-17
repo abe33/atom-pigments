@@ -24,6 +24,7 @@ class ColorScanner
       {lastIndex} = regexp
 
       color = @parser.parse(matchText, @context)
+      color.variables = @context.readUsedVariables() if @context?
 
       if (index = matchText.indexOf(color.colorExpression)) > 0
         lastIndex += -matchText.length + index + color.colorExpression.length

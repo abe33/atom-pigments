@@ -20,7 +20,8 @@ class BufferColorsScanner
 
       registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
         [d,d,name] = match
-        @rgba = context.readColor(name).rgba
+        baseColor = context.readColor(name)
+        @rgba = baseColor.rgba
 
   scan: ->
     lastIndex = 0

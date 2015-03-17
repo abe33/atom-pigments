@@ -20,7 +20,7 @@ class ColorMarker
 
   match: (properties) ->
     return false if @wasDestroyed
-    
+
     bool = true
 
     if properties.bufferRange?
@@ -30,3 +30,12 @@ class ColorMarker
     bool &&= properties.text is @text if properties.text?
 
     bool
+
+  serialize: ->
+    return if @wasDestroyed
+    {
+      bufferRange: @marker.getBufferRange().serialize()
+      color: @color.serialize()
+      text: @text
+      variables: @color.variables
+    }

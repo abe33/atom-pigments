@@ -19,6 +19,12 @@ class ColorContext
 
   getVariablesCount: -> @varCount ?= @getVariablesNames().length
 
+  readUsedVariables: ->
+    usedVariables = []
+    usedVariables.push v for v in @usedVariables when v not in usedVariables
+    @usedVariables = []
+    usedVariables
+
   readColorExpression: (value) ->
     if @vars[value]?
       @usedVariables.push(value)

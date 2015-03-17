@@ -220,3 +220,6 @@ class Color
       "rgb(#{rnd @red},#{rnd @green},#{rnd @blue})"
     else
       "rgba(#{rnd @red},#{rnd @green},#{rnd @blue},#{@alpha})"
+
+  serialize: ->
+    [@red, @green, @blue, @alpha]

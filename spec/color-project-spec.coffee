@@ -314,14 +314,15 @@ describe 'ColorProject', ->
 
   describe 'when restored', ->
     createProject = (params) ->
-      data =
-        root: params.root ? rootPath
-        timestamp: params.timestamp?.toJSON() ? new Date().toJSON()
-        editorId: params.editorId
+      {stateFixture} = params
+      delete params.stateFixture
 
-      jsonPath = path.resolve(__dirname, params.stateFixture)
+      params.root ?= rootPath
+      params.timestamp ?=  new Date().toJSON()
+
+      jsonPath = path.resolve(__dirname, stateFixture)
       json = fs.readFileSync(jsonPath).toString()
-      json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
+      json = json.replace /#\{(\w+)\}/g, (m,w) -> params[w]
 
       ColorProject.deserialize(JSON.parse(json))
 
@@ -338,7 +339,7 @@ describe 'ColorProject', ->
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->
         project = createProject
-          timestamp: new Date(0)
+          timestamp: new Date(0).toJSON()
           stateFixture: "./fixtures/empty-project.json"
 
         waitsForPromise -> project.initialize()
@@ -365,7 +366,7 @@ describe 'ColorProject', ->
         runs ->
           project = createProject
             stateFixture: "./fixtures/open-buffer-project.json"
-            editorId: editor.id
+            id: editor.id
 
       it 'restores the color buffer', ->
         expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()

@@ -1,10 +1,10 @@
+path = require 'path'
 ColorBuffer = require '../lib/color-buffer'
 
 describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
 
   editBuffer = (text, options={}) ->
-
     if options.start?
       if options.end?
         range = [options.start, options.end]
@@ -15,6 +15,14 @@ describe 'ColorBuffer', ->
 
     editor.insertText(text)
     editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
+
+  jsonFixture = (fixture, data) ->
+    jsonPath = path.resolve(__dirname, 'fixtures', fixture)
+    json = fs.readFileSync(jsonPath).toString()
+    json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
+
+    JSON.parse(json)
+
 
   beforeEach ->
     atom.config.set 'pigments.sourceNames', [
@@ -130,6 +138,16 @@ describe 'ColorBuffer', ->
           runs ->
             expect(colorBuffer.getColorMarkers().length).toEqual(3)
             expect(colorBuffer.getValidColorMarkers().length).toEqual(2)
+
+      describe '::serialize', ->
+        beforeEach ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+
+        it 'returns the whole buffer data', ->
+          expected = jsonFixture "four-variables-buffer.json", {
+            id: editor.id
+          }
+          expect(colorBuffer.serialize()).toEqual(expected)
 
     describe 'with a buffer with only colors', ->
       beforeEach ->

@@ -1,0 +1,47 @@
+{
+  "id": #{id},
+  "variableMarkers": [
+    {
+      "bufferRange": [[0,0],[0,17]],
+      "variable": "base-color"
+    },
+    {
+      "bufferRange": [[2,0],[2,45]],
+      "variable": "other-color"
+    },
+    {
+      "bufferRange": [[4,0],[4,27]],
+      "variable": "other_color"
+    },
+    {
+      "bufferRange": [[6,0],[6,39]],
+      "variable": "$other-color"
+    }
+  ],
+  "colorMarkers": [
+    {
+      "bufferRange": [[0,13],[0,17]],
+      "color": [255,255,255,1],
+      "text": "#fff",
+      "variables": []
+    },
+    {
+      "bufferRange": [[4,14],[4,27]],
+      "color": [0,0,0,1],
+      "text": "rgba(0,0,0,1)",
+      "variables": []
+    },
+    {
+      "bufferRange": [[6,15],[6,39]],
+      "color": [255,0,0,0.5],
+      "text": "transparentize(red, 0.5)",
+      "variables": []
+    },
+    {
+      "bufferRange": [[2,14],[2,45]],
+      "color": [255,255,255,0.5],
+      "text": "transparentize(base-color, 50%)",
+      "variables": ["base-color"]
+    }
+  ]
+}

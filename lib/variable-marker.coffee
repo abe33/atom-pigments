@@ -27,3 +27,10 @@ class VariableMarker
       bool &&= @variable?.isEqual(properties.variable)
 
     bool
+
+  serialize: ->
+    return if @wasDestroyed
+    {
+      bufferRange: @marker.getBufferRange().serialize()
+      variable: @variable.name
+    }

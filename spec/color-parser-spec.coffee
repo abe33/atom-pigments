@@ -16,7 +16,8 @@ describe 'ColorParser', ->
 
         if context?
           it 'stores the variables used by the color in property', ->
-            expect(parser.parse(expression, context).variables.sort()).toEqual(context.getVariablesNames().sort())
+            parser.parse(expression, context)
+            expect(context.readUsedVariables().sort()).toEqual(context.getVariablesNames().sort())
 
     asUndefined: ->
       context = @context
