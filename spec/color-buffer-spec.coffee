@@ -108,6 +108,29 @@ describe 'ColorBuffer', ->
           expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
           expect(updateSpy.argsForCall[0][0].created.length).toEqual(1)
 
+      describe 'when a variable marker is removed', ->
+        [colorsUpdateSpy] = []
+        beforeEach ->
+          updateSpy = jasmine.createSpy('did-update-variable-markers')
+          colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+          colorBuffer.onDidUpdateVariableMarkers(updateSpy)
+          colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+          editBuffer '', start: [0,0], end: [0,17]
+          waitsFor -> updateSpy.callCount > 0
+
+        it 'updates the modified variable marker', ->
+          expect(colorBuffer.getVariableMarkerByName('base-color')).toBeUndefined()
+
+        it 'dispatches the new marker in a did-update-variable-markers event', ->
+          expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
+          expect(updateSpy.argsForCall[0][0].created.length).toEqual(0)
+
+        it 'invalidates colors that were relying on the deleted variables', ->
+          waitsFor -> colorsUpdateSpy.callCount > 0
+          runs ->
+            expect(colorBuffer.getColorMarkers().length).toEqual(3)
+            expect(colorBuffer.getValidColorMarkers().length).toEqual(2)
+
     describe 'with a buffer with only colors', ->
       beforeEach ->
         waitsForPromise ->
@@ -171,6 +194,28 @@ describe 'ColorBuffer', ->
         it 'dispatches the new marker in a did-update-color-markers event', ->
           expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
           expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(1)
+
+      describe 'when a color marker is edited', ->
+        [colorsUpdateSpy] = []
+
+        beforeEach ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+
+          runs ->
+            colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+            colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+            editBuffer '', start: [1,2], end: [1,23]
+            waitsFor -> colorsUpdateSpy.callCount > 0
+
+        it 'updates the modified color marker', ->
+          expect(colorBuffer.getColorMarkers().length).toEqual(2)
+
+        it 'updates only the affected marker', ->
+          expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
+          expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(0)
+
+        it 'removes the previous editor markers', ->
+          expect(editor.findMarkers(type: 'pigments-color').length).toEqual(2)
 
   describe 'when the editor is destroyed', ->
     it 'destroys the color buffer at the same time', ->
