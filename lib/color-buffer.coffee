@@ -6,7 +6,7 @@ VariableMarker = require './variable-marker'
 module.exports =
 class ColorBuffer
   constructor: (params={}) ->
-    {@editor, @project} = params
+    {@editor, @project, variableMarkers, colorMarkers} = params
     {@id} = @editor
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -21,6 +21,9 @@ class ColorBuffer
         r.path is @editor.getPath()
       @updateVariableMarkers(resultsForBuffer)
 
+    if variableMarkers? and colorMarkers?
+      @restoreMarkersState(variableMarkers, colorMarkers)
+
     @initialize()
 
   onDidUpdateColorMarkers: (callback) ->
@@ -33,6 +36,7 @@ class ColorBuffer
     @emitter.on 'did-destroy', callback
 
   initialize: ->
+    return Promise.resolve() if @variableMarkers? and @colorMarkers?
     return @initializePromise if @initializePromise?
 
     @initializePromise = @scanBufferForColors().then (results) =>
@@ -40,6 +44,30 @@ class ColorBuffer
 
     @variablesAvailable()
     @initializePromise
+
+  restoreMarkersState: (variableMarkers, colorMarkers) ->
+    @variableMarkers = variableMarkers.map (state) =>
+      bufferRange = Range.fromObject(state.bufferRange)
+      marker = @editor.markBufferRange(bufferRange, {
+        type: 'pigments-variable'
+        invalidate: 'touch'
+      })
+      variable = @project.getVariableByName(state.variable)
+      variable.bufferRange ?= bufferRange
+      new VariableMarker {marker, variable}
+
+    @colorMarkers = colorMarkers.map (state) =>
+      marker = @editor.markBufferRange(state.bufferRange, {
+        type: 'pigments-color'
+        invalidate: 'touch'
+      })
+      color = new Color(state.color)
+      color.variables = state.variables
+      new ColorMarker {
+        marker
+        color
+        text: state.text
+      }
 
   variablesAvailable: ->
     return @variablesPromise if @variablesPromise?
@@ -231,6 +259,7 @@ class ColorBuffer
   serialize: ->
     {
       @id
+      path: @editor.getPath()
       variableMarkers: @variableMarkers?.map (marker) -> marker.serialize()
       colorMarkers: @colorMarkers?.map (marker) -> marker.serialize()
     }

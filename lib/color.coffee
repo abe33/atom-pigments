@@ -26,7 +26,10 @@ class Color
 
   constructor: (r=0,g=0,b=0,a=1) ->
     if typeof r is 'object'
-      @[k] = v for k,v of r
+      if Array.isArray(r)
+        @[i] = v for v,i in r
+      else
+        @[k] = v for k,v of r
     else if typeof r is 'string'
       if r of SVGColors.allCases
         @name = r

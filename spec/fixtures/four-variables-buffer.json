@@ -1,5 +1,6 @@
 {
   "id": #{id},
+  "path": "#{root}/four-variables.styl",
   "variableMarkers": [
     {
       "bufferRange": [[0,0],[0,17]],

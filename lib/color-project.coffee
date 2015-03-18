@@ -25,10 +25,12 @@ class ColorProject
         @createProjectVariableSubscriptions(variable)
         variable
 
+    @bufferStates = buffers ? {}
+
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
     @initialize() if @paths? and @variables?
-    @initializeBuffers(buffers)
+    @initializeBuffers()
 
   onDidInitialize: (callback) ->
     @emitter.on 'did-initialize', callback
@@ -80,9 +82,18 @@ class ColorProject
 
   colorBufferForEditor: (editor) ->
     return unless editor?
-    return @colorBuffersByEditorId[editor.id] if @colorBuffersByEditorId[editor.id]?
+    if @colorBuffersByEditorId[editor.id]?
+      return @colorBuffersByEditorId[editor.id]
 
-    @colorBuffersByEditorId[editor.id] = buffer = new ColorBuffer({editor, project: this})
+    if @bufferStates[editor.id]?
+      state = @bufferStates[editor.id]
+      state.editor = editor
+      state.project = this
+      delete @bufferStates[editor.id]
+    else
+      state = {editor, project: this}
+
+    @colorBuffersByEditorId[editor.id] = buffer = new ColorBuffer(state)
 
     @subscriptions.add subscription = buffer.onDidDestroy =>
       @subscriptions.remove(subscription)
@@ -124,6 +135,10 @@ class ColorProject
   getContext: -> new ColorContext(@variables)
 
   getVariables: -> @variables?.slice()
+
+  getVariableByName: (name) ->
+    for variable in @variables
+      return variable if variable.name is name
 
   getColorVariables: ->
     context = @getContext()
