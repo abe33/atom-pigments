@@ -267,6 +267,7 @@ describe 'ColorProject', ->
           colorBuffer = project.colorBufferForEditor(editor)
           spyOn(colorBuffer, 'scanBufferForVariables').andCallThrough()
 
+        waitsForPromise -> project.initialize()
         waitsForPromise -> colorBuffer.variablesAvailable()
 
       it 'updates the project variable with the buffer ranges', ->
