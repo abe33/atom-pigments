@@ -1,10 +1,13 @@
 {Emitter, CompositeDisposable} = require 'atom'
 ColorBuffer = require './color-buffer'
+ColorBufferElement = require './color-buffer-element'
 ColorContext = require './color-context'
 Palette = require './palette'
 PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
+
+ColorBufferElement.registerViewProvider(ColorBuffer)
 
 module.exports =
 class ColorProject
