@@ -210,12 +210,15 @@ class ColorProject
 
     destroyed = []
 
-    @variables = @variables.filter (variable) ->
+    @variables = @variables.filter (variable) =>
       if variable.path in paths
+        @clearProjectVariableSubscriptions(variable)
         variable.destroy()
         destroyed.push variable
         return false
       return true
+
+    @reloadVariablesForPaths(paths)
 
     destroyed
 

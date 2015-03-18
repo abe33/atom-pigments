@@ -171,6 +171,15 @@ describe 'ColorProject', ->
 
         expect(ProjectVariable::destroy).toHaveBeenCalled()
 
+      it 'debounces the calls to reloadVariablesForPath to perform one scan', ->
+        waitsFor -> project.initialize()
+        runs ->
+          spyOn(project, 'reloadVariablesForPaths').andCallThrough()
+          project.deleteVariablesForPath("#{rootPath}/styles/variables.styl")
+
+        waitsFor -> project.reloadVariablesForPaths.callCount > 0
+        runs -> expect(project.reloadVariablesForPaths.callCount).toEqual(1)
+
     describe '::getContext', ->
       it 'returns a context with the project variables', ->
         expect(project.getContext()).toBeDefined()
