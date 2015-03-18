@@ -218,8 +218,11 @@ class ColorBuffer
     createdMarkers = @createColorMarkers(toCreate)
     newMarkers = newMarkers.concat(createdMarkers)
 
-    toDestroy = @colorMarkers.filter (marker) -> marker not in newMarkers
-    toDestroy.forEach (marker) -> marker.destroy()
+    if @colorMarkers?
+      toDestroy = @colorMarkers.filter (marker) -> marker not in newMarkers
+      toDestroy.forEach (marker) -> marker.destroy()
+    else
+      toDestroy = []
 
     @colorMarkers = newMarkers
     @emitter.emit 'did-update-color-markers', {

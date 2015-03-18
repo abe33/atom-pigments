@@ -44,6 +44,8 @@ class ColorProject
     return Promise.resolve(@variables.slice()) if @isInitialized()
     return @initializePromise if @initializePromise?
 
+    destroyed = null
+
     @initializePromise = @loadPaths()
     .then (paths) =>
       if @paths? and paths.length > 0
@@ -54,11 +56,19 @@ class ColorProject
       else
         []
     .then (paths) =>
-      @deleteVariablesForPaths(paths)
+      destroyed = @deleteVariablesForPaths(paths)
       @loadVariablesForPaths(paths)
     .then (results) =>
+      hadVariables = @variables?
       @variables ?= []
       @variables = @variables.concat(results)
+
+      if hadVariables
+        @emitter.emit 'did-update-variables', {
+          created: results
+          destroyed: destroyed
+        }
+
       results.forEach (variable) =>
         @createProjectVariableSubscriptions(variable)
 
@@ -198,11 +208,16 @@ class ColorProject
   deleteVariablesForPaths: (paths) ->
     return unless @variables?
 
+    destroyed = []
+
     @variables = @variables.filter (variable) ->
       if variable.path in paths
         variable.destroy()
+        destroyed.push variable
         return false
       return true
+
+    destroyed
 
   reloadVariablesForPath: (path) -> @reloadVariablesForPaths [path]
 
@@ -231,7 +246,7 @@ class ColorProject
     unless @variablesSubscriptionsById[variable.id]?
       @variablesSubscriptionsById[variable.id] = variable.onDidDestroy =>
         @removeProjectVariable(variable)
-        @reloadVariablesForPath(variable.path)
+        @reloadVariablesForPath(variable.path) if @isInitialized()
 
   clearProjectVariableSubscriptions: (variable) ->
     @variablesSubscriptionsById[variable.id].dispose()

@@ -1,6 +1,7 @@
 fs = require 'fs'
 path = require 'path'
 ColorProject = require '../lib/color-project'
+ColorBuffer = require '../lib/color-buffer'
 ProjectVariable = require '../lib/project-variable'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
@@ -266,8 +267,7 @@ describe 'ColorProject', ->
           colorBuffer = project.colorBufferForEditor(editor)
           spyOn(colorBuffer, 'scanBufferForVariables').andCallThrough()
 
-        waitsForPromise -> colorBuffer.initialize()
-        waitsFor -> colorBuffer.getVariableMarkers()
+        waitsForPromise -> colorBuffer.variablesAvailable()
 
       it 'updates the project variable with the buffer ranges', ->
         for variable in project.getVariables()
@@ -358,15 +358,44 @@ describe 'ColorProject', ->
         expect(project.getVariables().length).toEqual(12)
 
     describe 'with an open editor and the corresponding buffer state', ->
-      [editor] = []
+      [editor, colorBuffer] = []
       beforeEach ->
         waitsForPromise ->
-          atom.workspace.open('four-variables.styl').then (o) -> editor = o
+          atom.workspace.open('variables.styl').then (o) -> editor = o
 
         runs ->
           project = createProject
             stateFixture: "./fixtures/open-buffer-project.json"
             id: editor.id
 
-      it 'restores the color buffer', ->
-        expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()
+          spyOn(ColorBuffer.prototype, 'variablesAvailable').andCallThrough()
+
+        runs -> colorBuffer = project.colorBuffersByEditorId[editor.id]
+
+      it 'restores the color buffer in its previous state', ->
+        expect(colorBuffer).toBeDefined()
+        expect(colorBuffer.getVariableMarkers().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+        expect(colorBuffer.getColorMarkers().length).toEqual(TOTAL_COLORS_VARIABLES_IN_PROJECT)
+
+      it 'does not wait for the project variables', ->
+        expect(colorBuffer.variablesAvailable).not.toHaveBeenCalled()
+
+    describe 'with an open editor, the corresponding buffer state and a old timestamp', ->
+      [editor, colorBuffer] = []
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('variables.styl').then (o) -> editor = o
+
+        runs ->
+          spyOn(ColorBuffer.prototype, 'updateVariableMarkers').andCallThrough()
+          project = createProject
+            timestamp: new Date(0).toJSON()
+            stateFixture: "./fixtures/open-buffer-project.json"
+            id: editor.id
+
+        runs -> colorBuffer = project.colorBuffersByEditorId[editor.id]
+
+        waitsFor -> colorBuffer.updateVariableMarkers.callCount > 0
+
+      it 'invalidates the color buffer markers as soon as the dirty paths have been determined', ->
+        expect(colorBuffer.updateVariableMarkers).toHaveBeenCalled()
