@@ -142,9 +142,10 @@ class ColorBuffer
 
     toDestroy = @variableMarkers.filter (marker) -> marker not in newMarkers
 
-    toDestroy.forEach (marker) =>
-      delete @variableMarkersByMarkerId[marker.marker.id]
-      marker.destroy()
+    toDestroy.forEach (marker) -> marker.destroy()
+
+    for id,marker of @variableMarkersByMarkerId when marker not in newMarkers
+      delete @variableMarkersByMarkerId[id]
 
     @variableMarkers = newMarkers
     @emitter.emit 'did-update-variable-markers', {
@@ -227,9 +228,11 @@ class ColorBuffer
 
     if @colorMarkers?
       toDestroy = @colorMarkers.filter (marker) -> marker not in newMarkers
-      toDestroy.forEach (marker) =>
-        delete @colorMarkersByMarkerId[marker.marker.id]
-        marker.destroy()
+      toDestroy.forEach (marker) -> marker.destroy()
+
+      for id,marker of @colorMarkersByMarkerId when marker not in newMarkers
+        delete @colorMarkersByMarkerId[id]
+
     else
       toDestroy = []
 
