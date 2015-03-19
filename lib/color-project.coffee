@@ -228,13 +228,17 @@ class ColorProject
   reloadVariablesForPath: (path) -> @reloadVariablesForPaths [path]
 
   reloadVariablesForPaths: (paths) ->
-    unless @isInitialized()
-      return Promise.reject("Can't reload paths that haven't been loaded yet")
+    promise = Promise.resolve()
+    promise = @initialize() unless @isInitialized()
 
-    if paths.some((path) => path not in @paths)
-      return Promise.reject("Can't reload paths that are not legible")
+    promise
+    .then =>
+      if paths.some((path) => path not in @paths)
+        return Promise.reject("Can't reload paths that are not legible")
 
-    @loadVariablesForPaths(paths).then (results) => @updateVariables(paths, results)
+      @loadVariablesForPaths(paths)
+    .then (results) =>
+      @updateVariables(paths, results)
 
   scanPathsForVariables: (paths, callback) ->
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])

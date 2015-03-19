@@ -62,4 +62,23 @@ describe 'ColorBufferElement', ->
         waitsForPromise -> colorBuffer.initialize()
 
       it 'creates markers views for every visible buffer markers', ->
-        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(4)
+        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+
+      describe 'when the project variables are initialized', ->
+        it 'creates markers for the new valid colors', ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(4)
+
+      describe 'when some markers are destroyed', ->
+        [spy] = []
+        beforeEach ->
+          spy = jasmine.createSpy('did-update')
+          colorBufferElement.onDidUpdate(spy)
+          editBuffer '', start: [4,0], end: [8,0]
+          waitsFor -> spy.callCount > 0
+
+        it 'releases the unused markers', ->
+          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+          expect(colorBufferElement.usedMarkers.length).toEqual(2)
+          expect(colorBufferElement.unusedMarkers.length).toEqual(1)

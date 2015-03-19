@@ -107,13 +107,13 @@ describe 'ColorProject', ->
 
     describe '::reloadVariablesForPath', ->
       beforeEach ->
-        spyOn(project, 'loadVariablesForPath').andCallThrough()
+        spyOn(project, 'initialize').andCallThrough()
 
-        waitsForPromise shouldReject: true, ->
+        waitsForPromise ->
           project.reloadVariablesForPath("#{rootPath}/styles/variables.styl")
 
-      it 'returns a rejected promise', ->
-        expect(project.loadVariablesForPath).not.toHaveBeenCalled()
+      it 'returns a promise hooked on the initialize promise', ->
+        expect(project.initialize).toHaveBeenCalled()
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##

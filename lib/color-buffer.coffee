@@ -248,6 +248,7 @@ class ColorBuffer
     }
 
   findColorMarker: (properties) ->
+    return unless @colorMarkers?
     for marker in @colorMarkers
       return marker if marker?.match(properties)
 
