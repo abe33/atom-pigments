@@ -159,6 +159,11 @@ class ColorBuffer
     for marker in @variableMarkers
       return marker if marker.match(properties)
 
+  findVariableMarkers: (properties) ->
+    properties.type = 'pigments-variable'
+    markers = @editor.findMarkers(properties)
+    markers.map (marker) => @variableMarkersByMarkerId[marker.id]
+
   scanBufferForVariables: ->
     return if @destroyed
     results = []
