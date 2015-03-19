@@ -2,7 +2,7 @@ path = require 'path'
 ColorBufferElement = require '../lib/color-buffer-element'
 
 describe 'ColorBufferElement', ->
-  [editor, editorElement, colorBuffer, pigments, project, colorBufferElement] = []
+  [editor, editorElement, colorBuffer, pigments, project, colorBufferElement, jasmineContent] = []
 
   editBuffer = (text, options={}) ->
     if options.start?
@@ -25,6 +25,11 @@ describe 'ColorBufferElement', ->
 
 
   beforeEach ->
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmineContent = document.body.querySelector('#jasmine-content')
+
+    jasmineContent.appendChild(workspaceElement)
+
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
       '*.less'
@@ -51,3 +56,10 @@ describe 'ColorBufferElement', ->
     it 'attaches itself in the target text editor element', ->
       expect(colorBufferElement.parentNode).toExist()
       expect(editorElement.shadowRoot.querySelector('.lines pigments-markers')).toExist()
+
+    describe 'when the color buffer is initialized', ->
+      beforeEach ->
+        waitsForPromise -> colorBuffer.initialize()
+
+      it 'creates markers views for every visible buffer markers', ->
+        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(4)

@@ -11,6 +11,9 @@ class ColorBuffer
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
 
+    @colorMarkersByMarkerId = {}
+    @variableMarkersByMarkerId = {}
+
     @subscriptions.add @editor.onDidDestroy => @destroy()
     @subscriptions.add @editor.onDidStopChanging =>
       @project.reloadVariablesForPath(@editor.getPath()).then =>
@@ -122,6 +125,7 @@ class ColorBuffer
         type: 'pigments-variable'
         invalidate: 'touch'
       })
+      @variableMarkersByMarkerId[marker.id] =
       new VariableMarker {marker, variable: result}
 
   updateVariableMarkers: (results) ->
@@ -138,7 +142,9 @@ class ColorBuffer
 
     toDestroy = @variableMarkers.filter (marker) -> marker not in newMarkers
 
-    toDestroy.forEach (marker) -> marker.destroy()
+    toDestroy.forEach (marker) =>
+      delete @variableMarkersByMarkerId[marker.marker.id]
+      marker.destroy()
 
     @variableMarkers = newMarkers
     @emitter.emit 'did-update-variable-markers', {
@@ -204,6 +210,7 @@ class ColorBuffer
         type: 'pigments-color'
         invalidate: 'touch'
       })
+      @colorMarkersByMarkerId[marker.id] =
       new ColorMarker {marker, color: result.color, text: result.match}
 
   updateColorMarkers: (results) ->
@@ -220,7 +227,9 @@ class ColorBuffer
 
     if @colorMarkers?
       toDestroy = @colorMarkers.filter (marker) -> marker not in newMarkers
-      toDestroy.forEach (marker) -> marker.destroy()
+      toDestroy.forEach (marker) =>
+        delete @colorMarkersByMarkerId[marker.marker.id]
+        marker.destroy()
     else
       toDestroy = []
 
@@ -233,6 +242,11 @@ class ColorBuffer
   findColorMarker: (properties) ->
     for marker in @colorMarkers
       return marker if marker?.match(properties)
+
+  findColorMarkers: (properties) ->
+    properties.type = 'pigments-color'
+    markers = @editor.findMarkers(properties)
+    markers.map (marker) => @colorMarkersByMarkerId[marker.id]
 
   scanBufferForColors: ->
     return if @destroyed
