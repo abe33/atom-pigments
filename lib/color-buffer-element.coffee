@@ -1,4 +1,5 @@
 {Emitter, CompositeDisposable} = require 'atom'
+ColorMarkerElement = require './color-marker-element'
 
 class ColorBufferElement extends HTMLElement
 
