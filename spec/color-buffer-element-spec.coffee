@@ -2,7 +2,7 @@ path = require 'path'
 ColorBufferElement = require '../lib/color-buffer-element'
 
 describe 'ColorBufferElement', ->
-  [editor, colorBuffer, pigments, project, colorBufferElement] = []
+  [editor, editorElement, colorBuffer, pigments, project, colorBufferElement] = []
 
   editBuffer = (text, options={}) ->
     if options.start?
@@ -31,7 +31,9 @@ describe 'ColorBufferElement', ->
     ]
 
     waitsForPromise ->
-      atom.workspace.open('four-variables.styl').then (o) -> editor = o
+      atom.workspace.open('four-variables.styl').then (o) ->
+        editor = o
+        editorElement = atom.views.getView(editor)
 
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
@@ -45,3 +47,7 @@ describe 'ColorBufferElement', ->
     it 'is associated to the ColorBuffer model', ->
       expect(colorBufferElement).toBeDefined()
       expect(colorBufferElement.getModel()).toBe(colorBuffer)
+
+    it 'attaches itself in the target text editor element', ->
+      expect(colorBufferElement.parentNode).toExist()
+      expect(editorElement.shadowRoot.querySelector('.lines pigments-markers')).toExist()

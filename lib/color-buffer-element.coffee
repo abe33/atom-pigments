@@ -10,6 +10,13 @@ class ColorBufferElement extends HTMLElement
   getModel: -> @colorBuffer
 
   setModel: (@colorBuffer) ->
+    {@editor} = @colorBuffer
+
+    @attach()
+
+  attach: ->
+    editorElement = atom.views.getView(@editor)
+    editorElement.shadowRoot.querySelector('.lines').appendChild(this)
 
 module.exports = ColorBufferElement =
 document.registerElement 'pigments-markers', {
