@@ -97,12 +97,9 @@ describe 'ColorBufferElement', ->
 
         describe 'and then some new marker are created', ->
           beforeEach ->
-            spy = jasmine.createSpy('did-update')
-            colorBufferElement.onDidUpdate(spy)
-
             editor.moveToBottom()
-            editBuffer 'foo = #123456'
-            waitsFor -> spy.callCount > 0
+            editBuffer '\nfoo = #123456\n'
+            waitsFor -> colorBufferElement.unusedMarkers.length is 0
 
           it 'reuses the previously released marker element', ->
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
