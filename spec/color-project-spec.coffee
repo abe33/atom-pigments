@@ -257,7 +257,7 @@ describe 'ColorProject', ->
         beforeEach ->
           spyOn(project, 'loadVariablesForPath').andCallThrough()
 
-          waitsForPromise shouldReject: true, ->
+          waitsForPromise ->
             project.reloadVariablesForPath("#{rootPath}/vendor/css/variables.less")
 
         it 'does nothing', ->

@@ -234,7 +234,7 @@ class ColorProject
     promise
     .then =>
       if paths.some((path) => path not in @paths)
-        return Promise.reject("Can't reload paths that are not legible")
+        return Promise.resolve([])
 
       @loadVariablesForPaths(paths)
     .then (results) =>
