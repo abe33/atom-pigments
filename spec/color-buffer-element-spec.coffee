@@ -1,5 +1,6 @@
 path = require 'path'
 ColorBufferElement = require '../lib/color-buffer-element'
+ColorMarkerElement = require '../lib/color-marker-element'
 
 describe 'ColorBufferElement', ->
   [editor, editorElement, colorBuffer, pigments, project, colorBufferElement, jasmineContent] = []
@@ -62,7 +63,12 @@ describe 'ColorBufferElement', ->
         waitsForPromise -> colorBuffer.initialize()
 
       it 'creates markers views for every visible buffer markers', ->
-        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+        markersElements = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+
+        expect(markersElements.length).toEqual(3)
+
+        for marker in markersElements
+          expect(marker.getModel()).toBeDefined()
 
       describe 'when the project variables are initialized', ->
         it 'creates markers for the new valid colors', ->
@@ -73,6 +79,9 @@ describe 'ColorBufferElement', ->
       describe 'when some markers are destroyed', ->
         [spy] = []
         beforeEach ->
+          for el in colorBufferElement.usedMarkers
+            spyOn(el, 'release').andCallThrough()
+
           spy = jasmine.createSpy('did-update')
           colorBufferElement.onDidUpdate(spy)
           editBuffer '', start: [4,0], end: [8,0]
@@ -82,3 +91,20 @@ describe 'ColorBufferElement', ->
           expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
           expect(colorBufferElement.usedMarkers.length).toEqual(2)
           expect(colorBufferElement.unusedMarkers.length).toEqual(1)
+
+          for marker in colorBufferElement.unusedMarkers
+            expect(marker.release).toHaveBeenCalled()
+
+        describe 'and then some new marker are created', ->
+          beforeEach ->
+            spy = jasmine.createSpy('did-update')
+            colorBufferElement.onDidUpdate(spy)
+
+            editor.moveToBottom()
+            editBuffer 'foo = #123456'
+            waitsFor -> spy.callCount > 0
+
+          it 'reuses the previously released marker element', ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+            expect(colorBufferElement.usedMarkers.length).toEqual(3)
+            expect(colorBufferElement.unusedMarkers.length).toEqual(0)

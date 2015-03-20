@@ -4,6 +4,7 @@ class ColorMarkerElement extends HTMLElement
 
   createdCallback: ->
     @emitter = new Emitter
+    @released = true
 
   attachedCallback: ->
 
@@ -15,14 +16,20 @@ class ColorMarkerElement extends HTMLElement
   getModel: -> @colorMarker
 
   setModel: (@colorMarker) ->
+    return unless @released
+    @released = false
     @subscriptions = new CompositeDisposable
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()
 
-  release: ->
+  isReleased: -> @released
+
+  release: (dispatchEvent=true) ->
+    return if @released
     @subscriptions.dispose()
     @subscriptions = null
     @colorMarker = null
-    @emitter.emit 'did-release'
+    @released = true
+    @emitter.emit('did-release') if dispatchEvent
 
 module.exports = ColorMarkerElement =
 document.registerElement 'pigments-color-marker', {

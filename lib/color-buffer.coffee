@@ -258,7 +258,7 @@ class ColorBuffer
     markers.map (marker) => @colorMarkersByMarkerId[marker.id]
 
   scanBufferForColors: ->
-    return if @destroyed
+    return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()

@@ -10,6 +10,7 @@ class ColorBufferElement extends HTMLElement
     @displayedMarkers = []
     @usedMarkers = []
     @unusedMarkers = []
+    @viewsByMarkers = new WeakMap
 
   attachedCallback: ->
 
@@ -50,15 +51,23 @@ class ColorBufferElement extends HTMLElement
   requestMarkerView: (marker) ->
     if @unusedMarkers.length
       view = @unusedMarkers.shift()
-      @usedMarkers.push(view)
-      return view
-    view = document.createElement('pigments-color-marker')
-    @shadowRoot.appendChild view
+    else
+      view = new ColorMarkerElement
+      view.onDidRelease => @releaseMarkerView(view)
+      @shadowRoot.appendChild view
+
+    view.setModel(marker)
     @usedMarkers.push(view)
+    @viewsByMarkers.set(marker, view)
+    view
 
   releaseMarkerView: (marker) ->
-    view = @usedMarkers.shift()
-    @unusedMarkers.push(view)
+    view = @viewsByMarkers.get(marker)
+    if view?
+      @viewsByMarkers.delete(marker)
+      @usedMarkers.splice(@usedMarkers.indexOf(view), 1)
+      view.release(false) unless view.isReleased()
+      @unusedMarkers.push(view)
 
 module.exports = ColorBufferElement =
 document.registerElement 'pigments-markers', {
