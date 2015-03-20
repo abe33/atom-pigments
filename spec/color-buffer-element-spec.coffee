@@ -95,7 +95,7 @@ describe 'ColorBufferElement', ->
           for marker in colorBufferElement.unusedMarkers
             expect(marker.release).toHaveBeenCalled()
 
-        describe 'and then some new marker are created', ->
+        describe 'and then a new marker is created', ->
           beforeEach ->
             editor.moveToBottom()
             editBuffer '\nfoo = #123456\n'
