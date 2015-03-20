@@ -1,6 +1,10 @@
 {CompositeDisposable, Emitter} = require 'atom'
 
+RENDERERS =
+  background: require './renderers/background'
+
 class ColorMarkerElement extends HTMLElement
+  renderer: new RENDERERS.background
 
   createdCallback: ->
     @emitter = new Emitter
@@ -20,6 +24,8 @@ class ColorMarkerElement extends HTMLElement
     @released = false
     @subscriptions = new CompositeDisposable
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()
+    content = @renderer.render(@colorMarker)
+    @appendChild(node) for node in content
 
   isReleased: -> @released
 
@@ -35,3 +41,6 @@ module.exports = ColorMarkerElement =
 document.registerElement 'pigments-color-marker', {
   prototype: ColorMarkerElement.prototype
 }
+
+ColorMarkerElement.setMarkerType = (markerType) ->
+  @prototype.renderer = new RENDERERS[markerType]

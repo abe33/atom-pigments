@@ -1,6 +1,7 @@
 {Emitter, CompositeDisposable} = require 'atom'
 ColorBuffer = require './color-buffer'
 ColorBufferElement = require './color-buffer-element'
+ColorMarkerElement = require './color-marker-element'
 ColorContext = require './color-context'
 Palette = require './palette'
 PathsLoader = require './paths-loader'
@@ -27,6 +28,9 @@ class ColorProject
         variable = @createProjectVariable(v)
         @createProjectVariableSubscriptions(variable)
         variable
+
+    @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
+      ColorMarkerElement.setMarkerType(type) if type?
 
     @bufferStates = buffers ? {}
 
@@ -91,7 +95,8 @@ class ColorProject
 
   initializeBuffers: (buffers) ->
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
-      @colorBufferForEditor(editor)
+      buffer = @colorBufferForEditor(editor)
+      atom.views.getView(buffer) if buffer?
 
   colorBufferForEditor: (editor) ->
     return unless editor?
@@ -112,6 +117,8 @@ class ColorProject
       @subscriptions.remove(subscription)
       subscription.dispose()
       delete @colorBuffersByEditorId[editor.id]
+
+    buffer
 
   colorBufferForPath: (path) ->
     for id,colorBuffer of @colorBuffersByEditorId

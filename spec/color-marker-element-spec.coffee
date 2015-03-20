@@ -18,10 +18,11 @@ describe 'ColorMarkerElement', ->
     text = 'red'
 
     colorMarker = new ColorMarker({marker, color, text})
+
+  it 'releases itself when the marker is destroyed', ->
     colorMarkerElement = new ColorMarkerElement
     colorMarkerElement.setModel(colorMarker)
 
-  it 'releases itself when the marker is destroyed', ->
     eventSpy = jasmine.createSpy('did-release')
     colorMarkerElement.onDidRelease(eventSpy)
     spyOn(colorMarkerElement, 'release').andCallThrough()
@@ -30,3 +31,13 @@ describe 'ColorMarkerElement', ->
 
     expect(colorMarkerElement.release).toHaveBeenCalled()
     expect(eventSpy).toHaveBeenCalled()
+
+  describe 'when the render mode is set to background', ->
+    beforeEach ->
+      ColorMarkerElement.setMarkerType('background')
+
+      colorMarkerElement = new ColorMarkerElement
+      colorMarkerElement.setModel(colorMarker)
+
+    it 'creates a region div for the color', ->
+      expect(colorMarkerElement.querySelectorAll('.region').length).toEqual(1)

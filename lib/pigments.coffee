@@ -17,6 +17,10 @@ module.exports =
     ignoredNames:
       type: 'array'
       default: []
+    markerType:
+      type: 'string'
+      default: 'background'
+      enum: ['background', 'outline', 'underline', 'dot']
 
   activate: (state) ->
     ColorProject = require './color-project'
