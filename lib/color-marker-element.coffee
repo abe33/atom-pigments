@@ -3,6 +3,7 @@
 RENDERERS =
   background: require './renderers/background'
   outline: require './renderers/outline'
+  underline: require './renderers/underline'
 
 class ColorMarkerElement extends HTMLElement
   renderer: new RENDERERS.background
@@ -14,6 +15,7 @@ class ColorMarkerElement extends HTMLElement
   attachedCallback: ->
 
   detachedCallback: ->
+    @release()
 
   onDidRelease: (callback) ->
     @emitter.on 'did-release', callback

@@ -57,7 +57,12 @@ atom-text-editor::shadow {
         background: @syntax-background-color;
       }
 
-      &.background {
+      &.underline {
+        height: 2px !important;
+        margin-top: 1.3em; // adjust to your liking
+      }
+
+      &.background, &.underline {
         .background-color;
       }
     }
