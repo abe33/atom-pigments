@@ -216,7 +216,6 @@ class Color
   # Public: Returns a {String} reprensenting the color with the CSS `rgba`
   # notation.
   toCSS: ->
-    return @name if @name?
     rnd = Math.round
 
     if @alpha is 1

@@ -196,8 +196,8 @@ describe 'Color', ->
 
     describe 'when the color have a CSS name', ->
       it 'only returns the color name', ->
-        color.name = 'orange'
-        expect(color.toCSS()).toEqual('orange')
+        color = new Color 'orange'
+        expect(color.toCSS()).toEqual('rgb(255,165,0)')
 
   describe '::interpolate', ->
     it 'blends the passed-in color linearly based on the passed-in ratio', ->
