@@ -24,6 +24,13 @@ class ColorMarkerElement extends HTMLElement
     @released = false
     @subscriptions = new CompositeDisposable
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()
+    @subscriptions.add @colorMarker.marker.onDidChange ({isValid}) =>
+      if isValid then @render() else @release()
+
+    @render()
+
+  render: ->
+    @innerHTML = ''
     content = @renderer.render(@colorMarker)
     @appendChild(node) for node in content
 
@@ -35,6 +42,7 @@ class ColorMarkerElement extends HTMLElement
     @subscriptions = null
     @colorMarker = null
     @released = true
+    @innerHTML = ''
     @emitter.emit('did-release') if dispatchEvent
 
 module.exports = ColorMarkerElement =

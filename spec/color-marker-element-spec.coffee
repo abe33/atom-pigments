@@ -3,7 +3,7 @@ ColorMarker = require '../lib/color-marker'
 ColorMarkerElement = require '../lib/color-marker-element'
 {TextEditor} = require 'atom'
 
-fdescribe 'ColorMarkerElement', ->
+describe 'ColorMarkerElement', ->
   [editor, marker, colorMarker, colorMarkerElement] = []
 
   beforeEach ->
@@ -59,3 +59,18 @@ fdescribe 'ColorMarkerElement', ->
     it 'sets the background of the region with the color css value', ->
       for region in regions
         expect(region.style.backgroundColor).toEqual('rgb(255, 0, 0)')
+
+    describe 'when the marker is modified', ->
+      beforeEach ->
+        spyOn(colorMarkerElement.renderer, 'render').andCallThrough()
+        editor.moveToTop()
+        editor.insertText('\n\n')
+
+      it 'renders again the marker content', ->
+        expect(colorMarkerElement.renderer.render).toHaveBeenCalled()
+        expect(colorMarkerElement.querySelectorAll('.region').length).toEqual(4)
+
+    describe 'when released', ->
+      it 'removes all the previously rendered content', ->
+        colorMarkerElement.release()
+        expect(colorMarkerElement.children.length).toEqual(0)
