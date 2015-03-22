@@ -156,6 +156,10 @@ describe 'ColorMarkerElement', ->
       expect(regions[2].textContent).toEqual('')
       expect(regions[3].textContent).toEqual('')
 
+    it 'sets the background of the region with the color css value', ->
+      for region in regions
+        expect(region.style.backgroundColor).toEqual('rgb(255, 0, 0)')
+
     describe 'when the marker is modified', ->
       beforeEach ->
         spyOn(colorMarkerElement.renderer, 'render').andCallThrough()
