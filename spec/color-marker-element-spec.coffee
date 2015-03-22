@@ -37,6 +37,14 @@ describe 'ColorMarkerElement', ->
     expect(colorMarkerElement.release).toHaveBeenCalled()
     expect(eventSpy).toHaveBeenCalled()
 
+  ##    ########     ###     ######  ##    ##
+  ##    ##     ##   ## ##   ##    ## ##   ##
+  ##    ##     ##  ##   ##  ##       ##  ##
+  ##    ########  ##     ## ##       #####
+  ##    ##     ## ######### ##       ##  ##
+  ##    ##     ## ##     ## ##    ## ##   ##
+  ##    ########  ##     ##  ######  ##    ##
+
   describe 'when the render mode is set to background', ->
     [regions] = []
     beforeEach ->
@@ -75,6 +83,14 @@ describe 'ColorMarkerElement', ->
         colorMarkerElement.release()
         expect(colorMarkerElement.children.length).toEqual(0)
 
+  ##     #######  ##     ## ######## ##       #### ##    ## ########
+  ##    ##     ## ##     ##    ##    ##        ##  ###   ## ##
+  ##    ##     ## ##     ##    ##    ##        ##  ####  ## ##
+  ##    ##     ## ##     ##    ##    ##        ##  ## ## ## ######
+  ##    ##     ## ##     ##    ##    ##        ##  ##  #### ##
+  ##    ##     ## ##     ##    ##    ##        ##  ##   ### ##
+  ##     #######   #######     ##    ######## #### ##    ## ########
+
   describe 'when the render mode is set to outline', ->
     [regions] = []
     beforeEach ->
@@ -112,6 +128,14 @@ describe 'ColorMarkerElement', ->
       it 'removes all the previously rendered content', ->
         colorMarkerElement.release()
         expect(colorMarkerElement.children.length).toEqual(0)
+
+  ##    ##     ## ##    ## ########  ######## ########
+  ##    ##     ## ###   ## ##     ## ##       ##     ##
+  ##    ##     ## ####  ## ##     ## ##       ##     ##
+  ##    ##     ## ## ## ## ##     ## ######   ########
+  ##    ##     ## ##  #### ##     ## ##       ##   ##
+  ##    ##     ## ##   ### ##     ## ##       ##    ##
+  ##     #######  ##    ## ########  ######## ##     ##
 
   describe 'when the render mode is set to underline', ->
     [regions] = []
