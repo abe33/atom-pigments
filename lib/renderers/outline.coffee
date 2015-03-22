@@ -9,7 +9,7 @@ class OutlineRenderer extends RegionRenderer
     color = colorMarker.color.toCSS()
 
     style =
-      webkitFilter: "drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color})"
+      webkitFilter: "drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color})"
 
     rowSpan = range.end.row - range.start.row
     regions = []
