@@ -36,12 +36,12 @@ class ColorBufferElement extends HTMLElement
   updateMarkers: ->
     markers = @colorBuffer.findColorMarkers({
       intersectsScreenRowRange: @editor.displayBuffer.getVisibleRowRange()
-    }).filter (marker) -> marker.color?.isValid()
+    }).filter (marker) -> marker?.color?.isValid()
 
     for m in @displayedMarkers when m not in markers
       @releaseMarkerView(m)
 
-    for m in markers when m.color.isValid() and m not in @displayedMarkers
+    for m in markers when m.color?.isValid() and m not in @displayedMarkers
       @requestMarkerView(m)
 
     @displayedMarkers = markers

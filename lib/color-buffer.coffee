@@ -140,7 +140,7 @@ class ColorBuffer
     createdMarkers = @createVariableMarkers(toCreate)
     newMarkers = newMarkers.concat(createdMarkers)
 
-    toDestroy = @variableMarkers.filter (marker) -> marker not in newMarkers
+    toDestroy = @variableMarkers?.filter((marker) -> marker not in newMarkers) ? []
 
     toDestroy.forEach (marker) -> marker.destroy()
 
