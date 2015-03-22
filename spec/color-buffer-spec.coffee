@@ -292,3 +292,13 @@ describe 'ColorBuffer', ->
     it 'restores the editor markers', ->
       expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+
+    it 'restores the ability to fetch markers', ->
+      expect(colorBuffer.findColorMarkers().length).toEqual(4)
+      expect(colorBuffer.findVariableMarkers().length).toEqual(4)
+
+      for marker in colorBuffer.findColorMarkers()
+        expect(marker).toBeDefined()
+
+      for marker in colorBuffer.findVariableMarkers()
+        expect(marker).toBeDefined()

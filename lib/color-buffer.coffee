@@ -57,7 +57,7 @@ class ColorBuffer
       })
       variable = @project.getVariableByName(state.variable)
       variable.bufferRange ?= bufferRange
-      new VariableMarker {marker, variable}
+      @variableMarkersByMarkerId[marker.id] = new VariableMarker {marker, variable}
 
     @colorMarkers = colorMarkers.map (state) =>
       marker = @editor.markBufferRange(state.bufferRange, {
@@ -66,7 +66,7 @@ class ColorBuffer
       })
       color = new Color(state.color)
       color.variables = state.variables
-      new ColorMarker {
+      @colorMarkersByMarkerId[marker.id] = new ColorMarker {
         marker
         color
         text: state.text
@@ -155,11 +155,11 @@ class ColorBuffer
 
     @scanBufferForColors().then (results) => @updateColorMarkers(results)
 
-  findVariableMarker: (properties) ->
+  findVariableMarker: (properties={}) ->
     for marker in @variableMarkers
       return marker if marker.match(properties)
 
-  findVariableMarkers: (properties) ->
+  findVariableMarkers: (properties={}) ->
     properties.type = 'pigments-variable'
     markers = @editor.findMarkers(properties)
     markers.map (marker) => @variableMarkersByMarkerId[marker.id]
@@ -247,12 +247,12 @@ class ColorBuffer
       destroyed: toDestroy
     }
 
-  findColorMarker: (properties) ->
+  findColorMarker: (properties={}) ->
     return unless @colorMarkers?
     for marker in @colorMarkers
       return marker if marker?.match(properties)
 
-  findColorMarkers: (properties) ->
+  findColorMarkers: (properties={}) ->
     properties.type = 'pigments-color'
     markers = @editor.findMarkers(properties)
     markers.map (marker) => @colorMarkersByMarkerId[marker.id]
