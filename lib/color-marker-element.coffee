@@ -28,6 +28,9 @@ class ColorMarkerElement extends HTMLElement
     @subscriptions.add @colorMarker.marker.onDidChange ({isValid}) =>
       if isValid then @render() else @release()
 
+    @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
+      @render()
+
     @render()
 
   render: ->
@@ -36,6 +39,8 @@ class ColorMarkerElement extends HTMLElement
     @appendChild(region) for region in regions
     if style?
       @style[k] = v for k,v of style
+    else
+      @style.cssText = ''
 
   isReleased: -> @released
 
