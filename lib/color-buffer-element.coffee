@@ -26,6 +26,7 @@ class ColorBufferElement extends HTMLElement
 
     @colorBuffer.initialize().then => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
+    @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
 
     @attach()
 
