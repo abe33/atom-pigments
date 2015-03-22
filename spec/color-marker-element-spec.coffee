@@ -3,17 +3,20 @@ ColorMarker = require '../lib/color-marker'
 ColorMarkerElement = require '../lib/color-marker-element'
 {TextEditor} = require 'atom'
 
-describe 'ColorMarkerElement', ->
+fdescribe 'ColorMarkerElement', ->
   [editor, marker, colorMarker, colorMarkerElement] = []
 
   beforeEach ->
-
-    editor = new TextEditor(text: """
+    editor = new TextEditor({})
+    editor.setText("""
     body {
       color: red
     }
     """)
-    marker = editor.markBufferRange([[1,9],[1,12]], type: 'pigments-color', invalidate: 'touch')
+    marker = editor.markBufferRange([[1,9],[2,1]], {
+      type: 'pigments-color'
+      invalidate: 'touch'
+    })
     color = new Color('#ff0000')
     text = 'red'
 
@@ -40,4 +43,12 @@ describe 'ColorMarkerElement', ->
       colorMarkerElement.setModel(colorMarker)
 
     it 'creates a region div for the color', ->
-      expect(colorMarkerElement.querySelectorAll('.region').length).toEqual(1)
+      expect(colorMarkerElement.querySelectorAll('.region.background').length).toEqual(2)
+
+    it 'fills the region with the covered text', ->
+      expect(colorMarkerElement.querySelector('.region').textContent).toEqual('red')
+      expect(colorMarkerElement.querySelector('.region:last-child').textContent).toEqual('}')
+
+    it 'sets the background of the region with the color css value', ->
+      expect(colorMarkerElement.querySelector('.region').style.backgroundColor).toEqual('rgb(255, 0, 0)')
+      expect(colorMarkerElement.querySelector('.region:last-child').style.backgroundColor).toEqual('rgb(255, 0, 0)')

@@ -3,3 +3,17 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+
+pigments-markers {
+  position: relative;
+  display: block;
+  z-index: 1;
+}
+pigments-markers::shadow pigments-color-marker, pigments-color-marker {
+  display: block;
+  position: absolute;
+
+  .region {
+    position: absolute;
+  }
+}
