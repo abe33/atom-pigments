@@ -21,6 +21,7 @@ class BufferColorsScanner
       registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
         [d,d,name] = match
         baseColor = context.readColor(name)
+        @colorExpression = name
         @rgba = baseColor.rgba
 
   scan: ->
