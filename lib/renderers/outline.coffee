@@ -1,17 +1,15 @@
 RegionRenderer = require './region-renderer'
 
 module.exports =
-class BackgroundRenderer extends RegionRenderer
-  includeTextInRegion: true
+class OutlineRenderer extends RegionRenderer
   render: (colorMarker) ->
     range = colorMarker.marker.getScreenRange()
     return [] if range.isEmpty()
 
     color = colorMarker.color.toCSS()
 
-    l = colorMarker.color.luma
-
-    colorText = if l > 0.43 then 'black' else 'white'
+    style =
+      webkitFilter: "drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color})"
 
     rowSpan = range.end.row - range.start.row
     regions = []
@@ -25,11 +23,8 @@ class BackgroundRenderer extends RegionRenderer
 
       regions.push @createRegion({ row: range.end.row, column: 0 }, range.end, colorMarker)
 
-    @styleRegion(region, color, colorText) for region in regions
-    {regions}
+    @styleRegion(region) for region in regions
+    {regions, style}
 
-  styleRegion: (region, color, textColor) ->
-    region.classList.add('background')
-
-    region.style.backgroundColor = color
-    region.style.color = textColor
+  styleRegion: (region) ->
+    region.classList.add('outline')

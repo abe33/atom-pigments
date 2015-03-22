@@ -2,6 +2,7 @@
 
 RENDERERS =
   background: require './renderers/background'
+  outline: require './renderers/outline'
 
 class ColorMarkerElement extends HTMLElement
   renderer: new RENDERERS.background
@@ -31,8 +32,10 @@ class ColorMarkerElement extends HTMLElement
 
   render: ->
     @innerHTML = ''
-    content = @renderer.render(@colorMarker)
-    @appendChild(node) for node in content
+    {style, regions} = @renderer.render(@colorMarker)
+    @appendChild(region) for region in regions
+    if style?
+      @style[k] = v for k,v of style
 
   isReleased: -> @released
 
