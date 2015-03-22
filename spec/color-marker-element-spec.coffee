@@ -10,10 +10,12 @@ fdescribe 'ColorMarkerElement', ->
     editor = new TextEditor({})
     editor.setText("""
     body {
-      color: red
+      color: red;
+      bar: foo;
+      foo: bar;
     }
     """)
-    marker = editor.markBufferRange([[1,9],[2,1]], {
+    marker = editor.markBufferRange([[1,9],[4,1]], {
       type: 'pigments-color'
       invalidate: 'touch'
     })
@@ -36,19 +38,24 @@ fdescribe 'ColorMarkerElement', ->
     expect(eventSpy).toHaveBeenCalled()
 
   describe 'when the render mode is set to background', ->
+    [regions] = []
     beforeEach ->
       ColorMarkerElement.setMarkerType('background')
 
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setModel(colorMarker)
 
+      regions = colorMarkerElement.querySelectorAll('.region.background')
+
     it 'creates a region div for the color', ->
-      expect(colorMarkerElement.querySelectorAll('.region.background').length).toEqual(2)
+      expect(regions.length).toEqual(4)
 
     it 'fills the region with the covered text', ->
-      expect(colorMarkerElement.querySelector('.region').textContent).toEqual('red')
-      expect(colorMarkerElement.querySelector('.region:last-child').textContent).toEqual('}')
+      expect(regions[0].textContent).toEqual('red;')
+      expect(regions[1].textContent).toEqual('  bar: foo;')
+      expect(regions[2].textContent).toEqual('  foo: bar;')
+      expect(regions[3].textContent).toEqual('}')
 
     it 'sets the background of the region with the color css value', ->
-      expect(colorMarkerElement.querySelector('.region').style.backgroundColor).toEqual('rgb(255, 0, 0)')
-      expect(colorMarkerElement.querySelector('.region:last-child').style.backgroundColor).toEqual('rgb(255, 0, 0)')
+      for region in regions
+        expect(region.style.backgroundColor).toEqual('rgb(255, 0, 0)')

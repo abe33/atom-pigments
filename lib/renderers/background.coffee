@@ -13,17 +13,19 @@ class BackgroundRenderer
 
     rowSpan = range.end.row - range.start.row
     regions = []
-    if rowSpan == 0
-      regions.push @createRegion(1, range.start, range.end, color, colorText, colorMarker)
+    if rowSpan is 0
+      regions.push @createRegion(range.start, range.end, color, colorText, colorMarker)
     else
-      regions.push @createRegion(1, range.start, {row: range.start.row, column: Infinity}, color, colorText, colorMarker)
+      regions.push @createRegion(range.start, {row: range.start.row, column: Infinity}, color, colorText, colorMarker)
       if rowSpan > 1
-        regions.push @createRegion(rowSpan - 1, { row: range.start.row + 1, column: 0}, {row: range.start.row + 1, column: Infinity}, color, colorText, colorMarker)
-      regions.push @createRegion(1, { row: range.end.row, column: 0 }, range.end, color, colorText, colorMarker)
+        for row in [range.start.row + 1...range.end.row]
+          regions.push @createRegion({row, column: 0}, {row, column: Infinity}, color, colorText, colorMarker)
+
+      regions.push @createRegion({ row: range.end.row, column: 0 }, range.end, color, colorText, colorMarker)
 
     regions
 
-  createRegion: (rows, start, end, color, textColor, colorMarker) ->
+  createRegion: (start, end, color, textColor, colorMarker) ->
     displayBuffer = colorMarker.marker.displayBuffer
     lineHeight = displayBuffer.getLineHeightInPixels()
     charWidth = displayBuffer.getDefaultCharWidth()
@@ -32,7 +34,7 @@ class BackgroundRenderer
     text = displayBuffer.buffer.getTextInRange(bufferRange)
 
     css = displayBuffer.pixelPositionForScreenPosition(start)
-    css.height = lineHeight * rows
+    css.height = lineHeight
     if end
       css.width = displayBuffer.pixelPositionForScreenPosition(end).left - css.left
     else
