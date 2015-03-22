@@ -181,7 +181,9 @@ class Color
   }
 
   isValid: ->
-    !@invalid and !isNaN(@red) and !isNaN(@green) and !isNaN(@blue) and !isNaN(@alpha)
+    !@invalid and
+    @red? and @green? and @blue? and @alpha? and
+    !isNaN(@red) and !isNaN(@green) and !isNaN(@blue) and !isNaN(@alpha)
 
   clone: -> new Color(@red, @green, @blue, @alpha)
 
