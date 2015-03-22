@@ -15,48 +15,60 @@ class RegionRenderer
     if rowSpan is 0
       regions.push @createRegion(range.start, range.end, colorMarker)
     else
-      screenLine = displayBuffer.screenLines[range.start.row]
-
       regions.push @createRegion(
         range.start,
         {
           row: range.start.row
-          column: screenLine.clipScreenColumn(Infinity)
+          column: Infinity
         },
         colorMarker,
+        displayBuffer.screenLines[range.start.row],
         displayBuffer.screenLines[range.start.row + 1]
       )
       if rowSpan > 1
         for row in [range.start.row + 1...range.end.row]
-          screenLine = displayBuffer.screenLines[range.start.row]
-
           regions.push @createRegion(
-            {row, column: screenLine.clipScreenColumn(0)},
-            {row, column: screenLine.clipScreenColumn(Infinity)},
+            {row, column: 0},
+            {row, column: Infinity},
             colorMarker,
+            displayBuffer.screenLines[row],
             displayBuffer.screenLines[row + 1]
           )
 
-      screenLine = displayBuffer.screenLines[range.end.row]
       regions.push @createRegion(
-        {row: range.end.row, column: screenLine.clipScreenColumn(0)},
+        {row: range.end.row, column: 0},
         range.end,
         colorMarker,
+        displayBuffer.screenLines[range.end.row],
         displayBuffer.screenLines[range.end.row + 1]
       )
 
     regions
 
-  createRegion: (start, end, colorMarker, nextScreenLine) ->
+  createRegion: (start, end, colorMarker, screenLine, nextScreenLine) ->
     displayBuffer = colorMarker.marker.displayBuffer
     lineHeight = displayBuffer.getLineHeightInPixels()
     charWidth = displayBuffer.getDefaultCharWidth()
 
-    bufferRange = displayBuffer.bufferRangeForScreenRange({start, end})
-    bufferRange.end.column++ if nextScreenLine?.isSoftWrapped()
+    clippedStart = {
+      row: start.row
+      column: screenLine?.clipScreenColumn(start.column) ? start.column
+    }
+    clippedEnd = {
+      row: end.row
+      column: screenLine?.clipScreenColumn(end.column) ? end.column
+    }
 
-    startPosition = displayBuffer.pixelPositionForScreenPosition(start)
-    endPosition = displayBuffer.pixelPositionForScreenPosition(end)
+    bufferRange = displayBuffer.bufferRangeForScreenRange({
+      start: clippedStart
+      end: clippedEnd
+    })
+
+    if nextScreenLine?.isSoftWrapped() and end.column is Infinity
+      bufferRange.end.column++
+
+    startPosition = displayBuffer.pixelPositionForScreenPosition(clippedStart)
+    endPosition = displayBuffer.pixelPositionForScreenPosition(clippedEnd)
 
     text = displayBuffer.buffer.getTextInRange(bufferRange)
 
@@ -64,7 +76,7 @@ class RegionRenderer
     css.left = startPosition.left
     css.top = startPosition.top
     css.width = endPosition.left - startPosition.left
-    css.width += charWidth if nextScreenLine?.isSoftWrapped()
+    css.width += charWidth if nextScreenLine?.isSoftWrapped() and end.column is Infinity
     css.height = lineHeight
 
     region = document.createElement('div')
