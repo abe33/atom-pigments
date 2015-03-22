@@ -12,6 +12,12 @@ class ColorBufferElement extends HTMLElement
     @unusedMarkers = []
     @viewsByMarkers = new WeakMap
 
+    @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
+      if type is 'background'
+        @classList.add('overlay')
+      else
+        @classList.remove('overlay')
+
   attachedCallback: ->
 
   detachedCallback: ->

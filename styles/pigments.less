@@ -3,13 +3,17 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+@import "syntax-variables";
 
 atom-text-editor::shadow {
 
   pigments-markers {
     position: relative;
     display: block;
-    z-index: 1;
+
+    &.overlay {
+      z-index: 1;
+    }
   }
   pigments-markers::shadow pigments-color-marker, pigments-color-marker {
     display: block;
@@ -17,7 +21,12 @@ atom-text-editor::shadow {
 
     .region {
       position: absolute;
+      white-space: nowrap;
+
+      &.outline {
+        background: @syntax-background-color;
+      }
     }
   }
-  
+
 }
