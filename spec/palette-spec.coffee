@@ -1,9 +1,7 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
-forOf = (iter, fn) -> `for (value of iter) { fn(value) }`; return
-
-describe 'Palette', ->
+fdescribe 'Palette', ->
   [colors, palette] = []
 
   beforeEach ->
@@ -37,7 +35,7 @@ describe 'Palette', ->
       ]
       map = palette.getUniqueColorsMap()
       keys = []
-      forOf map.keys(), (k) -> keys.push(k)
+      map.forEach (v,k) -> keys.push(k)
 
       expect(keys.length).toEqual(3)
 
