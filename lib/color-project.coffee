@@ -1,4 +1,6 @@
 {Emitter, CompositeDisposable} = require 'atom'
+minimatch = require 'minimatch'
+
 ColorBuffer = require './color-buffer'
 ColorBufferElement = require './color-buffer-element'
 ColorMarkerElement = require './color-marker-element'
@@ -144,6 +146,11 @@ class ColorProject
       }
       PathsLoader.startTask config, (results) -> resolve(results)
 
+  isIgnoredPath: (path) ->
+    path = atom.project.relativize(path)
+    ignores = atom.config.get('pigments.ignoredNames') ? []
+    ignores = ignores.concat(@ignores) if @ignores?
+    return true for ignore in ignores when minimatch(path, ignore)
   getPalette: ->
     return new Palette unless @isInitialized()
 

@@ -90,6 +90,8 @@ class ColorBuffer
     @colorMarkers?.forEach (marker) -> marker.destroy()
     @destroyed = true
 
+  isIgnored: -> @project.isIgnoredPath(@editor.getPath())
+
   ##    ##     ##    ###    ########
   ##    ##     ##   ## ##   ##     ##
   ##    ##     ##  ##   ##  ##     ##

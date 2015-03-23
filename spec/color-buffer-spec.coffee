@@ -23,6 +23,8 @@ describe 'ColorBuffer', ->
       '*.less'
     ]
 
+    atom.config.set 'pigments.ignoredNames', ['project/vendor/**']
+
     waitsForPromise ->
       atom.workspace.open('four-variables.styl').then (o) -> editor = o
 
@@ -254,6 +256,26 @@ describe 'ColorBuffer', ->
         it 'removes the previous editor markers', ->
           expect(editor.findMarkers(type: 'pigments-color').length).toEqual(2)
 
+  ##    ####  ######   ##    ##  #######  ########  ######## ########
+  ##     ##  ##    ##  ###   ## ##     ## ##     ## ##       ##     ##
+  ##     ##  ##        ####  ## ##     ## ##     ## ##       ##     ##
+  ##     ##  ##   #### ## ## ## ##     ## ########  ######   ##     ##
+  ##     ##  ##    ##  ##  #### ##     ## ##   ##   ##       ##     ##
+  ##     ##  ##    ##  ##   ### ##     ## ##    ##  ##       ##     ##
+  ##    ####  ######   ##    ##  #######  ##     ## ######## ########
+
+  describe 'with a buffer part of the ignored files', ->
+    beforeEach ->
+      waitsForPromise ->
+        atom.workspace.open('project/vendor/css/variables.less').then (o) -> editor = o
+
+      runs ->
+        colorBuffer = project.colorBufferForEditor(editor)
+
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
+    it 'knows that it is part of the ignored files', ->
+      expect(colorBuffer.isIgnored()).toBeTruthy()
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
   ##    ##     ## ##       ##          ##    ##     ## ##     ## ##
