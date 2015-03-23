@@ -3,6 +3,7 @@ path = require 'path'
 ColorProject = require '../lib/color-project'
 ColorBuffer = require '../lib/color-buffer'
 ProjectVariable = require '../lib/project-variable'
+jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
@@ -30,11 +31,8 @@ describe 'ColorProject', ->
         root: rootPath
         timestamp: new Date().toJSON()
 
-      jsonPath = path.resolve(__dirname, "./fixtures/base-project.json")
-      json = fs.readFileSync(jsonPath).toString()
-      json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
-
-      project = ColorProject.deserialize(JSON.parse(json))
+      json = jsonFixture 'base-project.json', data
+      project = ColorProject.deserialize(json)
 
       expect(project).toBeDefined()
       expect(project.getPaths()).toEqual([
@@ -323,23 +321,21 @@ describe 'ColorProject', ->
   ##    ##     ## ########  ######     ##     #######  ##     ## ########
 
   describe 'when restored', ->
-    createProject = (params) ->
+    createProject = (params={}) ->
       {stateFixture} = params
       delete params.stateFixture
 
       params.root ?= rootPath
       params.timestamp ?=  new Date().toJSON()
+      params.variableMarkers ?= [1..12]
+      params.colorMarkers ?= [13..24]
 
-      jsonPath = path.resolve(__dirname, stateFixture)
-      json = fs.readFileSync(jsonPath).toString()
-      json = json.replace /#\{(\w+)\}/g, (m,w) -> params[w]
-
-      ColorProject.deserialize(JSON.parse(json))
+      ColorProject.deserialize(jsonFixture(stateFixture, params))
 
     describe 'with a timestamp more recent than the files last modification date', ->
       beforeEach ->
         project = createProject
-          stateFixture: "./fixtures/empty-project.json"
+          stateFixture: "empty-project.json"
 
         waitsForPromise -> project.initialize()
 
@@ -350,7 +346,7 @@ describe 'ColorProject', ->
       beforeEach ->
         project = createProject
           timestamp: new Date(0).toJSON()
-          stateFixture: "./fixtures/empty-project.json"
+          stateFixture: "empty-project.json"
 
         waitsForPromise -> project.initialize()
 
@@ -360,7 +356,7 @@ describe 'ColorProject', ->
     describe 'with some files not saved in the project state', ->
       beforeEach ->
         project = createProject
-          stateFixture: "./fixtures/partial-project.json"
+          stateFixture: "partial-project.json"
 
         waitsForPromise -> project.initialize()
 
@@ -375,7 +371,7 @@ describe 'ColorProject', ->
 
         runs ->
           project = createProject
-            stateFixture: "./fixtures/open-buffer-project.json"
+            stateFixture: "open-buffer-project.json"
             id: editor.id
 
           spyOn(ColorBuffer.prototype, 'variablesAvailable').andCallThrough()
@@ -400,7 +396,7 @@ describe 'ColorProject', ->
           spyOn(ColorBuffer.prototype, 'updateVariableMarkers').andCallThrough()
           project = createProject
             timestamp: new Date(0).toJSON()
-            stateFixture: "./fixtures/open-buffer-project.json"
+            stateFixture: "open-buffer-project.json"
             id: editor.id
 
         runs -> colorBuffer = project.colorBuffersByEditorId[editor.id]

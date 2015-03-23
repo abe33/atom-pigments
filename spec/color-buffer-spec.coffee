@@ -1,5 +1,6 @@
 path = require 'path'
 ColorBuffer = require '../lib/color-buffer'
+jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
 
 describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
@@ -15,14 +16,6 @@ describe 'ColorBuffer', ->
 
     editor.insertText(text)
     editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
-
-  jsonFixture = (fixture, data) ->
-    jsonPath = path.resolve(__dirname, 'fixtures', fixture)
-    json = fs.readFileSync(jsonPath).toString()
-    json = json.replace /#\{(\w+)\}/g, (m,w) -> data[w]
-
-    JSON.parse(json)
-
 
   beforeEach ->
     atom.config.set 'pigments.sourceNames', [
@@ -161,7 +154,10 @@ describe 'ColorBuffer', ->
           expected = jsonFixture "four-variables-buffer.json", {
             id: editor.id
             root: atom.project.getPaths()[0]
+            colorMarkers: colorBuffer.getColorMarkers().map (m) -> m.marker.id
+            variableMarkers: colorBuffer.getVariableMarkers().map (m) -> m.marker.id
           }
+
           expect(colorBuffer.serialize()).toEqual(expected)
 
     ##     ######   #######  ##        #######  ########   ######
@@ -272,7 +268,11 @@ describe 'ColorBuffer', ->
       runs ->
         project.colorBufferForEditor(editor).destroy()
 
-        state = jsonFixture('four-variables-buffer.json', id: editor.id)
+        state = jsonFixture('four-variables-buffer.json', {
+          id: editor.id
+          colorMarkers: [1..4]
+          variableMarkers: [5..8]
+        })
         state.editor = editor
         state.project = project
         colorBuffer = new ColorBuffer(state)

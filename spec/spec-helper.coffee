@@ -55,3 +55,16 @@ beforeEach ->
       Math.round(@actual.green) is color.green and
       Math.round(@actual.blue) is color.blue and
       compare(@actual.alpha, color.alpha, 1)
+
+module.exports =
+  jsonFixture: (paths...) -> (fixture, data) ->
+    jsonPath = path.resolve(paths..., fixture)
+    json = fs.readFileSync(jsonPath).toString()
+    json = json.replace /#\{([\w\[\]]+)\}/g, (m,w) ->
+      if match = /^\[(\w+)\]$/.exec(w)
+        [_,w] = match
+        data[w].shift()
+      else
+        data[w]
+
+    JSON.parse(json)
