@@ -4,6 +4,7 @@ RENDERERS =
   background: require './renderers/background'
   outline: require './renderers/outline'
   underline: require './renderers/underline'
+  dot: require './renderers/dot'
 
 class ColorMarkerElement extends HTMLElement
   renderer: new RENDERERS.background
@@ -37,8 +38,11 @@ class ColorMarkerElement extends HTMLElement
 
   render: ->
     @innerHTML = ''
-    {style, regions} = @renderer.render(@colorMarker)
-    @appendChild(region) for region in regions
+    {style, regions, class: cls} = @renderer.render(@colorMarker)
+
+    @appendChild(region) for region in regions if regions?
+    @classList.add(cls) if cls?
+
     if style?
       @style[k] = v for k,v of style
     else
@@ -53,6 +57,8 @@ class ColorMarkerElement extends HTMLElement
     @colorMarker = null
     @released = true
     @innerHTML = ''
+    @className = ''
+    @style.cssText = ''
     @emitter.emit('did-release') if dispatchEvent
 
 module.exports = ColorMarkerElement =

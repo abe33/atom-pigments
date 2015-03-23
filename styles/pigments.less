@@ -35,36 +35,43 @@
   }
 }
 
-atom-text-editor::shadow {
+atom-text-editor::shadow pigments-markers,
+pigments-markers {
+  position: relative;
+  display: block;
 
-  pigments-markers {
-    position: relative;
-    display: block;
+  &.overlay {
+    z-index: 1;
+  }
+}
+atom-text-editor::shadow pigments-markers::shadow pigments-color-marker,
+pigments-markers::shadow pigments-color-marker,
+pigments-color-marker {
+  display: block;
+  position: absolute;
 
-    &.overlay {
-      z-index: 1;
+  .region {
+    position: absolute;
+    white-space: pre;
+
+    &.outline {
+      background: @syntax-background-color;
+    }
+
+    &.underline {
+      height: 2px !important;
+      margin-top: 1.3em; // adjust to your liking
+    }
+
+    &.background, &.underline {
+      .background-color;
     }
   }
-  pigments-markers::shadow pigments-color-marker, pigments-color-marker {
-    display: block;
-    position: absolute;
 
-    .region {
-      position: absolute;
-      white-space: pre;
+  &.dot {
+    width: 16px;
+    height: 16px;
 
-      &.outline {
-        background: @syntax-background-color;
-      }
-
-      &.underline {
-        height: 2px !important;
-        margin-top: 1.3em; // adjust to your liking
-      }
-
-      &.background, &.underline {
-        .background-color;
-      }
-    }
+    border-radius: 10px;
   }
 }
