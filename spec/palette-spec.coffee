@@ -3,7 +3,7 @@ require './spec-helper'
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
-fdescribe 'Palette', ->
+describe 'Palette', ->
   [colors, palette] = []
 
   beforeEach ->
