@@ -1,6 +1,8 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
+forOf = (iter, fn) -> `for (value of iter) { fn(value) }`; return
+
 describe 'Palette', ->
   [colors, palette] = []
 
@@ -25,3 +27,22 @@ describe 'Palette', ->
         'blue'
         'redCopy'
       ])
+
+  describe '::getUniqueColorsMap', ->
+    it 'returns a Map that map colors to the variables that define them', ->
+      expectedKeys = [
+        new Color '#ff0000'
+        new Color '#00ff00'
+        new Color '#0000ff'
+      ]
+      map = palette.getUniqueColorsMap()
+      keys = []
+      forOf map.keys(), (k) -> keys.push(k)
+
+      expect(keys.length).toEqual(3)
+
+      expect(keys[i]).toBeColor(key) for key,i in expectedKeys
+
+      expect(map.get(keys[0])).toEqual(['red', 'redCopy'])
+      expect(map.get(keys[1])).toEqual(['green'])
+      expect(map.get(keys[2])).toEqual(['blue'])
