@@ -316,8 +316,9 @@ describe 'ColorBuffer', ->
 
         state = jsonFixture('four-variables-buffer.json', {
           id: editor.id
-          colorMarkers: [1..4]
-          variableMarkers: [5..8]
+          root: atom.project.getPaths()[0]
+          colorMarkers: [-1..-4]
+          variableMarkers: [-5..-8]
         })
         state.editor = editor
         state.project = project
