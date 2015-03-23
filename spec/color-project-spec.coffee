@@ -113,6 +113,15 @@ describe 'ColorProject', ->
       it 'returns a promise hooked on the initialize promise', ->
         expect(project.initialize).toHaveBeenCalled()
 
+    describe '::setIgnores', ->
+      beforeEach ->
+        project.setIgnores([])
+
+        waitsForPromise -> project.initialize()
+
+      it 'initializes the project with the new paths', ->
+        expect(project.getVariables().length).toEqual(32)
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
@@ -311,6 +320,35 @@ describe 'ColorProject', ->
 
         it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
+
+    describe '::setIgnores', ->
+      describe 'with an empty array', ->
+        beforeEach ->
+          expect(project.getVariables().length).toEqual(12)
+
+          spy = jasmine.createSpy 'did-update-variables'
+          project.onDidUpdateVariables(spy)
+          project.setIgnores([])
+
+          waitsFor -> spy.callCount > 0
+
+        it 'reloads the variables from the new paths', ->
+          expect(project.getVariables().length).toEqual(32)
+
+      describe 'with a more restrictive array', ->
+        beforeEach ->
+          expect(project.getVariables().length).toEqual(12)
+
+          spy = jasmine.createSpy 'did-update-variables'
+          project.onDidUpdateVariables(spy)
+          project.setIgnores(['vendor/*', '**/*.styl'])
+
+          waitsFor -> spy.callCount > 0
+
+        it 'clears all the variables as there is no legible paths', ->
+          expect(project.getPaths().length).toEqual(0)
+          expect(project.getVariables().length).toEqual(0)
+
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##

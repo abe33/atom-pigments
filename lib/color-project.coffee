@@ -53,10 +53,17 @@ class ColorProject
     return Promise.resolve(@variables.slice()) if @isInitialized()
     return @initializePromise if @initializePromise?
 
+    @initializePromise = @loadPathsAndVariables().then =>
+      @initialized = true
+
+      variables = @variables.slice()
+      @emitter.emit 'did-initialize', variables
+      variables
+
+  loadPathsAndVariables: ->
     destroyed = null
 
-    @initializePromise = @loadPaths()
-    .then (paths) =>
+    @loadPaths().then (paths) =>
       if @paths? and paths.length > 0
         @paths.push path for path in paths when path not in @paths
         paths
@@ -80,12 +87,6 @@ class ColorProject
 
       results.forEach (variable) =>
         @createProjectVariableSubscriptions(variable)
-
-      @initialized = true
-
-      variables = @variables.slice()
-      @emitter.emit 'did-initialize', variables
-      variables
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
@@ -136,15 +137,27 @@ class ColorProject
 
   getPaths: -> @paths?.slice()
 
-  loadPaths: ->
+  loadPaths: (noKnownPaths=false) ->
     new Promise (resolve, reject) =>
       config = {
         @ignores
         @timestamp
-        knownPaths: @paths
+        knownPaths: if noKnownPaths then [] else @paths
         paths: atom.project.getPaths()
       }
       PathsLoader.startTask config, (results) -> resolve(results)
+
+  setIgnores: (ignores) ->
+    @ignores = ignores ? []
+
+    return if not @initialized? and not @initializePromise?
+
+    @initialize().then =>
+      dirtied = @paths.filter (p) => @isIgnoredPath(p)
+      @deleteVariablesForPaths(dirtied)
+      
+      @paths = @paths.filter (p) => !@isIgnoredPath(p)
+      @loadPathsAndVariables(true)
 
   isIgnoredPath: (path) ->
     path = atom.project.relativize(path)
