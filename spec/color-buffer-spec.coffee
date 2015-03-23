@@ -276,6 +276,30 @@ describe 'ColorBuffer', ->
 
     it 'knows that it is part of the ignored files', ->
       expect(colorBuffer.isIgnored()).toBeTruthy()
+
+    it 'scans the buffer for variables for in-buffer use only', ->
+      expect(colorBuffer.getColorMarkers().length).toEqual(20)
+      validMarkers = colorBuffer.getColorMarkers().filter (m) ->
+        m.color.isValid()
+
+      expect(validMarkers.length).toEqual(20)
+
+    describe 'when the buffer is edited', ->
+      beforeEach ->
+        colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+        colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+        editor.moveToBottom()
+        editBuffer '\n\n@new-color = @base0;\n'
+        waitsFor -> colorsUpdateSpy.callCount > 0
+
+      it 'finds the newly added color', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(21)
+        validMarkers = colorBuffer.getColorMarkers().filter (m) ->
+          m.color.isValid()
+
+        expect(validMarkers.length).toEqual(21)
+
+
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
   ##    ##     ## ##       ##          ##    ##     ## ##     ## ##

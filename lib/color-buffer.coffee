@@ -1,4 +1,5 @@
 {Emitter, CompositeDisposable, Task, Range} = require 'atom'
+ProjectVariable = require './project-variable'
 Color = require './color'
 ColorMarker = require './color-marker'
 VariableMarker = require './variable-marker'
@@ -15,9 +16,7 @@ class ColorBuffer
     @variableMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidStopChanging =>
-      @project.reloadVariablesForPath(@editor.getPath()).then =>
-        @scanBufferForColors().then (results) => @updateColorMarkers(results)
+    @subscriptions.add @editor.onDidStopChanging => @update()
 
     @subscriptions.add @project.onDidUpdateVariables =>
       resultsForBuffer = @project.getVariables().filter (r) =>
@@ -74,14 +73,32 @@ class ColorBuffer
 
   variablesAvailable: ->
     return @variablesPromise if @variablesPromise?
-    @variablesPromise = @project.initialize().then (results) =>
+
+    @variablesPromise = @project.initialize()
+    .then (results) =>
       return if @destroyed
       return unless results?
 
       resultsForBuffer = results.filter (r) => r.path is @editor.getPath()
       @variableMarkers = @createVariableMarkers(resultsForBuffer)
 
-      @scanBufferForColors().then (results) => @updateColorMarkers(results)
+      @scanBufferForVariables() if @isIgnored()
+    .then (results) =>
+      @scanBufferForColors
+        variables: results?.map (p) => new ProjectVariable(p, @project)
+    .then (results) =>
+      @updateColorMarkers(results)
+
+  update: ->
+    promise = if @isIgnored()
+      @scanBufferForVariables()
+    else
+      @project.reloadVariablesForPath(@editor.getPath())
+
+    promise.then (results) =>
+      @scanBufferForColors
+        variables: results?.map (p) => new ProjectVariable(p, @project)
+    .then (results) => @updateColorMarkers(results)
 
   destroy: ->
     @subscriptions.dispose()
@@ -259,14 +276,15 @@ class ColorBuffer
     markers = @editor.findMarkers(properties)
     markers.map (marker) => @colorMarkersByMarkerId[marker.id]
 
-  scanBufferForColors: ->
+  scanBufferForColors: (options={}) ->
     return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()
+    variables = (options.variables ? []).concat(@project.getVariables() ? [])
     config =
       buffer: @editor.getText()
-      variables: @project.getVariables()?.map (v) -> v.serialize()
+      variables: variables.map (v) -> v.serialize()
 
     new Promise (resolve, reject) ->
       task = Task.once(

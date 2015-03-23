@@ -126,13 +126,13 @@ class ColorProject
     for id,colorBuffer of @colorBuffersByEditorId
       return colorBuffer if colorBuffer.editor.getPath() is path
 
-  ##    ##     ##    ###    ########   ######
-  ##    ##     ##   ## ##   ##     ## ##    ##
-  ##    ##     ##  ##   ##  ##     ## ##
-  ##    ##     ## ##     ## ########   ######
-  ##     ##   ##  ######### ##   ##         ##
-  ##      ## ##   ##     ## ##    ##  ##    ##
-  ##       ###    ##     ## ##     ##  ######
+  ##    ########     ###    ######## ##     ##  ######
+  ##    ##     ##   ## ##      ##    ##     ## ##    ##
+  ##    ##     ##  ##   ##     ##    ##     ## ##
+  ##    ########  ##     ##    ##    #########  ######
+  ##    ##        #########    ##    ##     ##       ##
+  ##    ##        ##     ##    ##    ##     ## ##    ##
+  ##    ##        ##     ##    ##    ##     ##  ######
 
   getPaths: -> @paths?.slice()
 
@@ -151,6 +151,15 @@ class ColorProject
     ignores = atom.config.get('pigments.ignoredNames') ? []
     ignores = ignores.concat(@ignores) if @ignores?
     return true for ignore in ignores when minimatch(path, ignore)
+
+  ##    ##     ##    ###    ########   ######
+  ##    ##     ##   ## ##   ##     ## ##    ##
+  ##    ##     ##  ##   ##  ##     ## ##
+  ##    ##     ## ##     ## ########   ######
+  ##     ##   ##  ######### ##   ##         ##
+  ##      ## ##   ##     ## ##    ##  ##    ##
+  ##       ###    ##     ## ##     ##  ######
+
   getPalette: ->
     return new Palette unless @isInitialized()
 
