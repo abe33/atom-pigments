@@ -1,3 +1,5 @@
+require './spec-helper'
+
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
@@ -26,6 +28,19 @@ fdescribe 'Palette', ->
         'redCopy'
       ])
 
+  describe '::getColor', ->
+    it 'returns the color with the given name', ->
+      expect(palette.getColor('red')).toBeColor('#ff0000')
+
+    it 'returns undefined if the name does not exist in this palette', ->
+      expect(palette.getColor('foo')).toBeUndefined()
+
+  describe '::getNames', ->
+    it 'returns all the names a color have in the palette', ->
+      expect(palette.getNames(new Color('#ff0000'))).toEqual(['red', 'redCopy'])
+      expect(palette.getNames(new Color('#00ff00'))).toEqual(['green'])
+
+
   describe '::getUniqueColorsMap', ->
     it 'returns a Map that map colors to the variables that define them', ->
       expectedKeys = [
@@ -44,3 +59,21 @@ fdescribe 'Palette', ->
       expect(map.get(keys[0])).toEqual(['red', 'redCopy'])
       expect(map.get(keys[1])).toEqual(['green'])
       expect(map.get(keys[2])).toEqual(['blue'])
+
+  describe '::getSortedColorsByNames', ->
+    it 'returns the colors and names sorted by name', ->
+      expect(palette.getSortedColorsByNames()).toEqual([
+        ['blue', palette.getColor('blue')]
+        ['green', palette.getColor('green')]
+        ['red', palette.getColor('red')]
+        ['redCopy', palette.getColor('redCopy')]
+      ])
+
+  describe '::getSortedColors', ->
+    it 'returns the colors and names sorted by colors', ->
+      expect(palette.getSortedColors()).toEqual([
+        ['red', palette.getColor('red')]
+        ['redCopy', palette.getColor('redCopy')]
+        ['green', palette.getColor('green')]
+        ['blue', palette.getColor('blue')]
+      ])

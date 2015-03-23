@@ -3,6 +3,19 @@ module.exports =
 class Palette
   constructor: (@colors={}) ->
 
+  getColor: (name) -> @colors[name]
+
+  getNames: (ref) ->
+    @tuple()
+    .filter ([_,color]) -> color.isEqual(ref)
+    .map ([name]) -> name
+
+  getSortedColors: ->
+    @tuple().sort ([_, a], [__, b]) => @compareColors(a,b)
+
+  getSortedColorsByNames: ->
+    @tuple().sort ([a],[b]) -> if a > b then 1 else if a < b then -1 else 0
+
   getColorsNames: -> Object.keys(@colors)
 
   getColorsCount: -> @getColorsNames().length
@@ -22,3 +35,25 @@ class Palette
         colors.push(v)
 
     return map
+
+  eachColor: (iterator) -> iterator(k,v) for k,v of @colors
+
+  tuple: -> @eachColor (name, color) -> [name, color]
+
+  compareColors: (a,b) ->
+    [aHue, aSaturation, aLightness] = a.hsl
+    [bHue, bSaturation, bLightness] = b.hsl
+    if aHue < bHue
+      -1
+    else if aHue > bHue
+      1
+    else if aSaturation < bSaturation
+      -1
+    else if aSaturation > bSaturation
+      1
+    else if aLightness < bLightness
+      -1
+    else if aLightness > bLightness
+      1
+    else
+      0
