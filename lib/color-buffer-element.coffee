@@ -19,6 +19,7 @@ class ColorBufferElement extends HTMLElement
         @classList.remove('overlay')
 
   attachedCallback: ->
+    @updateMarkers()
 
   detachedCallback: ->
 
@@ -33,8 +34,6 @@ class ColorBufferElement extends HTMLElement
     @colorBuffer.initialize().then => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
-
-    @updateMarkers()
 
     @attach()
 
