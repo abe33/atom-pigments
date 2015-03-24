@@ -25,6 +25,12 @@ class ColorBuffer
 
     if variableMarkers? and colorMarkers?
       @restoreMarkersState(variableMarkers, colorMarkers)
+    else
+      # FIXME this is only needed because some markers can persist in the
+      # text editor when running atom without pigments running.
+      # As pigments state won't persist but markers will, we end up with a bunch
+      # of unused markers that will never get destroy.
+      @cleanUpTextEditorMarkers()
 
     @initialize()
 
@@ -70,6 +76,10 @@ class ColorBuffer
         color
         text: state.text
       }
+
+  cleanUpTextEditorMarkers: ->
+    @editor.findMarkers(type: 'pigments-color').forEach (m) -> m.destroy()
+    @editor.findMarkers(type: 'pigments-variable').forEach (m) -> m.destroy()
 
   variablesAvailable: ->
     return @variablesPromise if @variablesPromise?
