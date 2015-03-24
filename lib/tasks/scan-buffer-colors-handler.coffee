@@ -22,6 +22,9 @@ class BufferColorsScanner
         [d,d,name] = match
         baseColor = context.readColor(name)
         @colorExpression = name
+
+        return @invalid = true unless baseColor?
+
         @rgba = baseColor.rgba
 
   scan: ->
