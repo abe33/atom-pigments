@@ -363,43 +363,67 @@ describe 'ColorBuffer', ->
   ##    ##     ## ########  ######     ##     #######  ##     ## ########
 
   describe 'when created with a previous state', ->
-    beforeEach ->
-      waitsForPromise -> project.initialize()
-      runs ->
-        project.colorBufferForEditor(editor).destroy()
+    describe 'with variables and colors', ->
+      beforeEach ->
+        waitsForPromise -> project.initialize()
+        runs ->
+          project.colorBufferForEditor(editor).destroy()
 
-        state = jsonFixture('four-variables-buffer.json', {
-          id: editor.id
-          root: atom.project.getPaths()[0]
-          colorMarkers: [-1..-4]
-          variableMarkers: [-5..-8]
-        })
-        state.editor = editor
-        state.project = project
-        colorBuffer = new ColorBuffer(state)
+          state = jsonFixture('four-variables-buffer.json', {
+            id: editor.id
+            root: atom.project.getPaths()[0]
+            colorMarkers: [-1..-4]
+            variableMarkers: [-5..-8]
+          })
+          state.editor = editor
+          state.project = project
+          colorBuffer = new ColorBuffer(state)
 
-    it 'creates markers from the state object', ->
-      expect(colorBuffer.getColorMarkers().length).toEqual(4)
-      expect(colorBuffer.getVariableMarkers().length).toEqual(4)
+      it 'creates markers from the state object', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(4)
+        expect(colorBuffer.getVariableMarkers().length).toEqual(4)
 
-    it 'restores the markers properties', ->
-      variableMarker = colorBuffer.getVariableMarkers()[0]
-      expect(variableMarker.variable).toEqual(project.getVariableByName('base-color'))
+      it 'restores the markers properties', ->
+        variableMarker = colorBuffer.getVariableMarkers()[0]
+        expect(variableMarker.variable).toEqual(project.getVariableByName('base-color'))
 
-      colorMarker = colorBuffer.getColorMarkers()[3]
-      expect(colorMarker.color).toBeColor(255,255,255,0.5)
-      expect(colorMarker.color.variables).toEqual(['base-color'])
+        colorMarker = colorBuffer.getColorMarkers()[3]
+        expect(colorMarker.color).toBeColor(255,255,255,0.5)
+        expect(colorMarker.color.variables).toEqual(['base-color'])
 
-    it 'restores the editor markers', ->
-      expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
-      expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+      it 'restores the editor markers', ->
+        expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
+        expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
-    it 'restores the ability to fetch markers', ->
-      expect(colorBuffer.findColorMarkers().length).toEqual(4)
-      expect(colorBuffer.findVariableMarkers().length).toEqual(4)
+      it 'restores the ability to fetch markers', ->
+        expect(colorBuffer.findColorMarkers().length).toEqual(4)
+        expect(colorBuffer.findVariableMarkers().length).toEqual(4)
 
-      for marker in colorBuffer.findColorMarkers()
-        expect(marker).toBeDefined()
+        for marker in colorBuffer.findColorMarkers()
+          expect(marker).toBeDefined()
 
-      for marker in colorBuffer.findVariableMarkers()
-        expect(marker).toBeDefined()
+        for marker in colorBuffer.findVariableMarkers()
+          expect(marker).toBeDefined()
+
+    describe 'with an invalid color', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('invalid-color.styl').then (o) ->
+            editor = o
+
+        waitsForPromise -> project.initialize()
+
+        runs ->
+          state = jsonFixture('invalid-color-buffer.json', {
+            id: editor.id
+            root: atom.project.getPaths()[0]
+            colorMarkers: [-1]
+            variableMarkers: []
+          })
+          state.editor = editor
+          state.project = project
+          colorBuffer = new ColorBuffer(state)
+
+      it 'creates markers from the state object', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(1)
+        expect(colorBuffer.getValidColorMarkers().length).toEqual(0)

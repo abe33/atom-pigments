@@ -1,0 +1,15 @@
+{
+  "id": #{id},
+  "path": "#{root}/invalid-color-buffer.styl",
+  "variableMarkers": [],
+  "colorMarkers": [
+    {
+      "markerId": #{[colorMarkers]},
+      "bufferRange": [[0,0],[0,12]],
+      "color": [0,0,0,1],
+      "text": "lighten(a,b)",
+      "variables": [],
+      "invalid": true
+    }
+  ]
+}

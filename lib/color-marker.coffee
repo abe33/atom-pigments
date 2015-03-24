@@ -2,7 +2,7 @@
 
 module.exports =
 class ColorMarker
-  constructor: ({@marker, @color, @text}) ->
+  constructor: ({@marker, @color, @text, @invalid}) ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add @marker.onDidDestroy => @destroyed()
     @subscriptions.add @marker.onDidChange =>
@@ -33,10 +33,12 @@ class ColorMarker
 
   serialize: ->
     return if @wasDestroyed
-    {
+    out = {
       markerId: @marker.id
       bufferRange: @marker.getBufferRange().serialize()
       color: @color.serialize()
       text: @text
       variables: @color.variables
     }
+    out.invalid = true unless @color.isValid()
+    out

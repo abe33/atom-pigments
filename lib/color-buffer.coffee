@@ -71,6 +71,7 @@ class ColorBuffer
       })
       color = new Color(state.color)
       color.variables = state.variables
+      color.invalid = state.invalid
       @colorMarkersByMarkerId[marker.id] = new ColorMarker {
         marker
         color
