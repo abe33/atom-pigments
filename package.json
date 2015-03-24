@@ -12,6 +12,14 @@
     "async": "0.2.6",
     "css-color-function": "0.1.x",
     "minimatch": "0.3.x",
-    "delegato": "^1.0.0"
+    "delegato": "^1.0.0",
+    "fuzzaldrin": "2.x"
+  },
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "provide"
+      }
+    }
   }
 }

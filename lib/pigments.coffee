@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-ColorProject = null
+[ColorProject, PigmentsProvider] = []
 
 module.exports =
   config:
@@ -23,13 +23,33 @@ module.exports =
       type: 'string'
       default: 'background'
       enum: ['background', 'outline', 'underline', 'dot']
+    autocompleteScopes:
+      type: 'array'
+      default: [
+        '.source.css'
+        '.source.css.less'
+        '.source.sass'
+        '.source.css.scss'
+        '.source.stylus'
+      ]
+      description: 'The autocomplete provider will only complete color names in editors whose scope is present in this list.'
+      items:
+        type: 'string'
+    extendAutocompleteToVariables:
+      type: 'boolean'
+      default: true
+      description: 'When enabled, the autocomplete provider will also provides completion for non-color variables.'
 
   activate: (state) ->
-    ColorProject = require './color-project'
+    ColorProject ?= require './color-project'
 
     @project = new ColorProject(state ? {})
 
   deactivate: ->
+
+  provide: ->
+    PigmentsProvider ?= require './pigments-provider'
+    new PigmentsProvider(@getProject())
 
   serialize: -> @project.serialize()
 
