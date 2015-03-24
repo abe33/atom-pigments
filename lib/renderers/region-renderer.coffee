@@ -22,8 +22,7 @@ class RegionRenderer
           column: Infinity
         },
         colorMarker,
-        displayBuffer.screenLines[range.start.row],
-        displayBuffer.screenLines[range.start.row + 1]
+        displayBuffer.screenLines[range.start.row]
       )
       if rowSpan > 1
         for row in [range.start.row + 1...range.end.row]
@@ -31,21 +30,19 @@ class RegionRenderer
             {row, column: 0},
             {row, column: Infinity},
             colorMarker,
-            displayBuffer.screenLines[row],
-            displayBuffer.screenLines[row + 1]
+            displayBuffer.screenLines[row]
           )
 
       regions.push @createRegion(
         {row: range.end.row, column: 0},
         range.end,
         colorMarker,
-        displayBuffer.screenLines[range.end.row],
-        displayBuffer.screenLines[range.end.row + 1]
+        displayBuffer.screenLines[range.end.row]
       )
 
     regions
 
-  createRegion: (start, end, colorMarker, screenLine, nextScreenLine) ->
+  createRegion: (start, end, colorMarker, screenLine) ->
     displayBuffer = colorMarker.marker.displayBuffer
     lineHeight = displayBuffer.getLineHeightInPixels()
     charWidth = displayBuffer.getDefaultCharWidth()
@@ -64,8 +61,9 @@ class RegionRenderer
       end: clippedEnd
     })
 
-    if nextScreenLine?.isSoftWrapped() and end.column is Infinity
-      bufferRange.end.column++
+    needAdjustment = screenLine?.isSoftWrapped() and end.column >= screenLine?.text.length - screenLine?.softWrapIndentationDelta
+
+    bufferRange.end.column++ if needAdjustment
 
     startPosition = displayBuffer.pixelPositionForScreenPosition(clippedStart)
     endPosition = displayBuffer.pixelPositionForScreenPosition(clippedEnd)
@@ -76,7 +74,7 @@ class RegionRenderer
     css.left = startPosition.left
     css.top = startPosition.top
     css.width = endPosition.left - startPosition.left
-    css.width += charWidth if nextScreenLine?.isSoftWrapped() and end.column is Infinity
+    css.width += charWidth if needAdjustment
     css.height = lineHeight
 
     region = document.createElement('div')
