@@ -155,15 +155,20 @@ class ColorProject
     @initialize().then =>
       dirtied = @paths.filter (p) => @isIgnoredPath(p)
       @deleteVariablesForPaths(dirtied)
-      
+
       @paths = @paths.filter (p) => !@isIgnoredPath(p)
       @loadPathsAndVariables(true)
+
+  isVariablesSourcePath: (path) ->
+    path = atom.project.relativize(path)
+    sources = atom.config.get('pigments.sourceNames')
+    return true for source in sources when minimatch(path, source, matchBase: true, dot: true)
 
   isIgnoredPath: (path) ->
     path = atom.project.relativize(path)
     ignores = atom.config.get('pigments.ignoredNames') ? []
     ignores = ignores.concat(@ignores) if @ignores?
-    return true for ignore in ignores when minimatch(path, ignore)
+    return true for ignore in ignores when minimatch(path, ignore, matchBase: true, dot: true)
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##

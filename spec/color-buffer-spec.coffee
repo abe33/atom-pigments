@@ -47,6 +47,9 @@ describe 'ColorBuffer', ->
     it 'creates the corresponding markers in the text editor', ->
       expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
+    it 'knows that it is legible as a variables source file', ->
+      expect(colorBuffer.isVariablesSource()).toBeTruthy()
+
     describe 'when the editor is destroyed', ->
       it 'destroys the color buffer at the same time', ->
         editor.destroy()
@@ -277,6 +280,9 @@ describe 'ColorBuffer', ->
     it 'knows that it is part of the ignored files', ->
       expect(colorBuffer.isIgnored()).toBeTruthy()
 
+    it 'knows that it is a variables source file', ->
+      expect(colorBuffer.isVariablesSource()).toBeTruthy()
+
     it 'scans the buffer for variables for in-buffer use only', ->
       expect(colorBuffer.getColorMarkers().length).toEqual(20)
       validMarkers = colorBuffer.getColorMarkers().filter (m) ->
@@ -299,6 +305,54 @@ describe 'ColorBuffer', ->
 
         expect(validMarkers.length).toEqual(21)
 
+  ##    ##    ##  #######  ##     ##    ###    ########   ######
+  ##    ###   ## ##     ## ##     ##   ## ##   ##     ## ##    ##
+  ##    ####  ## ##     ## ##     ##  ##   ##  ##     ## ##
+  ##    ## ## ## ##     ## ##     ## ##     ## ########   ######
+  ##    ##  #### ##     ##  ##   ##  ######### ##   ##         ##
+  ##    ##   ### ##     ##   ## ##   ##     ## ##    ##  ##    ##
+  ##    ##    ##  #######     ###    ##     ## ##     ##  ######
+
+  describe 'with a buffer not being a variable source', ->
+    beforeEach ->
+      waitsForPromise ->
+        atom.workspace.open('project/lib/main.coffee').then (o) -> editor = o
+
+      runs -> colorBuffer = project.colorBufferForEditor(editor)
+
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
+    it 'knows that it is not part of the source files', ->
+      expect(colorBuffer.isVariablesSource()).toBeFalsy()
+
+    it 'knows that it is not part of the ignored files', ->
+      expect(colorBuffer.isIgnored()).toBeFalsy()
+
+    it 'scans the buffer for variables for in-buffer use only', ->
+      expect(colorBuffer.getColorMarkers().length).toEqual(4)
+      validMarkers = colorBuffer.getColorMarkers().filter (m) ->
+        m.color.isValid()
+
+      expect(validMarkers.length).toEqual(4)
+
+    describe 'when the buffer is edited', ->
+      beforeEach ->
+        colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+        spyOn(project, 'reloadVariablesForPath').andCallThrough()
+        colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+        editor.moveToBottom()
+        editBuffer '\n\n@new-color = red;\n'
+        waitsFor -> colorsUpdateSpy.callCount > 0
+
+      it 'finds the newly added color', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(5)
+        validMarkers = colorBuffer.getColorMarkers().filter (m) ->
+          m.color.isValid()
+
+        expect(validMarkers.length).toEqual(5)
+
+      it 'does not ask the project to reload the variables', ->
+        expect(project.reloadVariablesForPath).not.toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##

@@ -82,7 +82,7 @@ class ColorBuffer
       resultsForBuffer = results.filter (r) => r.path is @editor.getPath()
       @variableMarkers = @createVariableMarkers(resultsForBuffer)
 
-      @scanBufferForVariables() if @isIgnored()
+      @scanBufferForVariables() if @isIgnored() and @isVariablesSource()
     .then (results) =>
       @scanBufferForColors
         variables: results?.map (p) => new ProjectVariable(p, @project)
@@ -92,6 +92,8 @@ class ColorBuffer
   update: ->
     promise = if @isIgnored()
       @scanBufferForVariables()
+    else unless @isVariablesSource()
+      Promise.resolve([])
     else
       @project.reloadVariablesForPath(@editor.getPath())
 
@@ -106,6 +108,8 @@ class ColorBuffer
     @variableMarkers?.forEach (marker) -> marker.destroy()
     @colorMarkers?.forEach (marker) -> marker.destroy()
     @destroyed = true
+
+  isVariablesSource: -> @project.isVariablesSourcePath(@editor.getPath())
 
   isIgnored: -> @project.isIgnoredPath(@editor.getPath())
 
