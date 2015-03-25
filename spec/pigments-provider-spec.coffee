@@ -60,6 +60,8 @@ describe 'autocomplete provider', ->
       waitsFor ->
         autocompleteManager.displaySuggestions.calls.length is 1
 
+      waitsFor -> editorView.querySelector('.autocomplete-plus')
+
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         expect(editorView.querySelector('.autocomplete-plus span.word').textContent).toEqual('base-color')
@@ -107,6 +109,9 @@ describe 'autocomplete provider', ->
 
         waitsFor ->
           autocompleteManager.displaySuggestions.calls.length is 1
+
+        waitsFor ->
+          editorView.querySelector('.autocomplete-plus')
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
