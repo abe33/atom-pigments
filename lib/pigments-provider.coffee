@@ -25,7 +25,9 @@ class PigmentsProvider
     else
       variables = @project.getColorVariables()
 
-    @findSuggestionsForPrefix(variables, prefix)
+    suggestions = @findSuggestionsForPrefix(variables, prefix)
+    console.log suggestions
+    suggestions
 
   findSuggestionsForPrefix: (variables, prefix) ->
     return [] unless variables?

@@ -47,7 +47,7 @@ fdescribe 'autocomplete provider', ->
       spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
 
   describe 'writing the name of a color', ->
-    it 'returns sugestions for the matching colors', ->
+    it 'returns suggestions for the matching colors', ->
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -69,7 +69,7 @@ fdescribe 'autocomplete provider', ->
         expect(preview.style.background).toEqual('rgb(255, 255, 255)')
 
   describe 'writing the name of a non-color variable', ->
-    it 'returns sugestions for the matching variable', ->
+    it 'returns suggestions for the matching variable', ->
       atom.config.set('pigments.extendAutocompleteToVariables', false)
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -93,7 +93,7 @@ fdescribe 'autocomplete provider', ->
       atom.config.set('pigments.extendAutocompleteToVariables', true)
 
     describe 'writing the name of a non-color variable', ->
-      it 'returns sugestions for the matching variable', ->
+      it 'returns suggestions for the matching variable', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
