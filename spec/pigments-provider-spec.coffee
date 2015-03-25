@@ -1,5 +1,5 @@
 
-fdescribe 'autocomplete provider', ->
+describe 'autocomplete provider', ->
   [completionDelay, editor, editorView, pigments, autocompleteMain, autocompleteManager, jasmineContent] = []
 
   beforeEach ->
