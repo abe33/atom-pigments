@@ -18,14 +18,11 @@ class PigmentsProvider
   getSuggestions: ({scopeDescriptor, prefix}) ->
     return unless prefix?.length
 
-    console.log 'in pigments provider'
-
     if @extendAutocompleteToVariables
       variables = @project.getVariables()
     else
       variables = @project.getColorVariables()
 
-    console.log variables
     suggestions = @findSuggestionsForPrefix(variables, prefix)
     suggestions
 

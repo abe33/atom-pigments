@@ -7,6 +7,10 @@ fdescribe 'autocomplete provider', ->
       jasmineContent = document.body.querySelector('#jasmine-content')
 
       atom.config.set('pigments.autocompleteScopes', ['*'])
+      atom.config.set('pigments.sourceNames', [
+        '**/*.styl'
+        '**/*.less'
+      ])
 
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
@@ -34,9 +38,7 @@ fdescribe 'autocomplete provider', ->
         atom.packages.activatePackage('pigments')
       ]
 
-    waitsForPromise -> pigments.getProject().initialize().then ->
-      console.log 'project initialized'
-      console.log pigments.getProject().getVariables()
+    waitsForPromise -> pigments.getProject().initialize()
 
     waitsFor ->
       autocompleteMain.autocompleteManager?.ready and
