@@ -9,9 +9,7 @@ class VariableScanner
 
   getRegExp: ->
     registry ?= require './variable-expressions'
-    regexpString ?= registry.getExpressions()
-    .map (e) -> "(#{e.regexpString})"
-    .join('|')
+    regexpString ?= registry.getRegExp()
 
     regexp ?= new RegExp(regexpString, 'gm')
 

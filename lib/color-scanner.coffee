@@ -9,9 +9,7 @@ class ColorScanner
 
   getRegExp: ->
     registry ?= require './color-expressions'
-    regexpString ?= registry.getExpressions()
-    .map (e) -> "(#{e.regexpString})"
-    .join('|')
+    regexpString ?= registry.getRegExp()
 
     regexp ?= new RegExp(regexpString, 'g')
 
