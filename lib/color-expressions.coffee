@@ -8,11 +8,12 @@ cssColor = require 'css-color-function'
   floatOrPercent
   comma
   notQuote
-  hexa
+  hexadecimal
   ps
   pe
   variables
   namePrefixes
+  createVariableRegExpString
 } = require './regexes'
 
 {
@@ -68,19 +69,19 @@ module.exports = getRegistry: (context) ->
   ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
   # #6f3489ef
-  registry.createExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (match, expression, context) ->
+  registry.createExpression 'css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", (match, expression, context) ->
     [_, hexa] = match
 
     @hexARGB = hexa
 
   # #3489ef
-  registry.createExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (match, expression, context) ->
+  registry.createExpression 'css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w])", (match, expression, context) ->
     [_, hexa] = match
 
     @hex = hexa
 
   # #38e
-  registry.createExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (match, expression, context) ->
+  registry.createExpression 'css_hexa_3', "#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
     [_, hexa] = match
     colorAsInt = context.readInt(hexa, 16)
 
@@ -89,13 +90,13 @@ module.exports = getRegistry: (context) ->
     @blue = (colorAsInt & 0xf) * 17
 
   # 0xab3489ef
-  registry.createExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (match, expression, context) ->
+  registry.createExpression 'int_hexa_8', "0x(#{hexadecimal}{8})(?!#{hexadecimal})", (match, expression, context) ->
     [_, hexa] = match
 
     @hexARGB = hexa
 
   # 0x3489ef
-  registry.createExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (match, expression, context) ->
+  registry.createExpression 'int_hexa_6', "0x(#{hexadecimal}{6})(?!#{hexadecimal})", (match, expression, context) ->
     [_, hexa] = match
 
     @hex = hexa
@@ -606,6 +607,15 @@ module.exports = getRegistry: (context) ->
     @rgba = baseColor.rgba
 
   if context?.hasVariables()
-    registry.addExpression(context.createVariableExpression())
+    paletteRegexpString = createVariableRegExpString(context.getVariables())
+
+    registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
+      [d,d,name] = match
+      baseColor = context.readColor(name)
+      @colorExpression = name
+
+      return @invalid = true unless baseColor?
+
+      @rgba = baseColor.rgba
 
   registry
