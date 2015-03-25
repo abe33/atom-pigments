@@ -28,5 +28,6 @@ describe 'ColorSearch', ->
     it 'dispatches a did-complete-search when finalizing its search', ->
       spy = jasmine.createSpy('did-complete-search')
       search.onDidCompleteSearch(spy)
+      search.search()
       waitsFor -> spy.callCount > 0
       runs -> expect(spy.argsForCall[0][0].length).toEqual(23)

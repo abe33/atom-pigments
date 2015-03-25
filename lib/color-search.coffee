@@ -23,7 +23,6 @@ class ColorSearch
       catch error
         console.warn "Error parsing ignore pattern (#{ignore}): #{error.message}"
 
-    @search()
 
   onDidCompleteSearch: (callback) ->
     @emitter.on 'did-complete-search', callback
