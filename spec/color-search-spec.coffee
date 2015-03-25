@@ -5,6 +5,11 @@ describe 'ColorSearch', ->
   [search, pigments, project] = []
 
   beforeEach ->
+    atom.config.set 'pigments.sourceNames', [
+      '**/*.styl'
+      '**/*.less'
+    ]
+
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
       project = pigments.getProject()
@@ -14,10 +19,7 @@ describe 'ColorSearch', ->
   describe 'when created with basic options', ->
     beforeEach ->
       search = new ColorSearch
-        sourceNames: [
-          '**/*.styl'
-          '**/*.less'
-        ]
+        sourceNames: atom.config.get 'pigments.sourceNames'
         ignoredNames: [
           'project/vendor/**'
         ]
