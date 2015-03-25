@@ -3,6 +3,7 @@ decimal = "\\.#{int}"
 float = "(?:#{int}|#{int}#{decimal}|#{decimal})"
 percent = "#{float}%"
 variables = '(@[a-zA-Z0-9\\-_]+|\\$[a-zA-Z0-9\\-_]+|[a-zA-Z_][a-zA-Z0-9\\-_]*)'
+namePrefixes = '^| |:|=|,|\\n|\'|"|\\(|\\[|\\{'
 
 module.exports =
   int: int
@@ -16,4 +17,10 @@ module.exports =
   ps: '\\(\\s*'
   pe: '\\s*\\)'
   variables: variables
-  namePrefixes: '^| |:|=|,|\\n|\'|"|\\(|\\[|\\{'
+  namePrefixes: namePrefixes
+  createVariableRegExpString: (variables) ->
+    variableNames = variables.map (v) ->
+      v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    .join('|')
+
+    "(#{namePrefixes})(#{variableNames})(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"

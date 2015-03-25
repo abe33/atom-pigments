@@ -1,7 +1,7 @@
 ColorScanner = require '../color-scanner'
 ColorContext = require '../color-context'
 registry = require '../color-expressions'
-{namePrefixes} = require '../regexes'
+{createVariableRegExpString} = require '../regexes'
 ColorsChunkSize = 100
 
 class BufferColorsScanner
@@ -12,11 +12,7 @@ class BufferColorsScanner
     @results = []
 
     if variables?.length > 0
-      variableNames = variables.map (v) ->
-        v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-      .join('|')
-
-      paletteRegexpString = "(#{namePrefixes})(#{variableNames})(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"
+      paletteRegexpString = createVariableRegExpString(variables)
 
       registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
         [d,d,name] = match
