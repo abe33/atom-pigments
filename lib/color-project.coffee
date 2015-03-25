@@ -20,7 +20,7 @@ class ColorProject
   @deserialize: (state) -> new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignores, @paths, variables, timestamp, buffers} = state
+    {@ignoredNames, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @variablesSubscriptionsById = {}
@@ -143,15 +143,20 @@ class ColorProject
   loadPaths: (noKnownPaths=false) ->
     new Promise (resolve, reject) =>
       config = {
-        @ignores
         @timestamp
+        ignoredNames: @getIgnoredNames()
         knownPaths: if noKnownPaths then [] else @paths
         paths: atom.project.getPaths()
       }
       PathsLoader.startTask config, (results) -> resolve(results)
 
-  setIgnores: (ignores) ->
-    @ignores = ignores ? []
+  getIgnoredNames: ->
+    ignoredNames = @ignoredNames ? []
+    ignoredNames = ignoredNames.concat(atom.config.get('pigments.ignoredNames') ? [])
+    ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
+
+  setIgnoredNames: (ignoredNames) ->
+    @ignoredNames = ignoredNames ? []
 
     return if not @initialized? and not @initializePromise?
 
@@ -169,9 +174,9 @@ class ColorProject
 
   isIgnoredPath: (path) ->
     path = atom.project.relativize(path)
-    ignores = atom.config.get('pigments.ignoredNames') ? []
-    ignores = ignores.concat(@ignores) if @ignores?
-    return true for ignore in ignores when minimatch(path, ignore, matchBase: true, dot: true)
+    ignoredNames = atom.config.get('pigments.ignoredNames') ? []
+    ignoredNames = ignoredNames.concat(@ignoredNames) if @ignoredNames?
+    return true for ignore in ignoredNames when minimatch(path, ignore, matchBase: true, dot: true)
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
@@ -311,7 +316,7 @@ class ColorProject
   serialize: ->
     data = {deserializer: 'ColorProject', timestamp: @getTimestamp()}
 
-    data.ignores = @ignores if @ignores?
+    data.ignoredNames = @ignoredNames if @ignoredNames?
     data.buffers = @serializeBuffers()
 
     if @isInitialized()

@@ -22,7 +22,7 @@ describe 'ColorProject', ->
     atom.project.setPaths([rootPath])
 
     project = new ColorProject({
-      ignores: ['vendor/*']
+      ignoredNames: ['vendor/*']
     })
 
   describe '.deserialize', ->
@@ -91,7 +91,7 @@ describe 'ColorProject', ->
           deserializer: 'ColorProject'
           timestamp: date
           buffers: {}
-          ignores: ['vendor/*']
+          ignoredNames: ['vendor/*']
         })
 
     describe '::getVariablesForPath', ->
@@ -118,9 +118,9 @@ describe 'ColorProject', ->
       it 'returns a promise hooked on the initialize promise', ->
         expect(project.initialize).toHaveBeenCalled()
 
-    describe '::setIgnores', ->
+    describe '::setIgnoredNames', ->
       beforeEach ->
-        project.setIgnores([])
+        project.setIgnoredNames([])
 
         waitsForPromise -> project.initialize()
 
@@ -153,7 +153,7 @@ describe 'ColorProject', ->
         spyOn(project, 'getTimestamp').andCallFake -> date
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
-          ignores: ['vendor/*']
+          ignoredNames: ['vendor/*']
           timestamp: date
           paths: [
             "#{rootPath}/styles/buttons.styl"
@@ -326,14 +326,14 @@ describe 'ColorProject', ->
         it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
-    describe '::setIgnores', ->
+    describe '::setIgnoredNames', ->
       describe 'with an empty array', ->
         beforeEach ->
           expect(project.getVariables().length).toEqual(12)
 
           spy = jasmine.createSpy 'did-update-variables'
           project.onDidUpdateVariables(spy)
-          project.setIgnores([])
+          project.setIgnoredNames([])
 
           waitsFor -> spy.callCount > 0
 
@@ -346,7 +346,7 @@ describe 'ColorProject', ->
 
           spy = jasmine.createSpy 'did-update-variables'
           project.onDidUpdateVariables(spy)
-          project.setIgnores(['vendor/*', '**/*.styl'])
+          project.setIgnoredNames(['vendor/*', '**/*.styl'])
 
           waitsFor -> spy.callCount > 0
 

@@ -1,7 +1,7 @@
 {
   "deserializer": "ColorProject",
   "timestamp": "#{timestamp}",
-  "ignores": [
+  "ignoredNames": [
     "vendor/*"
   ],
   "paths": [
