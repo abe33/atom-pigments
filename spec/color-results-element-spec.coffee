@@ -1,6 +1,6 @@
 ColorSearch = require '../lib/color-search'
 
-fdescribe 'ColorResultsElement', ->
+describe 'ColorResultsElement', ->
   [search, resultsElement, pigments, project, completeSpy, findSpy] = []
 
   beforeEach ->
@@ -35,8 +35,8 @@ fdescribe 'ColorResultsElement', ->
     beforeEach -> waitsFor -> completeSpy.callCount > 0
 
     it 'groups results by files', ->
-      fileResults = resultsElement.querySelectorAll('pigments-file-result')
+      fileResults = resultsElement.querySelectorAll('.list-nested-item')
 
       expect(fileResults.length).toEqual(7)
 
-      expect(fileResults[0].querySelectorAll('pigments-color-result').length).toEqual(3)
+      expect(fileResults[0].querySelectorAll('li.list-item').length).toEqual(3)

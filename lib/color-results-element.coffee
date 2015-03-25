@@ -1,6 +1,10 @@
-{CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
+fs = require 'fs-plus'
+path = require 'path'
+{Range, CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
-FileResultElement = require './file-result-element'
+
+removeLeadingWhitespace = (string) -> string.replace(/^\s+/, '')
 
 module.exports =
 class ColorResultsElement extends HTMLElement
@@ -44,10 +48,7 @@ class ColorResultsElement extends HTMLElement
     @files += 1
     @colors += result.matches.length
 
-    fileResultElement = new FileResultElement
-    fileResultElement.setModel(result)
-
-    @resultsList.appendChild(fileResultElement)
+    @resultsList.innerHTML += @createFileResult(result)
     @updateMessage()
 
   searchComplete: ->
@@ -76,6 +77,61 @@ class ColorResultsElement extends HTMLElement
       """
     else
       "No colors found in #{@files} #{filesString}"
+
+  createFileResult: (fileResult) ->
+    {filePath,matches} = fileResult
+    fileBasename = path.basename(filePath)
+
+    pathAttribute = _.escapeAttribute(filePath)
+    pathName = atom.project.relativize(filePath)
+
+    """
+    <li class="path list-nested-item" data-path="#{pathAttribute}">
+      <div class="path-details list-item">
+        <span class="disclosure-arrow"></span>
+        <span class="icon icon-file-text" data-name="#{fileBasename}"></span>
+        <span class="path-name bright">#{pathName}</span>
+        <span class="path-match-number">(#{matches.length + 1})</span></div>
+        <ul class="matches list-tree">
+          #{matches.map((match) => @createMatchResult match).join('')}
+        </ul>
+      </div>
+    </li>"""
+
+  createMatchResult: (match) ->
+    textColor = if match.color.luma > 0.43
+      'black'
+    else
+      'white'
+
+    {filePath, range} = match
+
+    range = Range.fromObject(range)
+    matchStart = range.start.column - match.lineTextOffset
+    matchEnd = range.end.column - match.lineTextOffset
+    prefix = removeLeadingWhitespace(match.lineText[0...matchStart])
+    suffix = match.lineText[matchEnd..]
+    lineNumber = range.start.row + 1
+    style = ''
+    style += "background: #{match.color.toCSS()};"
+    style += "color: #{textColor};"
+
+    if fontFamily = atom.config.get('editor.fontFamily')
+      style += "font-family: #{fontFamily};"
+
+    """
+    <li class="search-result list-item">
+      <span class="line-number text-subtle">#{lineNumber}</span>
+      <span class="preview">
+        #{prefix}
+        <span class='match color-match' style='#{style}'>
+          #{match.matchText}
+        </span>
+        #{suffix}
+      </span>
+    </li>
+    """
+
 
 module.exports = ColorResultsElement =
 document.registerElement 'pigments-color-results', {
