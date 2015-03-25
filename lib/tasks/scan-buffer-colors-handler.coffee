@@ -1,7 +1,7 @@
 ColorScanner = require '../color-scanner'
 ColorContext = require '../color-context'
 registry = require '../color-expressions'
-{createVariableRegExpString} = require '../regexes'
+{createVariableExpression} = require '../utils'
 ColorsChunkSize = 100
 
 class BufferColorsScanner
@@ -12,16 +12,7 @@ class BufferColorsScanner
     @results = []
 
     if variables?.length > 0
-      paletteRegexpString = createVariableRegExpString(variables)
-
-      registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
-        [d,d,name] = match
-        baseColor = context.readColor(name)
-        @colorExpression = name
-
-        return @invalid = true unless baseColor?
-
-        @rgba = baseColor.rgba
+      registry.addExpression(@context.createVariableExpression())
 
   scan: ->
     lastIndex = 0

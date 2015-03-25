@@ -1,11 +1,13 @@
 Color = require './color'
 ColorParser = null
+ColorExpression = require './color-expression'
+{createVariableRegExpString} = require './regexes'
 
 module.exports =
 class ColorContext
-  constructor: (vars=[], @parser) ->
+  constructor: (@variables=[], @parser) ->
     @vars = {}
-    @vars[v.name] = v for v in vars
+    @vars[v.name] = v for v in @variables
 
     unless @parser?
       ColorParser = require './color-parser'
@@ -15,9 +17,29 @@ class ColorContext
 
   containsVariable: (variableName) -> variableName in @getVariablesNames()
 
+  getVariables: -> @variables
+
   getVariablesNames: -> @varNames ?= Object.keys(@vars)
 
   getVariablesCount: -> @varCount ?= @getVariablesNames().length
+
+  createVariableExpression: ->
+    paletteRegexpString = createVariableRegExpString(@variables)
+
+    expression = new ColorExpression
+      name: 'variables',
+      regexpString: paletteRegexpString
+      handle: (match, expression, context) ->
+        [d,d,name] = match
+        baseColor = context.readColor(name)
+        @colorExpression = name
+
+        return @invalid = true unless baseColor?
+
+        @rgba = baseColor.rgba
+
+    expression.priority = 1
+    expression
 
   readUsedVariables: ->
     usedVariables = []
