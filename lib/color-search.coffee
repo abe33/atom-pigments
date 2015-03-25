@@ -1,6 +1,6 @@
 {Emitter} = require 'atom'
 {Minimatch} = require 'minimatch'
-registry = require './color-expressions'
+{getRegistry} = require './color-expressions'
 ColorParser = require './color-parser'
 ColorContext = require './color-context'
 
@@ -29,10 +29,9 @@ class ColorSearch
     @emitter.on 'did-complete-search', callback
 
   search: ->
-    registry.addExpression(@context.createVariableExpression())
-    expressions = registry.getExpressions()
+    registry = getRegistry(@context)
 
-    re = new RegExp expressions.map((e) -> "(#{e.regexpString})").join('|')
+    re = new RegExp registry.getRegExp()
     results = []
 
     promise = atom.workspace.scan re, paths: @sourceNames, (m) =>
@@ -47,7 +46,6 @@ class ColorSearch
         results.push result
 
     promise.then =>
-      registry.removeExpression('variables')
       @emitter.emit 'did-complete-search', results
 
   isIgnored: (relativePath) ->

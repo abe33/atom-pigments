@@ -1,4 +1,4 @@
-[registry, regexpString, regexp] = []
+{getRegistry} = require './color-expressions'
 ColorParser = require './color-parser'
 
 module.exports =
@@ -8,18 +8,17 @@ class ColorScanner
     @parser ?= new ColorParser
 
   getRegExp: ->
-    registry ?= require './color-expressions'
-    regexpString ?= registry.getRegExp()
+    registry = getRegistry(@context)
 
-    regexp ?= new RegExp(regexpString, 'g')
+    @regexp = new RegExp(registry.getRegExp(), 'g')
 
   search: (text, start=0) ->
-    regexp = @getRegExp()
-    regexp.lastIndex = start
+    @regexp = @getRegExp()
+    @regexp.lastIndex = start
 
-    if match = regexp.exec(text)
+    if match = @regexp.exec(text)
       [matchText] = match
-      {lastIndex} = regexp
+      {lastIndex} = @regexp
 
       color = @parser.parse(matchText, @context)
       color.variables = @context.readUsedVariables() if @context?

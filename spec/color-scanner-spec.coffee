@@ -19,9 +19,6 @@ describe 'ColorScanner', ->
   withScannerForTextEditor = (fixture, block) ->
     withTextEditor fixture, ->
       beforeEach ->
-        # FIXME There's pollution between tests, and the registry end up with
-        # a variable expression matching nothing.
-        require('../lib/color-expressions').removeExpression('variables')
         scanner = new ColorScanner
 
       afterEach -> scanner = null

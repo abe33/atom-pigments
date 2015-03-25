@@ -17,6 +17,8 @@ class ColorContext
 
   containsVariable: (variableName) -> variableName in @getVariablesNames()
 
+  hasVariables: -> @variables.length > 0
+
   getVariables: -> @variables
 
   getVariablesNames: -> @varNames ?= Object.keys(@vars)
