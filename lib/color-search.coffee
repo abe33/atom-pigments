@@ -23,6 +23,8 @@ class ColorSearch
       catch error
         console.warn "Error parsing ignore pattern (#{ignore}): #{error.message}"
 
+  onDidFindMatches: (callback) ->
+    @emitter.on 'did-find-matches', callback
 
   onDidCompleteSearch: (callback) ->
     @emitter.on 'did-complete-search', callback
@@ -44,7 +46,10 @@ class ColorSearch
 
         results.push result
 
+      @emitter.emit 'did-find-matches', m
+
     promise.then =>
+      @results = results
       @emitter.emit 'did-complete-search', results
 
   isIgnored: (relativePath) ->

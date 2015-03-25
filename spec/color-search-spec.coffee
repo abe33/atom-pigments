@@ -31,3 +31,14 @@ describe 'ColorSearch', ->
       search.search()
       waitsFor -> spy.callCount > 0
       runs -> expect(spy.argsForCall[0][0].length).toEqual(23)
+
+    it 'dispatches a did-find-matches event for every files', ->
+      completeSpy = jasmine.createSpy('did-complete-search')
+      findSpy = jasmine.createSpy('did-find-matches')
+      search.onDidCompleteSearch(completeSpy)
+      search.onDidFindMatches(findSpy)
+      search.search()
+      waitsFor -> completeSpy.callCount > 0
+      runs ->
+        expect(findSpy.callCount).toEqual(6)
+        expect(findSpy.argsForCall[0][0].matches.length).toEqual(3)
