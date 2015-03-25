@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-[ColorProject, PigmentsProvider] = []
+[ColorProject, PigmentsProvider, url] = []
 
 module.exports =
   config:
@@ -44,6 +44,25 @@ module.exports =
     ColorProject ?= require './color-project'
 
     @project = new ColorProject(state ? {})
+
+    atom.commands.add 'atom-workspace',
+      'pigments:find-colors': => @findColors()
+
+    atom.workspace.addOpener (uriToOpen) =>
+      url ||= require 'url'
+
+      {protocol, host} = url.parse uriToOpen
+      return unless protocol is 'pigments:' and host is 'search'
+
+      atom.views.getView(@project.findAllColors())
+
+  findColors: ->
+    uri = "pigments://search"
+
+    pane = atom.workspace.paneForURI(uri)
+    pane ||= atom.workspace.getActivePane()
+
+    atom.workspace.openURIInPane(uri, pane, {})
 
   deactivate: ->
 

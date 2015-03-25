@@ -9,11 +9,14 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
+    "underscore-plus": "1.x",
+    "fs-plus": "2.x",
     "async": "0.2.6",
     "css-color-function": "0.1.x",
     "minimatch": "0.3.x",
     "delegato": "^1.0.0",
-    "fuzzaldrin": "2.x"
+    "fuzzaldrin": "2.x",
+    "atom-utils": ">=0.5.0"
   },
   "providedServices": {
     "autocomplete.provider": {

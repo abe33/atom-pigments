@@ -4,6 +4,7 @@ minimatch = require 'minimatch'
 ColorBuffer = require './color-buffer'
 ColorBufferElement = require './color-buffer-element'
 ColorMarkerElement = require './color-marker-element'
+ColorResultsElement = require './color-results-element'
 ColorContext = require './color-context'
 ColorSearch = require './color-search'
 Palette = require './palette'
@@ -12,6 +13,7 @@ PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 
 ColorBufferElement.registerViewProvider(ColorBuffer)
+ColorResultsElement.registerViewProvider(ColorSearch)
 
 module.exports =
 class ColorProject
@@ -89,7 +91,12 @@ class ColorProject
       results.forEach (variable) =>
         @createProjectVariableSubscriptions(variable)
 
-  findAllColors: -> new ColorSearch({})
+  findAllColors: ->
+    new ColorSearch
+      sourceNames: atom.config.get 'pigments.sourceNames'
+      ignoredNames: @getIgnoredNames()
+      context: @getContext()
+
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
