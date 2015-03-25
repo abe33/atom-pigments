@@ -61,6 +61,11 @@ describe 'ColorProject', ->
     it 'dispatches a did-initialize event', ->
       expect(eventSpy).toHaveBeenCalled()
 
+  describe '::findAllColors', ->
+    it 'returns all the colors in the legibles files of the project', ->
+      search = project.findAllColors()
+      expect(search).toBeDefined()
+
   ##    ##     ##    ###    ########   ######     ##    ##  #######  ########
   ##    ##     ##   ## ##   ##     ## ##    ##    ###   ## ##     ##    ##
   ##    ##     ##  ##   ##  ##     ## ##          ####  ## ##     ##    ##

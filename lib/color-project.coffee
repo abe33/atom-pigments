@@ -5,6 +5,7 @@ ColorBuffer = require './color-buffer'
 ColorBufferElement = require './color-buffer-element'
 ColorMarkerElement = require './color-marker-element'
 ColorContext = require './color-context'
+ColorSearch = require './color-search'
 Palette = require './palette'
 PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
@@ -87,6 +88,8 @@ class ColorProject
 
       results.forEach (variable) =>
         @createProjectVariableSubscriptions(variable)
+
+  findAllColors: -> new ColorSearch({})
 
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
