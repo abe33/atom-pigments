@@ -34,7 +34,9 @@ fdescribe 'autocomplete provider', ->
         atom.packages.activatePackage('pigments')
       ]
 
-    waitsForPromise -> pigments.getProject().initialize()
+    waitsForPromise -> pigments.getProject().initialize().then ->
+      console.log 'project initialized'
+      console.log pigments.getProject().getVariables()
 
     waitsFor ->
       autocompleteMain.autocompleteManager?.ready and
