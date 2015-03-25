@@ -31,15 +31,47 @@ class ColorBufferElement extends HTMLElement
   setModel: (@colorBuffer) ->
     {@editor} = @colorBuffer
 
-    @colorBuffer.initialize().then => @updateMarkers()
-    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
-    @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
+    @colorBuffer.initialize().then =>
+      @updateMarkers()
+    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers =>
+      @updateMarkers()
+    @subscriptions.add @editor.onDidChangeScrollTop =>
+      @updateMarkers()
+
+    @subscriptions.add @editor.onDidAddCursor =>
+      @requestSelectionUpdate()
+    @subscriptions.add @editor.onDidRemoveCursor =>
+      @requestSelectionUpdate()
+    @subscriptions.add @editor.onDidChangeCursorPosition =>
+      @requestSelectionUpdate()
+    @subscriptions.add @editor.onDidAddSelection =>
+      @requestSelectionUpdate()
+    @subscriptions.add @editor.onDidRemoveSelection =>
+      @requestSelectionUpdate()
+    @subscriptions.add @editor.onDidChangeSelectionRange =>
+      @requestSelectionUpdate()
 
     @attach()
 
   attach: ->
     @editorElement = atom.views.getView(@editor)
     @editorElement.shadowRoot.querySelector('.lines').appendChild(this)
+
+  requestSelectionUpdate: ->
+    return if @updateRequested
+
+    @updateRequested = true
+    requestAnimationFrame =>
+      @updateRequested = false
+      return if @editor.getBuffer().isDestroyed()
+      @updateSelections()
+
+  updateSelections: ->
+    for marker in @displayedMarkers
+      view = @viewsByMarkers.get(marker)
+      view.style.display = ''
+
+      @hideMarkerIfInSelection(marker, view)
 
   updateMarkers: ->
     markers = @colorBuffer.findColorMarkers({
@@ -65,6 +97,8 @@ class ColorBufferElement extends HTMLElement
       @shadowRoot.appendChild view
 
     view.setModel(marker)
+
+    @hideMarkerIfInSelection(marker, view)
     @usedMarkers.push(view)
     @viewsByMarkers.set(marker, view)
     view
@@ -76,6 +110,18 @@ class ColorBufferElement extends HTMLElement
       @usedMarkers.splice(@usedMarkers.indexOf(view), 1)
       view.release(false) unless view.isReleased()
       @unusedMarkers.push(view)
+
+  hideMarkerIfInSelection: (marker, view) ->
+    selections = @editor.getSelections()
+
+    for selection in selections
+      range = selection.getScreenRange()
+      markerRange = marker.marker?.getScreenRange()
+
+      continue unless markerRange? and range?
+
+      if markerRange.intersectsWith(range)
+        view.style.display = 'none'
 
 module.exports = ColorBufferElement =
 document.registerElement 'pigments-markers', {
