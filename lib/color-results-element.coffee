@@ -92,10 +92,10 @@ class ColorResultsElement extends HTMLElement
         <span class="icon icon-file-text" data-name="#{fileBasename}"></span>
         <span class="path-name bright">#{pathName}</span>
         <span class="path-match-number">(#{matches.length + 1})</span></div>
-        <ul class="matches list-tree">
-          #{matches.map((match) => @createMatchResult match).join('')}
-        </ul>
       </div>
+      <ul class="matches list-tree">
+        #{matches.map((match) => @createMatchResult match).join('')}
+      </ul>
     </li>"""
 
   createMatchResult: (match) ->
