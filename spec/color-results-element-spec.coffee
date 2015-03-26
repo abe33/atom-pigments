@@ -1,3 +1,4 @@
+{click} = require './helpers/events'
 ColorSearch = require '../lib/color-search'
 
 describe 'ColorResultsElement', ->
@@ -23,6 +24,8 @@ describe 'ColorResultsElement', ->
 
       resultsElement = atom.views.getView(search)
 
+      jasmine.attachToDOM(resultsElement)
+
   afterEach -> waitsFor -> completeSpy.callCount > 0
 
   it 'is associated with ColorSearch model', ->
@@ -40,3 +43,12 @@ describe 'ColorResultsElement', ->
       expect(fileResults.length).toEqual(7)
 
       expect(fileResults[0].querySelectorAll('li.list-item').length).toEqual(3)
+
+    describe 'when a file item is clicked', ->
+      [fileItem] = []
+      beforeEach ->
+        fileItem = resultsElement.querySelector('.list-nested-item > .list-item')
+        click(fileItem)
+
+      it 'collapses the file matches', ->
+        expect(resultsElement.querySelector('.list-nested-item.collapsed')).toExist()

@@ -2,7 +2,7 @@ _ = require 'underscore-plus'
 fs = require 'fs-plus'
 path = require 'path'
 {Range, CompositeDisposable} = require 'atom'
-{SpacePenDSL, EventsDelegation} = require 'atom-utils'
+{SpacePenDSL, EventsDelegation, AncestorsMethods} = require 'atom-utils'
 
 removeLeadingWhitespace = (string) -> string.replace(/^\s+/, '')
 
@@ -21,7 +21,7 @@ class ColorResultsElement extends HTMLElement
             @span outlet: 'searchedCount', class: 'searched-count'
             @span ' paths searched'
 
-      @div outlet: 'resultsList', class: 'search-colors-results results-view list-tree focusable-panel has-collapsable-children', tabindex: -1
+      @ol outlet: 'resultsList', class: 'search-colors-results results-view list-tree focusable-panel has-collapsable-children', tabindex: -1
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
@@ -30,6 +30,12 @@ class ColorResultsElement extends HTMLElement
     @colors = 0
 
     @loadingMessage.style.display = 'none'
+
+    @subscriptions.add @subscribeTo this, '.list-nested-item > .list-item',
+      click: (e) ->
+        e.stopPropagation()
+        fileItem = AncestorsMethods.parents(e.target,'.list-nested-item')[0]
+        fileItem.classList.toggle('collapsed')
 
   setModel: (@colorSearch) ->
     @subscriptions.add @colorSearch.onDidFindMatches (result) =>
