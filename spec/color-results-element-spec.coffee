@@ -52,3 +52,19 @@ describe 'ColorResultsElement', ->
 
       it 'collapses the file matches', ->
         expect(resultsElement.querySelector('.list-nested-item.collapsed')).toExist()
+
+    describe 'when a matches item is clicked', ->
+      [matchItem, spy] = []
+      beforeEach ->
+        spy = jasmine.createSpy('did-add-text-editor')
+
+        atom.workspace.onDidAddTextEditor(spy)
+        matchItem = resultsElement.querySelector('.search-result.list-item')
+        click(matchItem)
+
+        waitsFor -> spy.callCount > 0
+
+      it 'opens the file', ->
+        expect(spy).toHaveBeenCalled()
+        {textEditor} = spy.argsForCall[0][0]
+        expect(textEditor.getSelectedBufferRange()).toEqual([[1,13],[1,23]])

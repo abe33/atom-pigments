@@ -37,6 +37,22 @@ class ColorResultsElement extends HTMLElement
         fileItem = AncestorsMethods.parents(e.target,'.list-nested-item')[0]
         fileItem.classList.toggle('collapsed')
 
+    @subscriptions.add @subscribeTo this, '.search-result',
+      click: (e) ->
+        e.stopPropagation()
+        matchItem = if e.target.matches('.search-result')
+          e.target
+        else
+          AncestorsMethods.parents(e.target,'.search-result')[0]
+
+        fileItem = AncestorsMethods.parents(matchItem,'.list-nested-item')[0]
+        range = Range.fromObject([
+          matchItem.dataset.start.split(',').map(Number)
+          matchItem.dataset.end.split(',').map(Number)
+        ])
+        atom.workspace.open(fileItem.dataset.path).then (editor) ->
+          editor.setSelectedBufferRange(range, autoscroll: true)
+
   setModel: (@colorSearch) ->
     @subscriptions.add @colorSearch.onDidFindMatches (result) =>
       @addFileResult(result)
@@ -126,7 +142,7 @@ class ColorResultsElement extends HTMLElement
       style += "font-family: #{fontFamily};"
 
     """
-    <li class="search-result list-item">
+    <li class="search-result list-item" data-start="#{range.start.row},#{range.start.column}" data-end="#{range.end.row},#{range.end.column}">
       <span class="line-number text-subtle">#{lineNumber}</span>
       <span class="preview">
         #{prefix}
