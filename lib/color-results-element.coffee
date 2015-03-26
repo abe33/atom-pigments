@@ -115,7 +115,7 @@ class ColorResultsElement extends HTMLElement
         <span class="disclosure-arrow"></span>
         <span class="icon icon-file-text" data-name="#{fileBasename}"></span>
         <span class="path-name bright">#{pathName}</span>
-        <span class="path-match-number">(#{matches.length + 1})</span></div>
+        <span class="path-match-number">(#{matches.length})</span></div>
       </div>
       <ul class="matches list-tree">
         #{matches.map((match) => @createMatchResult match).join('')}
