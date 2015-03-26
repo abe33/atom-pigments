@@ -108,11 +108,22 @@ pigments-color-results {
   position: relative;
   display: -webkit-flex;
   -webkit-flex-direction: column;
-}
 
-.preview-pane .results-view {
-  overflow: auto;
-  position: relative;
-  padding: 0 10px;
-  -webkit-flex: 1;
+  .results-view {
+    overflow: auto;
+    position: relative;
+    padding: 0 10px;
+    -webkit-flex: 1;
+
+    .line-number {
+      margin-right: 1ex;
+      text-align: right;
+      display: inline-block;
+    }
+
+    .search-result {
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
 }
