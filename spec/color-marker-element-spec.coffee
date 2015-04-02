@@ -125,7 +125,7 @@ describe 'ColorMarkerElement', ->
 
     it 'sets the drop shadow color of the region with the color css value', ->
       for region in regions
-        expect(colorMarkerElement.style.webkitFilter).toEqual('drop-shadow(rgb(255, 0, 0) 0px 0px 1px) drop-shadow(rgb(255, 0, 0) 0px 0px 1px) drop-shadow(rgb(255, 0, 0) 0px 0px 1px) drop-shadow(rgb(255, 0, 0) 0px 0px 1px)')
+        expect(region.style.backgroundColor).toEqual('rgb(255, 0, 0)')
 
     describe 'when the marker is modified', ->
       beforeEach ->

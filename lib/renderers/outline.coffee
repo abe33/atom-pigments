@@ -8,14 +8,12 @@ class OutlineRenderer extends RegionRenderer
 
     color = colorMarker.color.toCSS()
 
-    style =
-      webkitFilter: "drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color}) drop-shadow(0 0 1px #{color})"
-
     rowSpan = range.end.row - range.start.row
     regions = @renderRegions(colorMarker)
 
-    @styleRegion(region) for region in regions
-    {regions, style}
+    @styleRegion(region, color) for region in regions
+    {regions}
 
-  styleRegion: (region) ->
+  styleRegion: (region, color) ->
     region.classList.add('outline')
+    region.style.backgroundColor = color
