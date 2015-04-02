@@ -8,12 +8,14 @@ ColorResultsElement = require './color-results-element'
 ColorContext = require './color-context'
 ColorSearch = require './color-search'
 Palette = require './palette'
+PaletteElement = require './palette-element'
 PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 
 ColorBufferElement.registerViewProvider(ColorBuffer)
 ColorResultsElement.registerViewProvider(ColorSearch)
+PaletteElement.registerViewProvider(Palette)
 
 module.exports =
 class ColorProject
