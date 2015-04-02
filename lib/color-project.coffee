@@ -197,7 +197,8 @@ class ColorProject
     return new Palette unless @isInitialized()
 
     colors = {}
-    @getColorVariables().forEach (variable) -> colors[variable.name] = variable
+    @getColorVariables().forEach (variable) ->
+      colors[variable.name] = variable.color
 
     new Palette(colors)
 
