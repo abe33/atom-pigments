@@ -64,11 +64,14 @@ describe 'autocomplete provider', ->
       waitsFor ->
         autocompleteManager.displaySuggestions.calls.length is 1
 
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(editorView.querySelector('.autocomplete-plus span.word').textContent).toEqual('base-color')
+      waitsFor -> editorView.querySelector('.autocomplete-plus li')?
 
-        preview = editorView.querySelector('.autocomplete-plus span.completion-label .color-suggestion-preview')
+      runs ->
+        popup = editorView.querySelector('.autocomplete-plus')
+        expect(popup).toExist()
+        expect(popup.querySelector('span.word').textContent).toEqual('base-color')
+
+        preview = popup.querySelector('.color-suggestion-preview')
         expect(preview).toExist()
         expect(preview.style.background).toEqual('rgb(255, 255, 255)')
 
@@ -112,8 +115,11 @@ describe 'autocomplete provider', ->
         waitsFor ->
           autocompleteManager.displaySuggestions.calls.length is 1
 
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          expect(editorView.querySelector('.autocomplete-plus span.word').textContent).toEqual('button-padding')
+        waitsFor -> editorView.querySelector('.autocomplete-plus li')?
 
-          expect(editorView.querySelector('.autocomplete-plus span.completion-label').textContent).toEqual('6px 8px')
+        runs ->
+          popup = editorView.querySelector('.autocomplete-plus')
+          expect(popup).toExist()
+          expect(popup.querySelector('span.word').textContent).toEqual('button-padding')
+
+          expect(popup.querySelector('span.right-label').textContent).toEqual('6px 8px')
