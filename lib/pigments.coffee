@@ -47,6 +47,7 @@ module.exports =
 
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
+      'pigments:show-palette': => @showPalette()
 
     atom.workspace.addOpener (uriToOpen) =>
       url ||= require 'url'
@@ -56,13 +57,13 @@ module.exports =
 
       atom.views.getView(@project.findAllColors())
 
-  findColors: ->
-    uri = "pigments://search"
+    atom.workspace.addOpener (uriToOpen) =>
+      url ||= require 'url'
 
-    pane = atom.workspace.paneForURI(uri)
-    pane ||= atom.workspace.getActivePane()
+      {protocol, host} = url.parse uriToOpen
+      return unless protocol is 'pigments:' and host is 'palette'
 
-    atom.workspace.openURIInPane(uri, pane, {})
+      atom.views.getView(@project.getPalette())
 
   deactivate: ->
 
@@ -73,3 +74,19 @@ module.exports =
   serialize: -> @project.serialize()
 
   getProject: -> @project
+
+  findColors: ->
+    uri = "pigments://search"
+
+    pane = atom.workspace.paneForURI(uri)
+    pane ||= atom.workspace.getActivePane()
+
+    atom.workspace.openURIInPane(uri, pane, {})
+
+  showPalette: ->
+    uri = "pigments://palette"
+
+    pane = atom.workspace.paneForURI(uri)
+    pane ||= atom.workspace.getActivePane()
+
+    atom.workspace.openURIInPane(uri, pane, {})

@@ -1,17 +1,38 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
-fdescribe 'PaletteElement', ->
+describe 'PaletteElement', ->
   [palette, paletteElement] = []
 
-  beforeEach ->
-    palette = new Palette
-      red: new Color '#ff0000'
-      green: new Color '#00ff00'
-      blue: new Color '#0000ff'
-      redCopy: new Color '#ff0000'
+  describe 'as a view provider', ->
+    beforeEach ->
+      palette = new Palette
+        red: new Color '#ff0000'
+        green: new Color '#00ff00'
+        blue: new Color '#0000ff'
+        redCopy: new Color '#ff0000'
 
-    paletteElement = atom.views.getView(palette)
+      paletteElement = atom.views.getView(palette)
 
-  it 'is associated with the Palette model', ->
-    expect(paletteElement).toBeDefined()
+    it 'is associated with the Palette model', ->
+      expect(paletteElement).toBeDefined()
+
+  describe 'when pigments:show-palette commands is triggered', ->
+    [workspaceElement, pigments, project] = []
+    beforeEach ->
+      workspaceElement = atom.views.getView(atom.workspace)
+
+      waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
+        pigments = pkg.mainModule
+        project = pigments.getProject()
+
+      waitsForPromise -> project.initialize()
+
+      runs ->
+        atom.commands.dispatch(workspaceElement, 'pigments:show-palette')
+
+      waitsFor ->
+        paletteElement = workspaceElement.querySelector('pigments-palette')
+
+    it 'opens a palette element', ->
+      expect(paletteElement).toBeDefined()
