@@ -34,6 +34,16 @@
   }
 }
 
+.icon-pigments::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-image: url(atom://pigments/resources/icon.svg);
+  background-size: 16px;
+  vertical-align: middle;
+}
+
 atom-text-editor::shadow pigments-markers,
 pigments-markers {
   position: relative;
@@ -149,14 +159,4 @@ pigments-color-results {
       padding-bottom: 2px;
     }
   }
-}
-
-.icon-pigments::before {
-  content: '';
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  background-image: url(atom://pigments/resources/icon-gradient.png);
-  background-size: 16px;
-  vertical-align: middle;
 }
