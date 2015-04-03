@@ -14,9 +14,9 @@ class ColorBufferElement extends HTMLElement
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
       if type is 'background'
-        @classList.add('overlay')
+        @classList.add('above-editor-content')
       else
-        @classList.remove('overlay')
+        @classList.remove('above-editor-content')
 
   attachedCallback: ->
     @updateMarkers()
