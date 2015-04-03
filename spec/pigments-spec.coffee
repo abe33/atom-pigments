@@ -6,7 +6,7 @@ Pigments = require '../lib/pigments'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Pigments", ->
-  [workspaceElement, pigments] = []
+  [workspaceElement, pigments, project] = []
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
@@ -14,6 +14,7 @@ describe "Pigments", ->
 
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
+      project = pigments.getProject()
 
   it 'instanciates a ColorProject instance', ->
     expect(pigments.getProject()).toBeDefined()
@@ -26,3 +27,16 @@ describe "Pigments", ->
       timestamp: date
       buffers: {}
     })
+
+  describe 'when deactivated', ->
+    [editor] = []
+    beforeEach ->
+      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
+        editor = e
+
+      runs ->
+        spyOn(project, 'destroy').andCallThrough()
+        atom.packages.deactivatePackage('pigments')
+
+    it 'destroys the pigments project', ->
+      expect(project.destroy).toHaveBeenCalled()

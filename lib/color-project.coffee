@@ -65,6 +65,8 @@ class ColorProject
       @emitter.emit 'did-initialize', variables
       variables
 
+  destroy: ->
+
   loadPathsAndVariables: ->
     destroyed = null
 

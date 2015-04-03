@@ -66,6 +66,7 @@ module.exports =
       atom.views.getView(@project.getPalette())
 
   deactivate: ->
+    @getProject()?.destroy()
 
   provide: ->
     PigmentsProvider ?= require './pigments-provider'
