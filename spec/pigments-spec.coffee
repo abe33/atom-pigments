@@ -42,7 +42,7 @@ describe "Pigments", ->
         spyOn(project, 'destroy').andCallThrough()
         spyOn(buffer, 'destroy').andCallThrough()
 
-        atom.packages.deactivatePackage('pigments')
+        pigments.deactivate()
 
     it 'destroys the pigments project', ->
       expect(project.destroy).toHaveBeenCalled()
