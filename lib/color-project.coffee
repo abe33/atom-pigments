@@ -54,6 +54,8 @@ class ColorProject
 
   isInitialized: -> @initialized
 
+  isDestroyed: -> @destroyed
+
   initialize: ->
     return Promise.resolve(@variables.slice()) if @isInitialized()
     return @initializePromise if @initializePromise?
@@ -66,6 +68,13 @@ class ColorProject
       variables
 
   destroy: ->
+    return if @destroyed
+
+    @destroyed = true
+
+    buffer.destroy() for id,buffer of @colorBuffersByEditorId
+
+    @colorBuffersByEditorId = null
 
   loadPathsAndVariables: ->
     destroyed = null
@@ -101,7 +110,6 @@ class ColorProject
       ignoredNames: @getIgnoredNames()
       context: @getContext()
 
-
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##
@@ -116,6 +124,7 @@ class ColorProject
       atom.views.getView(buffer) if buffer?
 
   colorBufferForEditor: (editor) ->
+    return if @destroyed
     return unless editor?
     if @colorBuffersByEditorId[editor.id]?
       return @colorBuffersByEditorId[editor.id]

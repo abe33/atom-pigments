@@ -36,6 +36,11 @@ class ColorMarkerElement extends HTMLElement
 
     @render()
 
+  destroy: ->
+    @parentNode?.removeChild(this)
+    @subscriptions.dispose()
+    @clear()
+
   render: ->
     @innerHTML = ''
     {style, regions, class: cls} = @renderer.render(@colorMarker)
@@ -53,13 +58,16 @@ class ColorMarkerElement extends HTMLElement
   release: (dispatchEvent=true) ->
     return if @released
     @subscriptions.dispose()
+    @clear()
+    @emitter.emit('did-release') if dispatchEvent
+
+  clear: ->
     @subscriptions = null
     @colorMarker = null
     @released = true
     @innerHTML = ''
     @className = ''
     @style.cssText = ''
-    @emitter.emit('did-release') if dispatchEvent
 
 module.exports = ColorMarkerElement =
 document.registerElement 'pigments-color-marker', {

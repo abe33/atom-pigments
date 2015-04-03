@@ -29,14 +29,28 @@ describe "Pigments", ->
     })
 
   describe 'when deactivated', ->
-    [editor] = []
+    [editor, editorElement, buffer] = []
     beforeEach ->
       waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
         editor = e
+        editorElement = atom.views.getView(e)
+        buffer = project.colorBufferForEditor(editor)
+
+      waitsFor -> editorElement.shadowRoot.querySelector('pigments-markers')
 
       runs ->
         spyOn(project, 'destroy').andCallThrough()
+        spyOn(buffer, 'destroy').andCallThrough()
+
         atom.packages.deactivatePackage('pigments')
 
     it 'destroys the pigments project', ->
       expect(project.destroy).toHaveBeenCalled()
+
+    it 'destroys all the buffer that were created', ->
+      expect(project.colorBufferForEditor(editor)).toBeUndefined()
+      expect(project.colorBuffersByEditorId).toBeNull()
+      expect(buffer.destroy).toHaveBeenCalled()
+
+    it 'destroys the buffer element that were added to the DOM', ->
+      expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()

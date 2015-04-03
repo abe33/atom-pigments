@@ -31,12 +31,11 @@ class ColorBufferElement extends HTMLElement
   setModel: (@colorBuffer) ->
     {@editor} = @colorBuffer
 
-    @colorBuffer.initialize().then =>
-      @updateMarkers()
-    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers =>
-      @updateMarkers()
-    @subscriptions.add @editor.onDidChangeScrollTop =>
-      @updateMarkers()
+    @colorBuffer.initialize().then => @updateMarkers()
+
+    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
+    @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
+    @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
 
     @subscriptions.add @editor.onDidAddCursor =>
       @requestSelectionUpdate()
@@ -56,6 +55,16 @@ class ColorBufferElement extends HTMLElement
   attach: ->
     @editorElement = atom.views.getView(@editor)
     @editorElement.shadowRoot.querySelector('.lines').appendChild(this)
+
+  detach: ->
+    return unless @parentNode?
+
+    @parentNode.removeChild(this)
+
+  destroy: ->
+    @detach()
+    @subscriptions.dispose()
+    @releaseAllMarkerViews()
 
   requestSelectionUpdate: ->
     return if @updateRequested
@@ -110,6 +119,12 @@ class ColorBufferElement extends HTMLElement
       @usedMarkers.splice(@usedMarkers.indexOf(view), 1)
       view.release(false) unless view.isReleased()
       @unusedMarkers.push(view)
+
+  releaseAllMarkerViews: ->
+    view.destroy() for view in @usedMarkers
+    view.destroy() for view in @unusedMarkers
+
+    @usedMarkers = @unusedMarkers = null
 
   hideMarkerIfInSelection: (marker, view) ->
     selections = @editor.getSelections()
