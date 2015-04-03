@@ -1,4 +1,11 @@
 class PaletteElement extends HTMLElement
+
+  getTitle: -> 'Palette'
+
+  getURI: -> 'pigments://palette'
+
+  getIconName: -> "pigments"
+
   getModel: -> @palette
 
   setModel: (@palette) ->
