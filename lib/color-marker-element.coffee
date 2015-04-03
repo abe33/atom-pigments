@@ -38,7 +38,7 @@ class ColorMarkerElement extends HTMLElement
 
   destroy: ->
     @parentNode?.removeChild(this)
-    @subscriptions.dispose()
+    @subscriptions?.dispose()
     @clear()
 
   render: ->
