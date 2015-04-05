@@ -137,6 +137,65 @@ pigments-color-results {
   }
 }
 
+pigments-palette {
+  background: @syntax-background-color;
+  color: @syntax-text-color;
+
+  ol {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 10px;
+    list-style: none;
+    border-bottom: 1px solid @base-border-color;
+  }
+
+  .palette-panel {
+    display: -webkit-flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-flex-flow: column;
+  }
+
+  .palette-list, .palette-controls {
+    display: -webkit-flex;
+    position: relative;
+    width: 100%;
+  }
+
+  .palette-controls {
+  }
+
+  .palette-list {
+    overflow-y: auto;
+  }
+
+  .pigments-color {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 10px;
+
+    .background-color;
+    z-index: 0;
+
+    &:before {
+      z-index: 0;
+    }
+    &:after {
+      z-index: 1;
+    }
+  }
+}
+
 .preview-pane {
   position: relative;
   display: -webkit-flex;

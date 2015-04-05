@@ -34,5 +34,12 @@ describe 'PaletteElement', ->
       waitsFor ->
         paletteElement = workspaceElement.querySelector('pigments-palette')
 
+      runs ->
+        palette = paletteElement.getModel()
+
     it 'opens a palette element', ->
       expect(paletteElement).toBeDefined()
+
+    it 'creates as many list item as there is colors in the project', ->
+      expect(paletteElement.querySelectorAll('li').length).not.toEqual(0)
+      expect(paletteElement.querySelectorAll('li').length).toEqual(palette.tuple().length)
