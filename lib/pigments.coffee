@@ -39,6 +39,10 @@ module.exports =
       type: 'boolean'
       default: true
       description: 'When enabled, the autocomplete provider will also provides completion for non-color variables.'
+    sortPaletteColors:
+      type: 'string'
+      default: 'none'
+      enum: ['none', 'by name', 'by color']
 
   activate: (state) ->
     ColorProject ?= require './color-project'

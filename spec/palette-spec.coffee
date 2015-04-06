@@ -60,18 +60,18 @@ describe 'Palette', ->
       expect(map.get(keys[1])).toEqual(['green'])
       expect(map.get(keys[2])).toEqual(['blue'])
 
-  describe '::getSortedColorsByNames', ->
+  describe '::sortedByName', ->
     it 'returns the colors and names sorted by name', ->
-      expect(palette.getSortedColorsByNames()).toEqual([
+      expect(palette.sortedByName()).toEqual([
         ['blue', palette.getColor('blue')]
         ['green', palette.getColor('green')]
         ['red', palette.getColor('red')]
         ['redCopy', palette.getColor('redCopy')]
       ])
 
-  describe '::getSortedColors', ->
+  describe '::sortedByColor', ->
     it 'returns the colors and names sorted by colors', ->
-      expect(palette.getSortedColors()).toEqual([
+      expect(palette.sortedByColor()).toEqual([
         ['red', palette.getColor('red')]
         ['redCopy', palette.getColor('redCopy')]
         ['green', palette.getColor('green')]

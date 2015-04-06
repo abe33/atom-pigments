@@ -10,10 +10,10 @@ class Palette
     .filter ([_,color]) -> color.isEqual(ref)
     .map ([name]) -> name
 
-  getSortedColors: ->
+  sortedByColor: ->
     @tuple().sort ([_, a], [__, b]) => @compareColors(a,b)
 
-  getSortedColorsByNames: ->
+  sortedByName: ->
     @tuple().sort ([a],[b]) -> if a > b then 1 else if a < b then -1 else 0
 
   getColorsNames: -> Object.keys(@colors)

@@ -52,3 +52,25 @@ describe 'PaletteElement', ->
 
       li = paletteElement.querySelector('li')
       expect(li.querySelector('.path').textContent).toEqual(atom.project.relativize(projectVariables[0].path))
+
+    describe 'when the sortPaletteColors settings is set to color', ->
+      beforeEach ->
+        atom.config.set 'pigments.sortPaletteColors', 'by color'
+
+      it 'reorders the colors', ->
+        sortedColors = project.getPalette().sortedByColor()
+        lis = paletteElement.querySelectorAll('li')
+
+        for [name,color],i in sortedColors
+          expect(lis[i].querySelector('.name').textContent).toEqual(name)
+
+    describe 'when the sortPaletteColors settings is set to name', ->
+      beforeEach ->
+        atom.config.set 'pigments.sortPaletteColors', 'by name'
+
+      it 'reorders the colors', ->
+        sortedColors = project.getPalette().sortedByName()
+        lis = paletteElement.querySelectorAll('li')
+
+        for [name,color],i in sortedColors
+          expect(lis[i].querySelector('.name').textContent).toEqual(name)

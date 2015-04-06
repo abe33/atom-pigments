@@ -1,3 +1,4 @@
+{CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
 pigments = require './pigments'
 
@@ -13,6 +14,10 @@ class PaletteElement extends HTMLElement
 
   createdCallback: ->
     @project = pigments.getProject()
+    @subscriptions = new CompositeDisposable
+
+    @subscriptions.add atom.config.observe 'pigments.sortPaletteColors', (@sortPaletteColors) =>
+      @renderList() if @palette?
 
   getTitle: -> 'Palette'
 
@@ -23,7 +28,20 @@ class PaletteElement extends HTMLElement
   getModel: -> @palette
 
   setModel: (@palette) ->
-    @palette.eachColor (name, color) =>
+    @renderList()
+
+  getColorsList: ->
+    switch @sortPaletteColors
+      when 'by color' then @palette.sortedByColor()
+      when 'by name' then @palette.sortedByName()
+      else @palette.tuple()
+
+  renderList: ->
+    @buildList(@list, @getColorsList())
+
+  buildList: (container, paletteColors) ->
+    container.innerHTML = ''
+    for [name, color] in paletteColors
       li = document.createElement('li')
       html = """
       <span class="pigments-color"
@@ -41,7 +59,7 @@ class PaletteElement extends HTMLElement
 
       li.innerHTML = html
 
-      @list.appendChild(li)
+      container.appendChild(li)
 
 module.exports = PaletteElement =
 document.registerElement 'pigments-palette', {
