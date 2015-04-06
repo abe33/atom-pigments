@@ -1,7 +1,7 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
-describe 'PaletteElement', ->
+fdescribe 'PaletteElement', ->
   [palette, paletteElement, workspaceElement, pigments, project] = []
 
   beforeEach ->
@@ -43,7 +43,7 @@ describe 'PaletteElement', ->
       expect(paletteElement.querySelectorAll('li').length).not.toEqual(0)
       expect(paletteElement.querySelectorAll('li').length).toEqual(palette.tuple().length)
 
-    it 'binds colors with palette variables', ->
+    it 'binds colors with project variables', ->
       projectVariables = project.getColorVariables()
 
       li = paletteElement.querySelector('li')
