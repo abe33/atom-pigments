@@ -54,7 +54,9 @@ class ColorBuffer
     @initializePromise
 
   restoreMarkersState: (variableMarkers, colorMarkers) ->
-    @variableMarkers = variableMarkers.map (state) =>
+    @variableMarkers = variableMarkers
+    .filter (state) -> state?
+    .map (state) =>
       bufferRange = Range.fromObject(state.bufferRange)
       marker = @editor.getMarker(state.markerId) ? @editor.markBufferRange(bufferRange, {
         type: 'pigments-variable'
@@ -64,7 +66,9 @@ class ColorBuffer
       variable.bufferRange ?= bufferRange
       @variableMarkersByMarkerId[marker.id] = new VariableMarker {marker, variable}
 
-    @colorMarkers = colorMarkers.map (state) =>
+    @colorMarkers = colorMarkers
+    .filter (state) -> state?
+    .map (state) =>
       marker = @editor.getMarker(state.markerId) ? @editor.markBufferRange(state.bufferRange, {
         type: 'pigments-color'
         invalidate: 'touch'
