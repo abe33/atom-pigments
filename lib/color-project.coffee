@@ -121,7 +121,9 @@ class ColorProject
   initializeBuffers: (buffers) ->
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       buffer = @colorBufferForEditor(editor)
-      atom.views.getView(buffer) if buffer?
+      if buffer?
+        bufferElement = atom.views.getView(buffer)
+        bufferElement.attach()
 
   colorBufferForEditor: (editor) ->
     return if @destroyed

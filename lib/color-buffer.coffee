@@ -124,6 +124,8 @@ class ColorBuffer
 
   isIgnored: -> @project.isIgnoredPath(@editor.getPath())
 
+  isDestroyed: -> @destroyed
+
   ##    ##     ##    ###    ########
   ##    ##     ##   ## ##   ##     ##
   ##    ##     ##  ##   ##  ##     ##

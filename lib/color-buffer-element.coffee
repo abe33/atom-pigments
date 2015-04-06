@@ -30,6 +30,7 @@ class ColorBufferElement extends HTMLElement
 
   setModel: (@colorBuffer) ->
     {@editor} = @colorBuffer
+    @editorElement = atom.views.getView(@editor)
 
     @colorBuffer.initialize().then => @updateMarkers()
 
@@ -50,10 +51,10 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @editor.onDidChangeSelectionRange =>
       @requestSelectionUpdate()
 
-    @attach()
+    @subscriptions.add @editorElement.onDidAttach => @attach()
+    @subscriptions.add @editorElement.onDidDetach => @detach()
 
   attach: ->
-    @editorElement = atom.views.getView(@editor)
     @editorElement.shadowRoot.querySelector('.lines').appendChild(this)
 
   detach: ->

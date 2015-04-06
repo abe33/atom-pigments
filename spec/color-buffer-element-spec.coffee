@@ -49,6 +49,7 @@ describe 'ColorBufferElement', ->
     beforeEach ->
       colorBuffer = project.colorBufferForEditor(editor)
       colorBufferElement = atom.views.getView(colorBuffer)
+      colorBufferElement.attach()
 
     it 'is associated to the ColorBuffer model', ->
       expect(colorBufferElement).toBeDefined()
@@ -146,3 +147,15 @@ describe 'ColorBufferElement', ->
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
             expect(colorBufferElement.usedMarkers.length).toEqual(3)
             expect(colorBufferElement.unusedMarkers.length).toEqual(0)
+
+      describe 'when the current pane is splitted to the right', ->
+        beforeEach ->
+          atom.commands.dispatch(editorElement, 'pane:split-right')
+
+        it 'should keep all the buffer elements attached', ->
+          editors = atom.workspace.getTextEditors()
+
+          editors.forEach (editor) ->
+            editorElement = atom.views.getView(editor)
+
+            expect(editorElement.shadowRoot.querySelector('pigments-markers')).toExist()
