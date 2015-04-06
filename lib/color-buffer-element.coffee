@@ -77,6 +77,7 @@ class ColorBufferElement extends HTMLElement
       @updateSelections()
 
   updateSelections: ->
+    return if @editor.isDestroyed()
     for marker in @displayedMarkers
       view = @viewsByMarkers.get(marker)
       view.style.display = ''
