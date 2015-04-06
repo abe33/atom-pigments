@@ -151,6 +151,8 @@ pigments-palette {
     padding: 10px;
     list-style: none;
     border-bottom: 1px solid @base-border-color;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
   }
 
   .palette-panel {
@@ -176,12 +178,23 @@ pigments-palette {
     overflow-y: auto;
   }
 
+  .pigments-color, .pigments-color-details {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+  }
+
+  .pigments-color-details {
+    -webkit-flex: 1;
+  }
+
+  .name, .path {
+    display: block;
+  }
+
   .pigments-color {
     position: relative;
-    display: inline-block;
     width: 40px;
     height: 40px;
-    vertical-align: middle;
     margin-right: 10px;
 
     .background-color;

@@ -2,7 +2,16 @@ Color = require '../lib/color'
 Palette = require '../lib/palette'
 
 describe 'PaletteElement', ->
-  [palette, paletteElement] = []
+  [palette, paletteElement, workspaceElement, pigments, project] = []
+
+  beforeEach ->
+    workspaceElement = atom.views.getView(atom.workspace)
+
+    waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
+      pigments = pkg.mainModule
+      project = pigments.getProject()
+
+    waitsForPromise -> project.initialize()
 
   describe 'as a view provider', ->
     beforeEach ->
@@ -18,18 +27,8 @@ describe 'PaletteElement', ->
       expect(paletteElement).toBeDefined()
 
   describe 'when pigments:show-palette commands is triggered', ->
-    [workspaceElement, pigments, project] = []
     beforeEach ->
-      workspaceElement = atom.views.getView(atom.workspace)
-
-      waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
-        pigments = pkg.mainModule
-        project = pigments.getProject()
-
-      waitsForPromise -> project.initialize()
-
-      runs ->
-        atom.commands.dispatch(workspaceElement, 'pigments:show-palette')
+      atom.commands.dispatch(workspaceElement, 'pigments:show-palette')
 
       waitsFor ->
         paletteElement = workspaceElement.querySelector('pigments-palette')
@@ -43,3 +42,9 @@ describe 'PaletteElement', ->
     it 'creates as many list item as there is colors in the project', ->
       expect(paletteElement.querySelectorAll('li').length).not.toEqual(0)
       expect(paletteElement.querySelectorAll('li').length).toEqual(palette.tuple().length)
+
+    it 'binds colors with palette variables', ->
+      projectVariables = project.getColorVariables()
+
+      li = paletteElement.querySelector('li')
+      expect(li.querySelector('.path').textContent).toEqual(atom.project.relativize(projectVariables[0].path))

@@ -1,4 +1,5 @@
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
+pigments = require './pigments'
 
 class PaletteElement extends HTMLElement
   SpacePenDSL.includeInto(this)
@@ -9,6 +10,9 @@ class PaletteElement extends HTMLElement
       @div class: 'palette-controls'
       @div class: 'palette-list', =>
         @ol outlet: 'list'
+
+  createdCallback: ->
+    @project = pigments.getProject()
 
   getTitle: -> 'Palette'
 
@@ -21,12 +25,22 @@ class PaletteElement extends HTMLElement
   setModel: (@palette) ->
     @palette.eachColor (name, color) =>
       li = document.createElement('li')
-      li.innerHTML = """
+      html = """
       <span class="pigments-color"
             style="background-color: #{color.toCSS()}">
       </span>
-      <span class="name">#{name}</span>
+      <span class="pigments-color-details">
+        <span class="name">#{name}</span>
       """
+      if variable = @project.getVariableByName(name)
+        html += """
+        <span class="path">#{atom.project.relativize(variable.path)}</span>
+        """
+
+      html += '</span>'
+
+      li.innerHTML = html
+
       @list.appendChild(li)
 
 module.exports = PaletteElement =
