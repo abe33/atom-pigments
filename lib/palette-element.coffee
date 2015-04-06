@@ -8,7 +8,14 @@ class PaletteElement extends HTMLElement
 
   @content: ->
     @div class: 'palette-panel', =>
-      @div class: 'palette-controls'
+      @div class: 'palette-controls', =>
+        @div class: 'palette-controls-wrapper', =>
+          @label for: 'sort-palette-colors', 'Sort'
+          @select outlet: 'sort', id: 'sort-palette-colors', =>
+            @option value: 'none', 'None'
+            @option value: 'by name', 'By Name'
+            @option value: 'by color', 'By Color'
+
       @div class: 'palette-list', =>
         @ol outlet: 'list'
 

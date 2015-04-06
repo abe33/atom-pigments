@@ -172,10 +172,17 @@ pigments-palette {
   }
 
   .palette-controls {
+    min-height: -webkit-min-content;
+  }
+  .palette-controls-wrapper {
+    border-bottom: 1px solid @base-border-color;
+    padding: 10px;
+    width: 100%;
   }
 
   .palette-list {
     overflow-y: auto;
+    background: @tool-panel-background-color;
   }
 
   .pigments-color, .pigments-color-details {
