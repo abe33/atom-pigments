@@ -1,11 +1,15 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
 
-fdescribe 'PaletteElement', ->
+describe 'PaletteElement', ->
   [palette, paletteElement, workspaceElement, pigments, project] = []
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
+    atom.config.set 'pigments.sourceNames', [
+      '*.styl'
+      '*.less'
+    ]
 
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
