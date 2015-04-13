@@ -46,7 +46,27 @@ module.exports =
       enum: ['none', 'by name', 'by color']
 
   activate: (state) ->
-    @project = atom.deserializers.deserialize(state.project) ? new ColorProject()
+    ColorBuffer = require './color-buffer'
+    ColorSearch = require './color-search'
+    Palette = require './palette'
+    ColorBufferElement = require './color-buffer-element'
+    ColorMarkerElement = require './color-marker-element'
+    ColorResultsElement = require './color-results-element'
+    PaletteElement = require './palette-element'
+
+    ColorBufferElement.registerViewProvider(ColorBuffer)
+    ColorResultsElement.registerViewProvider(ColorSearch)
+    PaletteElement.registerViewProvider(Palette)
+
+    console.log 'here', ColorProject
+
+    @project = if state.project?
+      atom.deserializers.deserialize(state.project)
+    else
+      try
+        new ColorProject()
+      catch e
+        console.log e
 
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
