@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
-[ColorProject, PigmentsProvider, url] = []
+ColorProject = require './color-project'
+[PigmentsProvider, url] = []
 
 module.exports =
   config:
@@ -45,9 +46,7 @@ module.exports =
       enum: ['none', 'by name', 'by color']
 
   activate: (state) ->
-    ColorProject ?= require './color-project'
-
-    @project = new ColorProject(state ? {})
+    @project = atom.deserializers.deserialize(state.project) ? new ColorProject()
 
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
@@ -70,13 +69,13 @@ module.exports =
       atom.views.getView(@project.getPalette())
 
   deactivate: ->
-    @getProject()?.destroy()
+    @getProject()?.destroy?()
 
   provide: ->
     PigmentsProvider ?= require './pigments-provider'
     new PigmentsProvider(@getProject())
 
-  serialize: -> @project.serialize()
+  serialize: -> {project: @project.serialize()}
 
   getProject: -> @project
 

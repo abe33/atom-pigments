@@ -23,9 +23,10 @@ describe "Pigments", ->
     date = new Date
     spyOn(pigments.getProject(), 'getTimestamp').andCallFake -> date
     expect(pigments.serialize()).toEqual({
-      deserializer: 'ColorProject'
-      timestamp: date
-      buffers: {}
+      project:
+        deserializer: 'ColorProject'
+        timestamp: date
+        buffers: {}
     })
 
   describe 'when deactivated', ->
