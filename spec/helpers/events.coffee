@@ -1,3 +1,4 @@
+event = (type, properties={}) -> new Event type, properties
 
 mouseEvent = (type, properties) ->
   defaults = {
@@ -14,7 +15,7 @@ mouseEvent = (type, properties) ->
     shiftKey: false
     metaKey: false
     button: 0
-    relatedTarget: `undefined`
+    relatedTarget: undefined
   }
 
   properties[k] = v for k,v of defaults when not properties[k]?
@@ -25,7 +26,7 @@ objectCenterCoordinates = (target) ->
   {top, left, width, height} = target.getBoundingClientRect()
   {x: left + width / 2, y: top + height / 2}
 
-module.exports = {objectCenterCoordinates, mouseEvent}
+module.exports = {objectCenterCoordinates, mouseEvent, event}
 
 ['mousedown', 'mousemove', 'mouseup', 'click'].forEach (key) ->
   module.exports[key] = (target, x, y, cx, cy) ->
@@ -39,3 +40,6 @@ module.exports = {objectCenterCoordinates, mouseEvent}
 
 module.exports.mousewheel = (target, deltaX=0, deltaY=0) ->
   target.dispatchEvent(mouseEvent 'mousewheel', {target, deltaX, deltaY})
+
+module.exports.change = (target) ->
+  target.dispatchEvent(event 'change', {target})

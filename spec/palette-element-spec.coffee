@@ -1,5 +1,6 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
+{change} = require './helpers/events'
 
 describe 'PaletteElement', ->
   [palette, paletteElement, workspaceElement, pigments, project] = []
@@ -74,3 +75,16 @@ describe 'PaletteElement', ->
 
         for [name,color],i in sortedColors
           expect(lis[i].querySelector('.name').textContent).toEqual(name)
+
+    describe 'sorting selector', ->
+      [sortSelect] = []
+
+      describe 'when changed', ->
+        beforeEach ->
+          sortSelect = paletteElement.querySelector('#sort-palette-colors')
+          sortSelect.querySelector('option[value="by name"]').setAttribute('selected', 'selected')
+
+          change(sortSelect)
+
+        it 'changes the settings value', ->
+          expect(atom.config.get('pigments.sortPaletteColors')).toEqual('by name')

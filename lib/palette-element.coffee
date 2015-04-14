@@ -26,6 +26,9 @@ class PaletteElement extends HTMLElement
     @subscriptions.add atom.config.observe 'pigments.sortPaletteColors', (@sortPaletteColors) =>
       @renderList() if @palette?
 
+    @subscriptions.add @subscribeTo @sort, 'change': (e) ->
+      atom.config.set 'pigments.sortPaletteColors', e.target.value
+
   getTitle: -> 'Palette'
 
   getURI: -> 'pigments://palette'
