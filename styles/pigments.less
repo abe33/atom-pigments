@@ -153,6 +153,12 @@ pigments-palette {
     border-bottom: 1px solid @base-border-color;
     display: -webkit-flex;
     -webkit-flex-direction: row;
+
+    &.color-group {
+      padding: 0;
+      border-bottom: none;
+      -webkit-flex-direction: column;
+    }
   }
 
   select {
@@ -161,6 +167,13 @@ pigments-palette {
     border: 1px solid @input-border-color;
     color: @text-color;
     font-family: @font-family;
+  }
+
+  .color-group-header {
+    border-bottom: 1px solid @base-border-color;
+    display: inline-block;
+    background: @syntax-background-color;
+    padding: 10px;
   }
 
   .palette-panel {
@@ -201,6 +214,10 @@ pigments-palette {
 
   .pigments-color-details {
     -webkit-flex: 1;
+  }
+
+  .input-group-inline {
+    margin-right: 1em;
   }
 
   .name, .path {

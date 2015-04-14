@@ -76,6 +76,18 @@ describe 'PaletteElement', ->
         for [name,color],i in sortedColors
           expect(lis[i].querySelector('.name').textContent).toEqual(name)
 
+    describe 'when the groupPaletteColors setting is set to file', ->
+      beforeEach ->
+        atom.config.set 'pigments.groupPaletteColors', 'by file'
+
+      it 'renders the list with sublists for each files', ->
+        ols = paletteElement.querySelectorAll('ol ol')
+        expect(ols.length).toEqual(3)
+
+      it 'adds a header with the file path for each sublist', ->
+        ols = paletteElement.querySelectorAll('.color-group-header')
+        expect(ols.length).toEqual(3)
+
     describe 'sorting selector', ->
       [sortSelect] = []
 
