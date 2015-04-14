@@ -44,6 +44,10 @@ module.exports =
       type: 'string'
       default: 'none'
       enum: ['none', 'by name', 'by color']
+    gorupPaletteColors:
+      type: 'string'
+      default: 'none'
+      enum: ['none', 'by file']
 
   activate: (state) ->
     ColorBuffer = require './color-buffer'
@@ -58,15 +62,10 @@ module.exports =
     ColorResultsElement.registerViewProvider(ColorSearch)
     PaletteElement.registerViewProvider(Palette)
 
-    console.log 'here', ColorProject
-
     @project = if state.project?
       atom.deserializers.deserialize(state.project)
     else
-      try
-        new ColorProject()
-      catch e
-        console.log e
+      new ColorProject()
 
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
