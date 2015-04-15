@@ -40,6 +40,8 @@ describe 'PaletteElement', ->
 
       runs ->
         palette = paletteElement.getModel()
+        paletteElement.attached = true
+        paletteElement.renderList()
 
     it 'opens a palette element', ->
       expect(paletteElement).toBeDefined()
