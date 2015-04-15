@@ -3,50 +3,6 @@
 pigments = require './pigments'
 Palette = require './palette'
 
-class StickyTitle
-  EventsDelegation.includeInto(this)
-
-  constructor: (@stickies, @scrollContainer) ->
-    @subscriptions = new CompositeDisposable
-    Array::forEach.call @stickies, (sticky) ->
-      sticky.parentNode.style.height = sticky.offsetHeight + 'px'
-      sticky.style.width = sticky.offsetWidth + 'px'
-
-    @subscriptions.add @subscribeTo @scrollContainer, 'scroll': => @scroll()
-
-  dispose: ->
-    @subscriptions.dispose()
-    @stickies = null
-    @scrollContainer = null
-
-  scroll: ->
-    Array::forEach.call @stickies, (sticky, i) =>
-      nextSticky = @stickies[i + 1]
-      prevSticky = @stickies[i - 1]
-      scrollTop = @scrollContainer.getBoundingClientRect().top
-      parentTop = sticky.parentNode.getBoundingClientRect().top
-      {top} = sticky.getBoundingClientRect()
-
-      if parentTop < scrollTop
-        unless sticky.classList.contains('absolute')
-          sticky.classList.add 'fixed'
-          sticky.style.top = Math.round(scrollTop) + 'px'
-
-          if nextSticky?
-            nextTop = nextSticky.parentNode.getBoundingClientRect().top
-            if top + sticky.offsetHeight >= nextTop
-              sticky.classList.add('absolute')
-              sticky.style.top = @scrollContainer.scrollTop + 'px'
-
-      else
-        sticky.classList.remove 'fixed'
-
-        if prevSticky? and prevSticky.classList.contains('absolute')
-          prevTop = prevSticky.getBoundingClientRect().top
-          if @scrollContainer.scrollTop - scrollTop <= prevTop + prevSticky.offsetHeight * 2
-            prevSticky.classList.remove('absolute')
-            prevSticky.style.top = 'initial'
-
 class PaletteElement extends HTMLElement
   SpacePenDSL.includeInto(this)
   EventsDelegation.includeInto(this)
@@ -167,14 +123,15 @@ class PaletteElement extends HTMLElement
             style="background-color: #{color.toCSS()}">
       </span>
       <span class="pigments-color-details">
-        <span class="name">#{name}</span>
+        <span class="color-entry">
+          <span class="name">#{name}</span>
       """
       if variable = @project.getVariableByName(name)
         html += """
         <span class="path">#{atom.project.relativize(variable.path)}</span>
         """
 
-      html += '</span>'
+      html += '</span></span>'
 
       li.innerHTML = html
 
@@ -190,3 +147,57 @@ PaletteElement.registerViewProvider = (modelClass) ->
     element = new PaletteElement
     element.setModel(model)
     element
+
+class StickyTitle
+  EventsDelegation.includeInto(this)
+
+  constructor: (@stickies, @scrollContainer) ->
+    @subscriptions = new CompositeDisposable
+    Array::forEach.call @stickies, (sticky) ->
+      sticky.parentNode.style.height = sticky.offsetHeight + 'px'
+      sticky.style.width = sticky.offsetWidth + 'px'
+
+    @subscriptions.add @subscribeTo @scrollContainer, 'scroll': (e) =>
+      @scroll(e)
+
+  dispose: ->
+    @subscriptions.dispose()
+    @stickies = null
+    @scrollContainer = null
+
+  scroll: (e) ->
+    delta = if @lastScrollTop
+      @lastScrollTop - @scrollContainer.scrollTop
+    else
+      0
+
+    Array::forEach.call @stickies, (sticky, i) =>
+      nextSticky = @stickies[i + 1]
+      prevSticky = @stickies[i - 1]
+      scrollTop = @scrollContainer.getBoundingClientRect().top
+      parentTop = sticky.parentNode.getBoundingClientRect().top
+      {top} = sticky.getBoundingClientRect()
+
+      if parentTop < scrollTop
+        unless sticky.classList.contains('absolute')
+          sticky.classList.add 'fixed'
+          sticky.style.top = scrollTop + 'px'
+
+          if nextSticky?
+            nextTop = nextSticky.parentNode.getBoundingClientRect().top
+            if top + sticky.offsetHeight >= nextTop
+              sticky.classList.add('absolute')
+              sticky.style.top = @scrollContainer.scrollTop + 'px'
+
+      else
+        sticky.classList.remove 'fixed'
+
+        if prevSticky? and prevSticky.classList.contains('absolute')
+          prevTop = prevSticky.getBoundingClientRect().top
+          prevTop -= prevSticky.offsetHeight if delta < 0
+
+          if scrollTop <= prevTop
+            prevSticky.classList.remove('absolute')
+            prevSticky.style.top = scrollTop + 'px'
+
+    @lastScrollTop = @scrollContainer.scrollTop

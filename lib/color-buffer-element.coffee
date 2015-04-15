@@ -55,7 +55,11 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @editorElement.onDidDetach => @detach()
 
   attach: ->
-    @editorElement.shadowRoot.querySelector('.lines').appendChild(this)
+    lines = @editorElement.shadowRoot.querySelector('.lines')
+    if lines?
+      lines.appendChild(this)
+    else
+      console.log @editorElement
 
   detach: ->
     return unless @parentNode?
