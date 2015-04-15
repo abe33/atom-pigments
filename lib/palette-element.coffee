@@ -127,7 +127,6 @@ class PaletteElement extends HTMLElement
 
   buildList: (container, paletteColors) ->
     paletteColors = @checkForDuplicates(paletteColors)
-    console.log paletteColors
     for [names, color] in paletteColors
       li = document.createElement('li')
       li.className = 'color-item'
