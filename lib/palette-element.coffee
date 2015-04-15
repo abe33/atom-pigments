@@ -10,25 +10,30 @@ class PaletteElement extends HTMLElement
   @content: ->
     sort = atom.config.get('pigments.sortPaletteColors')
     group = atom.config.get('pigments.groupPaletteColors')
-    optAttrs = (selected, attrs) ->
-      attrs.selected = 'selected' if selected
+    merge = atom.config.get('pigments.mergeColorDuplicates')
+    optAttrs = (bool, name, attrs) ->
+      attrs[name] = name if bool
       attrs
 
     @div class: 'palette-panel', =>
-      @div class: 'palette-controls', =>
+      @div class: 'palette-controls settings-view', =>
         @div class: 'palette-controls-wrapper', =>
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Sort Colors'
             @select outlet: 'sort', id: 'sort-palette-colors', =>
-              @option optAttrs(sort is 'none', value: 'none'), 'None'
-              @option optAttrs(sort is 'by name', value: 'by name'), 'By Name'
-              @option optAttrs(sort is 'by file', value: 'by color'), 'By Color'
+              @option optAttrs(sort is 'none', 'selected', value: 'none'), 'None'
+              @option optAttrs(sort is 'by name', 'selected', value: 'by name'), 'By Name'
+              @option optAttrs(sort is 'by file', 'selected', value: 'by color'), 'By Color'
 
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Group Colors'
             @select outlet: 'group', id: 'group-palette-colors', =>
-              @option optAttrs(group is 'none', value: 'none'), 'None'
-              @option optAttrs(group is 'by file',  value: 'by file'), 'By File'
+              @option optAttrs(group is 'none', 'selected', value: 'none'), 'None'
+              @option optAttrs(group is 'by file', 'selected', value: 'by file'), 'By File'
+
+          @span class: 'input-group-inline', =>
+            @input optAttrs merge, 'checked', type: 'checkbox', id: 'merge-duplicates', outlet: 'merge'
+            @label for: 'merge-duplicates', 'Merge Duplicates'
 
       @div class: 'palette-list', =>
         @ol outlet: 'list'
@@ -43,11 +48,17 @@ class PaletteElement extends HTMLElement
     @subscriptions.add atom.config.observe 'pigments.groupPaletteColors', (@groupPaletteColors) =>
       @renderList() if @palette? and @attached
 
+    @subscriptions.add atom.config.observe 'pigments.mergeColorDuplicates', (@mergeColorDuplicates) =>
+      @renderList() if @palette? and @attached
+
     @subscriptions.add @subscribeTo @sort, 'change': (e) ->
       atom.config.set 'pigments.sortPaletteColors', e.target.value
 
     @subscriptions.add @subscribeTo @group, 'change': (e) ->
       atom.config.set 'pigments.groupPaletteColors', e.target.value
+
+    @subscriptions.add @subscribeTo @merge, 'change': (e) ->
+      atom.config.set 'pigments.mergeColorDuplicates', e.target.checked
 
   attachedCallback: ->
     @renderList() if @palette?
@@ -80,7 +91,7 @@ class PaletteElement extends HTMLElement
         li.className = 'color-group'
         ol = document.createElement('ol')
 
-        li.appendChild @getGroupHeader(file)
+        li.appendChild @getGroupHeader(atom.project.relativize(file))
         li.appendChild ol
         @buildList(ol, @getColorsList(palette))
         @list.appendChild(li)
@@ -115,7 +126,9 @@ class PaletteElement extends HTMLElement
     palettes
 
   buildList: (container, paletteColors) ->
-    for [name, color] in paletteColors
+    paletteColors = @checkForDuplicates(paletteColors)
+    console.log paletteColors
+    for [names, color] in paletteColors
       li = document.createElement('li')
       li.className = 'color-item'
       html = """
@@ -123,19 +136,49 @@ class PaletteElement extends HTMLElement
             style="background-color: #{color.toCSS()}">
       </span>
       <span class="pigments-color-details">
-        <span class="color-entry">
-          <span class="name">#{name}</span>
       """
-      if variable = @project.getVariableByName(name)
-        html += """
-        <span class="path">#{atom.project.relativize(variable.path)}</span>
-        """
 
-      html += '</span></span>'
+      for name in names
+        html += """
+        <span class="color-entry">
+            <span class="name">#{name}</span>
+        """
+        if variable = @project.getVariableByName(name)
+          html += """
+          <span class="path">#{atom.project.relativize(variable.path)}</span>
+          """
+
+        html += '</span>'
+
+      html += '</span>'
 
       li.innerHTML = html
 
       container.appendChild(li)
+
+  checkForDuplicates: (paletteColors) ->
+    results = []
+    if @mergeColorDuplicates
+      map = new Map()
+
+      colors = []
+
+      findColor = (color) ->
+        return col for col in colors when col.isEqual(color)
+
+      for [k,v] in paletteColors
+        if key = findColor(v)
+          map.get(key).push(k)
+        else
+          map.set(v, [k])
+          colors.push(v)
+
+      map.forEach (names, color) -> results.push [names, color]
+
+      return results
+    else
+      return ([[name], color] for [name, color] in paletteColors)
+
 
 module.exports = PaletteElement =
 document.registerElement 'pigments-palette', {

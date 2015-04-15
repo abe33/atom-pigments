@@ -107,6 +107,15 @@ describe 'PaletteElement', ->
             for [name,color],i in sortedColors
               expect(lis[i].querySelector('.name').textContent).toEqual(name)
 
+      describe 'when the mergeColorDuplicates', ->
+        beforeEach ->
+          atom.config.set 'pigments.mergeColorDuplicates', true
+
+        it 'groups identical colors together', ->
+          lis = paletteElement.querySelectorAll('li')
+
+          expect(lis.length).not.toEqual(37)
+
     describe 'sorting selector', ->
       [sortSelect] = []
 

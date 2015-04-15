@@ -48,6 +48,9 @@ module.exports =
       type: 'string'
       default: 'none'
       enum: ['none', 'by file']
+    mergeColorDuplicates:
+      type: 'boolean'
+      default: false
 
   activate: (state) ->
     ColorBuffer = require './color-buffer'

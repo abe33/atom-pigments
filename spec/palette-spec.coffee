@@ -40,26 +40,6 @@ describe 'Palette', ->
       expect(palette.getNames(new Color('#ff0000'))).toEqual(['red', 'redCopy'])
       expect(palette.getNames(new Color('#00ff00'))).toEqual(['green'])
 
-
-  describe '::getUniqueColorsMap', ->
-    it 'returns a Map that map colors to the variables that define them', ->
-      expectedKeys = [
-        new Color '#ff0000'
-        new Color '#00ff00'
-        new Color '#0000ff'
-      ]
-      map = palette.getUniqueColorsMap()
-      keys = []
-      map.forEach (v,k) -> keys.push(k)
-
-      expect(keys.length).toEqual(3)
-
-      expect(keys[i]).toBeColor(key) for key,i in expectedKeys
-
-      expect(map.get(keys[0])).toEqual(['red', 'redCopy'])
-      expect(map.get(keys[1])).toEqual(['green'])
-      expect(map.get(keys[2])).toEqual(['blue'])
-
   describe '::sortedByName', ->
     it 'returns the colors and names sorted by name', ->
       expect(palette.sortedByName()).toEqual([
