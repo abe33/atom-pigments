@@ -18,8 +18,7 @@ class ColorBufferElement extends HTMLElement
       else
         @classList.remove('above-editor-content')
 
-  attachedCallback: ->
-    @updateMarkers()
+  attachedCallback: -> @updateMarkers()
 
   detachedCallback: ->
 
@@ -55,11 +54,8 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @editorElement.onDidDetach => @detach()
 
   attach: ->
-    lines = @editorElement.shadowRoot.querySelector('.lines')
-    if lines?
-      lines.appendChild(this)
-    else
-      console.log @editorElement
+    return if @parentNode?
+    @editorElement.shadowRoot.querySelector('.lines').appendChild(this)
 
   detach: ->
     return unless @parentNode?
@@ -130,7 +126,8 @@ class ColorBufferElement extends HTMLElement
     view.destroy() for view in @usedMarkers
     view.destroy() for view in @unusedMarkers
 
-    @usedMarkers = @unusedMarkers = null
+    @usedMarkers = []
+    @unusedMarkers = []
 
   hideMarkerIfInSelection: (marker, view) ->
     selections = @editor.getSelections()

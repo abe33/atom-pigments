@@ -16,7 +16,6 @@ class ColorMarkerElement extends HTMLElement
   attachedCallback: ->
 
   detachedCallback: ->
-    @release()
 
   onDidRelease: (callback) ->
     @emitter.on 'did-release', callback

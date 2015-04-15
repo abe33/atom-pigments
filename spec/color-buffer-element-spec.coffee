@@ -151,11 +151,18 @@ describe 'ColorBufferElement', ->
       describe 'when the current pane is splitted to the right', ->
         beforeEach ->
           atom.commands.dispatch(editorElement, 'pane:split-right')
+          editor = atom.workspace.getTextEditors()[1]
+          colorBufferElement = atom.views.getView(project.colorBufferForEditor(editor))
+          waitsFor ->
+            colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length
 
         it 'should keep all the buffer elements attached', ->
           editors = atom.workspace.getTextEditors()
 
           editors.forEach (editor) ->
             editorElement = atom.views.getView(editor)
+            colorBufferElement = editorElement.shadowRoot.querySelector('pigments-markers')
+            expect(colorBufferElement).toExist()
 
-            expect(editorElement.shadowRoot.querySelector('pigments-markers')).toExist()
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
