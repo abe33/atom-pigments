@@ -88,6 +88,23 @@ describe 'PaletteElement', ->
         ols = paletteElement.querySelectorAll('.color-group-header')
         expect(ols.length).toEqual(3)
 
+      describe 'and the sortPaletteColors is set to name', ->
+        beforeEach ->
+          atom.config.set 'pigments.sortPaletteColors', 'by name'
+
+        it 'sorts the nested list items', ->
+          palettes = paletteElement.getFilesPalettes()
+          ols = paletteElement.querySelectorAll('.color-group')
+          n = 0
+
+          for file, palette of palettes
+            ol = ols[n++]
+            lis = ol.querySelectorAll('li')
+            sortedColors = palette.sortedByName()
+
+            for [name,color],i in sortedColors
+              expect(lis[i].querySelector('.name').textContent).toEqual(name)
+
     describe 'sorting selector', ->
       [sortSelect] = []
 
