@@ -114,3 +114,27 @@ describe 'PaletteElement', ->
         it 'changes the settings value', ->
           expect(atom.config.get('pigments.groupPaletteColors')).toEqual('by file')
 
+  describe 'when the palette settings differs from defaults', ->
+    beforeEach ->
+      atom.config.set('pigments.sortPaletteColors', 'by name')
+      atom.config.set('pigments.groupPaletteColors', 'by file')
+
+    describe 'when pigments:show-palette commands is triggered', ->
+      beforeEach ->
+        atom.commands.dispatch(workspaceElement, 'pigments:show-palette')
+
+        waitsFor ->
+          paletteElement = workspaceElement.querySelector('pigments-palette')
+
+        runs ->
+          palette = paletteElement.getModel()
+
+      describe 'the sorting selector', ->
+        it 'selects the current value', ->
+          sortSelect = paletteElement.querySelector('#sort-palette-colors')
+          expect(sortSelect.querySelector('option[selected]').value).toEqual('by name')
+
+      describe 'the grouping selector', ->
+        it 'selects the current value', ->
+          groupSelect = paletteElement.querySelector('#group-palette-colors')
+          expect(groupSelect.querySelector('option[selected]').value).toEqual('by file')

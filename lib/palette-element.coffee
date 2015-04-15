@@ -8,21 +8,27 @@ class PaletteElement extends HTMLElement
   EventsDelegation.includeInto(this)
 
   @content: ->
+    sort = atom.config.get('pigments.sortPaletteColors')
+    group = atom.config.get('pigments.groupPaletteColors')
+    optAttrs = (selected, attrs) ->
+      attrs.selected = 'selected' if selected
+      attrs
+
     @div class: 'palette-panel', =>
       @div class: 'palette-controls', =>
         @div class: 'palette-controls-wrapper', =>
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Sort Colors'
             @select outlet: 'sort', id: 'sort-palette-colors', =>
-              @option value: 'none', 'None'
-              @option value: 'by name', 'By Name'
-              @option value: 'by color', 'By Color'
+              @option optAttrs(sort is 'none', value: 'none'), 'None'
+              @option optAttrs(sort is 'by name', value: 'by name'), 'By Name'
+              @option optAttrs(sort is 'by file', value: 'by color'), 'By Color'
 
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Group Colors'
             @select outlet: 'group', id: 'group-palette-colors', =>
-              @option value: 'none', 'None'
-              @option value: 'by file', 'By File'
+              @option optAttrs(group is 'none', value: 'none'), 'None'
+              @option optAttrs(group is 'by file',  value: 'by file'), 'By File'
 
       @div class: 'palette-list', =>
         @ol outlet: 'list'
