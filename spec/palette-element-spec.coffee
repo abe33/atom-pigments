@@ -100,3 +100,17 @@ describe 'PaletteElement', ->
 
         it 'changes the settings value', ->
           expect(atom.config.get('pigments.sortPaletteColors')).toEqual('by name')
+
+    describe 'grouping selector', ->
+      [groupSelect] = []
+
+      describe 'when changed', ->
+        beforeEach ->
+          groupSelect = paletteElement.querySelector('#group-palette-colors')
+          groupSelect.querySelector('option[value="by file"]').setAttribute('selected', 'selected')
+
+          change(groupSelect)
+
+        it 'changes the settings value', ->
+          expect(atom.config.get('pigments.groupPaletteColors')).toEqual('by file')
+
