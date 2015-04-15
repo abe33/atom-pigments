@@ -3,6 +3,50 @@
 pigments = require './pigments'
 Palette = require './palette'
 
+class StickyTitle
+  EventsDelegation.includeInto(this)
+
+  constructor: (@stickies, @scrollContainer) ->
+    @subscriptions = new CompositeDisposable
+    Array::forEach.call @stickies, (sticky) ->
+      sticky.parentNode.style.height = sticky.offsetHeight + 'px'
+      sticky.style.width = sticky.offsetWidth + 'px'
+
+    @subscriptions.add @subscribeTo @scrollContainer, 'scroll': => @scroll()
+
+  dispose: ->
+    @subscriptions.dispose()
+    @stickies = null
+    @scrollContainer = null
+
+  scroll: ->
+    Array::forEach.call @stickies, (sticky, i) =>
+      nextSticky = @stickies[i + 1]
+      prevSticky = @stickies[i - 1]
+      scrollTop = @scrollContainer.getBoundingClientRect().top
+      parentTop = sticky.parentNode.getBoundingClientRect().top
+      {top} = sticky.getBoundingClientRect()
+
+      if parentTop < scrollTop
+        unless sticky.classList.contains('absolute')
+          sticky.classList.add 'fixed'
+          sticky.style.top = Math.round(scrollTop) + 'px'
+
+          if nextSticky?
+            nextTop = nextSticky.parentNode.getBoundingClientRect().top
+            if top + sticky.offsetHeight >= nextTop
+              sticky.classList.add('absolute')
+              sticky.style.top = @scrollContainer.scrollTop + 'px'
+
+      else
+        sticky.classList.remove 'fixed'
+
+        if prevSticky? and prevSticky.classList.contains('absolute')
+          prevTop = prevSticky.getBoundingClientRect().top
+          if @scrollContainer.scrollTop - scrollTop <= prevTop + prevSticky.offsetHeight * 2
+            prevSticky.classList.remove('absolute')
+            prevSticky.style.top = 'initial'
+
 class PaletteElement extends HTMLElement
   SpacePenDSL.includeInto(this)
   EventsDelegation.includeInto(this)
@@ -38,16 +82,20 @@ class PaletteElement extends HTMLElement
     @subscriptions = new CompositeDisposable
 
     @subscriptions.add atom.config.observe 'pigments.sortPaletteColors', (@sortPaletteColors) =>
-      @renderList() if @palette?
+      @renderList() if @palette? and @attached
 
     @subscriptions.add atom.config.observe 'pigments.groupPaletteColors', (@groupPaletteColors) =>
-      @renderList() if @palette?
+      @renderList() if @palette? and @attached
 
     @subscriptions.add @subscribeTo @sort, 'change': (e) ->
       atom.config.set 'pigments.sortPaletteColors', e.target.value
 
     @subscriptions.add @subscribeTo @group, 'change': (e) ->
       atom.config.set 'pigments.groupPaletteColors', e.target.value
+
+  attachedCallback: ->
+    @renderList() if @palette?
+    @attached = true
 
   getTitle: -> 'Palette'
 
@@ -57,8 +105,7 @@ class PaletteElement extends HTMLElement
 
   getModel: -> @palette
 
-  setModel: (@palette) ->
-    @renderList()
+  setModel: (@palette) -> @renderList() if @attached
 
   getColorsList: (palette) ->
     switch @sortPaletteColors
@@ -67,7 +114,9 @@ class PaletteElement extends HTMLElement
       else palette.tuple()
 
   renderList: ->
+    @stickyTitle?.dispose()
     @list.innerHTML = ''
+
     if @groupPaletteColors is 'by file'
       palettes = @getFilesPalettes()
       for file, palette of palettes
@@ -79,13 +128,23 @@ class PaletteElement extends HTMLElement
         li.appendChild ol
         @buildList(ol, @getColorsList(palette))
         @list.appendChild(li)
+
+      @stickyTitle = new StickyTitle(
+        @list.querySelectorAll('.color-group-header-content'),
+        @querySelector('.palette-list')
+      )
     else
       @buildList(@list, @getColorsList(@palette))
 
   getGroupHeader: (label) ->
     header = document.createElement('div')
     header.className = 'color-group-header'
-    header.textContent = label
+
+    content = document.createElement('div')
+    content.className = 'color-group-header-content'
+    content.textContent = label
+
+    header.appendChild(content)
     header
 
   getFilesPalettes: ->

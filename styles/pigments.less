@@ -169,11 +169,29 @@ pigments-palette {
     font-family: @font-family;
   }
 
-  .color-group-header {
+  .color-group .path {
+    display: none;
+  }
+
+  .color-group-header-content {
     border-bottom: 1px solid @base-border-color;
     display: inline-block;
     background: @syntax-background-color;
     padding: 10px;
+    width: 100%;
+
+    &.fixed {
+      // background: red;
+      position: fixed;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    &.absolute {
+      // background: blue;
+      position: absolute;
+    }
   }
 
   .palette-panel {
