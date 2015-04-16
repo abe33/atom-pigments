@@ -146,6 +146,7 @@ describe 'PaletteElement', ->
     beforeEach ->
       atom.config.set('pigments.sortPaletteColors', 'by name')
       atom.config.set('pigments.groupPaletteColors', 'by file')
+      atom.config.set('pigments.mergeColorDuplicates', true)
 
     describe 'when pigments:show-palette commands is triggered', ->
       beforeEach ->
@@ -166,3 +167,7 @@ describe 'PaletteElement', ->
         it 'selects the current value', ->
           groupSelect = paletteElement.querySelector('#group-palette-colors')
           expect(groupSelect.querySelector('option[selected]').value).toEqual('by file')
+
+      it 'checks the merge checkbox', ->
+        mergeCheckBox = paletteElement.querySelector('#merge-duplicates')
+        expect(mergeCheckBox.checked).toBeTruthy()
