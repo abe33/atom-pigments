@@ -166,3 +166,22 @@ describe 'ColorBufferElement', ->
 
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
+
+    describe 'when the editor is moved to another pane', ->
+      [pane, newPane] = []
+      beforeEach ->
+        pane = atom.workspace.getActivePane()
+        newPane = pane.splitDown(copyActiveItem: false)
+        colorBuffer = project.colorBufferForEditor(editor)
+        colorBufferElement = atom.views.getView(colorBuffer)
+
+        expect(atom.workspace.getPanes().length).toEqual(2)
+
+        pane.moveItemToPane(editor, newPane, 0)
+
+        waitsFor ->
+          colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length
+
+      it 'moves the editor with the buffer to the new pane', ->
+        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
