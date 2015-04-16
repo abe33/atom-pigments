@@ -132,10 +132,17 @@ class PaletteElement extends HTMLElement
       li = document.createElement('li')
       li.className = 'pigments-color-item'
       html = """
-      <span class="pigments-color"
-            style="background-color: #{color.toCSS()}">
-      </span>
-      <span class="pigments-color-details">
+      <div class="pigments-color">
+        <span class="pigments-color-preview"
+              style="background-color: #{color.toCSS()}">
+        </span>
+        <span class="pigments-color-properties">
+          <span class="pigments-color-component"><strong>R:</strong> #{Math.round color.red}</span>
+          <span class="pigments-color-component"><strong>G:</strong> #{Math.round color.green}</span>
+          <span class="pigments-color-component"><strong>B:</strong> #{Math.round color.blue}</span>
+          <span class="pigments-color-component"><strong>A:</strong> #{color.alpha}</span>
+        </span>
+      </div>
       <div class="pigments-color-details">
       """
 

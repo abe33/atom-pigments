@@ -203,7 +203,8 @@ pigments-color-results {
 
 pigments-palette {
   background: @syntax-background-color;
-  color: @syntax-text-color;
+  color: @text-color;
+  font-size: 1.2em;
 
   .pigments-palette-list, .pigments-palette-controls {
     display: -webkit-flex;
@@ -274,20 +275,39 @@ pigments-palette {
 
   .pigments-color, .pigments-color-details {
     display: -webkit-flex;
-    -webkit-flex-flow: column;
   }
 
   .pigments-color-details {
+    -webkit-flex-flow: column;
     -webkit-flex: 1;
   }
 
   .pigments-color {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
+    -webkit-flex-flow: row;
+  }
 
+  .pigments-color-properties {
+    width: 8em;
+
+    span {
+      display: block;
+      float: left;
+      width: 50%;
+      color: @text-color;
+    }
+
+    strong {
+      color: @text-color-subtle;
+    }
+  }
+
+  .pigments-color-preview {
     .background-color;
+
+    position: relative;
+    width: 3em;
+    height: 3em;
+    margin-right: 10px;
     z-index: 0;
 
     &:before {
@@ -307,7 +327,7 @@ pigments-palette {
   //     ######     ##    ##     ## ########  ######
 
   select {
-    margin: 0 4px;
+    margin: 0 0.5em;
     background: @input-background-color;
     border: 1px solid @input-border-color;
     color: @text-color;
@@ -333,12 +353,11 @@ pigments-palette {
   .pigments-palette-controls {
     min-height: -webkit-min-content;
   }
-  
+
   .pigments-palette-controls-wrapper {
     border-bottom: 1px solid @base-border-color;
     padding: 10px;
     width: 100%;
-    font-size: 1.2em;
   }
 
   .input-group-inline {
