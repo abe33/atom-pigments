@@ -16,9 +16,9 @@ class PaletteElement extends HTMLElement
       attrs[name] = name if bool
       attrs
 
-    @div class: 'palette-panel', =>
-      @div class: 'palette-controls settings-view', =>
-        @div class: 'palette-controls-wrapper', =>
+    @div class: 'pigments-palette-panel', =>
+      @div class: 'pigments-palette-controls settings-view', =>
+        @div class: 'pigments-palette-controls-wrapper', =>
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Sort Colors'
             @select outlet: 'sort', id: 'sort-palette-colors', =>
@@ -36,7 +36,7 @@ class PaletteElement extends HTMLElement
             @input optAttrs merge, 'checked', type: 'checkbox', id: 'merge-duplicates', outlet: 'merge'
             @label for: 'merge-duplicates', 'Merge Duplicates'
 
-      @div class: 'palette-list', =>
+      @div class: 'pigments-palette-list', =>
         @ol outlet: 'list'
 
   createdCallback: ->
@@ -89,7 +89,7 @@ class PaletteElement extends HTMLElement
       palettes = @getFilesPalettes()
       for file, palette of palettes
         li = document.createElement('li')
-        li.className = 'color-group'
+        li.className = 'pigments-color-group'
         ol = document.createElement('ol')
 
         li.appendChild @getGroupHeader(atom.project.relativize(file))
@@ -98,18 +98,18 @@ class PaletteElement extends HTMLElement
         @list.appendChild(li)
 
       @stickyTitle = new StickyTitle(
-        @list.querySelectorAll('.color-group-header-content'),
-        @querySelector('.palette-list')
+        @list.querySelectorAll('.pigments-color-group-header-content'),
+        @querySelector('.pigments-palette-list')
       )
     else
       @buildList(@list, @getColorsList(@palette))
 
   getGroupHeader: (label) ->
     header = document.createElement('div')
-    header.className = 'color-group-header'
+    header.className = 'pigments-color-group-header'
 
     content = document.createElement('div')
-    content.className = 'color-group-header-content'
+    content.className = 'pigments-color-group-header-content'
     content.textContent = label
 
     header.appendChild(content)
@@ -130,17 +130,18 @@ class PaletteElement extends HTMLElement
     paletteColors = @checkForDuplicates(paletteColors)
     for [names, color] in paletteColors
       li = document.createElement('li')
-      li.className = 'color-item'
+      li.className = 'pigments-color-item'
       html = """
       <span class="pigments-color"
             style="background-color: #{color.toCSS()}">
       </span>
       <span class="pigments-color-details">
+      <div class="pigments-color-details">
       """
 
       for name in names
         html += """
-        <span class="color-entry">
+        <span class="pigments-color-occurence">
             <span class="name">#{name}</span>
         """
         if variable = @project.getVariableByName(name)
@@ -150,7 +151,7 @@ class PaletteElement extends HTMLElement
 
         html += '</span>'
 
-      html += '</span>'
+      html += '</div>'
 
       li.innerHTML = html
 

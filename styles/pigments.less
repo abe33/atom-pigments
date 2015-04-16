@@ -5,6 +5,14 @@
 @import "ui-variables";
 @import "syntax-variables";
 
+//    ##     ## ######## ##       ########  ######## ########   ######
+//    ##     ## ##       ##       ##     ## ##       ##     ## ##    ##
+//    ##     ## ##       ##       ##     ## ##       ##     ## ##
+//    ######### ######   ##       ########  ######   ########   ######
+//    ##     ## ##       ##       ##        ##       ##   ##         ##
+//    ##     ## ##       ##       ##        ##       ##    ##  ##    ##
+//    ##     ## ######## ######## ##        ######## ##     ##  ######
+
 .absolute-box {
   display: block;
   position: absolute;
@@ -43,6 +51,14 @@
   background-size: 16px;
   vertical-align: middle;
 }
+
+//    ##     ##    ###    ########  ##    ## ######## ########   ######
+//    ###   ###   ## ##   ##     ## ##   ##  ##       ##     ## ##    ##
+//    #### ####  ##   ##  ##     ## ##  ##   ##       ##     ## ##
+//    ## ### ## ##     ## ########  #####    ######   ########   ######
+//    ##     ## ######### ##   ##   ##  ##   ##       ##   ##         ##
+//    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
+//    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
 
 atom-text-editor::shadow pigments-markers,
 pigments-markers {
@@ -109,6 +125,14 @@ pigments-color-marker {
   }
 }
 
+//     ######  ##     ##  ######    ######   ########  ######  ########
+//    ##    ## ##     ## ##    ##  ##    ##  ##       ##    ##    ##
+//    ##       ##     ## ##        ##        ##       ##          ##
+//     ######  ##     ## ##   #### ##   #### ######    ######     ##
+//          ## ##     ## ##    ##  ##    ##  ##             ##    ##
+//    ##    ## ##     ## ##    ##  ##    ##  ##       ##    ##    ##
+//     ######   #######   ######    ######   ########  ######     ##
+
 .color-suggestion .label {
   opacity: 1 !important;
 }
@@ -118,6 +142,14 @@ pigments-color-marker {
   height: 14px;
   border-radius: 50%;
 }
+
+//     ######  ########    ###    ########   ######  ##     ##
+//    ##    ## ##         ## ##   ##     ## ##    ## ##     ##
+//    ##       ##        ##   ##  ##     ## ##       ##     ##
+//     ######  ######   ##     ## ########  ##       #########
+//          ## ##       ######### ##   ##   ##       ##     ##
+//    ##    ## ##       ##     ## ##    ##  ##    ## ##     ##
+//     ######  ######## ##     ## ##     ##  ######  ##     ##
 
 pigments-color-results {
   display: block;
@@ -134,134 +166,6 @@ pigments-color-results {
 
   .match.color-match {
     padding: 2px 4px
-  }
-}
-
-pigments-palette {
-  background: @syntax-background-color;
-  color: @syntax-text-color;
-
-  ol {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    padding: 10px;
-    list-style: none;
-    border-bottom: 1px solid @base-border-color;
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-
-    &.color-group {
-      padding: 0;
-      border-bottom: none;
-      -webkit-flex-direction: column;
-    }
-  }
-
-  select {
-    margin: 0 4px;
-    background: @input-background-color;
-    border: 1px solid @input-border-color;
-    color: @text-color;
-    font-family: @font-family;
-  }
-
-  .settings-view input[type="checkbox"] {
-    margin: 0 0.5em 0 0;
-    vertical-align: text-bottom;
-    font-size: 0.8em;
-  }
-
-  .color-group .path {
-    display: none;
-  }
-
-  .color-group-header-content {
-    border-bottom: 1px solid @base-border-color;
-    display: inline-block;
-    background: @syntax-background-color;
-    padding: 10px;
-    width: 100%;
-
-    &.fixed {
-      position: fixed;
-      width: 100%;
-      box-sizing: border-box;
-      z-index: 10;
-    }
-
-    &.absolute {
-      position: absolute;
-    }
-  }
-
-  .palette-panel {
-    display: -webkit-flex;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    -webkit-flex-flow: column;
-  }
-
-  .palette-list, .palette-controls {
-    display: -webkit-flex;
-    position: relative;
-    width: 100%;
-  }
-
-  .palette-controls {
-    min-height: -webkit-min-content;
-  }
-  .palette-controls-wrapper {
-    border-bottom: 1px solid @base-border-color;
-    padding: 10px;
-    width: 100%;
-    font-size: 1.2em;
-  }
-
-  .palette-list {
-    overflow-y: auto;
-    background: @tool-panel-background-color;
-  }
-
-  .pigments-color, .pigments-color-details {
-    display: -webkit-flex;
-    -webkit-flex-flow: column;
-  }
-
-  .pigments-color-details {
-    -webkit-flex: 1;
-  }
-
-  .input-group-inline {
-    margin-right: 1em;
-  }
-
-  .path {
-    padding-left: 1em;
-    color: @text-color-subtle;
-  }
-
-  .pigments-color {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-
-    .background-color;
-    z-index: 0;
-
-    &:before {
-      z-index: 0;
-    }
-    &:after {
-      z-index: 1;
-    }
   }
 }
 
@@ -286,5 +190,158 @@ pigments-palette {
       padding-top: 2px;
       padding-bottom: 2px;
     }
+  }
+}
+
+//    ########     ###    ##       ######## ######## ######## ########
+//    ##     ##   ## ##   ##       ##          ##       ##    ##
+//    ##     ##  ##   ##  ##       ##          ##       ##    ##
+//    ########  ##     ## ##       ######      ##       ##    ######
+//    ##        ######### ##       ##          ##       ##    ##
+//    ##        ##     ## ##       ##          ##       ##    ##
+//    ##        ##     ## ######## ########    ##       ##    ########
+
+pigments-palette {
+  background: @syntax-background-color;
+  color: @syntax-text-color;
+
+  .pigments-palette-list, .pigments-palette-controls {
+    display: -webkit-flex;
+    position: relative;
+    width: 100%;
+  }
+
+  //    ##       ####  ######  ########
+  //    ##        ##  ##    ##    ##
+  //    ##        ##  ##          ##
+  //    ##        ##   ######     ##
+  //    ##        ##        ##    ##
+  //    ##        ##  ##    ##    ##
+  //    ######## ####  ######     ##
+
+  ol {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 10px;
+    list-style: none;
+    border-bottom: 1px solid @base-border-color;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+
+    &.pigments-color-group {
+      padding: 0;
+      border-bottom: none;
+      -webkit-flex-direction: column;
+    }
+  }
+
+  .path {
+    padding-left: 1em;
+    color: @text-color-subtle;
+  }
+
+  .pigments-color-group .path {
+    display: none;
+  }
+
+  .pigments-color-group-header-content {
+    border-bottom: 1px solid @base-border-color;
+    display: inline-block;
+    background: @syntax-background-color;
+    padding: 10px;
+    width: 100%;
+
+    &.fixed {
+      position: fixed;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    &.absolute {
+      position: absolute;
+    }
+  }
+
+  .pigments-palette-list {
+    overflow-y: auto;
+    background: @tool-panel-background-color;
+  }
+
+  .pigments-color, .pigments-color-details {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+  }
+
+  .pigments-color-details {
+    -webkit-flex: 1;
+  }
+
+  .pigments-color {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+
+    .background-color;
+    z-index: 0;
+
+    &:before {
+      z-index: 0;
+    }
+    &:after {
+      z-index: 1;
+    }
+  }
+
+  //     ######  ######## ########  ##        ######
+  //    ##    ##    ##    ##     ## ##       ##    ##
+  //    ##          ##    ##     ## ##       ##
+  //    ##          ##    ########  ##        ######
+  //    ##          ##    ##   ##   ##             ##
+  //    ##    ##    ##    ##    ##  ##       ##    ##
+  //     ######     ##    ##     ## ########  ######
+
+  select {
+    margin: 0 4px;
+    background: @input-background-color;
+    border: 1px solid @input-border-color;
+    color: @text-color;
+    font-family: @font-family;
+  }
+
+  .settings-view input[type="checkbox"] {
+    margin: 0 0.5em 0 0;
+    vertical-align: text-bottom;
+    font-size: 0.8em;
+  }
+
+  .pigments-palette-panel {
+    display: -webkit-flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-flex-flow: column;
+  }
+
+  .pigments-palette-controls {
+    min-height: -webkit-min-content;
+  }
+  
+  .pigments-palette-controls-wrapper {
+    border-bottom: 1px solid @base-border-color;
+    padding: 10px;
+    width: 100%;
+    font-size: 1.2em;
+  }
+
+  .input-group-inline {
+    margin-right: 1em;
   }
 }

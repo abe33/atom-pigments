@@ -87,7 +87,7 @@ describe 'PaletteElement', ->
         expect(ols.length).toEqual(3)
 
       it 'adds a header with the file path for each sublist', ->
-        ols = paletteElement.querySelectorAll('.color-group-header')
+        ols = paletteElement.querySelectorAll('.pigments-color-group-header')
         expect(ols.length).toEqual(3)
 
       describe 'and the sortPaletteColors is set to name', ->
@@ -96,7 +96,7 @@ describe 'PaletteElement', ->
 
         it 'sorts the nested list items', ->
           palettes = paletteElement.getFilesPalettes()
-          ols = paletteElement.querySelectorAll('.color-group')
+          ols = paletteElement.querySelectorAll('.pigments-color-group')
           n = 0
 
           for file, palette of palettes
