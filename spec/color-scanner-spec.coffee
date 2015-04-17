@@ -46,6 +46,9 @@ describe 'ColorScanner', ->
         it 'stores the last index', ->
           expect(result.lastIndex).toEqual(17)
 
+        it 'stores match line', ->
+          expect(result.line).toEqual(0)
+
       describe 'successive searches', ->
         it 'returns a buffer color for each match and then undefined', ->
           doSearch = -> result = scanner.search(text, result.lastIndex)
@@ -54,3 +57,10 @@ describe 'ColorScanner', ->
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeUndefined()
+
+        it 'stores the line of successive matches', ->
+          doSearch = -> result = scanner.search(text, result.lastIndex)
+
+          expect(doSearch().line).toEqual(2)
+          expect(doSearch().line).toEqual(4)
+          expect(doSearch().line).toEqual(6)

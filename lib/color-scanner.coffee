@@ -27,6 +27,8 @@ class ColorScanner
         lastIndex += -matchText.length + index + color.colorExpression.length
         matchText = color.colorExpression
 
+      countLines = (string) -> string.split(/\r\n|\r|\n/g).length
+
       color: color
       match: matchText
       lastIndex: lastIndex
@@ -34,3 +36,4 @@ class ColorScanner
         lastIndex - matchText.length
         lastIndex
       ]
+      line: countLines(text[0..lastIndex - matchText.length]) - 1

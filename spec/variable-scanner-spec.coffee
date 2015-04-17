@@ -47,6 +47,7 @@ describe 'VariableScanner', ->
           expect(result[0].name).toEqual('base-color')
           expect(result[0].value).toEqual('#fff')
           expect(result[0].range).toEqual([0,17])
+          expect(result[0].line).toEqual(0)
 
       describe 'the second result object', ->
         beforeEach ->
@@ -65,6 +66,7 @@ describe 'VariableScanner', ->
           expect(result[0].name).toEqual('other-color')
           expect(result[0].value).toEqual('transparentize(base-color, 50%)')
           expect(result[0].range).toEqual([19,64])
+          expect(result[0].line).toEqual(2)
 
       describe 'successive searches', ->
         it 'returns a result for each match and then undefined', ->
