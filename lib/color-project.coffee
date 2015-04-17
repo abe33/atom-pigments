@@ -214,6 +214,10 @@ class ColorProject
 
   getVariables: -> @variables?.slice()
 
+  getVariableById: (id) ->
+    for variable in @variables
+      return variable if variable.id is id
+
   getVariableByName: (name) ->
     for variable in @variables
       return variable if variable.name is name

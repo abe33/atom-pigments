@@ -61,6 +61,12 @@ class PaletteElement extends HTMLElement
     @subscriptions.add @subscribeTo @merge, 'change': (e) ->
       atom.config.set 'pigments.mergeColorDuplicates', e.target.checked
 
+    @subscriptions.add @subscribeTo @list, '[data-variable-id]', 'click': (e) =>
+      variableId = Number(e.target.dataset.variableId)
+      variable = @project.getVariableById(variableId)
+
+      @project.showVariableInFile(variable)
+
   attachedCallback: ->
     @renderList() if @palette?
     @attached = true
@@ -153,8 +159,10 @@ class PaletteElement extends HTMLElement
         """
         if variable = @project.getVariableByName(name)
           html += """
-          <span class="path">#{atom.project.relativize(variable.path)}</span>
-          <span class="line">at line #{variable.getLine() + 1}</span>
+          <span data-variable-id="#{variable.id}">
+            <span class="path">#{atom.project.relativize(variable.path)}</span>
+            <span class="line">at line #{variable.getLine() + 1}</span>
+          </span>
           """
 
         html += '</span>'

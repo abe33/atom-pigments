@@ -189,6 +189,11 @@ pigments-color-results {
     .search-result {
       padding-top: 2px;
       padding-bottom: 2px;
+      cursor: alias;
+
+      &:hover {
+        background: @background-color-highlight;
+      }
     }
   }
 }
@@ -239,11 +244,19 @@ pigments-palette {
       -webkit-flex-direction: column;
     }
   }
+  [data-variable-id] {
+    cursor: alias;
+    pointer-events: auto;
+    display: inline-block;
+  }
+  [data-variable-id] * {
+    pointer-events: none;
+  }
 
   .path {
     padding-left: 1em;
   }
-  
+
   .path, .line {
     color: @text-color-subtle;
   }

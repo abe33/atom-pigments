@@ -1,6 +1,6 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
-{change} = require './helpers/events'
+{change, click} = require './helpers/events'
 
 describe 'PaletteElement', ->
   [palette, paletteElement, workspaceElement, pigments, project] = []
@@ -40,8 +40,7 @@ describe 'PaletteElement', ->
 
       runs ->
         palette = paletteElement.getModel()
-        paletteElement.attached = true
-        paletteElement.renderList()
+        jasmine.attachToDOM(paletteElement)
 
     it 'opens a palette element', ->
       expect(paletteElement).toBeDefined()
@@ -55,6 +54,16 @@ describe 'PaletteElement', ->
 
       li = paletteElement.querySelector('li')
       expect(li.querySelector('.path').textContent).toEqual(atom.project.relativize(projectVariables[0].path))
+
+    describe 'clicking on a result path', ->
+      it 'shows the variable in its file', ->
+        spyOn(project, 'showVariableInFile')
+
+        pathElement = paletteElement.querySelector('[data-variable-id]')
+
+        click(pathElement)
+
+        waitsFor -> project.showVariableInFile.callCount > 0
 
     describe 'when the sortPaletteColors settings is set to color', ->
       beforeEach ->
