@@ -110,9 +110,10 @@ module.exports =
     atom.workspace.openURIInPane(uri, pane, {})
 
   showPalette: ->
-    uri = "pigments://palette"
+    @project.initialize().then ->
+      uri = "pigments://palette"
 
-    pane = atom.workspace.paneForURI(uri)
-    pane ||= atom.workspace.getActivePane()
+      pane = atom.workspace.paneForURI(uri)
+      pane ||= atom.workspace.getActivePane()
 
-    atom.workspace.openURIInPane(uri, pane, {})
+      atom.workspace.openURIInPane(uri, pane, {})
