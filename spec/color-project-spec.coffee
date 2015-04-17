@@ -203,6 +203,20 @@ describe 'ColorProject', ->
         expect(project.getPalette()).toBeDefined()
         expect(project.getPalette().getColorsCount()).toEqual(10)
 
+    describe '::showVariableInFile', ->
+      it 'opens the file where is located the variable', ->
+        spy = jasmine.createSpy('did-add-text-editor')
+        atom.workspace.onDidAddTextEditor(spy)
+
+        project.showVariableInFile(project.getVariables()[0])
+
+        waitsFor -> spy.callCount > 0
+
+        runs ->
+          editor = atom.workspace.getActiveTextEditor()
+
+          expect(editor.getSelectedBufferRange()).toEqual([[1,2],[1,14]])
+
     describe '::reloadVariablesForPath', ->
       describe 'for a file that is part of the loaded paths', ->
         describe 'where the reload finds new variables', ->

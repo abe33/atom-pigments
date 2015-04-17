@@ -1,4 +1,4 @@
-{Emitter, CompositeDisposable} = require 'atom'
+{Emitter, CompositeDisposable, Range} = require 'atom'
 minimatch = require 'minimatch'
 
 ColorBuffer = require './color-buffer'
@@ -222,6 +222,19 @@ class ColorProject
     context = @getContext()
 
     @variables.filter (variable) -> variable.isColor()
+
+  showVariableInFile: (variable) ->
+    atom.workspace.open(variable.path).then (editor) ->
+      buffer = editor.getBuffer()
+
+      bufferRange = Range.fromObject [
+        buffer.positionForCharacterIndex(variable.range[0])
+        buffer.positionForCharacterIndex(variable.range[1])
+      ]
+
+      console.log bufferRange, variable.range
+
+      editor.setSelectedBufferRange(bufferRange, autoscroll: true)
 
   updateVariables: (paths, results) ->
     newVariables = @variables.filter (variable) -> variable.path not in paths
