@@ -154,6 +154,7 @@ class PaletteElement extends HTMLElement
         if variable = @project.getVariableByName(name)
           html += """
           <span class="path">#{atom.project.relativize(variable.path)}</span>
+          <span class="line">at line #{variable.getLine() + 1}</span>
           """
 
         html += '</span>'
