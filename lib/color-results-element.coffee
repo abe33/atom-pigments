@@ -148,9 +148,7 @@ class ColorResultsElement extends HTMLElement
       <span class="line-number text-subtle">#{lineNumber}</span>
       <span class="preview">
         #{prefix}
-        <span class='match color-match' style='#{style}'>
-          #{match.matchText}
-        </span>
+        <span class='match color-match' style='#{style}'>#{match.matchText}</span>
         #{suffix}
       </span>
     </li>
