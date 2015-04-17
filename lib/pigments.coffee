@@ -11,6 +11,7 @@ module.exports =
       type: 'array'
       default: [
         '**/*.styl'
+        '**/*.stylus'
         '**/*.less'
         '**/*.sass'
         '**/*.scss'
