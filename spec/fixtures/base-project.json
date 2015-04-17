@@ -16,7 +16,8 @@
         13,
         25
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 1
     },
     {
       "name": "colors.yellow",
@@ -25,7 +26,8 @@
         28,
         43
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 2
     },
     {
       "name": "colors.green",
@@ -34,7 +36,8 @@
         46,
         60
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 3
     },
     {
       "name": "colors.blue",
@@ -43,7 +46,8 @@
         63,
         76
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 4
     },
     {
       "name": "colors.cyan",
@@ -52,7 +56,8 @@
         79,
         92
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 5
     },
     {
       "name": "colors.light.base",
@@ -61,7 +66,8 @@
         109,
         122
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 8
     },
     {
       "name": "colors.dark.base",
@@ -70,7 +76,8 @@
         141,
         154
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 11
     },
     {
       "name": "text-color",
@@ -79,7 +86,8 @@
         162,
         192
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 15
     },
     {
       "name": "background-color",
@@ -88,7 +96,8 @@
         193,
         228
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 16
     },
     {
       "name": "button-color",
@@ -97,7 +106,8 @@
         229,
         255
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 17
     },
     {
       "name": "button-padding",
@@ -106,7 +116,8 @@
         257,
         281
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 19
     },
     {
       "name": "button-radius",
@@ -115,7 +126,8 @@
         282,
         301
       ],
-      "path": "#{root}/styles/variables.styl"
+      "path": "#{root}/styles/variables.styl",
+      "line": 20
     }
   ]
 }

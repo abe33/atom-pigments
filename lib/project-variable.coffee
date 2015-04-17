@@ -6,7 +6,7 @@ module.exports =
 class ProjectVariable
 
   constructor: (params={}, @project=null) ->
-    {@name, @value, @range, @path, @bufferRange} = params
+    {@name, @value, @range, @path, @bufferRange, @line} = params
     @id = nextId++
     @emitter = new Emitter
 
@@ -16,6 +16,8 @@ class ProjectVariable
   isColor: -> @getColor()?
 
   getColor: -> @color ?= @readColor()
+
+  getLine: -> @bufferRange?.start.row ? @line
 
   readColor: -> @project.getContext().readColor(@value)
 
@@ -36,4 +38,4 @@ class ProjectVariable
     bool
 
   serialize: ->
-    {@name, @value, @range, @path}
+    {@name, @value, @range, @path, line: @getLine()}
