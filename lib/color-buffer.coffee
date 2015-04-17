@@ -17,6 +17,9 @@ class ColorBuffer
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
     @subscriptions.add @editor.onDidStopChanging => @update()
+    @subscriptions.add @editor.onDidChangePath (path) =>
+      @project.appendPath(path) if @isVariablesSource()
+      @update()
 
     @subscriptions.add @project.onDidUpdateVariables =>
       resultsForBuffer = @project.getVariables().filter (r) =>

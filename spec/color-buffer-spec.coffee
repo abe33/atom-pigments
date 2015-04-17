@@ -35,6 +35,52 @@ describe 'ColorBuffer', ->
   it 'creates a color buffer for each editor in the workspace', ->
     expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()
 
+  describe 'when an editor without path is opened', ->
+    beforeEach ->
+      waitsForPromise ->
+        atom.workspace.open().then (o) ->
+          editor = o
+          colorBuffer = project.colorBufferForEditor(editor)
+
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
+    it 'does not fails when updating the colorBuffer', ->
+      expect(-> colorBuffer.update()).not.toThrow()
+
+    describe 'when the file is saved and aquires a path', ->
+      describe 'that is legible', ->
+        beforeEach ->
+          spyOn(colorBuffer, 'update').andCallThrough()
+          spyOn(editor, 'getPath').andReturn('new-path.styl')
+          editor.emitter.emit 'did-change-path', editor.getPath()
+
+          waitsFor -> colorBuffer.update.callCount > 0
+
+        it 'adds the path to the project paths', ->
+          expect('new-path.styl' in project.getPaths()).toBeTruthy()
+
+      describe 'that is not legible', ->
+        beforeEach ->
+          spyOn(colorBuffer, 'update').andCallThrough()
+          spyOn(editor, 'getPath').andReturn('new-path.sass')
+          editor.emitter.emit 'did-change-path', editor.getPath()
+
+          waitsFor -> colorBuffer.update.callCount > 0
+
+        it 'does not add the path to the project paths', ->
+          expect('new-path.styl' in project.getPaths()).toBeFalsy()
+
+      describe 'that is ignored', ->
+        beforeEach ->
+          spyOn(colorBuffer, 'update').andCallThrough()
+          spyOn(editor, 'getPath').andReturn('project/vendor/new-path.styl')
+          editor.emitter.emit 'did-change-path', editor.getPath()
+
+          waitsFor -> colorBuffer.update.callCount > 0
+
+        it 'does not add the path to the project paths', ->
+          expect('new-path.styl' in project.getPaths()).toBeFalsy()
+
   describe 'when created without a previous state', ->
     beforeEach ->
       colorBuffer = project.colorBufferForEditor(editor)

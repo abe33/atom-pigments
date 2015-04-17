@@ -155,6 +155,8 @@ class ColorProject
 
   getPaths: -> @paths?.slice()
 
+  appendPath: (path) -> @paths.push(path) if path?
+
   loadPaths: (noKnownPaths=false) ->
     new Promise (resolve, reject) =>
       config = {
@@ -183,11 +185,13 @@ class ColorProject
       @loadPathsAndVariables(true)
 
   isVariablesSourcePath: (path) ->
+    return false unless path
     path = atom.project.relativize(path)
     sources = atom.config.get('pigments.sourceNames')
     return true for source in sources when minimatch(path, source, matchBase: true, dot: true)
 
   isIgnoredPath: (path) ->
+    return false unless path
     path = atom.project.relativize(path)
     ignoredNames = atom.config.get('pigments.ignoredNames') ? []
     ignoredNames = ignoredNames.concat(@ignoredNames) if @ignoredNames?
