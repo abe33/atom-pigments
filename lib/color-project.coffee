@@ -240,8 +240,6 @@ class ColorProject
         buffer.positionForCharacterIndex(variable.range[1])
       ]
 
-      console.log bufferRange, variable.range
-
       editor.setSelectedBufferRange(bufferRange, autoscroll: true)
 
   updateVariables: (paths, results) ->

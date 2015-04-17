@@ -24,7 +24,6 @@ describe 'ColorBufferElement', ->
 
     JSON.parse(json)
 
-
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
     jasmineContent = document.body.querySelector('#jasmine-content')
