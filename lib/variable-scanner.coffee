@@ -1,5 +1,6 @@
-[registry, regexpString, regexp] = []
+{countLines} = require './utils'
 VariableParser = require './variable-parser'
+[registry, regexpString, regexp] = []
 
 module.exports =
 class VariableScanner
@@ -31,8 +32,7 @@ class VariableScanner
 
         line = -1
         lineCountIndex = 0
-        countLines = (string) -> string.split(/\r\n|\r|\n/g).length
-        
+
         for v in result
           v.range[0] += index
           v.range[1] += index

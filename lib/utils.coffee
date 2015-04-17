@@ -20,6 +20,8 @@ utils =
       res = parseInt(vars[value].value, base)
     res
 
+  countLines: (string) -> string.split(/\r\n|\r|\n/g).length
+
   readIntOrPercent: (value, vars={}, color) ->
     if not /\d+/.test(value) and vars[value]?
       color.usedVariables.push(value)

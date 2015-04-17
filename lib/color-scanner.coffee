@@ -1,3 +1,4 @@
+{countLines} = require './utils'
 {getRegistry} = require './color-expressions'
 ColorParser = require './color-parser'
 
@@ -26,8 +27,6 @@ class ColorScanner
       if (index = matchText.indexOf(color.colorExpression)) > 0
         lastIndex += -matchText.length + index + color.colorExpression.length
         matchText = color.colorExpression
-
-      countLines = (string) -> string.split(/\r\n|\r|\n/g).length
 
       color: color
       match: matchText
