@@ -4,6 +4,7 @@ ColorProject = require '../lib/color-project'
 ColorBuffer = require '../lib/color-buffer'
 ProjectVariable = require '../lib/project-variable'
 jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
+require '../lib/register-elements'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
