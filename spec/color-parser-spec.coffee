@@ -180,14 +180,14 @@ describe 'ColorParser', ->
   itParses('transparentize(cyan, 50%)').asColor(0, 255, 255, 0.5)
   itParses('transparentize(cyan, 0.5)').asColor(0, 255, 255, 0.5)
   itParses('transparentize(cyan, .5)').asColor(0, 255, 255, 0.5)
-  itParses('fadein(cyan, 0.5)').asColor(0, 255, 255, 0.5)
-  itParses('fadein(cyan, .5)').asColor(0, 255, 255, 0.5)
-  itParses('fadein(cyan, @r)').asInvalid()
-  itParses('fadein(@c, @r)').withContext({
+  itParses('fadeout(cyan, 0.5)').asColor(0, 255, 255, 0.5)
+  itParses('fadeout(cyan, .5)').asColor(0, 255, 255, 0.5)
+  itParses('fadeout(cyan, @r)').asInvalid()
+  itParses('fadeout(@c, @r)').withContext({
     '@c': 'cyan'
     '@r': '0.5'
   }).asColor(0, 255, 255, 0.5)
-  itParses('fadein(@a, @r)').withContext({
+  itParses('fadeout(@a, @r)').withContext({
     '@a': 'rgba(@c, 1)'
     '@c': 'cyan'
     '@r': '0.5'
@@ -196,14 +196,14 @@ describe 'ColorParser', ->
   itParses('opacify(0x7800FFFF, 50%)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
-  itParses('fadeout(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
-  itParses('fadeout(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
-  itParses('fadeout(0x7800FFFF, @r)').asInvalid()
-  itParses('fadeout(@c, @r)').withContext({
+  itParses('fadein(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
+  itParses('fadein(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
+  itParses('fadein(0x7800FFFF, @r)').asInvalid()
+  itParses('fadein(@c, @r)').withContext({
     '@c': '0x7800FFFF'
     '@r': '0.5'
   }).asColor(0, 255, 255, 1)
-  itParses('fadeout(@a, @r)').withContext({
+  itParses('fadein(@a, @r)').withContext({
     '@a': 'rgba(@c, 1)'
     '@c': '0x7800FFFF'
     '@r': '0.5'
