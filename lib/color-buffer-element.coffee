@@ -10,6 +10,7 @@ class ColorBufferElement extends HTMLElement
     @displayedMarkers = []
     @usedMarkers = []
     @unusedMarkers = []
+    @ignoredScopes=[]
     @viewsByMarkers = new WeakMap
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
@@ -18,7 +19,7 @@ class ColorBufferElement extends HTMLElement
       else
         @classList.remove('above-editor-content')
 
-    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes) =>
+    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes=[]) =>
       @updateMarkers() if @attached
 
   attachedCallback: ->
