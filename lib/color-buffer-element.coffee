@@ -18,9 +18,15 @@ class ColorBufferElement extends HTMLElement
       else
         @classList.remove('above-editor-content')
 
-  attachedCallback: -> @updateMarkers()
+    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes) =>
+      @updateMarkers() if @attached
+
+  attachedCallback: ->
+    @attached = true
+    @updateMarkers()
 
   detachedCallback: ->
+    @attached = false
 
   onDidUpdate: (callback) ->
     @emitter.on 'did-update', callback
@@ -87,7 +93,8 @@ class ColorBufferElement extends HTMLElement
   updateMarkers: ->
     markers = @colorBuffer.findColorMarkers({
       intersectsScreenRowRange: @editor.displayBuffer.getVisibleRowRange()
-    }).filter (marker) -> marker?.color?.isValid()
+    }).filter (marker) =>
+      marker?.color?.isValid() and not @markerScopeIsIgnored(marker)
 
     for m in @displayedMarkers when m not in markers
       @releaseMarkerView(m)
@@ -98,6 +105,14 @@ class ColorBufferElement extends HTMLElement
     @displayedMarkers = markers
 
     @emitter.emit 'did-update'
+
+  markerScopeIsIgnored: (marker) ->
+    range = marker.marker.getBufferRange()
+    scope = @editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
+    scopeChain = scope.getScopeChain()
+
+    @ignoredScopes.some (scopeRegExp) ->
+      scopeChain.match(new RegExp(scopeRegExp))
 
   requestMarkerView: (marker) ->
     if @unusedMarkers.length

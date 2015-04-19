@@ -1,0 +1,3 @@
+# comment = #ffffff
+
+string = '#ffffff'

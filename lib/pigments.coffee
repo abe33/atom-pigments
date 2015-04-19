@@ -17,14 +17,20 @@ module.exports =
         '**/*.scss'
       ]
       description: "Glob patterns of files to scan for variables."
+      items:
+        type: 'string'
     ignoredNames:
       type: 'array'
       default: []
       description: "Glob patterns of files to ignore when scanning the project for variables."
-    markerType:
-      type: 'string'
-      default: 'background'
-      enum: ['background', 'outline', 'underline', 'dot']
+      items:
+        type: 'string'
+    ignoredScopes:
+      type: 'array'
+      default: []
+      description: "Regular expressions of scopes in which colors are ignored. Note that regular expressions are strings."
+      items:
+        type: 'string'
     autocompleteScopes:
       type: 'array'
       default: [
@@ -41,6 +47,10 @@ module.exports =
       type: 'boolean'
       default: true
       description: 'When enabled, the autocomplete provider will also provides completion for non-color variables.'
+    markerType:
+      type: 'string'
+      default: 'background'
+      enum: ['background', 'outline', 'underline', 'dot']
     sortPaletteColors:
       type: 'string'
       default: 'none'

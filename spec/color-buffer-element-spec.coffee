@@ -184,3 +184,32 @@ describe 'ColorBufferElement', ->
       it 'moves the editor with the buffer to the new pane', ->
         expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
         expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
+
+    describe 'when pigments.ignoredScopes settings is defined', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.packages.activatePackage('language-coffee-script')
+
+        waitsForPromise ->
+          atom.workspace.open('scope-filter.coffee').then (o) ->
+            editor = o
+            editorElement = atom.views.getView(editor)
+            colorBuffer = project.colorBufferForEditor(editor)
+            colorBufferElement = atom.views.getView(colorBuffer)
+            colorBufferElement.attach()
+
+        waitsForPromise -> colorBuffer.initialize()
+
+      describe 'with one filter', ->
+        beforeEach ->
+          atom.config.set('pigments.ignoredScopes', ['\\.comment'])
+
+        it 'ignores the colors that matches the defined scopes', ->
+          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(1)
+
+      describe 'with two filters', ->
+        beforeEach ->
+          atom.config.set('pigments.ignoredScopes', ['\\.string', '\\.comment'])
+
+        it 'ignores the colors that matches the defined scopes', ->
+          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
