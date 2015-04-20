@@ -11,6 +11,7 @@ class ColorBuffer
     {@id} = @editor
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
+    @ignoredScopes=[]
 
     @colorMarkersByMarkerId = {}
     @variableMarkersByMarkerId = {}
@@ -25,6 +26,9 @@ class ColorBuffer
       resultsForBuffer = @project.getVariables().filter (r) =>
         r.path is @editor.getPath()
       @updateVariableMarkers(resultsForBuffer)
+
+    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes=[]) =>
+      @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}
 
     if variableMarkers? and colorMarkers?
       @restoreMarkersState(variableMarkers, colorMarkers)
@@ -299,6 +303,10 @@ class ColorBuffer
       @colorMarkersByMarkerId[marker.id]
     .filter (marker) -> marker?
 
+  findValidColorMarkers: (properties) ->
+    @findColorMarkers(properties).filter (marker) =>
+      marker?.color?.isValid() and not @markerScopeIsIgnored(marker)
+
   scanBufferForColors: (options={}) ->
     return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
     results = []
@@ -324,6 +332,14 @@ class ColorBuffer
             buffer.positionForCharacterIndex(res.range[1])
           ]
           res
+
+  markerScopeIsIgnored: (marker) ->
+    range = marker.marker.getBufferRange()
+    scope = @editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
+    scopeChain = scope.getScopeChain()
+
+    @ignoredScopes.some (scopeRegExp) ->
+      scopeChain.match(new RegExp(scopeRegExp))
 
   serialize: ->
     {
