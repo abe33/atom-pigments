@@ -1,4 +1,5 @@
 Pigments = require '../lib/pigments'
+PigmentsAPI = require '../lib/pigments-api'
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 #
@@ -28,6 +29,14 @@ describe "Pigments", ->
         timestamp: date
         buffers: {}
     })
+
+  describe 'service provider API', ->
+    [service] = []
+    beforeEach ->
+      service = pigments.provideAPI()
+
+    it 'returns an object conforming to the API', ->
+      expect(service instanceof PigmentsAPI).toBeTruthy()
 
   describe 'when deactivated', ->
     [editor, editorElement, buffer] = []

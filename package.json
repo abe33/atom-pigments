@@ -22,7 +22,12 @@
   "providedServices": {
     "autocomplete.provider": {
       "versions": {
-        "2.0.0": "provide"
+        "2.0.0": "provideAutocomplete"
+      }
+    },
+    "pigments.api": {
+      "versions": {
+        "0.0.0": "provideAPI"
       }
     }
   }

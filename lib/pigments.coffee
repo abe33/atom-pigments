@@ -1,6 +1,6 @@
 {CompositeDisposable} = require 'atom'
 ColorProject = require './color-project'
-[PigmentsProvider, url] = []
+[PigmentsProvider, PigmentsAPI, url] = []
 
 module.exports =
   config:
@@ -94,9 +94,13 @@ module.exports =
   deactivate: ->
     @getProject()?.destroy?()
 
-  provide: ->
+  provideAutocomplete: ->
     PigmentsProvider ?= require './pigments-provider'
     new PigmentsProvider(@getProject())
+
+  provideAPI: ->
+    PigmentsAPI ?= require './pigments-api'
+    new PigmentsAPI(@getProject())
 
   serialize: -> {project: @project.serialize()}
 

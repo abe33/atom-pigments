@@ -25,7 +25,7 @@ describe 'autocomplete provider', ->
       autocompleteMain = atom.packages.loadPackage('autocomplete-plus').mainModule
       spyOn(autocompleteMain, 'consumeProvider').andCallThrough()
       pigments = atom.packages.loadPackage('pigments').mainModule
-      spyOn(pigments, 'provide').andCallThrough()
+      spyOn(pigments, 'provideAutocomplete').andCallThrough()
 
     waitsForPromise ->
       atom.workspace.open('sample.styl').then (e) ->
@@ -44,7 +44,7 @@ describe 'autocomplete provider', ->
 
     waitsFor ->
       autocompleteMain.autocompleteManager?.ready and
-        pigments.provide.calls.length is 1 and
+        pigments.provideAutocomplete.calls.length is 1 and
         autocompleteMain.consumeProvider.calls.length is 1
 
     runs ->
