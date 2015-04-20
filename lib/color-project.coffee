@@ -86,7 +86,9 @@ class ColorProject
     .then (results) =>
       hadVariables = @variables?
       @variables ?= []
-      @variables = @variables.concat(results)
+      
+      for variable in results
+        @variables.push(variable) unless @findVariable(variable)
 
       if hadVariables
         @emitter.emit 'did-update-variables', {
