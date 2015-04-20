@@ -64,7 +64,7 @@ When enabled, the autocomplete provider will also provides completion for non-co
 Whether to traverse symlinked directories to find source files or not.
 
 * Key: `pigments.traverseIntoSymlinkDirectories`
-* Default: `true`
+* Default: `false`
 
 ### Marker Type
 
