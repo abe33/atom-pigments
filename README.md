@@ -16,6 +16,18 @@ apm install pigments
 
 Or search for `pigments` in Atom settings view.
 
+## Show Project Palette
+
+You can display the project's palette through the `Pigments: Show Palette` command from the command palette:
+
+![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/palette.gif?raw=true)
+
+## Search Colors In Project
+
+You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette: 
+
+![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
+
 ## Settings
 
 ### Source Names
