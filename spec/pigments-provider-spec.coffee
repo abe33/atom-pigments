@@ -77,7 +77,7 @@ describe 'autocomplete provider', ->
         expect(preview).toExist()
         expect(preview.style.background).toEqual('rgb(255, 255, 255)')
 
-    fit 'replaces the prefix even when it contains a @ or a $', ->
+    it 'replaces the prefix even when it contains a @ or a $', ->
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
