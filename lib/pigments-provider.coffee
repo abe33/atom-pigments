@@ -1,5 +1,6 @@
-{CompositeDisposable, Range}  = require('atom')
-fuzzaldrin = require('fuzzaldrin')
+{CompositeDisposable, Range}  = require 'atom'
+fuzzaldrin = require 'fuzzaldrin'
+{variables: variablesRegExp} = require './regexes'
 
 module.exports =
 class PigmentsProvider
@@ -15,7 +16,8 @@ class PigmentsProvider
     @subscriptions.dispose()
     @project = null
 
-  getSuggestions: ({scopeDescriptor, prefix}) ->
+  getSuggestions: ({editor, bufferPosition}) ->
+    prefix = @getPrefix(editor, bufferPosition)
     return unless prefix?.length
 
     if @extendAutocompleteToVariables
@@ -25,6 +27,11 @@ class PigmentsProvider
 
     suggestions = @findSuggestionsForPrefix(variables, prefix)
     suggestions
+
+  getPrefix: (editor, bufferPosition) ->
+    line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
+
+    line.match(new RegExp(variablesRegExp + '$'))?[0] or ''
 
   findSuggestionsForPrefix: (variables, prefix) ->
     return [] unless variables?
@@ -40,12 +47,14 @@ class PigmentsProvider
         suggestions.push {
           text: v.name
           rightLabelHTML: "<span class='color-suggestion-preview' style='background: #{v.getColor().toCSS()}'></span>"
+          replacementPrefix: prefix
           className: 'color-suggestion'
         }
       else
         suggestions.push {
           text: v.name
           rightLabel: v.value
+          replacementPrefix: prefix
           className: 'pigments-suggestion'
         }
 

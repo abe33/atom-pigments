@@ -1,6 +1,6 @@
 
 describe 'autocomplete provider', ->
-  [completionDelay, editor, editorView, pigments, autocompleteMain, autocompleteManager, jasmineContent] = []
+  [completionDelay, editor, editorView, pigments, autocompleteMain, autocompleteManager, jasmineContent, project] = []
 
   beforeEach ->
     runs ->
@@ -38,7 +38,9 @@ describe 'autocomplete provider', ->
         atom.packages.activatePackage('pigments')
       ]
 
-    waitsForPromise -> pigments.getProject().initialize()
+    waitsForPromise ->
+      project = pigments.getProject()
+      project.initialize()
 
     waitsFor ->
       autocompleteMain.autocompleteManager?.ready and
@@ -74,6 +76,26 @@ describe 'autocomplete provider', ->
         preview = popup.querySelector('.color-suggestion-preview')
         expect(preview).toExist()
         expect(preview.style.background).toEqual('rgb(255, 255, 255)')
+
+    fit 'replaces the prefix even when it contains a @ or a $', ->
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('@')
+        editor.insertText('b')
+        editor.insertText('a')
+
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.displaySuggestions.calls.length is 1
+
+      waitsFor -> editorView.querySelector('.autocomplete-plus li')?
+
+      runs ->
+        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+        expect(editor.getText()).not.toContain '@@'
 
   describe 'writing the name of a non-color variable', ->
     it 'returns suggestions for the matching variable', ->
