@@ -31,12 +31,46 @@ describe "Pigments", ->
     })
 
   describe 'service provider API', ->
-    [service] = []
+    [service, editor, editorElement, buffer] = []
     beforeEach ->
-      service = pigments.provideAPI()
+      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
+        editor = e
+        editorElement = atom.views.getView(e)
+        buffer = project.colorBufferForEditor(editor)
+
+      runs -> service = pigments.provideAPI()
+
+      waitsForPromise -> project.initialize()
 
     it 'returns an object conforming to the API', ->
       expect(service instanceof PigmentsAPI).toBeTruthy()
+
+      expect(service.getProject()).toBe(project)
+
+      expect(service.getPalette()).toEqual(project.getPalette())
+      expect(service.getPalette()).not.toBe(project.getPalette())
+
+      expect(service.getVariables()).toEqual(project.getVariables())
+      expect(service.getColorVariables()).toEqual(project.getColorVariables())
+
+    describe '::observeColorBuffers', ->
+      [spy] = []
+
+      beforeEach ->
+        spy = jasmine.createSpy('did-create-color-buffer')
+        service.observeColorBuffers(spy)
+
+      it 'calls the callback for every existing color buffers', ->
+        expect(spy).toHaveBeenCalled()
+        expect(spy.calls.length).toEqual(1)
+
+      it 'calls the callback on every new buffer creation', ->
+        waitsForPromise ->
+          atom.workspace.open('buttons.styl')
+
+        runs ->
+          expect(spy.calls.length).toEqual(2)
+
 
   describe 'when deactivated', ->
     [editor, editorElement, buffer] = []

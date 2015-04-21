@@ -45,6 +45,13 @@ class ColorProject
   onDidUpdateVariables: (callback) ->
     @emitter.on 'did-update-variables', callback
 
+  onDidCreateColorBuffer: (callback) ->
+    @emitter.on 'did-create-color-buffer', callback
+
+  observeColorBuffers: (callback) ->
+    callback(colorBuffer) for id,colorBuffer of @colorBuffersByEditorId
+    @onDidCreateColorBuffer(callback)
+
   isInitialized: -> @initialized
 
   isDestroyed: -> @destroyed
@@ -86,7 +93,7 @@ class ColorProject
     .then (results) =>
       hadVariables = @variables?
       @variables ?= []
-      
+
       for variable in results
         @variables.push(variable) unless @findVariable(variable)
 
@@ -140,6 +147,8 @@ class ColorProject
       @subscriptions.remove(subscription)
       subscription.dispose()
       delete @colorBuffersByEditorId[editor.id]
+
+    @emitter.emit 'did-create-color-buffer', buffer
 
     buffer
 
