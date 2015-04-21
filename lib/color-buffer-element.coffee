@@ -53,6 +53,12 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @editor.onDidChangeSelectionRange =>
       @requestSelectionUpdate()
 
+    @subscriptions.add atom.config.observe 'editor.fontSize', =>
+      @editorConfigChanged()
+
+    @subscriptions.add atom.config.observe 'editor.lineHeight', =>
+      @editorConfigChanged()
+
     @subscriptions.add @editorElement.onDidAttach => @attach()
     @subscriptions.add @editorElement.onDidDetach => @detach()
 
@@ -69,6 +75,11 @@ class ColorBufferElement extends HTMLElement
     @detach()
     @subscriptions.dispose()
     @releaseAllMarkerViews()
+
+  editorConfigChanged: ->
+    return unless @parentNode?
+    @usedMarkers.forEach (marker) -> marker.render()
+    @updateMarkers()
 
   requestSelectionUpdate: ->
     return if @updateRequested

@@ -213,3 +213,31 @@ describe 'ColorBufferElement', ->
 
         it 'ignores the colors that matches the defined scopes', ->
           expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+
+    describe 'when a text editor settings is modified', ->
+      [originalMarkers] = []
+      beforeEach ->
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+        runs ->
+          originalMarkers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)')
+          spyOn(colorBufferElement, 'updateMarkers').andCallThrough()
+          spyOn(ColorMarkerElement::, 'render').andCallThrough()
+
+      describe 'editor.fontSize', ->
+        beforeEach ->
+          atom.config.set('editor.fontSize', 20)
+
+        it 'forces an update and a re-render of existing markers', ->
+          expect(colorBufferElement.updateMarkers).toHaveBeenCalled()
+          for marker in originalMarkers
+            expect(marker.render).toHaveBeenCalled()
+
+      describe 'editor.lineHeight', ->
+        beforeEach ->
+          atom.config.set('editor.lineHeight', 20)
+
+        it 'forces an update and a re-render of existing markers', ->
+          expect(colorBufferElement.updateMarkers).toHaveBeenCalled()
+          for marker in originalMarkers
+            expect(marker.render).toHaveBeenCalled()
