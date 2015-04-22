@@ -57,6 +57,8 @@ readParam = (param, block) ->
 
     block(name, value)
 
+isInvalid = (color) -> not color?.isValid()
+
 module.exports = getRegistry: (context) ->
   registry = new ExpressionsRegistry(ColorExpression)
 
@@ -149,7 +151,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     @rgb = baseColor.rgb
     @alpha = context.readFloat(a)
@@ -166,11 +168,15 @@ module.exports = getRegistry: (context) ->
   "), (match, expression, context) ->
     [_,h,_,s,_,l] = match
 
-    @hsl = [
+    hsl = [
       context.readInt(h)
       context.readFloat(s)
       context.readFloat(l)
     ]
+
+    return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+    @hsl = hsl
     @alpha = 1
 
   # hsla(210,50%,50%,0.7)
@@ -187,11 +193,15 @@ module.exports = getRegistry: (context) ->
   "), (match, expression, context) ->
     [_,h,_,s,_,l,_,a] = match
 
-    @hsl = [
+    hsl = [
       context.readInt(h)
       context.readFloat(s)
       context.readFloat(l)
     ]
+
+    return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+    @hsl = hsl
     @alpha = context.readFloat(a)
 
   # hsv(210,70%,90%)
@@ -206,11 +216,15 @@ module.exports = getRegistry: (context) ->
   "), (match, expression, context) ->
     [_,h,_,s,_,v] = match
 
-    @hsv = [
+    hsv = [
       context.readInt(h)
       context.readFloat(s)
       context.readFloat(v)
     ]
+
+    return @invalid = true if hsv.some (v) -> not v? or isNaN(v)
+
+    @hsv = hsv
     @alpha = 1
 
   # hsva(210,70%,90%,0.7)
@@ -227,11 +241,15 @@ module.exports = getRegistry: (context) ->
   "), (match, expression, context) ->
     [_,h,_,s,_,v,_,a] = match
 
-    @hsv = [
+    hsv = [
       context.readInt(h)
       context.readFloat(s)
       context.readFloat(v)
     ]
+
+    return @invalid = true if hsv.some (v) -> not v? or isNaN(v)
+
+    @hsv = hsv
     @alpha = context.readFloat(a)
 
   # vec4(0.2, 0.5, 0.9, 0.7)
@@ -320,7 +338,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloat(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -340,7 +358,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloat(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -362,7 +380,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     @rgb = baseColor.rgb
     @alpha = clamp(baseColor.alpha - amount)
@@ -382,7 +400,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     @rgb = baseColor.rgb
     @alpha = clamp(baseColor.alpha + amount)
@@ -400,7 +418,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloat(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -439,7 +457,7 @@ module.exports = getRegistry: (context) ->
     baseColor1 = context.readColor(color1)
     baseColor2 = context.readColor(color2)
 
-    return @invalid = true unless baseColor1? and baseColor2?
+    return @invalid = true if isInvalid(baseColor1) or isInvalid(baseColor2)
 
     @rgba = mixColors(baseColor1, baseColor2, amount).rgba
 
@@ -456,7 +474,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     white = new Color(255, 255, 255)
 
@@ -475,7 +493,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     black = new Color(0,0,0)
 
@@ -489,7 +507,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -510,7 +528,7 @@ module.exports = getRegistry: (context) ->
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -524,7 +542,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [h,s,l] = baseColor.hsl
 
@@ -537,7 +555,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subexpr)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     [r,g,b] = baseColor.rgb
 
@@ -559,7 +577,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subject)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     for param in params
       readParam param, (name, value) ->
@@ -575,7 +593,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subject)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     for param in params
       readParam param, (name, value) ->
@@ -598,7 +616,7 @@ module.exports = getRegistry: (context) ->
 
     baseColor = context.readColor(subject)
 
-    return @invalid = true unless baseColor?
+    return @invalid = true if isInvalid(baseColor)
 
     for param in params
       readParam param, (name, value) ->
@@ -614,7 +632,7 @@ module.exports = getRegistry: (context) ->
       baseColor = context.readColor(name)
       @colorExpression = name
 
-      return @invalid = true unless baseColor?
+      return @invalid = true if isInvalid(baseColor)
 
       @rgba = baseColor.rgba
 
