@@ -1,7 +1,7 @@
 {
   "name": "pigments",
   "main": "./lib/pigments",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A rework of atom-color-highlight and project-palette-finder as a single package",
   "keywords": [
     "colors",
