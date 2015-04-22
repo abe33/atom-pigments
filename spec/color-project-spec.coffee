@@ -8,6 +8,7 @@ require '../lib/register-elements'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
+SERIALIZE_VERSION = "1.0.0"
 
 describe 'ColorProject', ->
   [project, promise, rootPath, paths, eventSpy] = []
@@ -31,6 +32,7 @@ describe 'ColorProject', ->
       data =
         root: rootPath
         timestamp: new Date().toJSON()
+        version: SERIALIZE_VERSION
 
       json = jsonFixture 'base-project.json', data
       project = ColorProject.deserialize(json)
@@ -91,6 +93,7 @@ describe 'ColorProject', ->
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
           timestamp: date
+          version: SERIALIZE_VERSION
           buffers: {}
           ignoredNames: ['vendor/*']
         })
@@ -156,6 +159,7 @@ describe 'ColorProject', ->
           deserializer: 'ColorProject'
           ignoredNames: ['vendor/*']
           timestamp: date
+          version: SERIALIZE_VERSION
           paths: [
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
@@ -387,6 +391,7 @@ describe 'ColorProject', ->
       params.timestamp ?=  new Date().toJSON()
       params.variableMarkers ?= [1..12]
       params.colorMarkers ?= [13..24]
+      params.version ?= SERIALIZE_VERSION
 
       ColorProject.deserialize(jsonFixture(stateFixture, params))
 
@@ -399,6 +404,17 @@ describe 'ColorProject', ->
 
       it 'does not rescans the files', ->
         expect(project.getVariables().length).toEqual(1)
+
+    describe 'with a version different that the current one', ->
+      beforeEach ->
+        project = createProject
+          stateFixture: "empty-project.json"
+          version: "0.0.0"
+
+        waitsForPromise -> project.initialize()
+
+      it 'drops the whole serialized state and rescans all the project', ->
+        expect(project.getVariables().length).toEqual(32)
 
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->

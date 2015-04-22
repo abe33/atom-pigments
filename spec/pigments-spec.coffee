@@ -1,10 +1,7 @@
 Pigments = require '../lib/pigments'
 PigmentsAPI = require '../lib/pigments-api'
 
-# Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
-#
-# To run a specific `it` or `describe` block add an `f` to the front (e.g. `fit`
-# or `fdescribe`). Remove the `f` to unfocus the block.
+SERIALIZE_VERSION = "1.0.0"
 
 describe "Pigments", ->
   [workspaceElement, pigments, project] = []
@@ -27,6 +24,7 @@ describe "Pigments", ->
       project:
         deserializer: 'ColorProject'
         timestamp: date
+        version: SERIALIZE_VERSION
         buffers: {}
     })
 

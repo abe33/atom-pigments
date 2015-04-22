@@ -10,11 +10,15 @@ PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 
+SERIALIZE_VERSION = "1.0.0"
+
 module.exports =
 class ColorProject
   atom.deserializers.add(this)
 
-  @deserialize: (state) -> new ColorProject(state)
+  @deserialize: (state) ->
+    state = {} if state?.version isnt SERIALIZE_VERSION
+    new ColorProject(state)
 
   constructor: (state={}) ->
     {@ignoredNames, @paths, variables, timestamp, buffers} = state
@@ -360,7 +364,10 @@ class ColorProject
   getTimestamp: -> new Date()
 
   serialize: ->
-    data = {deserializer: 'ColorProject', timestamp: @getTimestamp()}
+    data =
+      deserializer: 'ColorProject'
+      timestamp: @getTimestamp()
+      version: SERIALIZE_VERSION
 
     data.ignoredNames = @ignoredNames if @ignoredNames?
     data.buffers = @serializeBuffers()
