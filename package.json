@@ -27,7 +27,7 @@
     },
     "pigments.api": {
       "versions": {
-        "0.0.0": "provideAPI"
+        "1.0.0": "provideAPI"
       }
     }
   }
