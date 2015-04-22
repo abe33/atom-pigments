@@ -55,7 +55,7 @@ module.exports =
       type: 'string'
       default: 'none'
       enum: ['none', 'by name', 'by color']
-    gorupPaletteColors:
+    groupPaletteColors:
       type: 'string'
       default: 'none'
       enum: ['none', 'by file']
