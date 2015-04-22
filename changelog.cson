@@ -1,0 +1,22 @@
+sections: [
+  {
+    name: 'Features'
+    match: '^(Add|Implement)'
+    include_body: true
+  }
+  {
+    name: 'Bug Fixes'
+    match: '^(:bug:\\s+|(Fix))(.*)$'
+    replace: '\\2\\3'
+  }
+  {
+    name: 'Performances'
+    match: '^:racehorse:\\s+(.*)$'
+    replace: '\\1'
+  }
+  {
+    name: 'Dependencies Update'
+    match: '^:arrow_up:\\s+(.*)$'
+    replace: '\\1'
+  }
+]
