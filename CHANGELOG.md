@@ -1,3 +1,10 @@
+<a name="v0.1.4"></a>
+# v0.1.4 (2015-04-24)
+
+## Bug Fixes
+
+- Fix invalid colors displayed in search results ([1534ea49](https://github.com/abe33/atom-pigments/commit/1534ea490ad3ccd20949f7aef7b73f5b4076a11d), [#3](https://github.com/abe33/atom-pigments/issues/3))
+
 <a name="v0.1.3"></a>
 # v0.1.3 (2015-04-23)
 
