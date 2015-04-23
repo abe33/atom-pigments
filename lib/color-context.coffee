@@ -38,7 +38,8 @@ class ColorContext
       value
 
   readColor: (value) ->
-    @parser.parse(@readColorExpression(value), this)
+    result = @parser.parse(@readColorExpression(value), this)
+    result if result?.isValid()
 
   readFloat: (value) ->
     res = parseFloat(value)

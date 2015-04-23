@@ -42,6 +42,12 @@ describe 'ColorParser', ->
   beforeEach ->
     parser = new ColorParser
 
+  itParses('@list-item-height').withContext({
+      '@text-height': '@scale-b-xxl * 1rem'
+      '@component-line-height': '@text-height'
+      '@list-item-height': '@component-line-height'
+    }).asInvalid()
+
   itParses('#7fff7f00').asColor(255, 127, 0, 0.5)
   itParses('#ff7f00').asColor(255, 127, 0)
   itParses('#f70').asColor(255, 119, 0)

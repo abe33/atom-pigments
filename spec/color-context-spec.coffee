@@ -6,6 +6,10 @@ describe 'ColorContext', ->
   [context, parser] = []
 
   itParses = (expression) ->
+    asUndefinedColor: ->
+      it "parses '#{expression}' as undefined", ->
+        expect(context.readColor(expression)).toBeUndefined()
+
     asInt: (expected) ->
       it "parses '#{expression}' as an integer with value of #{expected}", ->
         expect(context.readInt(expression)).toEqual(expected)
@@ -53,8 +57,9 @@ describe 'ColorContext', ->
     itParses('rgb(255,127,0)').asColor(255, 127, 0)
 
   describe 'with a variables hash', ->
+    createVar = (name, value) -> {value, name}
+
     beforeEach ->
-      createVar = (name, value) -> {value, name}
 
       variables =[
         createVar 'x', '10'
@@ -72,3 +77,15 @@ describe 'ColorContext', ->
 
     itParses('c').asColorExpression('rgb(255,127,0)')
     itParses('c').asColor(255, 127, 0)
+
+    describe 'that contains invalid colors', ->
+      beforeEach ->
+        variables =[
+          createVar '@text-height', '@scale-b-xxl * 1rem'
+          createVar '@component-line-height', '@text-height'
+          createVar '@list-item-height', '@component-line-height'
+        ]
+
+        context = new ColorContext(variables)
+
+      itParses('@list-item-height').asUndefinedColor()
