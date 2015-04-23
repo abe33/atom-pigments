@@ -104,10 +104,9 @@ describe 'autocomplete provider', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.moveToBottom()
-        editor.insertText('b')
-        editor.insertText('u')
-        editor.insertText('t')
-        editor.insertText('p')
+        editor.insertText('f')
+        editor.insertText('o')
+        editor.insertText('o')
 
         advanceClock(completionDelay)
 
@@ -130,6 +129,10 @@ describe 'autocomplete provider', ->
           editor.insertText('b')
           editor.insertText('u')
           editor.insertText('t')
+          editor.insertText('t')
+          editor.insertText('o')
+          editor.insertText('n')
+          editor.insertText('-')
           editor.insertText('p')
 
           advanceClock(completionDelay)

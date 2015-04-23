@@ -24,7 +24,7 @@ You can display the project's palette through the `Pigments: Show Palette` comma
 
 ## Search Colors In Project
 
-You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette: 
+You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
 
@@ -69,7 +69,7 @@ The autocomplete provider will only complete color names in editors whose scope 
 When enabled, the autocomplete provider will also provides completion for non-color variables.
 
 * Key: `pigments.extendAutocompleteToVariables`
-* Default: `true`
+* Default: `false`
 
 ### Traverse Into Symlink Directories
 
