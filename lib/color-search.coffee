@@ -39,14 +39,21 @@ class ColorSearch
       relativePath = atom.project.relativize(m.filePath)
       return if @isIgnored(relativePath)
 
+      newMatches = []
       for result in m.matches
         result.color = @parser.parse(result.matchText, @context)
+        # FIXME it should be handled way before, but it'll need a change
+        # in how we test if a variable is a color.
+        continue unless result.color?.isValid()
         result.range[0][1] += result.matchText.indexOf(result.color.colorExpression)
         result.matchText = result.color.colorExpression
 
         results.push result
+        newMatches.push result
 
-      @emitter.emit 'did-find-matches', m
+      m.matches = newMatches
+
+      @emitter.emit 'did-find-matches', m if m.matches.length > 0
 
     promise.then =>
       @results = results
