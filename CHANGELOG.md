@@ -1,3 +1,11 @@
+<a name="v0.1.3"></a>
+# v0.1.3 (2015-04-23)
+
+## Bug Fixes
+
+- Implement strict matching in autocomplete provider ([028c3a9f](https://github.com/abe33/atom-pigments/commit/028c3a9f441d414bb3145d61a892e933920a4c61), [#3](https://github.com/abe33/atom-pigments/issues/3))
+- Fix context returning invalid colors ([dc47cd1d](https://github.com/abe33/atom-pigments/commit/dc47cd1df920457215bfd2de5299c8c462a3b17a), [#4](https://github.com/abe33/atom-pigments/issues/4))
+
 <a name="v0.1.2"></a>
 # v0.1.2 (2015-04-22)
 
