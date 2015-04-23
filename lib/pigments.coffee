@@ -45,7 +45,7 @@ module.exports =
         type: 'string'
     extendAutocompleteToVariables:
       type: 'boolean'
-      default: true
+      default: false
       description: 'When enabled, the autocomplete provider will also provides completion for non-color variables.'
     markerType:
       type: 'string'

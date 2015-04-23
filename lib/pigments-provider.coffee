@@ -38,9 +38,7 @@ class PigmentsProvider
 
     suggestions = []
 
-    allNames = variables.map (v) -> v.name
-    matchedNames = fuzzaldrin.filter(allNames, prefix)
-    matchedVariables = variables.filter (v) -> v.name in matchedNames
+    matchedVariables = variables.filter (v) -> ///^#{prefix}///.test v.name
 
     matchedVariables.forEach (v) ->
       if v.isColor()
