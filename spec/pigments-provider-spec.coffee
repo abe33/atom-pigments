@@ -77,7 +77,7 @@ describe 'autocomplete provider', ->
         expect(preview).toExist()
         expect(preview.style.background).toEqual('rgb(255, 255, 255)')
 
-    it 'replaces the prefix even when it contains a @ or a $', ->
+    it 'replaces the prefix even when it contains a @', ->
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -96,6 +96,27 @@ describe 'autocomplete provider', ->
       runs ->
         atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
         expect(editor.getText()).not.toContain '@@'
+
+    it 'replaces the prefix even when it contains a $', ->
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('$')
+        editor.insertText('o')
+        editor.insertText('t')
+
+        advanceClock(completionDelay)
+
+      waitsFor ->
+        autocompleteManager.displaySuggestions.calls.length is 1
+
+      waitsFor -> editorView.querySelector('.autocomplete-plus li')?
+
+      runs ->
+        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+        expect(editor.getText()).toContain '$other-color'
+        expect(editor.getText()).not.toContain '$$'
 
   describe 'writing the name of a non-color variable', ->
     it 'returns suggestions for the matching variable', ->

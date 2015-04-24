@@ -1,3 +1,4 @@
+_ = require 'underscore-plus'
 {CompositeDisposable, Range}  = require 'atom'
 fuzzaldrin = require 'fuzzaldrin'
 {variables: variablesRegExp} = require './regexes'
@@ -38,7 +39,7 @@ class PigmentsProvider
 
     suggestions = []
 
-    matchedVariables = variables.filter (v) -> ///^#{prefix}///.test v.name
+    matchedVariables = variables.filter (v) -> ///^#{_.escapeRegExp prefix}///.test v.name
 
     matchedVariables.forEach (v) ->
       if v.isColor()
