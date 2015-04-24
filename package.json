@@ -2,7 +2,7 @@
   "name": "pigments",
   "main": "./lib/pigments",
   "version": "0.1.4",
-  "description": "A rework of atom-color-highlight and project-palette-finder as a single package",
+  "description": "A package to display colors in project and files.",
   "keywords": [
     "colors",
     "palette"
