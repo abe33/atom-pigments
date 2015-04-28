@@ -25,10 +25,13 @@ class ProjectVariable
     @emitter.emit('did-destroy')
     {@name, @value, @range, @path, @project, @color} = {}
 
-  isEqual: (variable) ->
-    bool = @name is variable.name and
+  isValueEqual: (variable) ->
+    @name is variable.name and
     @value is variable.value and
     @path is variable.path
+
+  isEqual: (variable) ->
+    bool = @isValueEqual(variable)
 
     bool &&= if @bufferRange? and variable.bufferRange?
       @bufferRange.isEqual(variable.bufferRange)

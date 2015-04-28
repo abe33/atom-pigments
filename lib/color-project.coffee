@@ -105,6 +105,7 @@ class ColorProject
         @emitter.emit 'did-update-variables', {
           created: results
           destroyed: destroyed
+          updated: []
         }
 
       results.forEach (variable) =>
@@ -259,7 +260,9 @@ class ColorProject
 
   updateVariables: (paths, results) ->
     newVariables = @variables.filter (variable) -> variable.path not in paths
-    toCreate = []
+    created = []
+    updated = []
+
     for result in results
       if variable = @findVariable(result)
         # This is a special case, if both variables have a buffer range, they
@@ -268,28 +271,39 @@ class ColorProject
         if variable.range[0] isnt result.range[0] or variable.range[1] isnt result.range[1]
           variable.range = result.range
         newVariables.push(variable)
+      else if variable = @findVariableWithoutRange(result)
+        # This is another special case, when typing in the buffer, the variable
+        # range changed but the declaration didn't. We just need to update its
+        # ranges and mark it as updated.
+        variable.range = result.range
+        variable.bufferRange = result.bufferRange
+
+        newVariables.push(variable)
+        updated.push(variable)
       else
-        toCreate.push(result)
+        created.push(result)
 
-    newVariables = newVariables.concat(toCreate)
+    newVariables = newVariables.concat(created)
 
-    toCreate.forEach (variable) => @createProjectVariableSubscriptions(variable)
-    toDestroy = @variables.filter (variable) -> variable not in newVariables
-    toDestroy.forEach (variable) =>
+    created.forEach (variable) => @createProjectVariableSubscriptions(variable)
+    destroyed = @variables.filter (variable) -> variable not in newVariables
+    destroyed.forEach (variable) =>
       @clearProjectVariableSubscriptions(variable)
       variable.destroy()
 
-    if toDestroy.length > 0 or toCreate.length > 0
+    if destroyed.length > 0 or created.length > 0 or updated.length > 0
       @variables = newVariables
-      @emitter.emit 'did-update-variables', {
-        created: toCreate
-        destroyed: toDestroy
-      }
+      @emitter.emit 'did-update-variables', {created, destroyed, updated}
 
   findVariable: (result) ->
     return unless @variables?
     for variable in @variables
       return variable if variable.isEqual(result)
+
+  findVariableWithoutRange: (result) ->
+    return unless @variables?
+    for variable in @variables
+      return variable if variable.isValueEqual(result)
 
   loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 

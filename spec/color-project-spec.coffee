@@ -314,7 +314,7 @@ describe 'ColorProject', ->
         for variable in project.getVariables()
           expect(variable.bufferRange).toBeDefined()
 
-      describe 'when a color is modified and affects other variables ranges', ->
+      describe 'when a color is modified that does not affect other variables ranges', ->
         [variablesTextRanges] = []
         beforeEach ->
           runs ->
@@ -344,6 +344,34 @@ describe 'ColorProject', ->
 
         it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
+
+      describe 'when a text is inserted that affects other variables ranges', ->
+        [variablesTextRanges] = []
+        beforeEach ->
+          runs ->
+            variablesTextRanges = {}
+            colorBuffer.getVariableMarkers().forEach (marker) ->
+              variablesTextRanges[marker.variable.name] = marker.variable.range
+
+            editor.setSelectedBufferRange([[0,0],[0,0]])
+            editor.insertText('\n\n')
+            editor.getBuffer().emitter.emit('did-stop-changing')
+
+          waitsFor -> eventSpy.callCount > 0
+
+        it 'uses the buffer ranges to detect which variables were really changed', ->
+          expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(0)
+          expect(eventSpy.argsForCall[0][0].created.length).toEqual(0)
+          expect(eventSpy.argsForCall[0][0].updated.length).toEqual(12)
+
+        it 'updates the range of the updated variables', ->
+          range = eventSpy.argsForCall[0][0].updated[0].range
+          bufferRange = eventSpy.argsForCall[0][0].updated[0].bufferRange
+
+          expect(range[0]).not.toEqual(13)
+          expect(range[1]).not.toEqual(25)
+
+          expect(bufferRange).not.toEqual([[1,2], [1,14]])
 
     describe '::setIgnoredNames', ->
       describe 'with an empty array', ->
