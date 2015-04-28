@@ -27,7 +27,8 @@ class ColorMarkerElement extends HTMLElement
     @released = false
     @subscriptions = new CompositeDisposable
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()
-    @subscriptions.add @colorMarker.marker.onDidChange ({isValid}) =>
+    @subscriptions.add @colorMarker.marker.onDidChange (data) =>
+      {isValid} = data
       if isValid then @render() else @release()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
