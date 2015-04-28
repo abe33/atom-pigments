@@ -101,12 +101,7 @@ class ColorProject
       for variable in results
         @variables.push(variable) unless @findVariable(variable)
 
-      if hadVariables
-        @emitter.emit 'did-update-variables', {
-          created: results
-          destroyed: destroyed
-          updated: []
-        }
+      @emitVariablesChangeEvent(results, destroyed, [], true) if hadVariables
 
       results.forEach (variable) =>
         @createProjectVariableSubscriptions(variable)
@@ -243,9 +238,10 @@ class ColorProject
       return variable if variable.name is name
 
   getColorVariables: ->
+    return @colorVariablesCache if @colorVariablesCache?
     context = @getContext()
 
-    @variables.filter (variable) -> variable.isColor()
+    @colorVariablesCache = @variables.filter (variable) -> variable.isColor()
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
@@ -291,9 +287,8 @@ class ColorProject
       @clearProjectVariableSubscriptions(variable)
       variable.destroy()
 
-    if destroyed.length > 0 or created.length > 0 or updated.length > 0
-      @variables = newVariables
-      @emitter.emit 'did-update-variables', {created, destroyed, updated}
+    @variables = newVariables
+    @emitVariablesChangeEvent(created, destroyed, updated)
 
   findVariable: (result) ->
     return unless @variables?
@@ -304,6 +299,11 @@ class ColorProject
     return unless @variables?
     for variable in @variables
       return variable if variable.isValueEqual(result)
+
+  emitVariablesChangeEvent: (created, destroyed, updated, forceEvent=false) ->
+    if forceEvent or destroyed.length or created.length or updated.length
+      @emitter.emit 'did-update-variables', {created, destroyed, updated}
+      @colorVariablesCache = undefined
 
   loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 
