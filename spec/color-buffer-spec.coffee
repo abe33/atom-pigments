@@ -260,6 +260,22 @@ describe 'ColorBuffer', ->
         it 'removes the previous editor markers', ->
           expect(editor.findMarkers(type: 'pigments-color').length).toEqual(3)
 
+      describe 'when new lines changes the markers range', ->
+        [colorsUpdateSpy] = []
+
+        beforeEach ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+
+          runs ->
+            colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
+            colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
+            editBuffer '#fff\n\n', start: [0,0], end: [0,0]
+            waitsFor -> colorsUpdateSpy.callCount > 0
+
+        it 'does not destroys the previous markers', ->
+          expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
+          expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(1)
+
       describe 'when a new color is added', ->
         [colorsUpdateSpy] = []
 
