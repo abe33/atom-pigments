@@ -62,6 +62,10 @@ module.exports =
     mergeColorDuplicates:
       type: 'boolean'
       default: false
+    delayBeforeScan:
+      type: 'integer'
+      default: 500
+      description: 'Number of milliseconds after which the current buffer will be scanned for changes in the colors. This delay starts at the end of the text input and will be aborted if you start typing again during the interval.'
 
   activate: (state) ->
     require './register-elements'

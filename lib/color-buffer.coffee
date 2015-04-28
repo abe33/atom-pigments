@@ -17,7 +17,18 @@ class ColorBuffer
     @variableMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidStopChanging => @update()
+    @subscriptions.add @editor.onDidChange =>
+      clearTimeout(@timeout) if @timeout?
+    @subscriptions.add @editor.onDidStopChanging =>
+      if @delayBeforeScan is 0
+        @update()
+      else
+        clearTimeout(@timeout) if @timeout?
+        @timeout = setTimeout =>
+          @update()
+          @timeout = null
+        , @delayBeforeScan
+
     @subscriptions.add @editor.onDidChangePath (path) =>
       @project.appendPath(path) if @isVariablesSource()
       @update()
@@ -26,6 +37,8 @@ class ColorBuffer
       resultsForBuffer = @project.getVariables().filter (r) =>
         r.path is @editor.getPath()
       @updateVariableMarkers(resultsForBuffer)
+
+    @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
 
     @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes=[]) =>
       @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}

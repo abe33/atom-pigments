@@ -30,6 +30,7 @@ describe 'ColorBufferElement', ->
 
     jasmineContent.appendChild(workspaceElement)
 
+    atom.config.set 'pigments.delayBeforeScan', 0
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
       '*.less'
