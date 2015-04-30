@@ -123,6 +123,7 @@ class ColorBuffer
         variables: results?.map (p) => new ProjectVariable(p, @project)
     .then (results) =>
       @updateColorMarkers(results)
+    .catch (reason) ->
 
   update: ->
     promise = if @isIgnored()
@@ -135,7 +136,9 @@ class ColorBuffer
     promise.then (results) =>
       @scanBufferForColors
         variables: results?.map (p) => new ProjectVariable(p, @project)
-    .then (results) => @updateColorMarkers(results)
+    .then (results) =>
+      @updateColorMarkers(results)
+    .catch (reason) ->
 
   terminateRunningTask: -> @task?.terminate()
 
