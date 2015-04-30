@@ -1,3 +1,15 @@
+<a name="v0.2.0"></a>
+# v0.2.0 (2015-04-30)
+
+## Features
+
+- Implement a delay before scanning the buffer after an input ([1ba5ee49](https://github.com/abe33/atom-pigments/commit/1ba5ee4956d81f00c5f086f0738fc2da27d89245))
+
+## Bug Fixes
+
+- Fix tasks still running when starting typing again ([fb185a2d](https://github.com/abe33/atom-pigments/commit/fb185a2d464212a23402d5258845af3141103a39))
+- Fix provider not providing variable prefixed with $ ([f1752225](https://github.com/abe33/atom-pigments/commit/f1752225f729d84c854c728392528a3c62390134))
+
 <a name="v0.1.4"></a>
 # v0.1.4 (2015-04-24)
 
