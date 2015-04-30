@@ -5,6 +5,10 @@ jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
 describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
 
+  sleep = (ms) ->
+    start = new Date
+    -> new Date - start >= ms
+
   editBuffer = (text, options={}) ->
     if options.start?
       if options.end?
@@ -81,6 +85,33 @@ describe 'ColorBuffer', ->
 
         it 'does not add the path to the project paths', ->
           expect('new-path.styl' in project.getPaths()).toBeFalsy()
+
+  describe 'with rapid changes that triggers a rescan', ->
+    beforeEach ->
+      colorBuffer = project.colorBufferForEditor(editor)
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
+      runs ->
+        spyOn(colorBuffer, 'updateColorMarkers').andCallThrough()
+        spyOn(colorBuffer, 'scanBufferForVariables').andCallThrough()
+
+        editor.moveToBottom()
+
+        editor.insertText('#fff\n')
+        editor.getBuffer().emitter.emit('did-stop-changing')
+
+      waitsFor -> colorBuffer.scanBufferForVariables.callCount > 0
+
+      runs ->
+        editor.insertText(' ')
+        editor.emitter.emit('did-change')
+        editor.getBuffer().emitter.emit('did-stop-changing')
+
+      waitsFor sleep(1000)
+
+    it 'terminates the currently running task', ->
+      expect(colorBuffer.updateColorMarkers.callCount).toEqual(1)
+
 
   describe 'when created without a previous state', ->
     beforeEach ->

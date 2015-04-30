@@ -17,8 +17,11 @@ class ColorBuffer
     @variableMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
+
     @subscriptions.add @editor.onDidChange =>
+      @terminateRunningTask()
       clearTimeout(@timeout) if @timeout?
+
     @subscriptions.add @editor.onDidStopChanging =>
       if @delayBeforeScan is 0
         @update()
@@ -134,6 +137,8 @@ class ColorBuffer
         variables: results?.map (p) => new ProjectVariable(p, @project)
     .then (results) => @updateColorMarkers(results)
 
+  terminateRunningTask: -> @task?.terminate()
+
   destroy: ->
     @subscriptions.dispose()
     @emitter.emit 'did-destroy'
@@ -230,14 +235,16 @@ class ColorBuffer
     config =
       buffer: @editor.getText()
 
-    new Promise (resolve, reject) ->
-      task = Task.once(
+    new Promise (resolve, reject) =>
+      @task = Task.once(
         taskPath,
         config,
-        -> resolve(results)
+        =>
+          @task = null
+          resolve(results)
       )
 
-      task.on 'scan-buffer:variables-found', (variables) ->
+      @task.on 'scan-buffer:variables-found', (variables) ->
         results = results.concat variables.map (variable) ->
           variable.path = editor.getPath()
           variable.bufferRange = Range.fromObject [
@@ -330,14 +337,16 @@ class ColorBuffer
       buffer: @editor.getText()
       variables: variables.map (v) -> v.serialize()
 
-    new Promise (resolve, reject) ->
-      task = Task.once(
+    new Promise (resolve, reject) =>
+      @task = Task.once(
         taskPath,
         config,
-        -> resolve(results)
+        =>
+          @task = null
+          resolve(results)
       )
 
-      task.on 'scan-buffer:colors-found', (colors) ->
+      @task.on 'scan-buffer:colors-found', (colors) ->
         results = results.concat colors.map (res) ->
           res.color = new Color(res.color)
           res.bufferRange = Range.fromObject [
