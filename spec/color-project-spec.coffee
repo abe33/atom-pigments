@@ -508,3 +508,29 @@ describe 'ColorProject', ->
 
       it 'invalidates the color buffer markers as soon as the dirty paths have been determined', ->
         expect(colorBuffer.updateVariableMarkers).toHaveBeenCalled()
+
+##    ########  ######## ########    ###    ##     ## ##       ########
+##    ##     ## ##       ##         ## ##   ##     ## ##          ##
+##    ##     ## ##       ##        ##   ##  ##     ## ##          ##
+##    ##     ## ######   ######   ##     ## ##     ## ##          ##
+##    ##     ## ##       ##       ######### ##     ## ##          ##
+##    ##     ## ##       ##       ##     ## ##     ## ##          ##
+##    ########  ######## ##       ##     ##  #######  ########    ##
+
+xdescribe 'ColorProject', ->
+  [project, rootPath] = []
+  describe 'when the project has a pigments defaults file', ->
+    beforeEach ->
+      atom.config.set 'pigments.sourceNames', ['*.sass']
+
+      [fixturesPath] = atom.project.getPaths()
+      rootPath = "#{fixturesPath}/project-with-defaults"
+      atom.project.setPaths([rootPath])
+
+      project = new ColorProject({})
+
+      waitsForPromise -> project.initialize()
+
+    it 'uses the defaults in the .pigments file in priority', ->
+      expect(project.getColorVariables().length).toEqual(4)
+      expect(project.getVariableByName('$button-color').getColor()).toBeColor(255,255,255,1)
