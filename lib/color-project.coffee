@@ -10,7 +10,7 @@ PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 
-SERIALIZE_VERSION = "1.0.0"
+SERIALIZE_VERSION = "1.0.1"
 
 module.exports =
 class ColorProject

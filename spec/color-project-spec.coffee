@@ -8,7 +8,7 @@ require '../lib/register-elements'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
-SERIALIZE_VERSION = "1.0.0"
+SERIALIZE_VERSION = "1.0.1"
 
 describe 'ColorProject', ->
   [project, promise, rootPath, paths, eventSpy] = []
