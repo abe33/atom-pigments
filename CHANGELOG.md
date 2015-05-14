@@ -1,3 +1,10 @@
+<a name="v0.2.1"></a>
+# v0.2.1 (2015-05-14)
+
+## Bug Fixes
+
+- Fix mixins/functions arguments being parsed as variables ([e7a6fc17](https://github.com/abe33/atom-pigments/commit/e7a6fc178aa962c313ba7c3ce68301036526f093))
+
 <a name="v0.2.0"></a>
 # v0.2.0 (2015-04-30)
 
