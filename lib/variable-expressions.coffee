@@ -6,9 +6,13 @@ module.exports = registry = new ExpressionsRegistry(VariableExpression)
 
 registry.createExpression 'less', '(@[a-zA-Z0-9\\-_]+)\\s*:\\s*([^;\\n]+);?'
 
-registry.createExpression 'scss', '(\\$[a-zA-Z0-9\\-_]+):\\s*(.*?)(\\s*!default)?;'
+# It catches sequences like `@mixin foo($foo: 10)` and ignores them.
+registry.createExpression 'scss_params', '^\\s*@(mixin|include|function)\\s+[a-zA-Z0-9\\-_]+\\s*\\([^\\)]+\\)', (match, solver) ->
+  solver.endParsing(match.length - 1)
 
-registry.createExpression 'sass', '(\\$[a-zA-Z0-9\\-_]+):\\s*(.*?)(\\s*!default)?$'
+registry.createExpression 'scss', '^\\s*(\\$[a-zA-Z0-9\\-_]+):\\s*(.*?)(\\s*!default)?;'
+
+registry.createExpression 'sass', '^\\s*(\\$[a-zA-Z0-9\\-_]+):\\s*([^\\{]*?)(\\s*!default)?$'
 
 registry.createExpression 'stylus_hash', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\\{([^=]*)\\}', (match, solver) ->
   buffer = ''
@@ -57,4 +61,4 @@ registry.createExpression 'stylus_hash', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\
   else
     solver.abortParsing()
 
-registry.createExpression 'stylus', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*([^\\n;]*);?$'
+registry.createExpression 'stylus', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n;]*);?$'

@@ -38,4 +38,4 @@ class VariableExpression
 
       @handle(match, solver)
 
-    if parsingAborted then undefined else results
+    if parsingAborted then undefined else results if results.length

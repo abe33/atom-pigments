@@ -84,3 +84,21 @@ describe 'VariableScanner', ->
 
       it 'does not find any variables', ->
         expect(result).toBeUndefined()
+
+    withScannerForTextEditor 'variables-in-arguments.scss', ->
+      beforeEach ->
+        result = scanner.search(text)
+
+      it 'does not find any variables', ->
+        expect(result).toBeUndefined()
+
+    withScannerForTextEditor 'variables-in-conditions.scss', ->
+      beforeEach ->
+        result = null
+        doSearch = -> result = scanner.search(text, result?.lastIndex)
+
+        doSearch()
+        doSearch()
+
+      it 'does not find the variable in the if clause', ->
+        expect(result).toBeUndefined()
