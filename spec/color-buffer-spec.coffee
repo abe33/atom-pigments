@@ -239,8 +239,10 @@ describe 'ColorBuffer', ->
           expected = jsonFixture "four-variables-buffer.json", {
             id: editor.id
             root: atom.project.getPaths()[0]
-            colorMarkers: colorBuffer.getColorMarkers().map (m) -> m.marker.id
-            variableMarkers: colorBuffer.getVariableMarkers().map (m) -> m.marker.id
+            colorMarkers: colorBuffer.getColorMarkers().map (m) ->
+              String(m.marker.id)
+            variableMarkers: colorBuffer.getVariableMarkers().map (m) ->
+              String(m.marker.id)
           }
 
           expect(colorBuffer.serialize()).toEqual(expected)
