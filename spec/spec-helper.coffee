@@ -1,3 +1,6 @@
+fs = require 'fs'
+path = require 'path'
+
 beforeEach ->
   compare = (a,b,p) -> Math.abs(b - a) < (Math.pow(10, -p) / 2)
 
