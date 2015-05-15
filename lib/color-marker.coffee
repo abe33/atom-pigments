@@ -34,7 +34,7 @@ class ColorMarker
   serialize: ->
     return if @wasDestroyed
     out = {
-      markerId: @marker.id
+      markerId: String(@marker.id)
       bufferRange: @marker.getBufferRange().serialize()
       color: @color.serialize()
       text: @text
