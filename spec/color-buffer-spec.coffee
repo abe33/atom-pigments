@@ -355,6 +355,19 @@ describe 'ColorBuffer', ->
         it 'removes the previous editor markers', ->
           expect(editor.findMarkers(type: 'pigments-color').length).toEqual(2)
 
+    describe 'with a buffer whose scope is not one of source files', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('project/lib/main.coffee').then (o) -> editor = o
+
+        runs ->
+          colorBuffer = project.colorBufferForEditor(editor)
+
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+      it 'does not renders colors from variables', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(4)
+
   ##    ####  ######   ##    ##  #######  ########  ######## ########
   ##     ##  ##    ##  ###   ## ##     ## ##     ## ##       ##     ##
   ##     ##  ##        ####  ## ##     ## ##     ## ##       ##     ##

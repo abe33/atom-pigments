@@ -335,7 +335,11 @@ class ColorBuffer
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()
-    variables = (options.variables ? []).concat(@project.getVariables() ? [])
+    variables = if @isVariablesSource()
+      (options.variables ? []).concat(@project.getVariables() ? [])
+    else
+      []
+
     config =
       buffer: @editor.getText()
       variables: variables.map (v) -> v.serialize()
