@@ -31,7 +31,7 @@ class VariableMarker
   serialize: ->
     return if @wasDestroyed
     {
-      markerId: @marker.id
+      markerId: String(@marker.id)
       bufferRange: @marker.getBufferRange().serialize()
       variable: @variable.name
     }
