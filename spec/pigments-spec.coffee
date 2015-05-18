@@ -3,14 +3,20 @@ PigmentsAPI = require '../lib/pigments-api'
 
 SERIALIZE_VERSION = "1.0.1"
 
-describe "Pigments", ->
+fdescribe "Pigments", ->
   [workspaceElement, pigments, project] = []
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
+
+    # atom.config.set('pigments.sourceNames', ['**/*.sass', '**/*.styl'])
+    # atom.config.set('pigments.ignoredNames', [])
+    # atom.config.set('pigments.autocompleteScopes', [])
+
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
+      console.log atom.config.get('pigments')
       pigments = pkg.mainModule
       project = pigments.getProject()
 
