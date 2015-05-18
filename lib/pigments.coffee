@@ -30,7 +30,7 @@ module.exports =
     ignoredScopes:
       type: 'array'
       default: []
-      description: "Regular expressions of scopes in which colors are ignored. Note that regular expressions are strings."
+      description: "Regular expressions of scopes in which colors are ignored. For example, to ignore all colors in comments you can use `\\.comment`."
       items:
         type: 'string'
     autocompleteScopes:
