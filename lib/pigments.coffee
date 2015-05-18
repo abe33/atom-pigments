@@ -21,7 +21,9 @@ module.exports =
         type: 'string'
     ignoredNames:
       type: 'array'
-      default: []
+      default: [
+        "node_modules/*"
+      ]
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
         type: 'string'
