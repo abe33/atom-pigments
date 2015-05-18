@@ -42,7 +42,7 @@ An array of glob patterns of the files to use as source for the project's variab
 An array of glob patterns of the files to ignore as source files for the project's variables and colors.
 
 * Key: `pigments.ignoredNames`
-* Default: `[]`
+* Default: `['node_modules/*']`
 
 ### Ignored Scopes
 
