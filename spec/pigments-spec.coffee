@@ -10,13 +10,12 @@ describe "Pigments", ->
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
-
-    # atom.config.set('pigments.sourceNames', ['**/*.sass', '**/*.styl'])
-    # atom.config.set('pigments.ignoredNames', [])
-    # atom.config.set('pigments.autocompleteScopes', [])
+    atom.config.set('pigments.sourceNames', ['**/*.sass', '**/*.styl'])
+    atom.config.set('pigments.ignoredNames', [])
+    atom.config.set('pigments.ignoredScopes', [])
+    atom.config.set('pigments.autocompleteScopes', [])
 
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
-      console.log atom.config.get('pigments')
       pigments = pkg.mainModule
       project = pigments.getProject()
 
