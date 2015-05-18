@@ -146,7 +146,7 @@ class PaletteElement extends HTMLElement
           <span class="pigments-color-component"><strong>R:</strong> #{Math.round color.red}</span>
           <span class="pigments-color-component"><strong>G:</strong> #{Math.round color.green}</span>
           <span class="pigments-color-component"><strong>B:</strong> #{Math.round color.blue}</span>
-          <span class="pigments-color-component"><strong>A:</strong> #{color.alpha}</span>
+          <span class="pigments-color-component"><strong>A:</strong> #{Math.round(color.alpha * 1000) / 1000}</span>
         </span>
       </div>
       <div class="pigments-color-details">
