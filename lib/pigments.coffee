@@ -80,6 +80,7 @@ module.exports =
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
       'pigments:show-palette': => @showPalette()
+      'pigments:reload': => @reloadProjectVariables()
 
     atom.workspace.addOpener (uriToOpen) =>
       url ||= require 'url'
@@ -128,3 +129,7 @@ module.exports =
       pane ||= atom.workspace.getActivePane()
 
       atom.workspace.openURIInPane(uri, pane, {})
+
+  reloadProjectVariables: ->
+    @project.initialize().then =>
+      @project.reloadVariablesForPaths(@project.getPaths())

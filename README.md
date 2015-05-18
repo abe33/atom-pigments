@@ -16,17 +16,23 @@ apm install pigments
 
 Or search for `pigments` in Atom settings view.
 
-## Show Project Palette
+## Commands
+
+### Pigments: Show Palette
 
 You can display the project's palette through the `Pigments: Show Palette` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/palette.gif?raw=true)
 
-## Search Colors In Project
+### Pigments: Find Colors
 
 You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
+
+### Pigments: Reload
+
+This command will force a reload of all variables in the project, this can be useful when the serialized state of the plugin contains invalid data and you want to get rid of them without having to touch to the content of the `.atom/storage` directory.
 
 ## Settings
 
