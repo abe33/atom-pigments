@@ -3,7 +3,7 @@ PigmentsAPI = require '../lib/pigments-api'
 
 SERIALIZE_VERSION = "1.0.1"
 
-fdescribe "Pigments", ->
+describe "Pigments", ->
   [workspaceElement, pigments, project] = []
 
   beforeEach ->
