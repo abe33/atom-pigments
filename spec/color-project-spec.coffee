@@ -102,6 +102,14 @@ describe 'ColorProject', ->
       it 'returns undefined', ->
         expect(project.getVariablesForPath("#{rootPath}/styles/variables.styl")).toBeUndefined()
 
+    describe '::getVariableByName', ->
+      it 'returns undefined', ->
+        expect(project.getVariableByName("foo")).toBeUndefined()
+
+    describe '::getVariableById', ->
+      it 'returns undefined', ->
+        expect(project.getVariableById(0)).toBeUndefined()
+
     describe '::getContext', ->
       it 'returns an empty context', ->
         expect(project.getContext()).toBeDefined()

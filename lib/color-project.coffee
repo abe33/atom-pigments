@@ -230,10 +230,12 @@ class ColorProject
   getVariables: -> @variables?.slice()
 
   getVariableById: (id) ->
+    return undefined unless @variables?
     for variable in @variables
       return variable if variable.id is id
 
   getVariableByName: (name) ->
+    return undefined unless @variables?
     for variable in @variables
       return variable if variable.name is name
 
