@@ -5,6 +5,7 @@ ColorBuffer = require '../lib/color-buffer'
 ProjectVariable = require '../lib/project-variable'
 jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
 require '../lib/register-elements'
+{click} = require './helpers/events'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
@@ -571,6 +572,27 @@ describe 'ColorProject', ->
 
       it 'pauses after the paths loading and asks the user for choice', ->
         expect(promiseSpy).not.toHaveBeenCalled()
+
+      xdescribe 'when the warning popup is opened', ->
+        describe 'clicking on the ignore warning button', ->
+          beforeEach ->
+            ignoreButton = popup.ignoreButton
+            click(ignoreButton)
+
+            waitsFor -> promiseSpy.callCount > 0
+
+          it 'ignores the warning and uses all the paths', ->
+            expect(project.getPaths().length).toEqual(6)
+
+        describe 'clicking on the drop paths button', ->
+          beforeEach ->
+            dropPaths = popup.dropPaths
+            click(dropPaths)
+
+            waitsFor -> promiseSpy.callCount > 0
+
+          it 'ignores the loaded paths and uses an empty array instead', ->
+            expect(project.getPaths().length).toEqual(0)
 
 ##    ########  ######## ########    ###    ##     ## ##       ########
 ##    ##     ## ##       ##         ## ##   ##     ## ##          ##
