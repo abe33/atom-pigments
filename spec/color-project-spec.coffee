@@ -558,6 +558,8 @@ describe 'ColorProject', ->
       atom.project.setPaths([rootPath])
 
       workspaceElement = atom.views.getView(atom.workspace)
+      workspaceElement.style.height = "600px"
+      jasmine.attachToDOM(workspaceElement)
 
       project = new ColorProject({})
 
@@ -573,7 +575,7 @@ describe 'ColorProject', ->
       it 'pauses after the paths loading and asks the user for choice', ->
         expect(promiseSpy).not.toHaveBeenCalled()
 
-      xdescribe 'when the warning popup is opened', ->
+      describe 'when the warning popup is opened', ->
         describe 'clicking on the ignore warning button', ->
           beforeEach ->
             ignoreButton = popup.ignoreButton
@@ -586,8 +588,8 @@ describe 'ColorProject', ->
 
         describe 'clicking on the drop paths button', ->
           beforeEach ->
-            dropPaths = popup.dropPaths
-            click(dropPaths)
+            dropPathsButton = popup.dropPathsButton
+            click(dropPathsButton)
 
             waitsFor -> promiseSpy.callCount > 0
 

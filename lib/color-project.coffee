@@ -88,7 +88,7 @@ class ColorProject
 
     @loadPaths().then (paths) =>
       if paths.length >= @sourcesWarningThreshold
-        @openSourcesPopup()
+        @openSourcesPopup(paths)
       else
         Promise.resolve(paths)
     .then (paths) =>
