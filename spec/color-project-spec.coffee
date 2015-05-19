@@ -578,8 +578,7 @@ describe 'ColorProject', ->
       describe 'when the warning popup is opened', ->
         describe 'clicking on the ignore warning button', ->
           beforeEach ->
-            ignoreButton = popup.ignoreButton
-            click(ignoreButton)
+            click(popup.ignoreButton)
 
             waitsFor -> promiseSpy.callCount > 0
 
@@ -588,13 +587,32 @@ describe 'ColorProject', ->
 
         describe 'clicking on the drop paths button', ->
           beforeEach ->
-            dropPathsButton = popup.dropPathsButton
-            click(dropPathsButton)
+            click(popup.dropPathsButton)
 
             waitsFor -> promiseSpy.callCount > 0
 
           it 'ignores the loaded paths and uses an empty array instead', ->
             expect(project.getPaths().length).toEqual(0)
+
+        describe 'clicking on the choose paths button', ->
+          [list] = []
+
+          beforeEach ->
+            click(popup.choosePathsButton)
+
+            waitsFor -> list = popup.querySelector('.list-group:not(:empty)')
+
+          it 'opens a list containing all the paths', ->
+            expect(list.children.length).toEqual(6)
+
+          describe 'then clicking on the validate paths buttons', ->
+            beforeEach ->
+              click(popup.validatePathsButton)
+
+              waitsFor -> promiseSpy.callCount > 0
+
+            it 'resolve the promise with the active paths', ->
+              expect(promiseSpy.argsForCall[0][0].length).toEqual(6)
 
 ##    ########  ######## ########    ###    ##     ## ##       ########
 ##    ##     ## ##       ##         ## ##   ##     ## ##          ##

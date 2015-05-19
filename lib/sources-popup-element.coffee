@@ -7,22 +7,30 @@ class SourcesPopupElement extends HTMLElement
 
   @content: ->
     @tag 'atom-panel', class: 'modal overlay from-top', =>
-      @h3 'Warning!'
-      @p =>
-        @raw """
-          Pigments has found <span class='text-danger'>0</span> files that
-          can contains variables and the warning threshold is set to
-          <span class='text-warning'>#{atom.config.get 'pigments.sourcesWarningThreshold'}</span>.
-          All theses files aren't always necessary and can lead to performances
-          issues so it's sometime better to either ignore some or all paths.
-        """
+      @h4 'Paths size threshold exceeded'
+      @div class: 'inset-panel padded text-large', =>
+        @p =>
+          @raw """
+            Pigments has found <span class='text-danger'>0</span> files that
+            can contains variables and the warning threshold is set to
+            <span class='text-danger'>#{atom.config.get 'pigments.sourcesWarningThreshold'}</span>.
+            All theses files aren't always necessary and can lead to performances
+            issues so it's sometime better ignore some paths.
+          """
 
-      @p =>
-        @raw """
-          By choosing <code>Ignore Alert</code> the initializion will proceed as usual. By choosing <code>Drop Found Paths</code> no paths will be used at all.
-        """
+        @p class: 'text-warning', =>
+          @raw """
+            By choosing <kbd>Ignore Alert</kbd> the initializion will proceed as usual. By choosing <kbd>Drop Found Paths</kbd> no paths will be used at all.
+          """
 
       @div class: 'block', =>
+        @div class: 'select-list', =>
+          @ol outlet: 'list', class: 'list-group mark-active', =>
+
+      @div class: 'block', =>
+        @button outlet: 'choosePathsButton', class: 'btn', 'Choose Paths'
+        @button outlet: 'validatePathsButton', class: 'btn', 'Validate Paths'
+
         @div class: 'btn-group pull-right', =>
           @button outlet: 'ignoreButton', class: 'btn', 'Ignore Alert'
           @button outlet: 'dropPathsButton', class: 'btn', 'Drop Found Paths'
@@ -30,14 +38,33 @@ class SourcesPopupElement extends HTMLElement
   initialize: ({paths, resolve, reject}) ->
     @foundFiles = @querySelector('p .text-danger')
     @foundFiles.textContent = paths.length
+    @validatePathsButton.style.display = 'none'
 
     @subscriptions = new CompositeDisposable
 
     @subscriptions.add @subscribeTo @ignoreButton, 'click': -> resolve(paths)
     @subscriptions.add @subscribeTo @dropPathsButton, 'click': -> resolve([])
+    @subscriptions.add @subscribeTo @choosePathsButton, 'click': =>
+      @prepareList(paths, resolve)
+    @subscriptions.add @subscribeTo @validatePathsButton, 'click': =>
+      resolve Array::map.call @list.querySelectorAll('li.active'), (li) ->
+        li.dataset.path
 
   detachedCallback: ->
     @subscriptions.dispose()
+
+  prepareList: (paths, resolve) ->
+    @validatePathsButton.style.display = ''
+    @choosePathsButton.style.display = 'none'
+
+    html = ''
+
+    for p in paths
+      html += """
+      <li class='active' data-path='#{p}'>#{atom.project.relativize p}</li>
+      """
+
+    @list.innerHTML = html
 
 module.exports = SourcesPopupElement =
 document.registerElement 'pigments-sources-popup', {
