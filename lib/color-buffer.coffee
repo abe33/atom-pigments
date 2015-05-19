@@ -368,7 +368,10 @@ class ColorBuffer
     scopeChain = scope.getScopeChain()
 
     @ignoredScopes.some (scopeRegExp) ->
-      scopeChain.match(new RegExp(scopeRegExp))
+      try
+        scopeChain.match(new RegExp(scopeRegExp))
+      catch
+        return false
 
   serialize: ->
     {

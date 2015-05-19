@@ -215,6 +215,13 @@ describe 'ColorBufferElement', ->
         it 'ignores the colors that matches the defined scopes', ->
           expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
+      describe 'with an invalid filter', ->
+        beforeEach ->
+          atom.config.set('pigments.ignoredScopes', ['\\'])
+
+        it 'ignores the filter', ->
+          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+
     describe 'when a text editor settings is modified', ->
       [originalMarkers] = []
       beforeEach ->
