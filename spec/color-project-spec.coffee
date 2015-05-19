@@ -535,6 +535,43 @@ describe 'ColorProject', ->
       it 'invalidates the color buffer markers as soon as the dirty paths have been determined', ->
         expect(colorBuffer.updateVariableMarkers).toHaveBeenCalled()
 
+##     ######   ##     ##    ###    ########  ########
+##    ##    ##  ##     ##   ## ##   ##     ## ##     ##
+##    ##        ##     ##  ##   ##  ##     ## ##     ##
+##    ##   #### ##     ## ##     ## ########  ##     ##
+##    ##    ##  ##     ## ######### ##   ##   ##     ##
+##    ##    ##  ##     ## ##     ## ##    ##  ##     ##
+##     ######    #######  ##     ## ##     ## ########
+
+describe 'ColorProject', ->
+  describe 'with a number of files greater than the threshold', ->
+    [project, workspaceElement, promise, rootPath, popup, promiseSpy] = []
+
+    beforeEach ->
+
+      atom.config.set 'pigments.sourcesWarningThreshold', 5
+      atom.config.set 'pigments.sourceNames', ['*.sass']
+
+      [fixturesPath] = atom.project.getPaths()
+      rootPath = "#{fixturesPath}/project-out-of-bounds"
+      atom.project.setPaths([rootPath])
+
+      workspaceElement = atom.views.getView(atom.workspace)
+
+      project = new ColorProject({})
+
+    describe '::initialize', ->
+      beforeEach ->
+        promiseSpy = jasmine.createSpy('project.initialize')
+        promise = project.initialize()
+        promise.then(promiseSpy)
+
+        waitsFor ->
+          popup = workspaceElement.querySelector('pigments-sources-popup')
+
+      it 'pauses after the paths loading and asks the user for choice', ->
+        expect(promiseSpy).not.toHaveBeenCalled()
+
 ##    ########  ######## ########    ###    ##     ## ##       ########
 ##    ##     ## ##       ##         ## ##   ##     ## ##          ##
 ##    ##     ## ##       ##        ##   ##  ##     ## ##          ##

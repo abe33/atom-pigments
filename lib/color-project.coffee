@@ -9,6 +9,7 @@ PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
+SourcesPopupElement = require './sources-popup-element'
 
 SERIALIZE_VERSION = "1.0.1"
 
@@ -35,6 +36,8 @@ class ColorProject
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
       ColorMarkerElement.setMarkerType(type) if type?
+
+    @subscriptions.add atom.config.observe 'pigments.sourcesWarningThreshold', (@sourcesWarningThreshold) =>
 
     @bufferStates = buffers ? {}
 
@@ -84,6 +87,11 @@ class ColorProject
     destroyed = null
 
     @loadPaths().then (paths) =>
+      if paths.length >= @sourcesWarningThreshold
+        @openSourcesPopup()
+      else
+        Promise.resolve(paths)
+    .then (paths) =>
       if @paths? and paths.length > 0
         @paths.push path for path in paths when path not in @paths
         paths
@@ -207,6 +215,15 @@ class ColorProject
     ignoredNames = atom.config.get('pigments.ignoredNames') ? []
     ignoredNames = ignoredNames.concat(@ignoredNames) if @ignoredNames?
     return true for ignore in ignoredNames when minimatch(path, ignore, matchBase: true, dot: true)
+
+  openSourcesPopup: (paths) ->
+    new Promise (resolve, reject) ->
+      popup = new SourcesPopupElement
+      popup.initialize({paths, resolve, reject})
+      workspaceElement = atom.views.getView(atom.workspace)
+      panelContainer = workspaceElement.querySelector('atom-panel-container.modal')
+
+      panelContainer.appendChild(popup)
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
