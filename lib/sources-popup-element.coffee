@@ -42,13 +42,24 @@ class SourcesPopupElement extends HTMLElement
 
     @subscriptions = new CompositeDisposable
 
-    @subscriptions.add @subscribeTo @ignoreButton, 'click': -> resolve(paths)
-    @subscriptions.add @subscribeTo @dropPathsButton, 'click': -> resolve([])
+    @subscriptions.add @subscribeTo @ignoreButton, 'click': =>
+      resolve(paths)
+      @detach()
+
+    @subscriptions.add @subscribeTo @dropPathsButton, 'click': =>
+      resolve([])
+      @detach()
+
     @subscriptions.add @subscribeTo @choosePathsButton, 'click': =>
       @prepareList(paths, resolve)
+
+    @subscriptions.add @subscribeTo @list, 'li', 'click': (e) ->
+      e.target.classList.toggle('active')
+
     @subscriptions.add @subscribeTo @validatePathsButton, 'click': =>
       resolve Array::map.call @list.querySelectorAll('li.active'), (li) ->
         li.dataset.path
+      @detach()
 
   detachedCallback: ->
     @subscriptions.dispose()
@@ -65,6 +76,9 @@ class SourcesPopupElement extends HTMLElement
       """
 
     @list.innerHTML = html
+
+  detach: ->
+    @parentNode?.removeChild(this)
 
 module.exports = SourcesPopupElement =
 document.registerElement 'pigments-sources-popup', {

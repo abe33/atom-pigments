@@ -585,6 +585,9 @@ describe 'ColorProject', ->
           it 'ignores the warning and uses all the paths', ->
             expect(project.getPaths().length).toEqual(6)
 
+          it 'closes the popup', ->
+            expect(popup.parentNode).toBeNull()
+
         describe 'clicking on the drop paths button', ->
           beforeEach ->
             click(popup.dropPathsButton)
@@ -593,6 +596,9 @@ describe 'ColorProject', ->
 
           it 'ignores the loaded paths and uses an empty array instead', ->
             expect(project.getPaths().length).toEqual(0)
+
+          it 'closes the popup', ->
+            expect(popup.parentNode).toBeNull()
 
         describe 'clicking on the choose paths button', ->
           [list] = []
@@ -613,6 +619,30 @@ describe 'ColorProject', ->
 
             it 'resolve the promise with the active paths', ->
               expect(promiseSpy.argsForCall[0][0].length).toEqual(6)
+
+            it 'closes the popup', ->
+              expect(popup.parentNode).toBeNull()
+
+          describe 'when clicking on a list item', ->
+            [listItem] = []
+
+            beforeEach ->
+              listItem = popup.list.children[0]
+              expect(listItem.classList.contains('active')).toBeTruthy()
+
+              click(listItem)
+
+            it 'toggles the active class on that item', ->
+              expect(listItem.classList.contains('active')).toBeFalsy()
+
+            describe 'then clicking on the validate paths buttons', ->
+              beforeEach ->
+                click(popup.validatePathsButton)
+
+                waitsFor -> promiseSpy.callCount > 0
+
+              it 'resolve the promise with the active paths', ->
+                expect(promiseSpy.argsForCall[0][0].length).toEqual(5)
 
 ##    ########  ######## ########    ###    ##     ## ##       ########
 ##    ##     ## ##       ##         ## ##   ##     ## ##          ##
