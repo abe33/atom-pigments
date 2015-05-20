@@ -6,7 +6,7 @@
 - Add alpha rounding after 3 decimals in palette view ([69638149](https://github.com/abe33/atom-pigments/commit/696381498dd4951aebc57fd3f6c0368e139bd59a))
 - Fix accessing variables with id or name when there's no variables yet ([8155b945](https://github.com/abe33/atom-pigments/commit/8155b945f81fe834aabc99a74369670b241da96b), [#17](https://github.com/abe33/atom-pigments/issues/17))
 
-a name="v0.3.0"></a>
+<a name="v0.3.0"></a>
 # v0.3.0 (2015-05-18)
 
 ## Features
