@@ -25,7 +25,7 @@ class SourcesPopupElement extends HTMLElement
 
       @div class: 'block', =>
         @div class: 'select-list', =>
-          @ol outlet: 'list', class: 'list-group mark-active', =>
+          @ol outlet: 'list', class: 'list-group mark-active'
 
       @div class: 'block', =>
         @button outlet: 'choosePathsButton', class: 'btn', 'Choose Paths'
