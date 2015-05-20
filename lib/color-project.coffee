@@ -19,7 +19,7 @@ class ColorProject
 
   @deserialize: (state) ->
     version = SERIALIZE_VERSION
-    version += '-dev' if atom.inDevMode()
+    version += '-dev' if atom.inDevMode() and !atom.inSpecMode()
     state = {} if state?.version isnt version
     new ColorProject(state)
 
