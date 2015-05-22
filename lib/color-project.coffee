@@ -12,15 +12,21 @@ ColorMarkerElement = require './color-marker-element'
 SourcesPopupElement = require './sources-popup-element'
 
 SERIALIZE_VERSION = "1.0.1"
+SERIALIZE_MARKERS_VERSION = "1.0.1"
 
 module.exports =
 class ColorProject
   atom.deserializers.add(this)
 
   @deserialize: (state) ->
-    version = SERIALIZE_VERSION
-    version += '-dev' if atom.inDevMode() and !atom.inSpecMode()
-    state = {} if state?.version isnt version
+    markersVersion = SERIALIZE_VERSION
+    markersVersion += '-dev' if atom.inDevMode() and !atom.inSpecMode()
+    state = {} if state?.version isnt SERIALIZE_VERSION
+
+    if state?.markersVersion isnt markersVersion
+      delete state.variables
+      delete state.buffers
+
     new ColorProject(state)
 
   constructor: (state={}) ->
@@ -94,11 +100,27 @@ class ColorProject
       else
         Promise.resolve(paths)
     .then (paths) =>
+      # There was serialized paths, and the initialization discovered
+      # some new or dirty ones.
       if @paths? and paths.length > 0
         @paths.push path for path in paths when path not in @paths
-        paths
+
+        # There was also serialized variables, so we'll rescan only the
+        # dirty paths
+        if @variables?
+          paths
+        # There was no variables, so it's probably because the markers
+        # version changed, we'll rescan all the files
+        else
+          @paths
+      # There was no serialized paths, so there's no variables neither
       else unless @paths?
         @paths = paths
+      # Only the markers version changed, all the paths from the serialized
+      # state will be rescanned
+      else unless @variables?
+        @paths
+      # Nothing changed, there's no dirty paths to rescan
       else
         []
     .then (paths) =>
@@ -403,6 +425,7 @@ class ColorProject
       deserializer: 'ColorProject'
       timestamp: @getTimestamp()
       version: SERIALIZE_VERSION
+      markersVersion: SERIALIZE_MARKERS_VERSION
 
     data.ignoredNames = @ignoredNames if @ignoredNames?
     data.buffers = @serializeBuffers()

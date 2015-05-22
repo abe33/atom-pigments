@@ -2,6 +2,7 @@
   "deserializer": "ColorProject",
   "timestamp": "#{timestamp}",
   "version": "#{version}",
+  "markersVersion": "#{markersVersion}",
   "ignoredNames": [
     "vendor/*"
   ],

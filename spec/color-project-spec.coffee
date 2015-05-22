@@ -9,7 +9,9 @@ require '../lib/register-elements'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
 TOTAL_COLORS_VARIABLES_IN_PROJECT = 10
+
 SERIALIZE_VERSION = "1.0.1"
+SERIALIZE_MARKERS_VERSION = "1.0.1"
 
 describe 'ColorProject', ->
   [project, promise, rootPath, paths, eventSpy] = []
@@ -34,6 +36,7 @@ describe 'ColorProject', ->
         root: rootPath
         timestamp: new Date().toJSON()
         version: SERIALIZE_VERSION
+        markersVersion: SERIALIZE_MARKERS_VERSION
 
       json = jsonFixture 'base-project.json', data
       project = ColorProject.deserialize(json)
@@ -95,6 +98,7 @@ describe 'ColorProject', ->
           deserializer: 'ColorProject'
           timestamp: date
           version: SERIALIZE_VERSION
+          markersVersion: SERIALIZE_MARKERS_VERSION
           buffers: {}
           ignoredNames: ['vendor/*']
         })
@@ -187,6 +191,7 @@ describe 'ColorProject', ->
           ignoredNames: ['vendor/*']
           timestamp: date
           version: SERIALIZE_VERSION
+          markersVersion: SERIALIZE_MARKERS_VERSION
           paths: [
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
@@ -448,6 +453,7 @@ describe 'ColorProject', ->
       params.variableMarkers ?= [1..12]
       params.colorMarkers ?= [13..24]
       params.version ?= SERIALIZE_VERSION
+      params.markersVersion ?= SERIALIZE_MARKERS_VERSION
 
       ColorProject.deserialize(jsonFixture(stateFixture, params))
 
@@ -471,6 +477,24 @@ describe 'ColorProject', ->
 
       it 'drops the whole serialized state and rescans all the project', ->
         expect(project.getVariables().length).toEqual(32)
+
+    describe 'with a markers version different that the current one', ->
+      beforeEach ->
+        project = createProject
+          stateFixture: "empty-project.json"
+          markersVersion: "0.0.0"
+
+        waitsForPromise -> project.initialize()
+
+      it 'keeps the project related data', ->
+        expect(project.ignoredNames).toEqual(['vendor/*'])
+        expect(project.getPaths()).toEqual([
+          "#{rootPath}/styles/buttons.styl",
+          "#{rootPath}/styles/variables.styl"
+        ])
+
+      it 'drops the variables and buffers data', ->
+        expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
     describe 'with a timestamp older than the files last modification date', ->
       beforeEach ->

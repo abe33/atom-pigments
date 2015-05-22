@@ -2,6 +2,7 @@ Pigments = require '../lib/pigments'
 PigmentsAPI = require '../lib/pigments-api'
 
 SERIALIZE_VERSION = "1.0.1"
+SERIALIZE_MARKERS_VERSION = "1.0.1"
 
 describe "Pigments", ->
   [workspaceElement, pigments, project] = []
@@ -30,6 +31,7 @@ describe "Pigments", ->
         deserializer: 'ColorProject'
         timestamp: date
         version: SERIALIZE_VERSION
+        markersVersion: SERIALIZE_MARKERS_VERSION
         buffers: {}
     })
 
