@@ -143,6 +143,7 @@ class ColorBuffer
   terminateRunningTask: -> @task?.terminate()
 
   destroy: ->
+    @terminateRunningTask()
     @subscriptions.dispose()
     @emitter.emit 'did-destroy'
     @variableMarkers?.forEach (marker) -> marker.destroy()

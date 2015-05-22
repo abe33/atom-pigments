@@ -84,9 +84,9 @@ class ColorProject
 
   destroy: ->
     return if @destroyed
-
     @destroyed = true
 
+    PathsScanner.terminateRunningTask()
     buffer.destroy() for id,buffer of @colorBuffersByEditorId
 
     @colorBuffersByEditorId = null
