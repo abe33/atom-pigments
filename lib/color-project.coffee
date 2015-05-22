@@ -236,8 +236,7 @@ class ColorProject
   isIgnoredPath: (path) ->
     return false unless path
     path = atom.project.relativize(path)
-    ignoredNames = atom.config.get('pigments.ignoredNames') ? []
-    ignoredNames = ignoredNames.concat(@ignoredNames) if @ignoredNames?
+    ignoredNames = @getIgnoredNames()
     return true for ignore in ignoredNames when minimatch(path, ignore, matchBase: true, dot: true)
 
   openSourcesPopup: (paths) ->
