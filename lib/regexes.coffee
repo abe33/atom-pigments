@@ -19,8 +19,9 @@ module.exports =
   variables: variables
   namePrefixes: namePrefixes
   createVariableRegExpString: (variables) ->
-    variableNames = variables.map (v) ->
-      v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-    .join('|')
+    variableNames = []
+    for v in variables
+      variableNames.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    variableNames = variableNames.join('|')
 
     "(#{namePrefixes})(#{variableNames})(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"
