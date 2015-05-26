@@ -109,3 +109,13 @@ describe 'VariableScanner', ->
 
       it 'does not find the variable in the if clause', ->
         expect(result).toBeUndefined()
+
+    withScannerForTextEditor 'variables-after-mixins.scss', ->
+      beforeEach ->
+        result = null
+        doSearch = -> result = scanner.search(text, result?.lastIndex)
+
+        doSearch()
+
+      it 'finds the variable after the mixin', ->
+        expect(result).toBeDefined()

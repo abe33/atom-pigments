@@ -18,7 +18,7 @@ class VariableScanner
     regexp = @getRegExp()
     regexp.lastIndex = start
 
-    if match = regexp.exec(text)
+    while match = regexp.exec(text)
       [matchText] = match
       {index} = match
       {lastIndex} = regexp
@@ -27,16 +27,22 @@ class VariableScanner
 
       if result?
         result.lastIndex += index
-        result.range[0] += index
-        result.range[1] += index
 
-        line = -1
-        lineCountIndex = 0
+        if result.length > 0
+          result.range[0] += index
+          result.range[1] += index
 
-        for v in result
-          v.range[0] += index
-          v.range[1] += index
-          line = v.line = line + countLines(text[lineCountIndex..v.range[0]])
-          lineCountIndex = v.range[0]
+          line = -1
+          lineCountIndex = 0
 
-      result
+          for v in result
+            v.range[0] += index
+            v.range[1] += index
+            line = v.line = line + countLines(text[lineCountIndex..v.range[0]])
+            lineCountIndex = v.range[0]
+
+          return result
+        else
+          regexp.lastIndex = result.lastIndex
+
+    return undefined
