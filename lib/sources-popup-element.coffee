@@ -19,16 +19,16 @@ class SourcesPopupElement extends HTMLElement
             issues so it's sometime better ignore some paths.
           """
 
-        @p class: 'text-warning', =>
+        @span class: 'text-warning', =>
           @raw """
             By choosing <kbd>Ignore Alert</kbd> the initializion will proceed as usual. By choosing <kbd>Drop Found Paths</kbd> a new ignore rule with value <kbd>'*'</kbd> will be added to the project ignore rules.
           """
 
-      @div outlet: 'ignoreRulesBlock', class: 'block', style: 'display: none', =>
+      @div outlet: 'ignoreRulesBlock', class: 'block ignore-rules-block', style: 'display: none', =>
+        @tag 'atom-text-editor', mini: true, outlet: 'ignoreRulesEditorView', 'placeholder-text': 'Use glob-like pattern to filter the paths list below'
         @div class: 'select-list', =>
           @ol outlet: 'list', class: 'list-group mark-active'
 
-        @tag 'atom-text-editor', mini: true, outlet: 'ignoreRulesEditorView', placeholder: 'Use glob-like pattern to filter the paths list above'
 
       @div class: 'block', =>
         @button outlet: 'addIgnoreRuleButton', class: 'btn', 'Choose Paths'
