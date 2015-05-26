@@ -152,7 +152,9 @@ class ColorBuffer
 
   isVariablesSource: -> @project.isVariablesSourcePath(@editor.getPath())
 
-  isIgnored: -> @project.isIgnoredPath(@editor.getPath())
+  isIgnored: ->
+    p = @editor.getPath()
+    @project.isIgnoredPath(p) or not atom.project.contains(p)
 
   isDestroyed: -> @destroyed
 
@@ -339,7 +341,7 @@ class ColorBuffer
     variables = if @isVariablesSource()
       (options.variables ? []).concat(@project.getVariables() ? [])
     else
-      []
+      options.variables ? []
 
     config =
       buffer: @editor.getText()
