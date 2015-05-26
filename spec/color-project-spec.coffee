@@ -669,7 +669,7 @@ describe 'ColorProject', ->
               popup.ignoreRulesEditor.insertText(', +(')
               popup.ignoreRulesEditor.getBuffer().emitter.emit('did-stop-changing')
 
-            fit 'ignores the invalid rules', ->
+            it 'ignores the invalid rules', ->
               expect(popup.querySelectorAll('li.active').length).toEqual(6)
 
 ##    ########  ######## ########    ###    ##     ## ##       ########
