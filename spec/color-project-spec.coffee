@@ -624,11 +624,11 @@ describe 'ColorProject', ->
           it 'closes the popup', ->
             expect(popup.parentNode).toBeNull()
 
-        describe 'clicking on the choose paths button', ->
+        describe 'clicking on the add ignore rules button', ->
           [list] = []
 
           beforeEach ->
-            click(popup.choosePathsButton)
+            click(popup.addIgnoreRuleButton)
 
             waitsFor -> list = popup.querySelector('.list-group:not(:empty)')
 
@@ -647,17 +647,13 @@ describe 'ColorProject', ->
             it 'closes the popup', ->
               expect(popup.parentNode).toBeNull()
 
-          describe 'when clicking on a list item', ->
-            [listItem] = []
-
+          describe 'writing a rule in the mini editor', ->
             beforeEach ->
-              listItem = popup.list.children[0]
-              expect(listItem.classList.contains('active')).toBeTruthy()
+              popup.ignoreRulesEditor.insertText('*-5.sass, *-6.sass')
+              popup.ignoreRulesEditor.getBuffer().emitter.emit('did-stop-changing')
 
-              click(listItem)
-
-            it 'toggles the active class on that item', ->
-              expect(listItem.classList.contains('active')).toBeFalsy()
+            it 'updates the list to display which paths are ignored', ->
+              expect(popup.querySelectorAll('li.active').length).toEqual(4)
 
             describe 'then clicking on the validate paths buttons', ->
               beforeEach ->
@@ -666,7 +662,15 @@ describe 'ColorProject', ->
                 waitsFor -> promiseSpy.callCount > 0
 
               it 'resolve the promise with the active paths', ->
-                expect(promiseSpy.argsForCall[0][0].length).toEqual(5)
+                expect(promiseSpy.argsForCall[0][0].length).toEqual(4)
+
+          describe 'writing an invalid rule in the editor', ->
+            beforeEach ->
+              popup.ignoreRulesEditor.insertText(', +(')
+              popup.ignoreRulesEditor.getBuffer().emitter.emit('did-stop-changing')
+
+            it 'ignores the invalid rules', ->
+              expect(popup.querySelectorAll('li.active').length).toEqual(6)
 
 ##    ########  ######## ########    ###    ##     ## ##       ########
 ##    ##     ## ##       ##         ## ##   ##     ## ##          ##

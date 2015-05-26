@@ -96,7 +96,11 @@ class ColorProject
 
     @loadPaths().then (paths) =>
       if paths.length >= @sourcesWarningThreshold
-        @openSourcesPopup(paths)
+        @openSourcesPopup(paths).then (ignoreRules) =>
+          @ignoredNames = (@ignoredNames ? []).concat(ignoreRules)
+          paths.filter (p) ->
+            return false for source in ignoreRules when minimatch(p, source, matchBase: true, dot: true)
+            return true
       else
         Promise.resolve(paths)
     .then (paths) =>

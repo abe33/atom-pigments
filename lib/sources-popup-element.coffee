@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
+minimatch = require 'minimatch'
 
 class SourcesPopupElement extends HTMLElement
   SpacePenDSL.includeInto(this)
@@ -20,15 +21,17 @@ class SourcesPopupElement extends HTMLElement
 
         @p class: 'text-warning', =>
           @raw """
-            By choosing <kbd>Ignore Alert</kbd> the initializion will proceed as usual. By choosing <kbd>Drop Found Paths</kbd> no paths will be used at all.
+            By choosing <kbd>Ignore Alert</kbd> the initializion will proceed as usual. By choosing <kbd>Drop Found Paths</kbd> a new ignore rule with value <kbd>'*'</kbd> will be added to the project ignore rules.
           """
 
-      @div class: 'block', =>
+      @div outlet: 'ignoreRulesBlock', class: 'block', style: 'display: none', =>
         @div class: 'select-list', =>
           @ol outlet: 'list', class: 'list-group mark-active'
 
+        @tag 'atom-text-editor', mini: true, outlet: 'ignoreRulesEditorView', placeholder: 'Use glob-like pattern to filter the paths list above'
+
       @div class: 'block', =>
-        @button outlet: 'choosePathsButton', class: 'btn', 'Choose Paths'
+        @button outlet: 'addIgnoreRuleButton', class: 'btn', 'Choose Paths'
         @button outlet: 'validatePathsButton', class: 'btn', 'Validate Paths'
 
         @div class: 'btn-group pull-right', =>
@@ -39,34 +42,40 @@ class SourcesPopupElement extends HTMLElement
     @foundFiles = @querySelector('p .text-danger')
     @foundFiles.textContent = paths.length
     @validatePathsButton.style.display = 'none'
+    @ignoreRulesEditor = @ignoreRulesEditorView.getModel()
 
     @subscriptions = new CompositeDisposable
 
     @subscriptions.add @subscribeTo @ignoreButton, 'click': =>
-      resolve(paths)
-      @detach()
-
-    @subscriptions.add @subscribeTo @dropPathsButton, 'click': =>
       resolve([])
       @detach()
 
-    @subscriptions.add @subscribeTo @choosePathsButton, 'click': =>
+    @subscriptions.add @subscribeTo @dropPathsButton, 'click': =>
+      resolve(['*'])
+      @detach()
+
+    @subscriptions.add @subscribeTo @addIgnoreRuleButton, 'click': =>
+      @ignoreRulesBlock.style.display = ''
       @prepareList(paths, resolve)
 
-    @subscriptions.add @subscribeTo @list, 'li', 'click': (e) ->
-      e.target.classList.toggle('active')
+    @subscriptions.add @ignoreRulesEditor.onDidStopChanging =>
+      @updateList(@getRules())
 
     @subscriptions.add @subscribeTo @validatePathsButton, 'click': =>
-      resolve Array::map.call @list.querySelectorAll('li.active'), (li) ->
-        li.dataset.path
+      resolve(@getRules())
       @detach()
+
+  getRules: ->
+    @ignoreRulesEditor.getText().split(',')
+    .map (s) -> s.replace /^\s+|\s+$/g, ''
+    .filter (s) -> s.length > 0
 
   detachedCallback: ->
     @subscriptions.dispose()
 
   prepareList: (paths, resolve) ->
     @validatePathsButton.style.display = ''
-    @choosePathsButton.style.display = 'none'
+    @addIgnoreRuleButton.style.display = 'none'
 
     html = ''
 
@@ -76,6 +85,14 @@ class SourcesPopupElement extends HTMLElement
       """
 
     @list.innerHTML = html
+
+  updateList: (ignoreRules) ->
+    matchRules = (p) ->
+      return false for source in ignoreRules when minimatch(p, source, matchBase: true, dot: true)
+      return true
+
+    Array::forEach.call @list.children, (child) ->
+      child.classList.toggle('active', matchRules(child.dataset.path))
 
   detach: ->
     @parentNode?.removeChild(this)
