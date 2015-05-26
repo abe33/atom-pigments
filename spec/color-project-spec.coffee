@@ -666,10 +666,8 @@ describe 'ColorProject', ->
 
           describe 'writing an invalid rule in the editor', ->
             beforeEach ->
-              waitsFor -> null
-              runs ->
-                popup.ignoreRulesEditor.insertText(', +(')
-                popup.ignoreRulesEditor.getBuffer().emitter.emit('did-stop-changing')
+              popup.ignoreRulesEditor.insertText(', +(')
+              popup.ignoreRulesEditor.getBuffer().emitter.emit('did-stop-changing')
 
             fit 'ignores the invalid rules', ->
               expect(popup.querySelectorAll('li.active').length).toEqual(6)
