@@ -14,8 +14,6 @@ class ColorContext
     @vars[v.name] = v for v in @variables
     @colorVars[v.name] = v for v in @colorVariables
 
-    console.log @colorVars
-
     unless @parser?
       ColorParser = require './color-parser'
       @parser = new ColorParser
@@ -49,10 +47,10 @@ class ColorContext
     else
       value
 
-  readColor: (value) ->
+  readColor: (value, keepAllVariables=false) ->
     result = @parser.parse(@readColorExpression(value), @clone())
     if result?
-      unless value in @usedVariables
+      if keepAllVariables or value not in @usedVariables
         result.variables = result.variables.concat(@readUsedVariables())
       return result
 

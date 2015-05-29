@@ -11,8 +11,10 @@ class VariablesCollection
   constructor: ->
     @emitter = new Emitter
     @variables = []
-    @variablesByPath = {}
+    @variableNames = []
     @colorVariables = []
+    @variablesByPath = {}
+    @dependencyGraph = {}
 
   onDidChange: (callback) ->
     @emitter.on 'did-change', callback
@@ -31,67 +33,29 @@ class VariablesCollection
       return v if keys.every(compare)
 
   add: (variable, batch=false) ->
-    [status, v] = @getVariableStatus(variable)
+    [status, previousVariable] = @getVariableStatus(variable)
 
     switch status
       when 'moved'
         v.range = variable.range
         v.bufferRange = variable.bufferRange
-
       when 'updated'
-        wasColor = v.isColor
-        v.value = variable.value
-
-        context = @getContext()
-        color = context.readColor(variable.value)
-
-        if color?
-          v.color = color
-          v.isColor = true
-
-          unless wasColor
-            @colorVariables.push(v)
-
-        else if wasColor
-          @colorVariables = @colorVariables.filter (vv) -> vv is v
-
-        if batch
-          return ['updated', v]
-        else
-          @emitChangeEvent([],[],[v])
-
+        @updateVariable(previousVariable, variable, batch)
       when 'created'
-        context = @getContext()
-        color = context.readColor(variable.value)
-
-        if color?
-          variable.color = color
-          variable.isColor = true
-          @colorVariables.push(variable)
-
-        @variables.push variable
-
-        @variablesByPath[variable.path] ?= []
-        @variablesByPath[variable.path].push(variable)
-
-        if batch
-          return ['created', variable]
-        else
-          @emitChangeEvent([variable])
+        @createVariable(variable, batch)
 
   addMany: (variables) ->
-    results =
-      created: []
-      destroyed: []
-      updated: []
+    results = {}
 
     for variable in variables
       res = @add(variable, true)
       if res?
         [status, v] = res
+
+        results[status] ?= []
         results[status].push(v)
 
-    @emitChangeEvent(results.created, results.destroyed, results.updated)
+    @emitChangeEvent(@updateDependencies(results))
 
   remove: (variable, batch=false) ->
 
@@ -99,6 +63,52 @@ class VariablesCollection
     @remove(variable, true) for variable in variables
 
   getContext: -> new ColorContext(@variables, @colorVariables)
+
+  updateVariable: (previousVariable, variable, batch) ->
+    previousVariable.value = variable.value
+    previousVariable.range = variable.range
+    previousVariable.bufferRange = variable.bufferRange
+
+    @evaluateVariableColor(previousVariable, previousVariable.isColor)
+
+    if batch
+      return ['updated', previousVariable]
+    else
+      @emitChangeEvent(@updateDependencies(updated: [previousVariable]))
+
+  createVariable: (variable, batch) ->
+    @variableNames.push(variable.name)
+    @variables.push variable
+
+    @variablesByPath[variable.path] ?= []
+    @variablesByPath[variable.path].push(variable)
+
+    @evaluateVariableColor(variable)
+    @buildDependencyGraph(variable)
+
+    if batch
+      return ['created', variable]
+    else
+      @emitChangeEvent(@updateDependencies(created: [variable]))
+
+  evaluateVariableColor: (variable, wasColor=false) ->
+    context = @getContext()
+    color = context.readColor(variable.value, true)
+
+    if color?
+      return false if wasColor and color.isEqual(variable.color)
+
+      variable.color = color
+      variable.isColor = true
+
+      @colorVariables.push(variable) unless variable in @colorVariables
+      return true
+
+    else if wasColor
+      delete variable.color
+      variable.isColor = false
+      @colorVariables = @colorVariables.filter (v) -> v isnt variable
+      return true
 
   getVariableStatus: (variable) ->
     return ['created', variable] unless @variablesByPath[variable.path]?
@@ -121,6 +131,51 @@ class VariablesCollection
 
     return ['created', variable]
 
-  emitChangeEvent: (created=[], destroyed=[], updated=[]) ->
-    if created.length or destroyed.length or updated.length
+  buildDependencyGraph: (variable) ->
+    if variable.value in @variableNames
+      a = @dependencyGraph[variable.value] ?= []
+      a.push(variable.name) unless variable.name in a
+
+    if variable.color?.variables.length > 0
+      variables = variable.color.variables
+
+      for v in variables
+        a = @dependencyGraph[v] ?= []
+        a.push(variable.name) unless variable.name in a
+
+  collectVariablesByName: (names) ->
+    variables = []
+    variables.push v for v in @variables when v.name in names
+    variables
+
+  updateDependencies: ({created, updated, destroyed}) ->
+    variables = []
+    dirtyVariableNames = []
+
+    if created?
+      variables = variables.concat(created)
+      createdVariableNames = created.map (v) -> v.name
+    else
+      createdVariableNames = []
+
+    variables = variables.concat(updated) if updated?
+    variables = variables.concat(destroyed) if destroyed?
+
+    for variable in variables
+      if dependencies = @dependencyGraph[variable.name]
+        for name in dependencies
+          if name not in dirtyVariableNames and name not in createdVariableNames
+            dirtyVariableNames.push(name)
+
+    dirtyVariables = @collectVariablesByName(dirtyVariableNames)
+
+    for variable in dirtyVariables
+      if @evaluateVariableColor(variable, variable.isColor)
+        updated ?= []
+        updated.push(variable)
+
+    {created, destroyed, updated}
+
+  emitChangeEvent: ({created, destroyed, updated}) ->
+    if created?.length or destroyed?.length or updated?.length
       @emitter.emit 'did-change', {created, destroyed, updated}

@@ -30,11 +30,21 @@ describe 'VariablesCollection', ->
 
       it 'dispatches a change event', ->
         expect(changeSpy).toHaveBeenCalled()
-        arg = changeSpy.mostRecentCall.args[0]
 
+        arg = changeSpy.mostRecentCall.args[0]
         expect(arg.created.length).toEqual(5)
-        expect(arg.destroyed.length).toEqual(0)
-        expect(arg.updated.length).toEqual(0)
+        expect(arg.destroyed).toBeUndefined()
+        expect(arg.updated).toBeUndefined()
+
+      it 'stores the names of the variables', ->
+        expect(collection.variableNames.sort()).toEqual(['foo','bar','baz','bat','bab'].sort())
+
+      it 'builds a dependencies map', ->
+        expect(collection.dependencyGraph).toEqual({
+          foo: ['baz']
+          bar: ['bat']
+          bat: ['bab']
+        })
 
       describe 'appending an already existing variable', ->
         beforeEach ->
@@ -48,26 +58,66 @@ describe 'VariablesCollection', ->
 
       describe 'appending an already existing variable with a different value', ->
         describe 'that is still a color', ->
-        beforeEach ->
-          collection.addMany([
-            createVar 'foo', '#abc', [0,10], '/path/to/foo.styl', 1
-          ])
+          beforeEach ->
+            collection.addMany([
+              createVar 'foo', '#abc', [0,10], '/path/to/foo.styl', 1
+            ])
 
-        it 'leaves the collection untouched', ->
-          expect(collection.length).toEqual(5)
-          expect(collection.getColorVariables().length).toEqual(2)
+          it 'leaves the collection untouched', ->
+            expect(collection.length).toEqual(5)
+            expect(collection.getColorVariables().length).toEqual(2)
 
-        it 'updates the existing variable value', ->
-          variable = collection.find({
-            name: 'foo'
-            path: '/path/to/foo.styl'
-          })
-          expect(variable.value).toEqual('#abc')
-          expect(variable.isColor).toBeTruthy()
-          expect(variable.color).toBeColor('#abc')
+          it 'updates the existing variable value', ->
+            variable = collection.find({
+              name: 'foo'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.value).toEqual('#abc')
+            expect(variable.isColor).toBeTruthy()
+            expect(variable.color).toBeColor('#abc')
 
-        it 'emits a change event', ->
-          expect(changeSpy.callCount).toEqual(2)
+          it 'emits a change event', ->
+            expect(changeSpy.callCount).toEqual(2)
+
+            arg = changeSpy.mostRecentCall.args[0]
+            expect(arg.created).toBeUndefined()
+            expect(arg.destroyed).toBeUndefined()
+            expect(arg.updated.length).toEqual(2)
+
+        describe 'that is no longer a color', ->
+          beforeEach ->
+            collection.addMany([
+              createVar 'foo', '20px', [0,10], '/path/to/foo.styl', 1
+            ])
+
+          it 'leaves the collection variables untouched', ->
+            expect(collection.length).toEqual(5)
+
+          it 'affects the colors variables within the collection', ->
+            expect(collection.getColorVariables().length).toEqual(0)
+
+          it 'updates the existing variable value', ->
+            variable = collection.find({
+              name: 'foo'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.value).toEqual('20px')
+            expect(variable.isColor).toBeFalsy()
+
+          it 'updates the variables depending on the changed variable', ->
+            variable = collection.find({
+              name: 'baz'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.isColor).toBeFalsy()
+
+          it 'emits a change event', ->
+            arg = changeSpy.mostRecentCall.args[0]
+            expect(changeSpy.callCount).toEqual(2)
+
+            expect(arg.created).toBeUndefined()
+            expect(arg.destroyed).toBeUndefined()
+            expect(arg.updated.length).toEqual(2)
 
     describe '::removeMany', ->
       describe 'with variables that were not referenced by any other variables', ->
