@@ -624,13 +624,14 @@ module.exports = getRegistry: (context) ->
 
     @rgba = baseColor.rgba
 
-  if context?.hasVariables()
-    paletteRegexpString = createVariableRegExpString(context.getVariables())
+  if context?.hasColorVariables()
+    paletteRegexpString = createVariableRegExpString(context.getColorVariables())
 
     registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
       [d,d,name] = match
       baseColor = context.readColor(name)
       @colorExpression = name
+      @variables = baseColor?.variables
 
       return @invalid = true if isInvalid(baseColor)
 

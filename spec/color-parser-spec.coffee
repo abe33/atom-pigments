@@ -6,18 +6,18 @@ ColorContext = require '../lib/color-context'
 describe 'ColorParser', ->
   [parser] = []
 
+  asColor = (value) -> "color:#{value}"
+
   itParses = (expression) ->
     description: ''
-    asColor: (args...) ->
+    asColor: (r,g,b,a=1) ->
       context = @context
       describe @description, ->
         it "parses '#{expression}' as a color", ->
-          expect(parser.parse(expression, context)).toBeColor(args...)
-
-        if context?
-          it 'stores the variables used by the color in property', ->
-            parser.parse(expression, context)
-            expect(context.readUsedVariables().sort()).toEqual(context.getVariablesNames().sort())
+          if context?
+            expect(parser.parse(expression, context)).toBeColor(r,g,b,a, context.getVariablesNames().sort())
+          else
+            expect(parser.parse(expression)).toBeColor(r,g,b,a)
 
     asUndefined: ->
       context = @context
@@ -32,9 +32,17 @@ describe 'ColorParser', ->
           expect(parser.parse(expression, context)).not.toBeValid()
 
     withContext: (variables) ->
-      ctx = []
-      ctx.push {name, value} for name,value of variables
-      @context = new ColorContext(ctx)
+      vars = []
+      colorVars = []
+      for name,value of variables
+        if value.indexOf('color:') isnt -1
+          value = value.replace('color:', '')
+          vars.push {name, value}
+          colorVars.push {name, value}
+
+        else
+          vars.push {name, value}
+      @context = new ColorContext(vars, colorVars)
       @description = "with variables context #{jasmine.pp variables} "
 
       return this
@@ -46,7 +54,7 @@ describe 'ColorParser', ->
       '@text-height': '@scale-b-xxl * 1rem'
       '@component-line-height': '@text-height'
       '@list-item-height': '@component-line-height'
-    }).asInvalid()
+    }).asUndefined()
 
   itParses('#7fff7f00').asColor(255, 127, 0, 0.5)
   itParses('#ff7f00').asColor(255, 127, 0)
@@ -87,11 +95,11 @@ describe 'ColorParser', ->
   itParses('rgba($c,$a)').asInvalid()
   itParses('rgba($c,1)').asInvalid()
   itParses('rgba($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('rgba($c,$a)').withContext({
-    '$c': 'green'
+    '$c': asColor 'green'
     '$a': '0.5'
   }).asColor(0, 128, 0, 0.5)
 
@@ -193,16 +201,16 @@ describe 'ColorParser', ->
   itParses('darken(#fff, 100%)').asColor(0, 0, 0)
   itParses('darken(cyan, $r)').asInvalid()
   itParses('darken($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('darken($c, $r)').withContext({
-    '$c': 'cyan'
+    '$c': asColor 'cyan'
     '$r': '20%'
   }).asColor(0, 153, 153)
   itParses('darken($a, $r)').withContext({
-    '$a': 'rgba($c, 1)'
-    '$c': 'cyan'
+    '$a': asColor 'rgba($c, 1)'
+    '$c': asColor 'cyan'
     '$r': '20%'
   }).asColor(0, 153, 153)
 
@@ -210,16 +218,16 @@ describe 'ColorParser', ->
   itParses('lighten(#000, 100%)').asColor(255, 255, 255)
   itParses('lighten(cyan, $r)').asInvalid()
   itParses('lighten($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('lighten($c, $r)').withContext({
-    '$c': 'cyan'
+    '$c': asColor 'cyan'
     '$r': '20%'
   }).asColor(102, 255, 255)
   itParses('lighten($a, $r)').withContext({
-    '$a': 'rgba($c, 1)'
-    '$c': 'cyan'
+    '$a': asColor 'rgba($c, 1)'
+    '$c': asColor 'cyan'
     '$r': '20%'
   }).asColor(102, 255, 255)
 
@@ -230,16 +238,16 @@ describe 'ColorParser', ->
   itParses('fadeout(cyan, .5)').asColor(0, 255, 255, 0.5)
   itParses('fadeout(cyan, @r)').asInvalid()
   itParses('fadeout($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('fadeout(@c, @r)').withContext({
-    '@c': 'cyan'
+    '@c': asColor 'cyan'
     '@r': '0.5'
   }).asColor(0, 255, 255, 0.5)
   itParses('fadeout(@a, @r)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': 'cyan'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor 'cyan'
     '@r': '0.5'
   }).asColor(0, 255, 255, 0.5)
 
@@ -250,16 +258,16 @@ describe 'ColorParser', ->
   itParses('fadein(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
   itParses('fadein(0x7800FFFF, @r)').asInvalid()
   itParses('fadein($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('fadein(@c, @r)').withContext({
-    '@c': '0x7800FFFF'
+    '@c': asColor '0x7800FFFF'
     '@r': '0.5'
   }).asColor(0, 255, 255, 1)
   itParses('fadein(@a, @r)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': '0x7800FFFF'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor '0x7800FFFF'
     '@r': '0.5'
   }).asColor(0, 255, 255, 1)
 
@@ -267,16 +275,16 @@ describe 'ColorParser', ->
   itParses('saturate(#855, 0.2)').asColor(158, 63, 63)
   itParses('saturate(#855, @r)').asInvalid()
   itParses('saturate($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('saturate(@c, @r)').withContext({
-    '@c': '#855'
+    '@c': asColor '#855'
     '@r': '0.2'
   }).asColor(158, 63, 63)
   itParses('saturate(@a, @r)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': '#855'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor '#855'
     '@r': '0.2'
   }).asColor(158, 63, 63)
 
@@ -285,16 +293,16 @@ describe 'ColorParser', ->
   itParses('desaturate(#9e3f3f, .2)').asColor(136, 85, 85)
   itParses('desaturate(#9e3f3f, @r)').asInvalid()
   itParses('desaturate($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('desaturate(@c, @r)').withContext({
-    '@c': '#9e3f3f'
+    '@c': asColor '#9e3f3f'
     '@r': '0.2'
   }).asColor(136, 85, 85)
   itParses('desaturate(@a, @r)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': '#9e3f3f'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor '#9e3f3f'
     '@r': '0.2'
   }).asColor(136, 85, 85)
 
@@ -302,27 +310,27 @@ describe 'ColorParser', ->
   itParses('greyscale(#9e3f3f)').asColor(111, 111, 111)
   itParses('grayscale(@c)').asInvalid()
   itParses('grayscale($c)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
   }).asInvalid()
   itParses('grayscale(@c)').withContext({
-    '@c': '#9e3f3f'
+    '@c': asColor '#9e3f3f'
   }).asColor(111, 111, 111)
   itParses('grayscale(@a)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': '#9e3f3f'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor '#9e3f3f'
   }).asColor(111, 111, 111)
 
   itParses('invert(#9e3f3f)').asColor(97, 192, 192)
   itParses('invert(@c)').asInvalid()
   itParses('invert($c)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
   }).asInvalid()
   itParses('invert(@c)').withContext({
-    '@c': '#9e3f3f'
+    '@c': asColor '#9e3f3f'
   }).asColor(97, 192, 192)
   itParses('invert(@a)').withContext({
-    '@a': 'rgba(@c, 1)'
-    '@c': '#9e3f3f'
+    '@a': asColor 'rgba(@c, 1)'
+    '@c': asColor '#9e3f3f'
   }).asColor(97, 192, 192)
 
   itParses('adjust-hue(#811, 45deg)').asColor(136, 106, 17)
@@ -331,16 +339,16 @@ describe 'ColorParser', ->
   itParses('adjust-hue(#811, -45%)').asColor(136, 17, 106)
   itParses('adjust-hue($c, $r)').asInvalid()
   itParses('adjust-hue($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('adjust-hue($c, $r)').withContext({
-    '$c': '#811'
+    '$c': asColor '#811'
     '$r': '-45deg'
   }).asColor(136, 17, 106)
   itParses('adjust-hue($a, $r)').withContext({
-    '$a': 'rgba($c, 0.5)'
-    '$c': '#811'
+    '$a': asColor 'rgba($c, 0.5)'
+    '$c': asColor '#811'
     '$r': '-45deg'
   }).asColor(136, 17, 106, 0.5)
 
@@ -348,57 +356,57 @@ describe 'ColorParser', ->
   itParses('mix(red, blue, 25%)').asColor(63, 0, 191)
   itParses('mix($a, $b, $r)').asInvalid()
   itParses('mix($a, $b, $r)').withContext({
-    '$a': 'hsv($h, $s, $v)'
-    '$b': 'blue'
+    '$a': asColor 'hsv($h, $s, $v)'
+    '$b': asColor 'blue'
     '$r': '25%'
   }).asInvalid()
   itParses('mix($a, $b, $r)').withContext({
-    '$a': 'blue'
-    '$b': 'hsv($h, $s, $v)'
+    '$a': asColor 'blue'
+    '$b': asColor 'hsv($h, $s, $v)'
     '$r': '25%'
   }).asInvalid()
   itParses('mix($a, $b, $r)').withContext({
-    '$a': 'red'
-    '$b': 'blue'
+    '$a': asColor 'red'
+    '$b': asColor 'blue'
     '$r': '25%'
   }).asColor(63, 0, 191)
   itParses('mix($c, $d, $r)').withContext({
-    '$a': 'red'
-    '$b': 'blue'
-    '$c': 'rgba($a, 1)'
-    '$d': 'rgba($b, 1)'
+    '$a': asColor 'red'
+    '$b': asColor 'blue'
+    '$c': asColor 'rgba($a, 1)'
+    '$d': asColor 'rgba($b, 1)'
     '$r': '25%'
   }).asColor(63, 0, 191)
 
   itParses('tint(#fd0cc7,66%)').asColor(254, 172, 235)
   itParses('tint($c,$r)').asInvalid()
   itParses('tint($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('tint($c,$r)').withContext({
-    '$c': '#fd0cc7'
+    '$c': asColor '#fd0cc7'
     '$r': '66%'
   }).asColor(254, 172, 235)
   itParses('tint($c,$r)').withContext({
-    '$a': '#fd0cc7'
-    '$c': 'rgba($a, 0.9)'
+    '$a': asColor '#fd0cc7'
+    '$c': asColor 'rgba($a, 0.9)'
     '$r': '66%'
   }).asColor(254, 172, 235, 0.966)
 
   itParses('shade(#fd0cc7,66%)').asColor(86, 4, 67)
   itParses('shade($c,$r)').asInvalid()
   itParses('shade($c, $r)').withContext({
-    '$c': 'hsv($h, $s, $v)'
+    '$c': asColor 'hsv($h, $s, $v)'
     '$r': '1'
   }).asInvalid()
   itParses('shade($c,$r)').withContext({
-    '$c': '#fd0cc7'
+    '$c': asColor '#fd0cc7'
     '$r': '66%'
   }).asColor(86, 4, 67)
   itParses('shade($c,$r)').withContext({
-    '$a': '#fd0cc7'
-    '$c': 'rgba($a, 0.9)'
+    '$a': asColor '#fd0cc7'
+    '$c': asColor 'rgba($a, 0.9)'
     '$r': '66%'
   }).asColor(86, 4, 67, 0.966)
 
@@ -410,18 +418,18 @@ describe 'ColorParser', ->
   itParses('adjust-color($d, $red: $a, $blue: $b)').withContext({
     '$a': '-5'
     '$b': '5'
-    '$d': 'rgba($c, 1)'
+    '$d': asColor 'rgba($c, 1)'
   }).asInvalid()
   itParses('adjust-color($c, $red: $a, $blue: $b)').withContext({
     '$a': '-5'
     '$b': '5'
-    '$c': '#102030'
+    '$c': asColor '#102030'
   }).asColor(11, 32, 53)
   itParses('adjust-color($d, $red: $a, $blue: $b)').withContext({
     '$a': '-5'
     '$b': '5'
-    '$c': '#102030'
-    '$d': 'rgba($c, 1)'
+    '$c': asColor '#102030'
+    '$d': asColor 'rgba($c, 1)'
   }).asColor(11, 32, 53)
 
   itParses('scale-color(rgb(200, 150, 170), $green: -40%, $blue: 70%)').asColor(200, 90, 230)
@@ -430,16 +438,16 @@ describe 'ColorParser', ->
   itParses('scale-color($d, $green: $a, $blue: $b)').withContext({
     '$a': '-40%'
     '$b': '70%'
-    '$d': 'rgba($c, 1)'
+    '$d': asColor 'rgba($c, 1)'
   }).asInvalid()
   itParses('scale-color($c, $green: $a, $blue: $b)').withContext({
     '$a': '-40%'
     '$b': '70%'
-    '$c': 'rgb(200, 150, 170)'
+    '$c': asColor 'rgb(200, 150, 170)'
   }).asColor(200, 90, 230)
   itParses('scale-color($d, $green: $a, $blue: $b)').withContext({
     '$a': '-40%'
     '$b': '70%'
-    '$c': 'rgb(200, 150, 170)'
-    '$d': 'rgba($c, 1)'
+    '$c': asColor 'rgb(200, 150, 170)'
+    '$d': asColor 'rgba($c, 1)'
   }).asColor(200, 90, 230)

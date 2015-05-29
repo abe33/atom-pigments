@@ -345,7 +345,10 @@ class ColorBuffer
 
     config =
       buffer: @editor.getText()
-      variables: variables.map (v) -> v.serialize()
+      variables: variables.map (v) ->
+        o = v.serialize()
+        o.isColor = v.isColor()
+        o
 
     new Promise (resolve, reject) =>
       @task = Task.once(

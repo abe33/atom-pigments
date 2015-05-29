@@ -15,9 +15,14 @@ class ColorParser
       context = new ColorContext
     context.parser ?= this
 
+    return undefined if not expression? or expression is ''
+
     registry = getRegistry(context)
 
     for e in registry.getExpressions()
-      return e.parse(expression, context) if e.match(expression)
+      if e.match(expression)
+        res = e.parse(expression, context)
+        res.variables = context.readUsedVariables()
+        return res
 
     return
