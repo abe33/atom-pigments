@@ -1,8 +1,7 @@
 Pigments = require '../lib/pigments'
 PigmentsAPI = require '../lib/pigments-api'
 
-SERIALIZE_VERSION = "1.0.1"
-SERIALIZE_MARKERS_VERSION = "1.0.1"
+{SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require '../lib/versions'
 
 describe "Pigments", ->
   [workspaceElement, pigments, project] = []

@@ -1,6 +1,7 @@
 {Emitter, CompositeDisposable, Range} = require 'atom'
 minimatch = require 'minimatch'
 
+{SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require './versions'
 ColorBuffer = require './color-buffer'
 ColorContext = require './color-context'
 ColorSearch = require './color-search'
@@ -10,9 +11,6 @@ PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 SourcesPopupElement = require './sources-popup-element'
-
-SERIALIZE_VERSION = "1.0.1"
-SERIALIZE_MARKERS_VERSION = "1.0.1"
 
 module.exports =
 class ColorProject
