@@ -132,16 +132,22 @@ class VariablesCollection
     return ['created', variable]
 
   buildDependencyGraph: (variable) ->
-    if variable.value in @variableNames
-      a = @dependencyGraph[variable.value] ?= []
+    dependencies = @getVariableDependencies(variable)
+    for dependency in dependencies
+      a = @dependencyGraph[dependency] ?= []
       a.push(variable.name) unless variable.name in a
+
+  getVariableDependencies: (variable) ->
+    dependencies = []
+    dependencies.push(variable.value) if variable.value in @variableNames
 
     if variable.color?.variables.length > 0
       variables = variable.color.variables
 
       for v in variables
-        a = @dependencyGraph[v] ?= []
-        a.push(variable.name) unless variable.name in a
+        dependencies.push(v) unless v in dependencies
+
+    dependencies
 
   collectVariablesByName: (names) ->
     variables = []
