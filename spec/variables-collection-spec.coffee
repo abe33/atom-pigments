@@ -119,6 +119,32 @@ describe 'VariablesCollection', ->
             expect(arg.destroyed).toBeUndefined()
             expect(arg.updated.length).toEqual(2)
 
+        xdescribe 'that breaks a dependency', ->
+          beforeEach ->
+            collection.addMany([
+              createVar 'baz', '#abc', [22,30], '/path/to/foo.styl', 3
+            ])
+
+          it 'leaves the collection untouched', ->
+            expect(collection.length).toEqual(5)
+            expect(collection.getColorVariables().length).toEqual(2)
+
+          it 'updates the existing variable value', ->
+            variable = collection.find({
+              name: 'baz'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.value).toEqual('#abc')
+            expect(variable.isColor).toBeTruthy()
+            expect(variable.color).toBeColor('#abc')
+
+          it 'updates the dependencies graph', ->
+            expect(collection.dependencyGraph).toEqual({
+              bar: ['bat']
+              bat: ['bab']
+            })
+
+
     describe '::removeMany', ->
       describe 'with variables that were not referenced by any other variables', ->
         beforeEach ->
