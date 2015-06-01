@@ -1,3 +1,22 @@
+<a name="v0.4.0"></a>
+# v0.4.0 (2015-06-01)
+
+## Features
+
+- Add border radius to background markers ([3a9efc6a](https://github.com/abe33/atom-pigments/commit/3a9efc6ab12132820ece1bd2509834f81abb839d))
+- Add a second version property in serialized data ([53fb3c1c](https://github.com/abe33/atom-pigments/commit/53fb3c1c91a0806e2f3305792caf4f82f6ee1df4))  <br>This version will only be used for markers data (variables and buffers
+  data). So that we can drop these data without affecting the project
+  specific data.
+- Implement an alert on large project loading to ignores the paths ([05ba87f4](https://github.com/abe33/atom-pigments/commit/05ba87f45ef622d5811f11672d1314e125d8229f))
+
+## Bug Fixes
+
+- Fix variables defined after a mixin not found by scanner ([8f000e59](https://github.com/abe33/atom-pigments/commit/8f000e59a0c7aeea74a8a1475d7d543b98568c59))
+- Fix variables and colors not handled for file not in project ([4bb84b72](https://github.com/abe33/atom-pigments/commit/4bb84b72d8e6a795335df462f804f91760a66da4))
+- Prevent call stack errors when building the variables regexp ([3aa322cb](https://github.com/abe33/atom-pigments/commit/3aa322cb033aafbd5a4e6c84804342751ca21205))
+- Fix broken anchor tag. ([f0ff40a7](https://github.com/abe33/atom-pigments/commit/f0ff40a7bbad999763cf0dcd0b0ed8f3766517b0))
+- Fix error raised when an invalid regexp is set in ignored scopes ([d4527c68](https://github.com/abe33/atom-pigments/commit/d4527c6843766584541c25a1f610e21e26d11340), [#14](https://github.com/abe33/atom-pigments/issues/14))
+
 <a name="v0.3.1"></a>
 # v0.3.1 (2015-05-19)
 
