@@ -434,6 +434,23 @@ describe 'ColorProject', ->
           expect(project.getPaths().length).toEqual(0)
           expect(project.getVariables().length).toEqual(0)
 
+    ##     ######  ######## ######## ######## #### ##    ##  ######    ######
+    ##    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
+    ##    ##       ##          ##       ##     ##  ####  ## ##        ##
+    ##     ######  ######      ##       ##     ##  ## ## ## ##   ####  ######
+    ##          ## ##          ##       ##     ##  ##  #### ##    ##        ##
+    ##    ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
+    ##     ######  ########    ##       ##    #### ##    ##  ######    ######
+
+    xdescribe 'when the sourceNames setting is changed', ->
+      beforeEach ->
+        originalPaths = project.getPaths()
+        atom.config.set 'pigments.sourceNames', ['**/*.sass']
+
+        waitsFor -> project.getPaths().join(',') isnt originalPaths.join(',')
+
+      it 'updates the found using the new pattern', ->
+
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
