@@ -1,3 +1,15 @@
+<a name="v0.4.1"></a>
+# v0.4.1 (2015-06-02)
+
+## Features
+
+- Add `vendor/*`, `spec/*` and `test/*` as default ignored names. ([96381ecf](https://github.com/abe33/atom-pigments/commit/96381ecf1c643300aa091c744149e28207e0c0bc))
+
+## Bug Fixes
+
+- Raise the threshold to avoid annoying user ([15b05c07](https://github.com/abe33/atom-pigments/commit/15b05c07885aaac2062c5c2b5aa40f892795bc9a))
+- Fix paths and variables not updated when the paths settings are changed ([8e259a8a](https://github.com/abe33/atom-pigments/commit/8e259a8a81f0aed8744ab381d6a44c6f3609f85c))
+
 <a name="v0.4.0"></a>
 # v0.4.0 (2015-06-01)
 

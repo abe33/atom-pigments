@@ -22,7 +22,10 @@ module.exports =
     ignoredNames:
       type: 'array'
       default: [
-        "node_modules/*"
+        "vendor/*",
+        "node_modules/*",
+        "spec/*",
+        "test/*"
       ]
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
@@ -70,7 +73,7 @@ module.exports =
       description: 'Number of milliseconds after which the current buffer will be scanned for changes in the colors. This delay starts at the end of the text input and will be aborted if you start typing again during the interval.'
     sourcesWarningThreshold:
       type: 'integer'
-      default: 50
+      default: 300
       description: 'When the number of variables source files is bigger than this value, a warning dialog pop up and let you choose between continuing or ignoring the sources files for this project.'
 
   activate: (state) ->
