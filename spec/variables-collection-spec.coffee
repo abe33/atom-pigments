@@ -171,16 +171,70 @@ describe 'VariablesCollection', ->
             })
 
     describe '::removeMany', ->
-      describe 'with variables that were not referenced by any other variables', ->
+      beforeEach ->
+        collection.addMany([
+          createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
+          createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+          createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
+          createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
+          createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
+        ])
+
+      describe 'with variables that were not colors', ->
         beforeEach ->
           collection.removeMany([
             createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
             createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
           ])
 
-      describe 'with variables that were referenced by other variables', ->
+        it 'removes the variables from the collection', ->
+          expect(collection.length).toEqual(3)
+
+        it 'dispatches a change event', ->
+          expect(changeSpy).toHaveBeenCalled()
+
+          arg = changeSpy.mostRecentCall.args[0]
+          expect(arg.created).toBeUndefined()
+          expect(arg.destroyed.length).toEqual(2)
+          expect(arg.updated).toBeUndefined()
+
+        it 'stores the names of the variables', ->
+          expect(collection.variableNames.sort()).toEqual(['foo','bar','baz'].sort())
+
+        it 'updates the variables per path map', ->
+          expect(collection.variablesByPath['/path/to/foo.styl'].length).toEqual(3)
+
+        it 'updates the dependencies map', ->
+          expect(collection.dependencyGraph).toEqual({
+            foo: ['baz']
+          })
+
+      describe 'with variables that were referenced by a color variable', ->
         beforeEach ->
           collection.removeMany([
             createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
-            createVar 'bar', '10px', [12,20], '/path/to/foo.styl', 2
           ])
+
+        it 'removes the variables from the collection', ->
+          expect(collection.length).toEqual(4)
+          expect(collection.getColorVariables().length).toEqual(0)
+
+        it 'dispatches a change event', ->
+          expect(changeSpy).toHaveBeenCalled()
+
+          arg = changeSpy.mostRecentCall.args[0]
+          expect(arg.created).toBeUndefined()
+          expect(arg.destroyed.length).toEqual(1)
+          expect(arg.updated.length).toEqual(1)
+
+        it 'stores the names of the variables', ->
+          expect(collection.variableNames.sort()).toEqual(['bar','baz','bat','bab'].sort())
+
+        it 'updates the variables per path map', ->
+          expect(collection.variablesByPath['/path/to/foo.styl'].length).toEqual(4)
+
+        it 'updates the dependencies map', ->
+          expect(collection.dependencyGraph).toEqual({
+            bar: ['bat']
+            bat: ['bab']
+          })

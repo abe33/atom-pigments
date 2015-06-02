@@ -21,11 +21,16 @@ class VariablesCollection
 
   getColorVariables: -> @colorVariables
 
-  find: (properties) ->
+  find: (properties={}) ->
     keys = Object.keys(properties)
+    return null if keys.length is 0
+
     compare = (k) ->
       if v[k]?.isEqual?
         v[k].isEqual(properties[k])
+      else if Array.isArray(b = properties[k])
+        a = v[k]
+        a.length is b.length and a.every (value) -> value in b
       else
         v[k] is properties[k]
 
@@ -58,9 +63,45 @@ class VariablesCollection
     @emitChangeEvent(@updateDependencies(results))
 
   remove: (variable, batch=false) ->
+    variable = @find(variable)
+
+    return unless variable?
+
+    @variables = @variables.filter (v) -> v isnt variable
+    if variable.isColor
+      @colorVariables = @colorVariables.filter (v) -> v isnt variable
+
+    if batch
+      return variable
+    else
+      results = @updateDependencies(destroyed: [variable])
+
+      @deleteVariableReferences(variable)
+      @emitChangeEvent(results)
 
   removeMany: (variables) ->
-    @remove(variable, true) for variable in variables
+    destroyed = []
+    for variable in variables
+      destroyed.push @remove(variable, true)
+
+    results = @updateDependencies({destroyed})
+
+    @deleteVariableReferences(v) for v in destroyed
+
+    @emitChangeEvent(results)
+
+  deleteVariableReferences: (variable) ->
+    dependencies = @getVariableDependencies(variable)
+    
+    a = @variablesByPath[variable.path]
+    a.splice(a.indexOf(variable), 1)
+
+    a = @variableNames
+    a.splice(a.indexOf(variable.name), 1)
+
+    @removeDependencies(variable.name, dependencies)
+
+    delete @dependencyGraph[variable.name]
 
   getContext: -> new ColorContext(@variables, @colorVariables)
 
@@ -166,7 +207,6 @@ class VariablesCollection
         dependencies.splice(dependencies.indexOf(from), 1)
 
         delete @dependencyGraph[v] if dependencies.length is 0
-
 
   addDependencies: (from, to) ->
     for v in to
