@@ -21,6 +21,7 @@ describe 'ColorProject', ->
       '*.styl'
       '*.less'
     ]
+    atom.config.set 'pigments.ignoredNames', []
 
     [fixturesPath] = atom.project.getPaths()
     rootPath = "#{fixturesPath}/project"
@@ -94,14 +95,17 @@ describe 'ColorProject', ->
       it 'returns an object without paths nor variables', ->
         date = new Date
         spyOn(project, 'getTimestamp').andCallFake -> date
-        expect(project.serialize()).toEqual({
+        expected = {
           deserializer: 'ColorProject'
           timestamp: date
           version: SERIALIZE_VERSION
           markersVersion: SERIALIZE_MARKERS_VERSION
-          buffers: {}
+          globalSourceNames: ['*.styl', '*.less']
+          globalIgnoredNames: []
           ignoredNames: ['vendor/*']
-        })
+          buffers: {}
+        }
+        expect(project.serialize()).toEqual(expected)
 
     describe '::getVariablesForPath', ->
       it 'returns undefined', ->
@@ -196,6 +200,8 @@ describe 'ColorProject', ->
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
           ]
+          globalSourceNames: ['*.styl', '*.less']
+          globalIgnoredNames: []
           buffers: {}
           variables: project.getVariables().map (v) -> v.serialize()
         })
@@ -538,6 +544,18 @@ describe 'ColorProject', ->
 
       it 'drops the whole serialized state and rescans all the project', ->
         expect(project.getVariables().length).toEqual(32)
+
+    describe 'with a sourceNames setting value different than when serialized', ->
+      beforeEach ->
+        atom.config.set('pigments.sourceNames', [])
+
+        project = createProject
+          stateFixture: "empty-project.json"
+
+        waitsForPromise -> project.initialize()
+
+      it 'drops the whole serialized state and rescans all the project', ->
+        expect(project.getVariables().length).toEqual(0)
 
     describe 'with a markers version different that the current one', ->
       beforeEach ->

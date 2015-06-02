@@ -31,6 +31,8 @@ describe "Pigments", ->
         timestamp: date
         version: SERIALIZE_VERSION
         markersVersion: SERIALIZE_MARKERS_VERSION
+        globalSourceNames: ['**/*.sass', '**/*.styl']
+        globalIgnoredNames: []
         buffers: {}
     })
 

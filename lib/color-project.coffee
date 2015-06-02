@@ -12,6 +12,12 @@ ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 SourcesPopupElement = require './sources-popup-element'
 
+compareArray = (a,b) ->
+  return false if not a? or not b?
+  return false unless a.length is b.length
+  return false for v,i in a when v isnt b[i]
+  return true
+
 module.exports =
 class ColorProject
   atom.deserializers.add(this)
@@ -24,6 +30,11 @@ class ColorProject
     if state?.markersVersion isnt markersVersion
       delete state.variables
       delete state.buffers
+
+    if not compareArray(state.globalSourceNames, atom.config.get('pigments.sourceNames')) or not compareArray(state.globalIgnoredNames, atom.config.get('pigments.ignoredNames'))
+      delete state.variables
+      delete state.buffers
+      delete state.paths
 
     new ColorProject(state)
 
@@ -456,6 +467,8 @@ class ColorProject
       timestamp: @getTimestamp()
       version: SERIALIZE_VERSION
       markersVersion: SERIALIZE_MARKERS_VERSION
+      globalSourceNames: atom.config.get('pigments.sourceNames')
+      globalIgnoredNames: atom.config.get('pigments.ignoredNames')
 
     data.ignoredNames = @ignoredNames if @ignoredNames?
     data.buffers = @serializeBuffers()

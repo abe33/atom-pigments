@@ -3,6 +3,11 @@
   "timestamp": "#{timestamp}",
   "version": "#{version}",
   "markersVersion": "#{markersVersion}",
+  "globalSourceNames": [
+    "*.styl",
+    "*.less"
+  ],
+  "globalIgnoredNames": [],
   "ignoredNames": [
     "vendor/*"
   ],
