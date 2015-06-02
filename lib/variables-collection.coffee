@@ -21,11 +21,13 @@ class VariablesCollection
 
   getColorVariables: -> @colorVariables
 
-  find: (properties={}) ->
+  find: (properties) -> @findAll(properties)?[0]
+
+  findAll: (properties={}) ->
     keys = Object.keys(properties)
     return null if keys.length is 0
 
-    compare = (k) ->
+    @variables.filter (v) -> keys.every (k) ->
       if v[k]?.isEqual?
         v[k].isEqual(properties[k])
       else if Array.isArray(b = properties[k])
@@ -33,9 +35,6 @@ class VariablesCollection
         a.length is b.length and a.every (value) -> value in b
       else
         v[k] is properties[k]
-
-    for v in @variables
-      return v if keys.every(compare)
 
   add: (variable, batch=false) ->
     [status, previousVariable] = @getVariableStatus(variable)
@@ -92,7 +91,7 @@ class VariablesCollection
 
   deleteVariableReferences: (variable) ->
     dependencies = @getVariableDependencies(variable)
-    
+
     a = @variablesByPath[variable.path]
     a.splice(a.indexOf(variable), 1)
 
@@ -163,6 +162,7 @@ class VariablesCollection
     for v in @variablesByPath[variable.path]
       sameName = v.name is variable.name
       sameValue = v.value is variable.value
+      sameLine = v.line is variable.line
       sameRange = if v.bufferRange? and variable.bufferRange?
         v.bufferRange.isEqual(variable.bufferRange)
       else
@@ -174,7 +174,10 @@ class VariablesCollection
         else
           return ['moved', v]
       else if sameName
-        return ['updated', v]
+        if sameRange or sameLine
+          return ['updated', v]
+        else
+          return ['created', variable]
 
     return ['created', variable]
 

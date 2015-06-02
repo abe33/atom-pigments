@@ -56,7 +56,62 @@ describe 'VariablesCollection', ->
           expect(collection.length).toEqual(5)
           expect(collection.getColorVariables().length).toEqual(2)
 
+        it 'does not trigger an update event', ->
+          expect(changeSpy.callCount).toEqual(1)
+
       describe 'appending an already existing variable with a different value', ->
+        describe 'that has a different range', ->
+          beforeEach ->
+            collection.addMany([
+              createVar 'foo', '#aabbcc', [0,14], '/path/to/foo.styl', 1
+            ])
+
+          it 'leaves the collection untouched', ->
+            expect(collection.length).toEqual(5)
+            expect(collection.getColorVariables().length).toEqual(2)
+
+          it 'updates the existing variable value', ->
+            variable = collection.find({
+              name: 'foo'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.value).toEqual('#aabbcc')
+            expect(variable.isColor).toBeTruthy()
+            expect(variable.color).toBeColor('#aabbcc')
+
+          it 'emits a change event', ->
+            expect(changeSpy.callCount).toEqual(2)
+
+            arg = changeSpy.mostRecentCall.args[0]
+            expect(arg.created).toBeUndefined()
+            expect(arg.destroyed).toBeUndefined()
+            expect(arg.updated.length).toEqual(2)
+
+        describe 'that has a different range and a different line', ->
+          beforeEach ->
+            collection.addMany([
+              createVar 'foo', '#abc', [52,64], '/path/to/foo.styl', 6
+            ])
+
+          it 'appends the new variables', ->
+            expect(collection.length).toEqual(6)
+            expect(collection.getColorVariables().length).toEqual(3)
+
+          it 'stores the two variables', ->
+            variables = collection.findAll({
+              name: 'foo'
+              path: '/path/to/foo.styl'
+            })
+            expect(variables.length).toEqual(2)
+
+          it 'emits a change event', ->
+            expect(changeSpy.callCount).toEqual(2)
+
+            arg = changeSpy.mostRecentCall.args[0]
+            expect(arg.created.length).toEqual(1)
+            expect(arg.destroyed).toBeUndefined()
+            expect(arg.updated.length).toEqual(1)
+
         describe 'that is still a color', ->
           beforeEach ->
             collection.addMany([
