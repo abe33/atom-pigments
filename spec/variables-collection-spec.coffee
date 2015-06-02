@@ -12,6 +12,14 @@ describe 'VariablesCollection', ->
       changeSpy = jasmine.createSpy('did-change')
       collection.onDidChange(changeSpy)
 
+    ##       ###    ########  ########
+    ##      ## ##   ##     ## ##     ##
+    ##     ##   ##  ##     ## ##     ##
+    ##    ##     ## ##     ## ##     ##
+    ##    ######### ##     ## ##     ##
+    ##    ##     ## ##     ## ##     ##
+    ##    ##     ## ########  ########
+
     describe '::addMany', ->
       beforeEach ->
         collection.addMany([
@@ -225,6 +233,14 @@ describe 'VariablesCollection', ->
               bat: ['bab']
             })
 
+    ##    ########  ######## ##     ##  #######  ##     ## ########
+    ##    ##     ## ##       ###   ### ##     ## ##     ## ##
+    ##    ##     ## ##       #### #### ##     ## ##     ## ##
+    ##    ########  ######   ## ### ## ##     ## ##     ## ######
+    ##    ##   ##   ##       ##     ## ##     ##  ##   ##  ##
+    ##    ##    ##  ##       ##     ## ##     ##   ## ##   ##
+    ##    ##     ## ######## ##     ##  #######     ###    ########
+
     describe '::removeMany', ->
       beforeEach ->
         collection.addMany([
@@ -293,3 +309,32 @@ describe 'VariablesCollection', ->
             bar: ['bat']
             bat: ['bab']
           })
+
+    ##    ##     ## ########  ########     ###    ######## ########
+    ##    ##     ## ##     ## ##     ##   ## ##      ##    ##
+    ##    ##     ## ##     ## ##     ##  ##   ##     ##    ##
+    ##    ##     ## ########  ##     ## ##     ##    ##    ######
+    ##    ##     ## ##        ##     ## #########    ##    ##
+    ##    ##     ## ##        ##     ## ##     ##    ##    ##
+    ##     #######  ##        ########  ##     ##    ##    ########
+
+    xdescribe '::updatePathCollection', ->
+      beforeEach ->
+        collection.addMany([
+          createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
+          createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+          createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
+          createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
+          createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
+        ])
+
+      describe 'when a new variable is added', ->
+        beforeEach ->
+          collection.updatePathCollection('/path/to/foo.styl' ,[
+            createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
+            createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+            createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
+            createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
+            createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
+            createVar 'baa', '#f00', [52,60], '/path/to/foo.styl', 6
+          ])
