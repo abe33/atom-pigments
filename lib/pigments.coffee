@@ -22,7 +22,10 @@ module.exports =
     ignoredNames:
       type: 'array'
       default: [
-        "node_modules/*"
+        "vendor/*",
+        "node_modules/*",
+        "spec/*",
+        "test/*"
       ]
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
