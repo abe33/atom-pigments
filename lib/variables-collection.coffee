@@ -65,11 +65,17 @@ class VariablesCollection
   getContext: -> new ColorContext(@variables, @colorVariables)
 
   updateVariable: (previousVariable, variable, batch) ->
+    previousDependencies = @getVariableDependencies(previousVariable)
     previousVariable.value = variable.value
     previousVariable.range = variable.range
     previousVariable.bufferRange = variable.bufferRange
 
     @evaluateVariableColor(previousVariable, previousVariable.isColor)
+    newDependencies = @getVariableDependencies(previousVariable)
+
+    {removed, added} = @diffArrays(previousDependencies, newDependencies)
+    @removeDependencies(variable.name, removed)
+    @addDependencies(variable.name, added)
 
     if batch
       return ['updated', previousVariable]
@@ -154,6 +160,19 @@ class VariablesCollection
     variables.push v for v in @variables when v.name in names
     variables
 
+  removeDependencies: (from, to) ->
+    for v in to
+      if dependencies = @dependencyGraph[v]
+        dependencies.splice(dependencies.indexOf(from), 1)
+
+        delete @dependencyGraph[v] if dependencies.length is 0
+
+
+  addDependencies: (from, to) ->
+    for v in to
+      @dependencyGraph[v] ?= []
+      @dependencyGraph[v].push(from)
+
   updateDependencies: ({created, updated, destroyed}) ->
     variables = []
     dirtyVariableNames = []
@@ -185,3 +204,12 @@ class VariablesCollection
   emitChangeEvent: ({created, destroyed, updated}) ->
     if created?.length or destroyed?.length or updated?.length
       @emitter.emit 'did-change', {created, destroyed, updated}
+
+  diffArrays: (a,b) ->
+    removed = []
+    added = []
+
+    removed.push(v) for v in a when v not in b
+    added.push(v) for v in b when v not in a
+
+    {removed, added}

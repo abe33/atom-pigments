@@ -16,7 +16,7 @@ describe 'VariablesCollection', ->
       beforeEach ->
         collection.addMany([
           createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
-          createVar 'bar', '10px', [12,20], '/path/to/foo.styl', 2
+          createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
           createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
           createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
           createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
@@ -119,7 +119,7 @@ describe 'VariablesCollection', ->
             expect(arg.destroyed).toBeUndefined()
             expect(arg.updated.length).toEqual(2)
 
-        xdescribe 'that breaks a dependency', ->
+        describe 'that breaks a dependency', ->
           beforeEach ->
             collection.addMany([
               createVar 'baz', '#abc', [22,30], '/path/to/foo.styl', 3
@@ -144,6 +144,31 @@ describe 'VariablesCollection', ->
               bat: ['bab']
             })
 
+        describe 'that adds a dependency', ->
+          beforeEach ->
+            collection.addMany([
+              createVar 'baz', 'transparentize(foo, bar)', [22,30], '/path/to/foo.styl', 3
+            ])
+
+          it 'leaves the collection untouched', ->
+            expect(collection.length).toEqual(5)
+            expect(collection.getColorVariables().length).toEqual(2)
+
+          it 'updates the existing variable value', ->
+            variable = collection.find({
+              name: 'baz'
+              path: '/path/to/foo.styl'
+            })
+            expect(variable.value).toEqual('transparentize(foo, bar)')
+            expect(variable.isColor).toBeTruthy()
+            expect(variable.color).toBeColor(255,255,255, 0.5)
+
+          it 'updates the dependencies graph', ->
+            expect(collection.dependencyGraph).toEqual({
+              foo: ['baz']
+              bar: ['bat', 'baz']
+              bat: ['bab']
+            })
 
     describe '::removeMany', ->
       describe 'with variables that were not referenced by any other variables', ->
