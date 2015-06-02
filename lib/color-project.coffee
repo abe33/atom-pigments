@@ -40,6 +40,12 @@ class ColorProject
         @createProjectVariableSubscriptions(variable)
         variable
 
+    @subscriptions.add atom.config.observe 'pigments.sourceNames', =>
+      @updatePaths()
+
+    @subscriptions.add atom.config.observe 'pigments.ignoredNames', =>
+      @updatePaths()
+
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
       ColorMarkerElement.setMarkerType(type) if type?
 
@@ -209,8 +215,31 @@ class ColorProject
         ignoredNames: @getIgnoredNames()
         knownPaths: if noKnownPaths then [] else @paths
         paths: atom.project.getPaths()
+        traverseIntoSymlinkDirectories: atom.config.get 'pigments.traverseIntoSymlinkDirectories'
+        sourceNames: atom.config.get('pigments.sourceNames') ? []
+        ignoreVcsIgnores: atom.config.get('core.excludeVcsIgnoredPaths')
       }
       PathsLoader.startTask config, (results) -> resolve(results)
+
+  updatePaths: ->
+    return Promise.resolve() unless @initialized
+
+    previousPaths = @getPaths()
+    @loadPaths().then (paths) =>
+      newPaths = []
+      removedPaths = []
+
+      for p in paths
+        newPaths.push(p) if p not in previousPaths
+
+      for p in previousPaths
+        removedPaths.push(p) if p not in paths
+
+      @deleteVariablesForPaths(removedPaths)
+
+      @paths = paths
+
+      @reloadVariablesForPaths(newPaths)
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []

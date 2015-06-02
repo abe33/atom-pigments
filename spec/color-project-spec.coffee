@@ -442,15 +442,59 @@ describe 'ColorProject', ->
     ##    ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
     ##     ######  ########    ##       ##    #### ##    ##  ######    ######
 
-    xdescribe 'when the sourceNames setting is changed', ->
+    describe 'when the sourceNames setting is changed', ->
+      [updateSpy] = []
+
       beforeEach ->
         originalPaths = project.getPaths()
-        atom.config.set 'pigments.sourceNames', ['**/*.sass']
+        atom.config.set 'pigments.sourceNames', []
 
         waitsFor -> project.getPaths().join(',') isnt originalPaths.join(',')
 
       it 'updates the found using the new pattern', ->
+        expect(project.getVariables().length).toEqual(0)
 
+      describe 'so that new paths are found', ->
+        beforeEach ->
+          updateSpy = jasmine.createSpy('did-update-variables')
+
+          originalPaths = project.getPaths()
+          project.onDidUpdateVariables(updateSpy)
+
+          atom.config.set 'pigments.sourceNames', ['**/*.styl']
+
+          waitsFor -> project.getPaths().join(',') isnt originalPaths.join(',')
+          waitsFor -> updateSpy.callCount > 0
+
+        it 'loads the variables from these new paths', ->
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+
+    describe 'when the ignoredNames setting is changed', ->
+      [updateSpy] = []
+
+      beforeEach ->
+        originalPaths = project.getPaths()
+        atom.config.set 'pigments.ignoredNames', ['**/*.styl']
+
+        waitsFor -> project.getPaths().join(',') isnt originalPaths.join(',')
+
+      it 'updates the found using the new pattern', ->
+        expect(project.getVariables().length).toEqual(0)
+
+      describe 'so that new paths are found', ->
+        beforeEach ->
+          updateSpy = jasmine.createSpy('did-update-variables')
+
+          originalPaths = project.getPaths()
+          project.onDidUpdateVariables(updateSpy)
+
+          atom.config.set 'pigments.ignoredNames', []
+
+          waitsFor -> project.getPaths().join(',') isnt originalPaths.join(',')
+          waitsFor -> updateSpy.callCount > 0
+
+        it 'loads the variables from these new paths', ->
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
