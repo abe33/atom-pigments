@@ -4,6 +4,7 @@ ColorMarkerElement = require './color-marker-element'
 class ColorBufferElement extends HTMLElement
 
   createdCallback: ->
+    [@editorScrollLeft, @editorScrollTop] = [0, 0]
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @shadowRoot = @createShadowRoot()
@@ -38,10 +39,11 @@ class ColorBufferElement extends HTMLElement
 
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidChangeScrollTop (scrollTop) =>
-      if @editorElement.hasTiledRendering
-        @style.webkitTransform = "translate3d(0, #{-scrollTop}px, 0)"
 
+    @subscriptions.add @editor.onDidChangeScrollLeft (@editorScrollLeft) =>
+      @updateScroll()
+    @subscriptions.add @editor.onDidChangeScrollTop (@editorScrollTop) =>
+      @updateScroll()
       @updateMarkers()
 
     @subscriptions.add @editor.onDidAddCursor =>
@@ -76,6 +78,10 @@ class ColorBufferElement extends HTMLElement
     return unless @parentNode?
 
     @parentNode.removeChild(this)
+
+  updateScroll: ->
+    if @editorElement.hasTiledRendering
+      @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
 
   destroy: ->
     @detach()
