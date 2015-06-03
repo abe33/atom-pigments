@@ -33,12 +33,17 @@ class ColorBufferElement extends HTMLElement
   setModel: (@colorBuffer) ->
     {@editor} = @colorBuffer
     @editorElement = atom.views.getView(@editor)
+    @editorIsUsingTiles = @editorElement.shadowRoot.querySelector('.tile')?
 
     @colorBuffer.initialize().then => @updateMarkers()
 
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
+    @subscriptions.add @editor.onDidChangeScrollTop (scrollTop) =>
+      if @editorIsUsingTiles
+        @style.webkitTransform = "translate3d(0, #{-scrollTop}px, 0)"
+
+      @updateMarkers()
 
     @subscriptions.add @editor.onDidAddCursor =>
       @requestSelectionUpdate()
