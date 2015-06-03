@@ -1,3 +1,10 @@
+<a name="v0.4.3"></a>
+# v0.4.3 (2015-06-03)
+
+## Bug Fixes
+
+- Fix scroll still not in sync if there's no tiles when setting the model ([5d4b93a4](https://github.com/abe33/atom-pigments/commit/5d4b93a4a3a4a37317f0acf483195f99b3955dac), [#25](https://github.com/abe33/atom-pigments/issues/25))
+
 <a name="v0.4.2"></a>
 # v0.4.2 (2015-06-03)
 
