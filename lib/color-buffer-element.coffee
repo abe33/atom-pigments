@@ -38,7 +38,11 @@ class ColorBufferElement extends HTMLElement
 
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidChangeScrollTop => @updateMarkers()
+    @subscriptions.add @editor.onDidChangeScrollTop (scrollTop) =>
+      if @editorElement.hasTiledRendering
+        @style.webkitTransform = "translate3d(0, #{-scrollTop}px, 0)"
+
+      @updateMarkers()
 
     @subscriptions.add @editor.onDidAddCursor =>
       @requestSelectionUpdate()
