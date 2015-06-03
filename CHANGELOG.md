@@ -1,3 +1,10 @@
+<a name="v0.4.4"></a>
+# v0.4.4 (2015-06-03)
+
+## Bug Fixes
+
+- Fix markers horizontal scroll not in sync with editor tiles ([264450b5](https://github.com/abe33/atom-pigments/commit/264450b591c59481010ce927c643ad8ab3689c84))
+
 <a name="v0.4.3"></a>
 # v0.4.3 (2015-06-03)
 
