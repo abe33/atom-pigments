@@ -1,3 +1,10 @@
+<a name="v0.4.2"></a>
+# v0.4.2 (2015-06-03)
+
+## Bug Fixes
+
+- Fix color markers not synced with editor scroll ([dded923d](https://github.com/abe33/atom-pigments/commit/dded923d103592fa2b4cf17d0d1f34ed22b90732), [#25](https://github.com/abe33/atom-pigments/issues/25))
+
 <a name="v0.4.1"></a>
 # v0.4.1 (2015-06-02)
 
