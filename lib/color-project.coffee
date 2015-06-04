@@ -329,7 +329,7 @@ class ColorProject
     return @colorVariablesCache if @colorVariablesCache?
     context = @getContext()
 
-    @colorVariablesCache = @variables.filter (variable) -> variable.isColor()
+    @colorVariablesCache = @variables?.filter((variable) -> variable.isColor()) ? []
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
