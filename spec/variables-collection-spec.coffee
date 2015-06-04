@@ -318,7 +318,7 @@ describe 'VariablesCollection', ->
     ##    ##     ## ##        ##     ## ##     ##    ##    ##
     ##     #######  ##        ########  ##     ##    ##    ########
 
-    xdescribe '::updatePathCollection', ->
+    describe '::updatePathCollection', ->
       beforeEach ->
         collection.addMany([
           createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
@@ -338,3 +338,26 @@ describe 'VariablesCollection', ->
             createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
             createVar 'baa', '#f00', [52,60], '/path/to/foo.styl', 6
           ])
+
+        it 'detects the addition and leave the rest of the collection unchanged', ->
+          expect(collection.length).toEqual(6)
+          expect(collection.getColorVariables().length).toEqual(3)
+          expect(changeSpy.mostRecentCall.args[0].created.length).toEqual(1)
+          expect(changeSpy.mostRecentCall.args[0].destroyed).toBeUndefined()
+          expect(changeSpy.mostRecentCall.args[0].updated).toBeUndefined()
+
+      describe 'when a variable is removed', ->
+        beforeEach ->
+          collection.updatePathCollection('/path/to/foo.styl' ,[
+            createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
+            createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+            createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
+            createVar 'bat', 'bar', [32,40], '/path/to/foo.styl', 4
+          ])
+
+        it 'removes the variable that is not present in the new array', ->
+          expect(collection.length).toEqual(4)
+          expect(collection.getColorVariables().length).toEqual(2)
+          expect(changeSpy.mostRecentCall.args[0].destroyed.length).toEqual(1)
+          expect(changeSpy.mostRecentCall.args[0].created).toBeUndefined()
+          expect(changeSpy.mostRecentCall.args[0].updated).toBeUndefined()

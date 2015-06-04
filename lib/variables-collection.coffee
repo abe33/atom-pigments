@@ -36,6 +36,21 @@ class VariablesCollection
       else
         v[k] is properties[k]
 
+  updatePathCollection: (path, collection) ->
+    pathCollection = @variablesByPath[path]
+
+    results = @addMany(collection, true)
+
+    destroyed = []
+    for v in pathCollection
+      [status] = @getVariableStatusInCollection(v, collection)
+      destroyed.push(@remove(v, true)) if status is 'created'
+
+    results.destroyed = destroyed if destroyed.length > 0
+    results = @updateDependencies(results)
+    @deleteVariableReferences(v) for v in destroyed
+    @emitChangeEvent(results)
+
   add: (variable, batch=false) ->
     [status, previousVariable] = @getVariableStatus(variable)
 
@@ -48,7 +63,7 @@ class VariablesCollection
       when 'created'
         @createVariable(variable, batch)
 
-  addMany: (variables) ->
+  addMany: (variables, batch=false) ->
     results = {}
 
     for variable in variables
@@ -59,7 +74,10 @@ class VariablesCollection
         results[status] ?= []
         results[status].push(v)
 
-    @emitChangeEvent(@updateDependencies(results))
+    if batch
+      results
+    else
+      @emitChangeEvent(@updateDependencies(results))
 
   remove: (variable, batch=false) ->
     variable = @find(variable)
@@ -78,16 +96,19 @@ class VariablesCollection
       @deleteVariableReferences(variable)
       @emitChangeEvent(results)
 
-  removeMany: (variables) ->
+  removeMany: (variables, batch=false) ->
     destroyed = []
     for variable in variables
       destroyed.push @remove(variable, true)
 
-    results = @updateDependencies({destroyed})
+    results = {destroyed}
 
-    @deleteVariableReferences(v) for v in destroyed
-
-    @emitChangeEvent(results)
+    if batch
+      results
+    else
+      results = @updateDependencies(results)
+      @deleteVariableReferences(v) for v in destroyed
+      @emitChangeEvent(results)
 
   deleteVariableReferences: (variable) ->
     dependencies = @getVariableDependencies(variable)
@@ -158,28 +179,39 @@ class VariablesCollection
 
   getVariableStatus: (variable) ->
     return ['created', variable] unless @variablesByPath[variable.path]?
+    @getVariableStatusInCollection(variable, @variablesByPath[variable.path])
 
-    for v in @variablesByPath[variable.path]
-      sameName = v.name is variable.name
-      sameValue = v.value is variable.value
-      sameLine = v.line is variable.line
-      sameRange = if v.bufferRange? and variable.bufferRange?
-        v.bufferRange.isEqual(variable.bufferRange)
-      else
-        v.range[0] is variable.range[0] and v.range[1] is variable.range[1]
+  getVariableStatusInCollection: (variable, collection) ->
+    for v in collection
+      status = @compareVariables(v, variable)
 
-      if sameName and sameValue
-        if sameRange
-          return ['unchanged', v]
-        else
-          return ['moved', v]
-      else if sameName
-        if sameRange or sameLine
-          return ['updated', v]
-        else
-          return ['created', variable]
+      switch status
+        when 'identical' then return ['unchanged', v]
+        when 'move' then return ['moved', v]
+        when 'update' then return ['updated', v]
+        when 'different' then return ['created', variable]
 
     return ['created', variable]
+
+  compareVariables: (v1, v2) ->
+    sameName = v1.name is v2.name
+    sameValue = v1.value is v2.value
+    sameLine = v1.line is v2.line
+    sameRange = if v1.bufferRange? and v2.bufferRange?
+      v1.bufferRange.isEqual(v2.bufferRange)
+    else
+      v1.range[0] is v2.range[0] and v1.range[1] is v2.range[1]
+
+    if sameName and sameValue
+      if sameRange
+        'identical'
+      else
+        'move'
+    else if sameName
+      if sameRange or sameLine
+        'update'
+      else
+        'different'
 
   buildDependencyGraph: (variable) ->
     dependencies = @getVariableDependencies(variable)
