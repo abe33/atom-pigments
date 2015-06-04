@@ -254,8 +254,12 @@ class ColorProject
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []
-    ignoredNames = ignoredNames.concat(atom.config.get('pigments.ignoredNames') ? [])
+    ignoredNames = ignoredNames.concat(@getGlobalIgnoredNames() ? [])
     ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
+
+  getGlobalIgnoredNames: ->
+    atom.config.get('pigments.ignoredNames')?.map (p) ->
+      if /\/\*$/.test(p) then p + '*' else p
 
   setIgnoredNames: (ignoredNames) ->
     @ignoredNames = ignoredNames ? []

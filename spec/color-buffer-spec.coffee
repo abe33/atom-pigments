@@ -376,7 +376,34 @@ describe 'ColorBuffer', ->
   ##     ##  ##    ##  ##   ### ##     ## ##    ##  ##       ##     ##
   ##    ####  ######   ##    ##  #######  ##     ## ######## ########
 
-  describe 'with a buffer part of the ignored files', ->
+  describe 'with a buffer part of the global ignored files', ->
+    beforeEach ->
+      project.setIgnoredNames([])
+      atom.config.set('pigments.ignoredNames', ['project/vendor/*'])
+
+      waitsForPromise ->
+        atom.workspace.open('project/vendor/css/variables.less').then (o) -> editor = o
+
+      runs ->
+        colorBuffer = project.colorBufferForEditor(editor)
+
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
+    it 'knows that it is part of the ignored files', ->
+      expect(colorBuffer.isIgnored()).toBeTruthy()
+
+    it 'knows that it is a variables source file', ->
+      expect(colorBuffer.isVariablesSource()).toBeTruthy()
+
+    it 'scans the buffer for variables for in-buffer use only', ->
+      expect(colorBuffer.getColorMarkers().length).toEqual(20)
+      validMarkers = colorBuffer.getColorMarkers().filter (m) ->
+        m.color.isValid()
+
+      expect(validMarkers.length).toEqual(20)
+
+
+  describe 'with a buffer part of the project ignored files', ->
     beforeEach ->
       waitsForPromise ->
         atom.workspace.open('project/vendor/css/variables.less').then (o) -> editor = o
