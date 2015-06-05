@@ -361,3 +361,20 @@ describe 'VariablesCollection', ->
           expect(changeSpy.mostRecentCall.args[0].destroyed.length).toEqual(1)
           expect(changeSpy.mostRecentCall.args[0].created).toBeUndefined()
           expect(changeSpy.mostRecentCall.args[0].updated).toBeUndefined()
+
+      describe 'when a new variable is changed', ->
+        beforeEach ->
+          collection.updatePathCollection('/path/to/foo.styl' ,[
+            createVar 'foo', '#fff', [0,10], '/path/to/foo.styl', 1
+            createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+            createVar 'baz', 'foo', [22,30], '/path/to/foo.styl', 3
+            createVar 'bat', '#abc', [32,40], '/path/to/foo.styl', 4
+            createVar 'bab', 'bat', [42,50], '/path/to/foo.styl', 5
+          ])
+
+        it 'detects the update', ->
+          expect(collection.length).toEqual(5)
+          expect(collection.getColorVariables().length).toEqual(4)
+          expect(changeSpy.mostRecentCall.args[0].updated.length).toEqual(2)
+          expect(changeSpy.mostRecentCall.args[0].destroyed).toBeUndefined()
+          expect(changeSpy.mostRecentCall.args[0].created).toBeUndefined()
