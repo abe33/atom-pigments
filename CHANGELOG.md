@@ -1,3 +1,11 @@
+<a name="v0.4.5"></a>
+# v0.4.5 (2015-06-05)
+
+## Bug Fixes
+
+- Fix error raised when filtering the variables if there's no variables ([70e546c8](https://github.com/abe33/atom-pigments/commit/70e546c81dda1f181693291173c306fe8cf6d44b))
+- Fix glob pattern matching not consistent between project and loader ([503d274c](https://github.com/abe33/atom-pigments/commit/503d274ca8054488fdea36ca35c539c2c2fb9890))
+
 <a name="v0.4.4"></a>
 # v0.4.4 (2015-06-03)
 
