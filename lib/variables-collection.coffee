@@ -1,20 +1,29 @@
 {Emitter} = require 'atom'
 ColorContext = require './color-context'
+Color = require './color'
 
 module.exports =
 class VariablesCollection
+  atom.deserializers.add(this)
+
+  @deserialize: (state) ->
+    new VariablesCollection(state)
+
   Object.defineProperty @prototype, 'length', {
     get: -> @variables.length
     enumerable: true
   }
 
-  constructor: ->
+  constructor: (state) ->
     @emitter = new Emitter
     @variables = []
     @variableNames = []
     @colorVariables = []
     @variablesByPath = {}
     @dependencyGraph = {}
+
+    if state?.content?
+      @restoreVariable(v) for v in state.content
 
   onDidChange: (callback) ->
     @emitter.on 'did-change', callback
@@ -142,6 +151,22 @@ class VariablesCollection
       return ['updated', previousVariable]
     else
       @emitChangeEvent(@updateDependencies(updated: [previousVariable]))
+
+  restoreVariable: (variable) ->
+    @variableNames.push(variable.name)
+    @variables.push variable
+
+    if variable.isColor
+      variable.color = new Color(variable.color)
+      variable.color.variables = variable.variables
+      @colorVariables.push(variable)
+      delete variable.variables
+
+    @variablesByPath[variable.path] ?= []
+    @variablesByPath[variable.path].push(variable)
+
+    @evaluateVariableColor(variable)
+    @buildDependencyGraph(variable)
 
   createVariable: (variable, batch) ->
     @variableNames.push(variable.name)
@@ -288,3 +313,23 @@ class VariablesCollection
     added.push(v) for v in b when v not in a
 
     {removed, added}
+
+  serialize: ->
+    {
+      deserializer: 'VariablesCollection'
+      content: @variables.map (v) ->
+        res = {
+          name: v.name
+          value: v.value
+          path: v.path
+          range: v.range
+          line: v.line
+        }
+
+        if v.isColor
+          res.isColor = true
+          res.color = v.color.serialize()
+          res.variables = v.color.variables if v.color.variables?
+
+        res
+    }
