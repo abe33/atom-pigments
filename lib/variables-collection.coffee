@@ -84,7 +84,14 @@ class VariablesCollection
       results.destroyed = results.destroyed.concat(destroyed) if destroyed?
 
     results = @updateDependencies(results)
-    @deleteVariableReferences(v) for v in results.destroyed
+
+    delete results.created if results.created?.length is 0
+    delete results.updated if results.updated?.length is 0
+    delete results.destroyed if results.destroyed?.length is 0
+
+    if results.destroyed?
+      @deleteVariableReferences(v) for v in results.destroyed
+
     @emitChangeEvent(results)
 
   updatePathCollection: (path, collection, batch=false) ->
