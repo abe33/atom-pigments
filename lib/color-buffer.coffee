@@ -214,7 +214,6 @@ class ColorBuffer
       new ColorMarker {marker, color: result.color, text: result.match}
 
   updateColorMarkers: (results) ->
-    console.log results
     newMarkers = []
     toCreate = []
     for result in results
