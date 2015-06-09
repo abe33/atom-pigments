@@ -161,7 +161,7 @@ class PaletteElement extends HTMLElement
           html += """
           <span data-variable-id="#{variable.id}">
             <span class="path">#{atom.project.relativize(variable.path)}</span>
-            <span class="line">at line #{variable.getLine() + 1}</span>
+            <span class="line">at line #{variable.line + 1}</span>
           </span>
           """
 

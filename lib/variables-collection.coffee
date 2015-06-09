@@ -36,6 +36,8 @@ class VariablesCollection
 
   getVariableByName: (name) -> @collectVariablesByName([name]).pop()
 
+  getVariableById: (id) -> return v for v in @variables when v.id is id
+
   getVariablesForPaths: (paths) ->
     res = []
 
