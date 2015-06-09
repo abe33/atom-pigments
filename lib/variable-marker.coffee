@@ -15,14 +15,15 @@ class VariableMarker
     @subscriptions.dispose()
     {@marker, @variable} = {}
     @wasDestroyed = true
+    @subscriptions = null
 
   match: (properties) ->
     bool = true
 
-    if properties.bufferRange?
-      bool &&= @marker?.bufferRange.isEqual(properties.bufferRange)
+    if @marker? and properties.bufferRange?
+      bool &&= @marker.getBufferRange().isEqual(properties.bufferRange)
 
-    if properties.variable? && @variables?
+    if properties.variable? && @variable?
       bool &&= @isEqual(@variable, properties.variable)
 
     bool
@@ -35,7 +36,7 @@ class VariableMarker
     bool &&= if v1.bufferRange? and v2.bufferRange?
       v1.bufferRange.isEqual(v2.bufferRange)
     else
-      v1range[0] is v2.range[0] and v1range[1] is v2.range[1]
+      v1.range[0] is v2.range[0] and v1.range[1] is v2.range[1]
 
     bool
 
@@ -43,6 +44,6 @@ class VariableMarker
     return if @wasDestroyed
     {
       markerId: String(@marker.id)
-      bufferRange: @marker.bufferRange.serialize()
+      bufferRange: @marker.getBufferRange().serialize()
       variable: @variable.name
     }
