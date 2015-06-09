@@ -8,9 +8,6 @@ class ColorContext
     @vars = {}
     @colorVars = {}
 
-    unless @colorVariables?
-      @colorVariables = @variables.filter (v) -> v.isColor
-
     @vars[v.name] = v for v in @variables
     @colorVars[v.name] = v for v in @colorVariables
 

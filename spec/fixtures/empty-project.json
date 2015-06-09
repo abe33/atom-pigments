@@ -15,15 +15,22 @@
     "#{root}/styles/buttons.styl",
     "#{root}/styles/variables.styl"
   ],
-  "variables": [
-    {
-      "name": "colors.red",
-      "value": "#BF616A",
-      "range": [
-        13,
-        25
-      ],
-      "path": "#{root}/styles/variables.styl"
-    }
-  ]
+  "variables": {
+    "deserializer": "VariablesCollection",
+    "content": [
+      {
+        "name": "colors.red",
+        "value": "#BF616A",
+        "range": [
+          13,
+          25
+        ],
+        "path": "#{root}/styles/variables.styl",
+        "line": 1,
+        "isColor": true,
+        "color": [191, 97, 106, 1],
+        "variables": []
+      }
+    ]
+  }
 }

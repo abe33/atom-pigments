@@ -2,6 +2,8 @@
 ColorContext = require './color-context'
 Color = require './color'
 
+nextId = 0
+
 module.exports =
 class VariablesCollection
   atom.deserializers.add(this)
@@ -28,7 +30,21 @@ class VariablesCollection
   onDidChange: (callback) ->
     @emitter.on 'did-change', callback
 
-  getColorVariables: -> @colorVariables
+  getVariables: -> @variables.slice()
+
+  getVariablesForPath: (path) -> @variablesByPath[path] ? []
+
+  getVariableByName: (name) -> @collectVariablesByName([name]).pop()
+
+  getVariablesForPaths: (paths) ->
+    res = []
+
+    for p in paths when p of @variablesByPath
+      res = res.concat(@variablesByPath[p])
+
+    res
+
+  getColorVariables: -> @colorVariables.slice()
 
   find: (properties) -> @findAll(properties)?[0]
 
@@ -45,8 +61,32 @@ class VariablesCollection
       else
         v[k] is properties[k]
 
-  updatePathCollection: (path, collection) ->
-    pathCollection = @variablesByPath[path]
+  updateCollection: (collection) ->
+    pathsCollection = {}
+
+    for v in collection
+      pathsCollection[v.path] ?= []
+      pathsCollection[v.path].push(v)
+
+    results = {
+      created: []
+      destroyed: []
+      updated: []
+    }
+
+    for path, collection of pathsCollection
+      {created, updated, destroyed} = @updatePathCollection(path, collection) or {}
+
+      results.created = results.created.concat(created) if created?
+      results.updated = results.updated.concat(updated) if updated?
+      results.destroyed = results.destroyed.concat(destroyed) if destroyed?
+
+    results = @updateDependencies(results)
+    @deleteVariableReferences(v) for v in results.destroyed
+    @emitChangeEvent(results)
+
+  updatePathCollection: (path, collection, batch=false) ->
+    pathCollection = @variablesByPath[path] or []
 
     results = @addMany(collection, true)
 
@@ -56,17 +96,22 @@ class VariablesCollection
       destroyed.push(@remove(v, true)) if status is 'created'
 
     results.destroyed = destroyed if destroyed.length > 0
-    results = @updateDependencies(results)
-    @deleteVariableReferences(v) for v in destroyed
-    @emitChangeEvent(results)
+
+    if batch
+      results
+    else
+      results = @updateDependencies(results)
+      @deleteVariableReferences(v) for v in destroyed
+      @emitChangeEvent(results)
 
   add: (variable, batch=false) ->
     [status, previousVariable] = @getVariableStatus(variable)
 
     switch status
       when 'moved'
-        v.range = variable.range
-        v.bufferRange = variable.bufferRange
+        previousVariable.range = variable.range
+        previousVariable.bufferRange = variable.bufferRange
+        return undefined
       when 'updated'
         @updateVariable(previousVariable, variable, batch)
       when 'created'
@@ -119,6 +164,8 @@ class VariablesCollection
       @deleteVariableReferences(v) for v in destroyed
       @emitChangeEvent(results)
 
+  deleteVariablesForPaths: (paths) -> @removeMany(@getVariablesForPaths(paths))
+
   deleteVariableReferences: (variable) ->
     dependencies = @getVariableDependencies(variable)
 
@@ -155,6 +202,7 @@ class VariablesCollection
   restoreVariable: (variable) ->
     @variableNames.push(variable.name)
     @variables.push variable
+    variable.id = nextId++
 
     if variable.isColor
       variable.color = new Color(variable.color)
@@ -171,6 +219,7 @@ class VariablesCollection
   createVariable: (variable, batch) ->
     @variableNames.push(variable.name)
     @variables.push variable
+    variable.id = nextId++
 
     @variablesByPath[variable.path] ?= []
     @variablesByPath[variable.path].push(variable)
@@ -222,10 +271,10 @@ class VariablesCollection
     sameName = v1.name is v2.name
     sameValue = v1.value is v2.value
     sameLine = v1.line is v2.line
-    sameRange = if v1.bufferRange? and v2.bufferRange?
-      v1.bufferRange.isEqual(v2.bufferRange)
-    else
-      v1.range[0] is v2.range[0] and v1.range[1] is v2.range[1]
+    sameRange = v1.range[0] is v2.range[0] and v1.range[1] is v2.range[1]
+
+    if v1.bufferRange? and v2.bufferRange?
+      sameRange &&= v1.bufferRange.isEqual(v2.bufferRange)
 
     if sameName and sameValue
       if sameRange

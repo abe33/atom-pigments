@@ -119,11 +119,11 @@ class ColorBuffer
 
       @scanBufferForVariables() if @isIgnored() and @isVariablesSource()
     .then (results) =>
-      @scanBufferForColors
-        variables: results?.map (p) => new ProjectVariable(p, @project)
+      @scanBufferForColors variables: results
     .then (results) =>
       @updateColorMarkers(results)
     .catch (reason) ->
+      console.log reason
 
   update: ->
     promise = if @isIgnored()
@@ -345,10 +345,8 @@ class ColorBuffer
 
     config =
       buffer: @editor.getText()
-      variables: variables.map (v) ->
-        o = v.serialize()
-        o.isColor = v.isColor()
-        o
+      variables: variables
+      colorVariables: variables.filter (v) -> v.isColor
 
     new Promise (resolve, reject) =>
       @task = Task.once(
