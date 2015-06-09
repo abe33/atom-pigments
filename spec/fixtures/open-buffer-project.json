@@ -19,68 +19,6 @@
     "#{id}": {
       "id": #{id},
       "path": "#{root}/styles/variables.styl",
-      "variableMarkers": [
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[1,2],[1,14]],
-          "variable": "colors.red"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[2,2],[2,17]],
-          "variable": "colors.yellow"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[3,2],[3,16]],
-          "variable": "colors.green"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[4,2],[4,15]],
-          "variable": "colors.blue"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[5,2],[5,15]],
-          "variable": "colors.cyan"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[8,4],[8,17]],
-          "variable": "colors.light.base"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[11,4],[11,17]],
-          "variable": "colors.dark.base"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[15,0],[15,30]],
-          "variable": "text-color"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[16,0],[16,35]],
-          "variable": "background-color"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[17,0],[17,26]],
-          "variable": "button-color"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[19,0],[19,24]],
-          "variable": "button-padding"
-        },
-        {
-          "markerId": #{[variableMarkers]},
-          "bufferRange": [[20,0],[20,19]],
-          "variable": "button-radius"
-        }
-      ],
       "colorMarkers": [
         {
           "markerId": #{[colorMarkers]},

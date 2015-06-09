@@ -1,7 +1,6 @@
 {
   "id": #{id},
   "path": "#{root}/invalid-color-buffer.styl",
-  "variableMarkers": [],
   "colorMarkers": [
     {
       "markerId": #{[colorMarkers]},

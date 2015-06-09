@@ -159,26 +159,12 @@ describe 'ColorBuffer', ->
       it 'destroys the text editor markers', ->
         expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
-      it 'creates markers for variables in the buffer', ->
-        expect(colorBuffer.getVariableMarkers().length).toEqual(4)
-        expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
-
-      describe 'when a variable marker is edited', ->
+      describe 'when a variable is edited', ->
         [colorsUpdateSpy] = []
         beforeEach ->
-          updateSpy = jasmine.createSpy('did-update-variable-markers')
           colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
-          colorBuffer.onDidUpdateVariableMarkers(updateSpy)
           colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
           editBuffer '#336699', start: [0,13], end: [0,17]
-          waitsFor -> updateSpy.callCount > 0
-
-        it 'updates the modified variable marker', ->
-          expect(colorBuffer.getVariableMarkerByName('base-color').variable.value).toEqual('#336699')
-
-        it 'has the same number of variables than before', ->
-          expect(colorBuffer.getVariableMarkers().length).toEqual(4)
-          expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
 
         it 'updates the modified colors', ->
           waitsFor -> colorsUpdateSpy.callCount > 0
@@ -193,54 +179,37 @@ describe 'ColorBuffer', ->
           waitsForPromise -> colorBuffer.variablesAvailable()
 
           runs ->
-            updateSpy = jasmine.createSpy('did-update-variable-markers')
+            updateSpy = jasmine.createSpy('did-update-color-markers')
             colorBuffer.onDidUpdateColorMarkers(updateSpy)
             editor.moveToBottom()
             editBuffer '\nfoo = base-color'
             waitsFor -> updateSpy.callCount > 0
 
-        it 'adds a marker for the new variable', ->
-          expect(colorBuffer.getVariableMarkers().length).toEqual(5)
-          expect(colorBuffer.getVariableMarkerByName('foo').variable.value).toEqual('base-color')
-          expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(5)
-
-        it 'dispatches the new marker in a did-update-variable-markers event', ->
+        it 'dispatches the new marker in a did-update-color-markers event', ->
           expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
           expect(updateSpy.argsForCall[0][0].created.length).toEqual(1)
 
-      describe 'when a variable marker is removed', ->
+      describe 'when a variable is removed', ->
         [colorsUpdateSpy] = []
         beforeEach ->
-          updateSpy = jasmine.createSpy('did-update-variable-markers')
           colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
-          colorBuffer.onDidUpdateVariableMarkers(updateSpy)
           colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
           editBuffer '', start: [0,0], end: [0,17]
-          waitsFor -> updateSpy.callCount > 0
-
-        it 'updates the modified variable marker', ->
-          expect(colorBuffer.getVariableMarkerByName('base-color')).toBeUndefined()
-
-        it 'dispatches the new marker in a did-update-variable-markers event', ->
-          expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
-          expect(updateSpy.argsForCall[0][0].created.length).toEqual(0)
+          waitsFor -> colorsUpdateSpy.callCount > 0
 
         it 'invalidates colors that were relying on the deleted variables', ->
-          waitsFor -> colorsUpdateSpy.callCount > 0
-          runs ->
-            expect(colorBuffer.getColorMarkers().length).toEqual(3)
-            expect(colorBuffer.getValidColorMarkers().length).toEqual(2)
+          expect(colorBuffer.getColorMarkers().length).toEqual(3)
+          expect(colorBuffer.getValidColorMarkers().length).toEqual(2)
 
       describe '::serialize', ->
         beforeEach ->
           waitsForPromise -> colorBuffer.variablesAvailable()
 
-        it 'returns the whole buffer data', ->
+        xit 'returns the whole buffer data', ->
           expected = jsonFixture "four-variables-buffer.json", {
             id: editor.id
             root: atom.project.getPaths()[0]
             colorMarkers: colorBuffer.getColorMarkers().map (m) -> m.marker.id
-            variableMarkers: colorBuffer.getVariableMarkers().map (m) -> m.marker.id
           }
 
           expect(colorBuffer.serialize()).toEqual(expected)
@@ -508,7 +477,6 @@ describe 'ColorBuffer', ->
             id: editor.id
             root: atom.project.getPaths()[0]
             colorMarkers: [-1..-4]
-            variableMarkers: [-5..-8]
           })
           state.editor = editor
           state.project = project
@@ -516,28 +484,19 @@ describe 'ColorBuffer', ->
 
       it 'creates markers from the state object', ->
         expect(colorBuffer.getColorMarkers().length).toEqual(4)
-        expect(colorBuffer.getVariableMarkers().length).toEqual(4)
 
       it 'restores the markers properties', ->
-        variableMarker = colorBuffer.getVariableMarkers()[0]
-        expect(variableMarker.variable).toEqual(project.getVariableByName('base-color'))
-
         colorMarker = colorBuffer.getColorMarkers()[3]
         expect(colorMarker.color).toBeColor(255,255,255,0.5)
         expect(colorMarker.color.variables).toEqual(['base-color'])
 
       it 'restores the editor markers', ->
-        expect(editor.findMarkers(type: 'pigments-variable').length).toEqual(4)
         expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
 
       it 'restores the ability to fetch markers', ->
         expect(colorBuffer.findColorMarkers().length).toEqual(4)
-        expect(colorBuffer.findVariableMarkers().length).toEqual(4)
 
         for marker in colorBuffer.findColorMarkers()
-          expect(marker).toBeDefined()
-
-        for marker in colorBuffer.findVariableMarkers()
           expect(marker).toBeDefined()
 
     describe 'with an invalid color', ->
@@ -553,7 +512,6 @@ describe 'ColorBuffer', ->
             id: editor.id
             root: atom.project.getPaths()[0]
             colorMarkers: [-1]
-            variableMarkers: []
           })
           state.editor = editor
           state.project = project

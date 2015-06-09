@@ -340,15 +340,13 @@ describe 'ColorProject', ->
       describe 'when a color is modified that does not affect other variables ranges', ->
         [variablesTextRanges] = []
         beforeEach ->
-          runs ->
-            variablesTextRanges = {}
-            colorBuffer.getVariableMarkers().forEach (marker) ->
-              variablesTextRanges[marker.variable.name] = marker.variable.range
+          variablesTextRanges = {}
+          project.getVariablesForPath(editor.getPath()).forEach (variable) ->
+            variablesTextRanges[variable.name] = variable.range
 
-            editor.setSelectedBufferRange([[1,7],[1,14]])
-            editor.insertText('#336')
-            editor.getBuffer().emitter.emit('did-stop-changing')
-
+          editor.setSelectedBufferRange([[1,7],[1,14]])
+          editor.insertText('#336')
+          editor.getBuffer().emitter.emit('did-stop-changing')
 
           waitsFor -> eventSpy.callCount > 0
 
@@ -376,9 +374,9 @@ describe 'ColorProject', ->
           runs ->
             variablesTextRanges = {}
             variablesBufferRanges = {}
-            colorBuffer.getVariableMarkers().forEach (marker) ->
-              variablesTextRanges[marker.variable.name] = marker.variable.range
-              variablesBufferRanges[marker.variable.name] = marker.variable.bufferRange
+            project.getVariablesForPath(editor.getPath()).forEach (variable) ->
+              variablesTextRanges[variable.name] = variable.range
+              variablesBufferRanges[variable.name] = variable.bufferRange
 
             spyOn(project.variables, 'addMany').andCallThrough()
 
@@ -403,8 +401,8 @@ describe 'ColorProject', ->
         beforeEach ->
           runs ->
             variablesTextRanges = {}
-            colorBuffer.getVariableMarkers().forEach (marker) ->
-              variablesTextRanges[marker.variable.name] = marker.variable.range
+            project.getVariablesForPath(editor.getPath()).forEach (variable) ->
+              variablesTextRanges[variable.name] = variable.range
 
             editor.setSelectedBufferRange([[1,0],[2,0]])
             editor.insertText('')
@@ -629,7 +627,6 @@ describe 'ColorProject', ->
 
       it 'restores the color buffer in its previous state', ->
         expect(colorBuffer).toBeDefined()
-        expect(colorBuffer.getVariableMarkers().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
         expect(colorBuffer.getColorMarkers().length).toEqual(TOTAL_COLORS_VARIABLES_IN_PROJECT)
 
       it 'does not wait for the project variables', ->
@@ -642,7 +639,7 @@ describe 'ColorProject', ->
           atom.workspace.open('variables.styl').then (o) -> editor = o
 
         runs ->
-          spyOn(ColorBuffer.prototype, 'updateVariableMarkers').andCallThrough()
+          spyOn(ColorBuffer.prototype, 'updateVariableRanges').andCallThrough()
           project = createProject
             timestamp: new Date(0).toJSON()
             stateFixture: "open-buffer-project.json"
@@ -650,10 +647,10 @@ describe 'ColorProject', ->
 
         runs -> colorBuffer = project.colorBuffersByEditorId[editor.id]
 
-        waitsFor -> colorBuffer.updateVariableMarkers.callCount > 0
+        waitsFor -> colorBuffer.updateVariableRanges.callCount > 0
 
       it 'invalidates the color buffer markers as soon as the dirty paths have been determined', ->
-        expect(colorBuffer.updateVariableMarkers).toHaveBeenCalled()
+        expect(colorBuffer.updateVariableRanges).toHaveBeenCalled()
 
 ##     ######   ##     ##    ###    ########  ########
 ##    ##    ##  ##     ##   ## ##   ##     ## ##     ##
