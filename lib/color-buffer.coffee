@@ -3,6 +3,7 @@ ProjectVariable = require './project-variable'
 Color = require './color'
 ColorMarker = require './color-marker'
 VariableMarker = require './variable-marker'
+VariablesCollection = require './variables-collection'
 
 module.exports =
 class ColorBuffer
@@ -119,11 +120,11 @@ class ColorBuffer
 
       @scanBufferForVariables() if @isIgnored() and @isVariablesSource()
     .then (results) =>
-      @scanBufferForColors
-        variables: results?.map (p) => new ProjectVariable(p, @project)
+      @scanBufferForColors variables: results
     .then (results) =>
       @updateColorMarkers(results)
     .catch (reason) ->
+      console.log reason
 
   update: ->
     promise = if @isIgnored()
@@ -134,8 +135,7 @@ class ColorBuffer
       @project.reloadVariablesForPath(@editor.getPath())
 
     promise.then (results) =>
-      @scanBufferForColors
-        variables: results?.map (p) => new ProjectVariable(p, @project)
+      @scanBufferForColors variables: results
     .then (results) =>
       @updateColorMarkers(results)
     .catch (reason) ->
@@ -197,6 +197,8 @@ class ColorBuffer
       new VariableMarker {marker, variable: result}
 
   updateVariableMarkers: (results) ->
+    return unless @variableMarkers?
+
     newMarkers = []
     toCreate = []
     for result in results
@@ -338,17 +340,21 @@ class ColorBuffer
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()
+
+    if options.variables?
+      collection = new VariablesCollection()
+      collection.addMany(options.variables)
+      options.variables = collection
+
     variables = if @isVariablesSource()
-      (options.variables ? []).concat(@project.getVariables() ? [])
+      (options.variables?.getVariables() ? []).concat(@project.getVariables() ? [])
     else
-      options.variables ? []
+      options.variables?.getVariables() ? []
 
     config =
       buffer: @editor.getText()
-      variables: variables.map (v) ->
-        o = v.serialize()
-        o.isColor = v.isColor()
-        o
+      variables: variables
+      colorVariables: variables.filter (v) -> v.isColor
 
     new Promise (resolve, reject) =>
       @task = Task.once(

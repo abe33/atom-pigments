@@ -11,6 +11,7 @@ PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 SourcesPopupElement = require './sources-popup-element'
+VariablesCollection = require './variables-collection'
 
 compareArray = (a,b) ->
   return false if not a? or not b?
@@ -46,10 +47,12 @@ class ColorProject
     @colorBuffersByEditorId = {}
 
     if variables?
-      @variables = variables.map (v) =>
-        variable = @createProjectVariable(v)
-        @createProjectVariableSubscriptions(variable)
-        variable
+      @variables = atom.deserializers.deserialize(variables)
+    else
+      @variables = new VariablesCollection
+
+    @subscriptions.add @variables.onDidChange (results) =>
+      @emitVariablesChangeEvent(results)
 
     @subscriptions.add atom.config.observe 'pigments.sourceNames', =>
       @updatePaths()
@@ -66,7 +69,7 @@ class ColorProject
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
-    @initialize() if @paths? and @variables?
+    @initialize() if @paths? and @variables.length?
     @initializeBuffers()
 
   onDidInitialize: (callback) ->
@@ -87,13 +90,13 @@ class ColorProject
   isDestroyed: -> @destroyed
 
   initialize: ->
-    return Promise.resolve(@variables.slice()) if @isInitialized()
+    return Promise.resolve(@variables.getVariables()) if @isInitialized()
     return @initializePromise if @initializePromise?
 
     @initializePromise = @loadPathsAndVariables().then =>
       @initialized = true
 
-      variables = @variables.slice()
+      variables = @variables.getVariables()
       @emitter.emit 'did-initialize', variables
       variables
 
@@ -126,7 +129,7 @@ class ColorProject
 
         # There was also serialized variables, so we'll rescan only the
         # dirty paths
-        if @variables?
+        if @variables.length
           paths
         # There was no variables, so it's probably because the markers
         # version changed, we'll rescan all the files
@@ -137,25 +140,15 @@ class ColorProject
         @paths = paths
       # Only the markers version changed, all the paths from the serialized
       # state will be rescanned
-      else unless @variables?
+      else unless @variables.length
         @paths
       # Nothing changed, there's no dirty paths to rescan
       else
         []
     .then (paths) =>
-      destroyed = @deleteVariablesForPaths(paths)
       @loadVariablesForPaths(paths)
     .then (results) =>
-      hadVariables = @variables?
-      @variables ?= []
-
-      for variable in results
-        @variables.push(variable) unless @findVariable(variable)
-
-      @emitVariablesChangeEvent(results, destroyed, [], true) if hadVariables
-
-      results.forEach (variable) =>
-        @createProjectVariableSubscriptions(variable)
+      @variables.updateCollection(results) if results?
 
   findAllColors: ->
     new ColorSearch
@@ -311,25 +304,15 @@ class ColorProject
 
     new Palette(colors)
 
-  getContext: -> new ColorContext(@variables)
+  getContext: -> @variables.getContext()
 
-  getVariables: -> @variables?.slice()
+  getVariables: -> @variables.getVariables()
 
-  getVariableById: (id) ->
-    return undefined unless @variables?
-    for variable in @variables
-      return variable if variable.id is id
+  getVariableById: (id) -> @variables.getVariableById(id)
 
-  getVariableByName: (name) ->
-    return undefined unless @variables?
-    for variable in @variables
-      return variable if variable.name is name
+  getVariableByName: (name) -> @variables.getVariableByName(name)
 
-  getColorVariables: ->
-    return @colorVariablesCache if @colorVariablesCache?
-    context = @getContext()
-
-    @colorVariablesCache = @variables?.filter((variable) -> variable.isColor()) ? []
+  getColorVariables: -> @variables.getColorVariables()
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
@@ -342,89 +325,23 @@ class ColorProject
 
       editor.setSelectedBufferRange(bufferRange, autoscroll: true)
 
-  updateVariables: (paths, results) ->
-    newVariables = @variables.filter (variable) -> variable.path not in paths
-    created = []
-    updated = []
-
-    for result in results
-      if variable = @findVariable(result)
-        # This is a special case, if both variables have a buffer range, they
-        # can be equals and at the same time having a different text range.
-        # In that case we always use the most recent range.
-        if variable.range[0] isnt result.range[0] or variable.range[1] isnt result.range[1]
-          variable.range = result.range
-        newVariables.push(variable)
-      else if variable = @findVariableWithoutRange(result)
-        # This is another special case, when typing in the buffer, the variable
-        # range changed but the declaration didn't. We just need to update its
-        # ranges and mark it as updated.
-        variable.range = result.range
-        variable.bufferRange = result.bufferRange
-
-        newVariables.push(variable)
-        updated.push(variable)
-      else
-        created.push(result)
-
-    newVariables = newVariables.concat(created)
-
-    created.forEach (variable) => @createProjectVariableSubscriptions(variable)
-    destroyed = @variables.filter (variable) -> variable not in newVariables
-    destroyed.forEach (variable) =>
-      @clearProjectVariableSubscriptions(variable)
-      variable.destroy()
-
-    @variables = newVariables
-    @emitVariablesChangeEvent(created, destroyed, updated)
-
-  findVariable: (result) ->
-    return unless @variables?
-    for variable in @variables
-      return variable if variable.isEqual(result)
-
-  findVariableWithoutRange: (result) ->
-    return unless @variables?
-    for variable in @variables
-      return variable if variable.isValueEqual(result)
-
-  emitVariablesChangeEvent: (created, destroyed, updated, forceEvent=false) ->
-    if forceEvent or destroyed.length or created.length or updated.length
-      @emitter.emit 'did-update-variables', {created, destroyed, updated}
-      @colorVariablesCache = undefined
+  emitVariablesChangeEvent: (results) ->
+    @emitter.emit 'did-update-variables', results
 
   loadVariablesForPath: (path) -> @loadVariablesForPaths [path]
 
   loadVariablesForPaths: (paths) ->
     new Promise (resolve, reject) =>
-      @scanPathsForVariables paths, (results) =>
-        resolve(results.map(@createProjectVariable))
+      @scanPathsForVariables paths, (results) => resolve(results)
 
-  getVariablesForPath: (path) -> @getVariablesForPaths [path]
+  getVariablesForPath: (path) -> @variables.getVariablesForPath(path)
 
-  getVariablesForPaths: (paths) ->
-    return unless @isInitialized()
-
-    @variables.filter (variable) -> variable.path in paths
+  getVariablesForPaths: (paths) -> @variables.getVariablesForPaths(paths)
 
   deleteVariablesForPath: (path) -> @deleteVariablesForPaths [path]
 
   deleteVariablesForPaths: (paths) ->
-    return unless @variables?
-
-    destroyed = []
-
-    @variables = @variables.filter (variable) =>
-      if variable.path in paths
-        @clearProjectVariableSubscriptions(variable)
-        variable.destroy()
-        destroyed.push variable
-        return false
-      return true
-
-    @reloadVariablesForPaths(paths)
-
-    destroyed
+    @variables.deleteVariablesForPaths(paths)
 
   reloadVariablesForPath: (path) -> @reloadVariablesForPaths [path]
 
@@ -439,7 +356,7 @@ class ColorProject
 
       @loadVariablesForPaths(paths)
     .then (results) =>
-      @updateVariables(paths, results)
+      @variables.updateCollection(results)
 
   scanPathsForVariables: (paths, callback) ->
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
@@ -479,7 +396,7 @@ class ColorProject
 
     if @isInitialized()
       data.paths = @paths
-      data.variables = @variables.map (variable) -> variable.serialize()
+      data.variables = @variables.serialize()
 
     data
 

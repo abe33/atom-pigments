@@ -4,12 +4,9 @@ ColorExpression = require './color-expression'
 
 module.exports =
 class ColorContext
-  constructor: (@variables=[], @colorVariables=null, @parser) ->
+  constructor: (@variables=[], @colorVariables=[], @parser) ->
     @vars = {}
     @colorVars = {}
-
-    unless @colorVariables?
-      @colorVariables = @variables.filter (v) -> v.isColor
 
     @vars[v.name] = v for v in @variables
     @colorVars[v.name] = v for v in @colorVariables

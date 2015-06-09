@@ -402,7 +402,6 @@ describe 'ColorBuffer', ->
 
       expect(validMarkers.length).toEqual(20)
 
-
   describe 'with a buffer part of the project ignored files', ->
     beforeEach ->
       waitsForPromise ->

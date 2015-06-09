@@ -362,6 +362,7 @@ describe 'VariablesCollection', ->
           expect(changeSpy.mostRecentCall.args[0].created).toBeUndefined()
           expect(changeSpy.mostRecentCall.args[0].updated).toBeUndefined()
 
+
       describe 'when a new variable is changed', ->
         beforeEach ->
           collection.updatePathCollection('/path/to/foo.styl' ,[
@@ -378,3 +379,137 @@ describe 'VariablesCollection', ->
           expect(changeSpy.mostRecentCall.args[0].updated.length).toEqual(2)
           expect(changeSpy.mostRecentCall.args[0].destroyed).toBeUndefined()
           expect(changeSpy.mostRecentCall.args[0].created).toBeUndefined()
+
+    ##    ########  ########  ######  ########  #######  ########  ########
+    ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
+    ##    ##     ## ##       ##          ##    ##     ## ##     ## ##
+    ##    ########  ######    ######     ##    ##     ## ########  ######
+    ##    ##   ##   ##             ##    ##    ##     ## ##   ##   ##
+    ##    ##    ##  ##       ##    ##    ##    ##     ## ##    ##  ##
+    ##    ##     ## ########  ######     ##     #######  ##     ## ########
+
+    describe '::serialize', ->
+      describe 'with an empty collection', ->
+        it 'returns an empty serialized collection', ->
+          expect(collection.serialize()).toEqual({
+            deserializer: 'VariablesCollection'
+            content: []
+          })
+
+      describe 'with a collection that contains a non-color variable', ->
+        beforeEach ->
+          collection.add createVar 'bar', '0.5', [12,20], '/path/to/foo.styl', 2
+
+        it 'returns the serialized collection', ->
+          expect(collection.serialize()).toEqual({
+            deserializer: 'VariablesCollection'
+            content: [
+              {
+                name: 'bar'
+                value: '0.5'
+                range: [12,20]
+                path: '/path/to/foo.styl'
+                line: 2
+              }
+            ]
+          })
+
+      describe 'with a collection that contains a color variable', ->
+        beforeEach ->
+          collection.add createVar 'bar', '#abc', [12,20], '/path/to/foo.styl', 2
+
+        it 'returns the serialized collection', ->
+          expect(collection.serialize()).toEqual({
+            deserializer: 'VariablesCollection'
+            content: [
+              {
+                name: 'bar'
+                value: '#abc'
+                range: [12,20]
+                path: '/path/to/foo.styl'
+                line: 2
+                isColor: true
+                color: [170, 187, 204, 1]
+                variables: []
+              }
+            ]
+          })
+
+      describe 'with a collection that contains color variables with references', ->
+        beforeEach ->
+          collection.add createVar 'foo', '#abc', [0,10], '/path/to/foo.styl', 1
+          collection.add createVar 'bar', 'foo', [12,20], '/path/to/foo.styl', 2
+
+        it 'returns the serialized collection', ->
+          expect(collection.serialize()).toEqual({
+            deserializer: 'VariablesCollection'
+            content: [
+              {
+                name: 'foo'
+                value: '#abc'
+                range: [0,10]
+                path: '/path/to/foo.styl'
+                line: 1
+                isColor: true
+                color: [170, 187, 204, 1]
+                variables: []
+              },
+              {
+                name: 'bar'
+                value: 'foo'
+                range: [12,20]
+                path: '/path/to/foo.styl'
+                line: 2
+                isColor: true
+                color: [170, 187, 204, 1]
+                variables: ['foo']
+              }
+            ]
+          })
+
+    describe '.deserialize', ->
+      beforeEach ->
+        collection = atom.deserializers.deserialize({
+          deserializer: 'VariablesCollection'
+          content: [
+            {
+              name: 'foo'
+              value: '#abc'
+              range: [0,10]
+              path: '/path/to/foo.styl'
+              line: 1
+              isColor: true
+              color: [170, 187, 204, 1]
+              variables: []
+            },
+            {
+              name: 'bar'
+              value: 'foo'
+              range: [12,20]
+              path: '/path/to/foo.styl'
+              line: 2
+              isColor: true
+              color: [170, 187, 204, 1]
+              variables: ['foo']
+            },
+            {
+              name: 'baz'
+              value: '0.5'
+              range: [22,30]
+              path: '/path/to/foo.styl'
+              line: 3
+            }
+          ]
+        })
+
+      it 'restores the variables', ->
+        expect(collection.length).toEqual(3)
+        expect(collection.getColorVariables().length).toEqual(2)
+
+      it 'restores all the denormalized data in the collection', ->
+        expect(collection.variableNames).toEqual(['foo', 'bar', 'baz'])
+        expect(Object.keys collection.variablesByPath).toEqual(['/path/to/foo.styl'])
+        expect(collection.variablesByPath['/path/to/foo.styl'].length).toEqual(3)
+        expect(collection.dependencyGraph).toEqual({
+          foo: ['bar']
+        })
