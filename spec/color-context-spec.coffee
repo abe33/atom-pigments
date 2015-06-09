@@ -66,14 +66,16 @@ describe 'ColorContext', ->
 
     beforeEach ->
 
-      variables =[
+      variables = [
         createVar 'x', '10'
         createVar 'y', '0.1'
         createVar 'z', '10%'
         createColorVar 'c', 'rgb(255,127,0)'
       ]
 
-      context = new ColorContext(variables)
+      colorVariables = variables.filter (v) -> v.isColor
+
+      context = new ColorContext(variables, colorVariables)
 
     itParses('x').asInt(10)
     itParses('y').asFloat(0.1)

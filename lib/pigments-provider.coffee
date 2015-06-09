@@ -42,10 +42,10 @@ class PigmentsProvider
     matchedVariables = variables.filter (v) -> ///^#{_.escapeRegExp prefix}///.test v.name
 
     matchedVariables.forEach (v) ->
-      if v.isColor()
+      if v.isColor
         suggestions.push {
           text: v.name
-          rightLabelHTML: "<span class='color-suggestion-preview' style='background: #{v.getColor().toCSS()}'></span>"
+          rightLabelHTML: "<span class='color-suggestion-preview' style='background: #{v.color.toCSS()}'></span>"
           replacementPrefix: prefix
           className: 'color-suggestion'
         }
