@@ -56,6 +56,13 @@ describe 'ColorParser', ->
       '@list-item-height': '@component-line-height'
     }).asUndefined()
 
+  itParses('c').withContext({'c': 'c'}).asUndefined()
+  itParses('c').withContext({
+    'c': 'd'
+    'd': 'e'
+    'e': 'c'
+  }).asUndefined()
+
   itParses('#7fff7f00').asColor(255, 127, 0, 0.5)
   itParses('#ff7f00').asColor(255, 127, 0)
   itParses('#f70').asColor(255, 119, 0)
