@@ -77,7 +77,7 @@ class VariablesCollection
     }
 
     for path, collection of pathsCollection
-      {created, updated, destroyed} = @updatePathCollection(path, collection) or {}
+      {created, updated, destroyed} = @updatePathCollection(path, collection, true) or {}
 
       results.created = results.created.concat(created) if created?
       results.updated = results.updated.concat(updated) if updated?

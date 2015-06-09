@@ -398,6 +398,36 @@ describe 'ColorProject', ->
               expect(variable.range[1]).toEqual(variablesTextRanges[variable.name][1] + 2)
               expect(variable.bufferRange.isEqual(variablesBufferRanges[variable.name])).toBeFalsy()
 
+      describe 'when a color is removed', ->
+        [variablesTextRanges] = []
+        beforeEach ->
+          runs ->
+            variablesTextRanges = {}
+            colorBuffer.getVariableMarkers().forEach (marker) ->
+              variablesTextRanges[marker.variable.name] = marker.variable.range
+
+            editor.setSelectedBufferRange([[1,0],[2,0]])
+            editor.insertText('')
+            editor.getBuffer().emitter.emit('did-stop-changing')
+
+          waitsFor -> eventSpy.callCount > 0
+
+        it 'reloads the variables with the buffer instead of the file', ->
+          expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
+          expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT - 1)
+
+        it 'uses the buffer ranges to detect which variables were really changed', ->
+          expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(1)
+          expect(eventSpy.argsForCall[0][0].created).toBeUndefined()
+          expect(eventSpy.argsForCall[0][0].updated).toBeUndefined()
+
+        it 'can no longer be found in the project variables', ->
+          expect(project.getVariables().some (v) -> v.name is 'colors.red').toBeFalsy()
+          expect(project.getColorVariables().some (v) -> v.name is 'colors.red').toBeFalsy()
+
+        it 'dispatches a did-update-variables event', ->
+          expect(eventSpy).toHaveBeenCalled()
+
     describe '::setIgnoredNames', ->
       describe 'with an empty array', ->
         beforeEach ->
