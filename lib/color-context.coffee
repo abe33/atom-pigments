@@ -4,7 +4,7 @@ ColorExpression = require './color-expression'
 
 module.exports =
 class ColorContext
-  constructor: (@variables=[], @colorVariables=null, @parser) ->
+  constructor: (@variables=[], @colorVariables=[], @parser) ->
     @vars = {}
     @colorVars = {}
 
