@@ -125,7 +125,7 @@ describe 'ColorMarkerElement', ->
 
     it 'sets the drop shadow color of the region with the color css value', ->
       for region in regions
-        expect(region.style.backgroundColor).toEqual('rgb(255, 0, 0)')
+        expect(region.style.borderColor).toEqual('rgb(255, 0, 0)')
 
     describe 'when the marker is modified', ->
       beforeEach ->
