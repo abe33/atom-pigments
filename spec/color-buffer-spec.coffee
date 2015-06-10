@@ -456,7 +456,7 @@ describe 'ColorBuffer', ->
         expect(validMarkers.length).toEqual(5)
 
       it 'does not ask the project to reload the variables', ->
-        expect(project.reloadVariablesForPath).not.toHaveBeenCalled()
+        expect(project.reloadVariablesForPath.mostRecentCall.args[0]).not.toEqual(colorBuffer.editor.getPath())
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
