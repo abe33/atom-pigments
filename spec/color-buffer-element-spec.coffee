@@ -15,7 +15,7 @@ describe 'ColorBufferElement', ->
       editor.setSelectedBufferRange(range)
 
     editor.insertText(text)
-    editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
+    advanceClock(500) unless options.noEvent
 
   jsonFixture = (fixture, data) ->
     jsonPath = path.resolve(__dirname, 'fixtures', fixture)

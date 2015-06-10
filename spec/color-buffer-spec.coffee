@@ -19,7 +19,7 @@ describe 'ColorBuffer', ->
       editor.setSelectedBufferRange(range)
 
     editor.insertText(text)
-    editor.getBuffer().emitter.emit('did-stop-changing') unless options.noEvent
+    advanceClock(500) unless options.noEvent
 
   beforeEach ->
     atom.config.set 'pigments.delayBeforeScan', 0
