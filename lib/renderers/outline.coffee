@@ -16,4 +16,4 @@ class OutlineRenderer extends RegionRenderer
 
   styleRegion: (region, color) ->
     region.classList.add('outline')
-    region.style.backgroundColor = color
+    region.style.borderColor = color
