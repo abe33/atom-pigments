@@ -18,7 +18,7 @@ class ColorBuffer
     @subscriptions.add @editor.onDidDestroy => @destroy()
 
     @subscriptions.add @editor.onDidChange =>
-      @terminateRunningTask()
+      @terminateRunningTask() if @initialized and @variableInitialized
       clearTimeout(@timeout) if @timeout?
 
     @subscriptions.add @editor.onDidStopChanging =>
@@ -66,6 +66,7 @@ class ColorBuffer
 
     @initializePromise = @scanBufferForColors().then (results) =>
       @colorMarkers = @createColorMarkers(results)
+      @initialized = true
 
     @variablesAvailable()
     @initializePromise
@@ -106,6 +107,7 @@ class ColorBuffer
       @scanBufferForColors variables: results
     .then (results) =>
       @updateColorMarkers(results)
+      @variableInitialized = true
     .catch (reason) ->
       console.log reason
 
@@ -122,6 +124,7 @@ class ColorBuffer
     .then (results) =>
       @updateColorMarkers(results)
     .catch (reason) ->
+      console.log reason
 
   terminateRunningTask: -> @task?.terminate()
 
