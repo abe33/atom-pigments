@@ -24,6 +24,7 @@
 
 .background-color {
   z-index: -2;
+  margin-top: -2px;
 
   &:before {
     content: '';
@@ -64,7 +65,7 @@ atom-text-editor::shadow pigments-markers,
 pigments-markers {
   position: relative;
   display: block;
-  z-index: -1;
+  z-index: 1;
 
   &.above-editor-content {
     z-index: 1;
@@ -85,13 +86,16 @@ pigments-color-marker {
     }
 
     &.outline {
-      background-image: url(atom://pigments/resources/transparent-background.png);
-      margin-left: -2px;
+      margin-left: -1px;
+      margin-top: -2px;
       padding-left: 4px;
 
-      border-radius: 3px;
+      border-radius: 0;
 
       &::before {
+        box-sizing: border-box;
+        border: 2px solid transparent;
+        border-image: -webkit-repeating-linear-gradient(45deg, #808080 4px, #6A6A6A 4px, #6A6A6A 8px, #808080 8px, #808080 12px) 1 1 1 1 round;
         content: '';
         border-radius: inherit;
         background-color: inherit;
@@ -100,15 +104,13 @@ pigments-color-marker {
       }
 
       &::after {
+        box-sizing: border-box;
         content: '';
         display: block;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 2px;
-        border-radius: 2px;
-        background: @syntax-background-color;
+        border: 2px solid transparent;
+        border-color: inherit;
+        border-radius: inherit;
+        .absolute-box;
       }
     }
 
@@ -128,6 +130,21 @@ pigments-color-marker {
     margin-top: 0.15em;
     border-radius: 50%;
     vertical-align: bottom;
+
+    &:before {
+      content: '';
+      background: url(atom://pigments/resources/transparent-background.png);
+      background-size: 100%;
+      border-radius: inherit;
+      .absolute-box;
+    }
+
+    &:after {
+      content: '';
+      background: inherit;
+      border-radius: inherit;
+      .absolute-box;
+    }
   }
 }
 
