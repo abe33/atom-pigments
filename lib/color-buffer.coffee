@@ -45,7 +45,7 @@ class ColorBuffer
       @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}
 
     # Needed to clean the serialized markers from previous versions
-    @editor.findMarkers(type: 'pigments-variable').forEach (m) => m.destroy()
+    @editor.findMarkers(type: 'pigments-variable').forEach (m) -> m.destroy()
 
     if colorMarkers?
       @restoreMarkersState(colorMarkers)
