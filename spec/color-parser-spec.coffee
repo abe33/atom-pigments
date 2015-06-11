@@ -486,3 +486,9 @@ describe 'ColorParser', ->
     '@a': '0.5'
   }).asInvalid()
   itParses('fade(@c, @a,)').asUndefined()
+
+  itParses('contrast(#bbbbbb)').asColor(0,0,0)
+  itParses('contrast(#333333)').asColor(255,255,255)
+  itParses('contrast(#bbbbbb, rgb(20,20,20))').asColor(20,20,20)
+  itParses('contrast(#333333, rgb(20,20,20), rgb(140,140,140))').asColor(140,140,140)
+  itParses('contrast(#666666, rgb(20,20,20), rgb(140,140,140), 13%)').asColor(140,140,140)

@@ -65,6 +65,13 @@ class ColorContext
       res = parseInt(@vars[value].value, base)
     res
 
+  readPercent: (value) ->
+    if not /\d+/.test(value) and @vars[value]?
+      @usedVariables.push(value)
+      value = @vars[value].value
+
+    Math.round(parseFloat(value) * 2.55)
+
   readIntOrPercent: (value) ->
     if not /\d+/.test(value) and @vars[value]?
       @usedVariables.push(value)

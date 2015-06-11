@@ -50,6 +50,14 @@ mixColors = (color1, color2, amount=0.5) ->
 
   color
 
+contrast = (base, dark=new Color('black'), light=new Color('white'), threshold=0.43) ->
+  [light, dark] = [dark, light] if dark.luma > light.luma
+
+  if base.luma > threshold
+    dark
+  else
+    light
+
 readParam = (param, block) ->
   re = ///\$(\w+):\s*((-?#{float})|#{variables})///
   if re.test(param)
@@ -599,6 +607,49 @@ module.exports = getRegistry: (context) ->
 
     @hsl = [(360 + h + angle) % 360, s, l]
     @alpha = baseColor.alpha
+
+  # contrast(#666666, #111111, #999999, threshold)
+  registry.createExpression 'contrast_n_arguments', strip("
+    contrast#{ps}
+      (
+        #{notQuote}
+        #{comma}
+        #{notQuote}
+      )
+    #{pe}
+  "), (match, expression, context) ->
+    [_, expr] = match
+
+    [base, dark, light, threshold] = split(expr)
+
+    baseColor = context.readColor(base)
+    dark = context.readColor(dark)
+    light = context.readColor(light)
+    threshold = context.readPercent(threshold) if threshold?
+
+    return @invalid = true if isInvalid(baseColor)
+    return @invalid = true if dark?.invalid
+    return @invalid = true if light?.invalid
+
+    res = contrast(baseColor, dark, light)
+
+    return @invalid = true if isInvalid(res)
+
+    {@rgb} = contrast(baseColor, dark, light, threshold)
+
+  # contrast(#666666)
+  registry.createExpression 'contrast_1_argument', strip("
+    contrast#{ps}
+      (#{notQuote})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, subexpr] = match
+
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+
+    {@rgb} = contrast(baseColor)
 
   # color(green tint(50%))
   registry.createExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
