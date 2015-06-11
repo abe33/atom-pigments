@@ -365,6 +365,24 @@ module.exports = getRegistry: (context) ->
     @hsl = [h, s, clampInt(l + amount)]
     @alpha = baseColor.alpha
 
+  # fade(#ffffff, 0.5)
+  registry.createExpression 'fade', strip("
+    fade#{ps}
+      (#{notQuote})
+      #{comma}
+      (#{floatOrPercent}|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, subexpr, amount] = match
+
+    amount = context.readFloatOrPercent(amount)
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+
+    @rgb = baseColor.rgb
+    @alpha = amount
+
   # transparentize(#ffffff, 0.5)
   # transparentize(#ffffff, 50%)
   # fadeout(#ffffff, 0.5)

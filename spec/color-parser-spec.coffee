@@ -472,3 +472,17 @@ describe 'ColorParser', ->
     '@a': '120'
   }).asInvalid()
   itParses('spin(@c, @a,)').asUndefined()
+
+  itParses('fade(#F00, 0.5)').asColor(255, 0, 0, 0.5)
+  itParses('fade(#F00, 50%)').asColor(255, 0, 0, 0.5)
+  itParses('fade(@c, @a)').withContext({
+    '@c': asColor '#F00'
+    '@a': '0.5'
+  }).asColor(255, 0, 0, 0.5)
+  itParses('fade(@c, @a)').withContext({
+    '@a': '0.5'
+  }).asInvalid()
+  itParses('fade(@c, @a)').withContext({
+    '@a': '0.5'
+  }).asInvalid()
+  itParses('fade(@c, @a,)').asUndefined()
