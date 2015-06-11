@@ -55,7 +55,7 @@ module.exports =
     markerType:
       type: 'string'
       default: 'background'
-      enum: ['background', 'outline', 'underline', 'dot']
+      enum: ['background', 'outline', 'underline', 'dot', 'square-dot']
     sortPaletteColors:
       type: 'string'
       default: 'none'

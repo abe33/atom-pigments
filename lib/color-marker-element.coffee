@@ -5,6 +5,7 @@ RENDERERS =
   outline: require './renderers/outline'
   underline: require './renderers/underline'
   dot: require './renderers/dot'
+  'square-dot': require './renderers/square-dot'
 
 class ColorMarkerElement extends HTMLElement
   renderer: new RENDERERS.background
@@ -46,7 +47,9 @@ class ColorMarkerElement extends HTMLElement
     {style, regions, class: cls} = @renderer.render(@colorMarker)
 
     @appendChild(region) for region in regions if regions?
-    @classList.add(cls) if cls?
+    if cls?
+      classes = cls.split(' ')
+      @classList.add(cls) for cls in classes
 
     if style?
       @style[k] = v for k,v of style

@@ -238,3 +238,55 @@ describe 'ColorMarkerElement', ->
     it 'adds the dot class on the marker', ->
       for markersElement in markersElements
         expect(markersElement.classList.contains('dot')).toBeTruthy()
+
+  ##     ######   #######  ##     ##    ###    ########  ########
+  ##    ##    ## ##     ## ##     ##   ## ##   ##     ## ##
+  ##    ##       ##     ## ##     ##  ##   ##  ##     ## ##
+  ##     ######  ##     ## ##     ## ##     ## ########  ######
+  ##          ## ##  ## ## ##     ## ######### ##   ##   ##
+  ##    ##    ## ##    ##  ##     ## ##     ## ##    ##  ##
+  ##     ######   ##### ##  #######  ##     ## ##     ## ########
+
+  describe 'when the render mode is set to dot', ->
+    [regions, markers, markersElements] = []
+
+    createMarker = (range, color, text) ->
+      marker = editor.markBufferRange(range, {
+        type: 'pigments-color'
+        invalidate: 'touch'
+      })
+      color = new Color(color)
+      text = text
+
+      colorMarker = new ColorMarker({marker, color, text})
+
+    beforeEach ->
+      editor = new TextEditor({})
+      editor.setText("""
+      body {
+        background: red, green, blue;
+      }
+      """)
+
+      editorElement = atom.views.getView(editor)
+      jasmineContent.appendChild(editorElement)
+
+      markers = [
+        createMarker [[1,13],[1,16]], '#ff0000', 'red'
+        createMarker [[1,18],[1,23]], '#00ff00', 'green'
+        createMarker [[1,25],[1,29]], '#0000ff', 'blue'
+      ]
+
+      ColorMarkerElement.setMarkerType('square-dot')
+
+      markersElements = markers.map (colorMarker) ->
+        colorMarkerElement = new ColorMarkerElement
+        colorMarkerElement.setModel(colorMarker)
+
+        jasmineContent.appendChild(colorMarkerElement)
+        colorMarkerElement
+
+    it 'adds the dot class on the marker', ->
+      for markersElement in markersElements
+        expect(markersElement.classList.contains('dot')).toBeTruthy()
+        expect(markersElement.classList.contains('square')).toBeTruthy()
