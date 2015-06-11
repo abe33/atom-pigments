@@ -1,3 +1,14 @@
+<a name="v0.6.0"></a>
+# v0.6.0 (2015-06-11)
+
+## Features
+
+- Add a square dots marker renderer ([4b73948b](https://github.com/abe33/atom-pigments/commit/4b73948b4ef8172488de72dc017ddd21f4140ad1), [#15](https://github.com/abe33/atom-pigments/issues/15))
+
+## Bug Fixes
+
+- Remove annoying warning dialog for large project ([30cd2553](https://github.com/abe33/atom-pigments/commit/30cd2553677b2aeaa605a5e84251eea47975c7d9), [#23](https://github.com/abe33/atom-pigments/issues/23))
+
 <a name="v0.5.0"></a>
 # v0.5.0 (2015-06-11)
 
