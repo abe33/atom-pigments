@@ -10,7 +10,6 @@ PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
 ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
-SourcesPopupElement = require './sources-popup-element'
 VariablesCollection = require './variables-collection'
 
 compareArray = (a,b) ->
@@ -113,15 +112,6 @@ class ColorProject
     destroyed = null
 
     @loadPaths().then (paths) =>
-      if paths.length >= @sourcesWarningThreshold
-        @openSourcesPopup(paths).then (ignoreRules) =>
-          @ignoredNames = (@ignoredNames ? []).concat(ignoreRules)
-          paths.filter (p) ->
-            return false for source in ignoreRules when minimatch(p, source, matchBase: true, dot: true)
-            return true
-      else
-        Promise.resolve(paths)
-    .then (paths) =>
       # There was serialized paths, and the initialization discovered
       # some new or dirty ones.
       if @paths? and paths.length > 0
@@ -277,15 +267,6 @@ class ColorProject
     path = atom.project.relativize(path)
     ignoredNames = @getIgnoredNames()
     return true for ignore in ignoredNames when minimatch(path, ignore, matchBase: true, dot: true)
-
-  openSourcesPopup: (paths) ->
-    new Promise (resolve, reject) ->
-      popup = new SourcesPopupElement
-      popup.initialize({paths, resolve, reject})
-      workspaceElement = atom.views.getView(atom.workspace)
-      panelContainer = workspaceElement.querySelector('atom-panel-container.modal')
-
-      panelContainer.appendChild(popup)
 
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##

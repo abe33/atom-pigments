@@ -134,16 +134,3 @@ Defines whether to merge colors duplicates together as a single result in the pa
 
 * Key: `pigments.mergeDuplicates`
 * Default: `false`
-
-### Sources Warning Threshold
-
-When the number of source paths found in a project (as defined by the `Source Names` setting) is greater than or equal to the threshold, a safeguard popup open to let you define how to proceed further in the project initialization. It's just a safety measure to avoid scanning too many irrelevant files.
-
-You can either choose to drop all the paths that were found or to keep them all.
-
-A last option let you specify ignores patterns specific to the current project to ignore. These patterns are separated by commas and use the [`minimatch`](https://github.com/isaacs/minimatch) to perform the comparison with the file paths. You can live test the patterns while in the dialog.
-
-![sourcesWarningThreshold](https://github.com/abe33/atom-pigments/blob/master/resources/paths-size-guard.gif?raw=true)
-
-* Key: `pigments.sourcesWarningThreshold`
-* Default: `50`
