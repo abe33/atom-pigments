@@ -36,6 +36,7 @@ class ColorBuffer
       @update()
 
     @subscriptions.add @project.onDidUpdateVariables =>
+      return unless @variableInitialized
       @scanBufferForColors().then (results) => @updateColorMarkers(results)
 
     @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
@@ -62,20 +63,13 @@ class ColorBuffer
     return Promise.resolve() if @colorMarkers?
     return @initializePromise if @initializePromise?
 
-
-    # @initializePromise = @variablesAvailable().then =>
-    #   @initialized = true
+    @updateVariableRanges()
 
     @initializePromise = @scanBufferForColors().then (results) =>
       @colorMarkers = @createColorMarkers(results)
       @initialized = true
 
-    @variablesAvailable().then =>
-      @updateVariableRanges()
-    #
-    # @initializePromise.then =>
-    #   console.log 'there'
-    #   @variablesAvailable().then -> console.log 'and there'
+    @initializePromise.then => @variablesAvailable()
 
     @initializePromise
 
@@ -229,7 +223,6 @@ class ColorBuffer
   updateColorMarkers: (results) ->
     newMarkers = []
     toCreate = []
-    console.log results, @editor.findMarkers(type: 'pigments-color')
     for result in results
       if marker = @findColorMarker(result)
         newMarkers.push(marker)
