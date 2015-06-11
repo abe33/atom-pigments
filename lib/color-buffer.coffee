@@ -62,13 +62,21 @@ class ColorBuffer
     return Promise.resolve() if @colorMarkers?
     return @initializePromise if @initializePromise?
 
-    @updateVariableRanges()
+
+    # @initializePromise = @variablesAvailable().then =>
+    #   @initialized = true
 
     @initializePromise = @scanBufferForColors().then (results) =>
       @colorMarkers = @createColorMarkers(results)
       @initialized = true
 
-    @variablesAvailable()
+    @variablesAvailable().then =>
+      @updateVariableRanges()
+    #
+    # @initializePromise.then =>
+    #   console.log 'there'
+    #   @variablesAvailable().then -> console.log 'and there'
+
     @initializePromise
 
   restoreMarkersState: (colorMarkers) ->
@@ -112,6 +120,8 @@ class ColorBuffer
       console.log reason
 
   update: ->
+    @terminateRunningTask()
+
     promise = if @isIgnored()
       @scanBufferForVariables()
     else unless @isVariablesSource()
@@ -219,6 +229,7 @@ class ColorBuffer
   updateColorMarkers: (results) ->
     newMarkers = []
     toCreate = []
+    console.log results, @editor.findMarkers(type: 'pigments-color')
     for result in results
       if marker = @findColorMarker(result)
         newMarkers.push(marker)

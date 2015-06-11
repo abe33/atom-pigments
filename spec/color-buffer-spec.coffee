@@ -21,7 +21,11 @@ describe 'ColorBuffer', ->
     editor.insertText(text)
     advanceClock(500) unless options.noEvent
 
+  afterEach ->
+    console.log '------------------ test end -------------------'
+
   beforeEach ->
+    console.log '------------------ test start -------------------'
     atom.config.set 'pigments.delayBeforeScan', 0
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
