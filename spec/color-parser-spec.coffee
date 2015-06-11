@@ -458,3 +458,17 @@ describe 'ColorParser', ->
     '$c': asColor 'rgb(200, 150, 170)'
     '$d': asColor 'rgba($c, 1)'
   }).asColor(200, 90, 230)
+
+  itParses('spin(#F00, 120)').asColor(0, 255, 0)
+  itParses('spin(#F00, -120)').asColor(0, 0, 255)
+  itParses('spin(@c, @a)').withContext({
+    '@c': asColor '#F00'
+    '@a': '120'
+  }).asColor(0, 255, 0)
+  itParses('spin(@c, @a)').withContext({
+    '@a': '120'
+  }).asInvalid()
+  itParses('spin(@c, @a)').withContext({
+    '@a': '120'
+  }).asInvalid()
+  itParses('spin(@c, @a,)').asUndefined()

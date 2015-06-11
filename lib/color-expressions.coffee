@@ -562,6 +562,26 @@ module.exports = getRegistry: (context) ->
     @rgb = [255 - r, 255 - g, 255 - b]
     @alpha = baseColor.alpha
 
+  # spin(green, 20)
+  registry.createExpression 'spin', strip("
+    spin#{ps}
+      (#{notQuote})
+      #{comma}
+      (-?#{int}|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, subexpr, angle] = match
+
+    baseColor = context.readColor(subexpr)
+    angle = context.readInt(angle)
+
+    return @invalid = true if isInvalid(baseColor)
+
+    [h,s,l] = baseColor.hsl
+
+    @hsl = [(360 + h + angle) % 360, s, l]
+    @alpha = baseColor.alpha
+
   # color(green tint(50%))
   registry.createExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
     try
