@@ -1,3 +1,20 @@
+<a name="v0.5.0"></a>
+# v0.5.0 (2015-06-11)
+
+## Features
+
+- Implement a variable that allow to speed up considerably considerably. ([c7ffc5c1](https://github.com/abe33/atom-pigments/commit/c7ffc5c19bf280928d204ea3b6ae5dfe5a931907))
+- Bump markers version ([e483bb34](https://github.com/abe33/atom-pigments/commit/e483bb340683942eefc4d363b6512e1a50083cf2))
+
+## Bug Fixes
+
+- Fix outline, underline and dot markers hidden by tiles ([818930fc](https://github.com/abe33/atom-pigments/commit/818930fca4b6c4a1e9e1879499fe656b4ed4ba6d), [#26](https://github.com/abe33/atom-pigments/issues/26))
+- Fix issue with variables update when rescanning a buffer ([5080531a](https://github.com/abe33/atom-pigments/commit/5080531a83ff6d578dd8210eea9ae5f419099d40))
+
+## Performances
+
+- Remove variables markers created in text buffer ([f701b6b9](https://github.com/abe33/atom-pigments/commit/f701b6b9ce01174154e90755c233afc2264b8eab))
+
 <a name="v0.4.5"></a>
 # v0.4.5 (2015-06-05)
 
