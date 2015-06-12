@@ -583,3 +583,10 @@ describe 'ColorParser', ->
     '@modifier': asColor '#666666'
   }).asColor('#99cc66')
   itParses('negation(@base, @modifier)').asInvalid()
+
+  itParses('blend(rgba(#FFDE00,.42), 0x19C261)').asColor('#7ace38')
+  itParses('blend(@top, @bottom)').withContext({
+    '@top': asColor 'rgba(#FFDE00,.42)'
+    '@bottom': asColor '0x19C261'
+  }).asColor('#7ace38')
+  itParses('blend(@top, @bottom)').asInvalid()

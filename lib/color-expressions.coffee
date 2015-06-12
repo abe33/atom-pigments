@@ -729,6 +729,32 @@ module.exports = getRegistry: (context) ->
 
     @rgba = baseColor.rgba
 
+  # blend(rgba(#FFDE00,.42), 0x19C261)
+  registry.createExpression 'stylus_blend', strip("
+    blend#{ps}
+      (
+        #{notQuote}
+        #{comma}
+        #{notQuote}
+      )
+    #{pe}
+  "), (match, expression, context) ->
+    [_, expr] = match
+
+    [color1, color2] = split(expr)
+
+    baseColor1 = context.readColor(color1)
+    baseColor2 = context.readColor(color2)
+
+    return @invalid = true if isInvalid(baseColor1) or isInvalid(baseColor2)
+
+    @rgba = [
+      baseColor1.red * baseColor1.alpha + baseColor2.red * (1 - baseColor1.alpha)
+      baseColor1.green * baseColor1.alpha + baseColor2.green * (1 - baseColor1.alpha)
+      baseColor1.blue * baseColor1.alpha + baseColor2.blue * (1 - baseColor1.alpha)
+      baseColor1.alpha + baseColor2.alpha - baseColor1.alpha * baseColor2.alpha
+    ]
+
   # multiply(#f00, #00F)
   blendMethod registry, 'multiply', BlendModes.MULTIPLY
 
