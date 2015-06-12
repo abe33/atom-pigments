@@ -492,3 +492,31 @@ describe 'ColorParser', ->
   itParses('contrast(#bbbbbb, rgb(20,20,20))').asColor(20,20,20)
   itParses('contrast(#333333, rgb(20,20,20), rgb(140,140,140))').asColor(140,140,140)
   itParses('contrast(#666666, rgb(20,20,20), rgb(140,140,140), 13%)').asColor(140,140,140)
+
+  itParses('contrast(@base)').withContext({
+    '@base': asColor '#bbbbbb'
+  }).asColor(0,0,0)
+  itParses('contrast(@base)').withContext({
+    '@base': asColor '#333333'
+  }).asColor(255,255,255)
+  itParses('contrast(@base, @dark)').withContext({
+    '@base': asColor '#bbbbbb'
+    '@dark': asColor 'rgb(20,20,20)'
+  }).asColor(20,20,20)
+  itParses('contrast(@base, @dark, @light)').withContext({
+    '@base': asColor '#333333'
+    '@dark': asColor 'rgb(20,20,20)'
+    '@light': asColor 'rgb(140,140,140)'
+  }).asColor(140,140,140)
+  itParses('contrast(@base, @dark, @light, @threshold)').withContext({
+    '@base': asColor '#666666'
+    '@dark': asColor 'rgb(20,20,20)'
+    '@light': asColor 'rgb(140,140,140)'
+    '@threshold': '13%'
+  }).asColor(140,140,140)
+
+  itParses('contrast(@base)').asInvalid()
+  itParses('contrast(@base)').asInvalid()
+  itParses('contrast(@base, @dark)').asInvalid()
+  itParses('contrast(@base, @dark, @light)').asInvalid()
+  itParses('contrast(@base, @dark, @light, @threshold)').asInvalid()
