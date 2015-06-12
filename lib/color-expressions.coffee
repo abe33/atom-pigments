@@ -27,6 +27,7 @@ ExpressionsRegistry = require './expressions-registry'
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
 Color = require './color'
+BlendModes = require './blend-modes'
 
 MAX_PER_COMPONENT =
   red: 255
@@ -57,6 +58,28 @@ contrast = (base, dark=new Color('black'), light=new Color('white'), threshold=0
     dark
   else
     light
+
+blendMethod = (registry, name, method) ->
+  registry.createExpression name, strip("
+    #{name}#{ps}
+      (
+        #{notQuote}
+        #{comma}
+        #{notQuote}
+      )
+    #{pe}
+  "), (match, expression, context) ->
+    [_, expr] = match
+
+    [color1, color2] = split(expr)
+
+    baseColor1 = context.readColor(color1)
+    baseColor2 = context.readColor(color2)
+
+    return @invalid = true if isInvalid(baseColor1) or isInvalid(baseColor2)
+
+    {@rgba} = baseColor1.blend(baseColor2, method)
+
 
 readParam = (param, block) ->
   re = ///\$(\w+):\s*((-?#{float})|#{variables})///
@@ -705,6 +728,33 @@ module.exports = getRegistry: (context) ->
         baseColor[name] = context.readFloat(value)
 
     @rgba = baseColor.rgba
+
+  # multiply(#f00, #00F)
+  blendMethod registry, 'multiply', BlendModes.MULTIPLY
+
+  # screen(#f00, #00F)
+  blendMethod registry, 'screen', BlendModes.SCREEN
+
+  # overlay(#f00, #00F)
+  blendMethod registry, 'overlay', BlendModes.OVERLAY
+
+  # softlight(#f00, #00F)
+  blendMethod registry, 'softlight', BlendModes.SOFT_LIGHT
+
+  # hardlight(#f00, #00F)
+  blendMethod registry, 'hardlight', BlendModes.HARD_LIGHT
+
+  # difference(#f00, #00F)
+  blendMethod registry, 'difference', BlendModes.DIFFERENCE
+
+  # exclusion(#f00, #00F)
+  blendMethod registry, 'exclusion', BlendModes.EXCLUSION
+
+  # average(#f00, #00F)
+  blendMethod registry, 'average', BlendModes.AVERAGE
+
+  # negation(#f00, #00F)
+  blendMethod registry, 'negation', BlendModes.NEGATION
 
   if context?.hasColorVariables()
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())

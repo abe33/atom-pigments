@@ -520,3 +520,66 @@ describe 'ColorParser', ->
   itParses('contrast(@base, @dark)').asInvalid()
   itParses('contrast(@base, @dark, @light)').asInvalid()
   itParses('contrast(@base, @dark, @light, @threshold)').asInvalid()
+
+  itParses('multiply(#ff6600, 0x666666)').asColor('#662900')
+  itParses('multiply(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#662900')
+  itParses('multiply(@base, @modifier)').asInvalid()
+
+  itParses('screen(#ff6600, 0x666666)').asColor('#ffa366')
+  itParses('screen(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#ffa366')
+  itParses('screen(@base, @modifier)').asInvalid()
+
+  itParses('overlay(#ff6600, 0x666666)').asColor('#ff5200')
+  itParses('overlay(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#ff5200')
+  itParses('overlay(@base, @modifier)').asInvalid()
+
+  itParses('softlight(#ff6600, 0x666666)').asColor('#ff5a00')
+  itParses('softlight(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#ff5a00')
+  itParses('softlight(@base, @modifier)').asInvalid()
+
+  itParses('hardlight(#ff6600, 0x666666)').asColor('#cc5200')
+  itParses('hardlight(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#cc5200')
+  itParses('hardlight(@base, @modifier)').asInvalid()
+
+  itParses('difference(#ff6600, 0x666666)').asColor('#990066')
+  itParses('difference(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#990066')
+  itParses('difference(@base, @modifier)').asInvalid()
+
+  itParses('exclusion(#ff6600, 0x666666)').asColor('#997a66')
+  itParses('exclusion(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#997a66')
+  itParses('exclusion(@base, @modifier)').asInvalid()
+
+  itParses('average(#ff6600, 0x666666)').asColor('#b36633')
+  itParses('average(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#b36633')
+  itParses('average(@base, @modifier)').asInvalid()
+
+  itParses('negation(#ff6600, 0x666666)').asColor('#99cc66')
+  itParses('negation(@base, @modifier)').withContext({
+    '@base': asColor '#ff6600'
+    '@modifier': asColor '#666666'
+  }).asColor('#99cc66')
+  itParses('negation(@base, @modifier)').asInvalid()

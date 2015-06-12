@@ -207,11 +207,11 @@ class Color
   transparentize: (alpha) ->
     new Color(@red, @green, @blue, alpha)
 
-  blend: (color, method) ->
+  blend: (color, method, preserveAlpha=true) ->
     r = method(@red, color.red)
     g = method(@green, color.green)
     b = method(@blue, color.blue)
-    a = method(@alpha, color.alpha)
+    a = if preserveAlpha then @alpha else method(@alpha, color.alpha) 
 
     new Color(r,g,b,a)
 
