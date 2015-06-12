@@ -590,3 +590,9 @@ describe 'ColorParser', ->
     '@bottom': asColor '0x19C261'
   }).asColor('#7ace38')
   itParses('blend(@top, @bottom)').asInvalid()
+
+  itParses('complement(red)').asColor('#00ffff')
+  itParses('complement(@base)').withContext({
+    '@base': asColor 'red'
+  }).asColor('#00ffff')
+  itParses('complement(@base)').asInvalid()

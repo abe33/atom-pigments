@@ -604,6 +604,19 @@ module.exports = getRegistry: (context) ->
     @rgb = [255 - r, 255 - g, 255 - b]
     @alpha = baseColor.alpha
 
+  # complement(green)
+  registry.createExpression 'complement', "complement#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+    [_, subexpr] = match
+
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+
+    [h,s,l] = baseColor.hsl
+
+    @hsl = [(h + 180) % 360, s, l]
+    @alpha = baseColor.alpha
+
   # spin(green, 20)
   registry.createExpression 'spin', strip("
     spin#{ps}
