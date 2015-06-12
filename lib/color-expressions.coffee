@@ -456,36 +456,29 @@ module.exports = getRegistry: (context) ->
   registry.createExpression 'mix', strip("
     mix#{ps}
       (
-        (#{notQuote})
+        #{notQuote}
         #{comma}
-        (#{notQuote})
+        #{notQuote}
         #{comma}
         (#{floatOrPercent}|#{variables})
-      |
-        (#{notQuote})
-        #{comma}
-        (#{notQuote})
       )
     #{pe}
   "), (match, expression, context) ->
-    [_, _, color1A, color2A, amount, _, _, color1B, color2B] = match
+    [_, expr] = match
 
-    if color1A?
-      color1 = color1A
-      color2 = color2A
+    [color1, color2, amount] = split(expr)
+
+    if amount?
       amount = context.readFloatOrPercent(amount)
     else
-      color1 = color1B
-      color2 = color2B
       amount = 0.5
-
 
     baseColor1 = context.readColor(color1)
     baseColor2 = context.readColor(color2)
 
     return @invalid = true if isInvalid(baseColor1) or isInvalid(baseColor2)
 
-    @rgba = mixColors(baseColor1, baseColor2, amount).rgba
+    {@rgba} = mixColors(baseColor1, baseColor2, amount)
 
   # tint(red, 50%)
   registry.createExpression 'tint', strip("

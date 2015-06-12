@@ -359,8 +359,8 @@ describe 'ColorParser', ->
     '$r': '-45deg'
   }).asColor(136, 17, 106, 0.5)
 
-  itParses('mix(red, blue)').asColor(127, 0, 127)
-  itParses('mix(red, blue, 25%)').asColor(63, 0, 191)
+  itParses('mix(rgb(255,0,0), blue)').asColor(127, 0, 127)
+  itParses('mix(red, rgb(0,0,255), 25%)').asColor(63, 0, 191)
   itParses('mix($a, $b, $r)').asInvalid()
   itParses('mix($a, $b, $r)').withContext({
     '$a': asColor 'hsv($h, $s, $v)'
