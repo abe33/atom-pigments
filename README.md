@@ -93,7 +93,6 @@ Defines the render mode of color markers. The possible values are:
     <th>background</th>
     <th>outline</th>
     <th>underline</th>
-    <th>dot</th>
   </tr>
   <tr>
     <td>
@@ -105,8 +104,17 @@ Defines the render mode of color markers. The possible values are:
     <td>
       <img src='https://github.com/abe33/atom-pigments/blob/master/resources/underline-renderer.png?raw=true'/>
     </td>
+  </tr>
+  <tr>
+    <th>dot</th>
+    <th>square-dot</th>
+  </tr>
+  <tr>
     <td>
       <img src='https://github.com/abe33/atom-pigments/blob/master/resources/dot-renderer.png?raw=true'/>
+    </td>
+    <td>
+      <img src='https://github.com/abe33/atom-pigments/blob/master/resources/square-dot-renderer.png?raw=true'/>
     </td>
   </tr>
 </table>
