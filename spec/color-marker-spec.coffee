@@ -2,7 +2,7 @@
 Color = require '../lib/color'
 ColorMarker = require '../lib/color-marker'
 
-fdescribe 'ColorMarker', ->
+describe 'ColorMarker', ->
   [editor, marker, colorMarker, colorMarkerElement, jasmineContent] = []
 
   beforeEach ->
