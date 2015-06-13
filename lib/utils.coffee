@@ -1,5 +1,9 @@
 
 utils =
+  fill: (str, length, filler='0') ->
+    str = filler + str while str.length < length
+    str
+
   strip: (str) -> str.replace(/\s+/g, '')
 
   clamp: (n) -> Math.min(1, Math.max(0, n))
