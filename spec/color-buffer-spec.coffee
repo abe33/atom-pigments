@@ -135,6 +135,16 @@ describe 'ColorBuffer', ->
 
         expect(project.colorBuffersByEditorId[editor.id]).toBeUndefined()
 
+    describe '::getColorMarkerAtBufferPosition', ->
+      describe 'when the buffer position is contained in a marker range', ->
+        it 'returns the corresponding color marker', ->
+          colorMarker = colorBuffer.getColorMarkerAtBufferPosition([2, 15])
+          expect(colorMarker).toEqual(colorBuffer.colorMarkers[1])
+
+      describe 'when the buffer position is not contained in a marker range', ->
+        it 'returns undefined', ->
+          expect(colorBuffer.getColorMarkerAtBufferPosition([1, 15])).toBeUndefined()
+
     ##    ##     ##    ###    ########   ######
     ##    ##     ##   ## ##   ##     ## ##    ##
     ##    ##     ##  ##   ##  ##     ## ##

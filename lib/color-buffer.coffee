@@ -210,6 +210,14 @@ class ColorBuffer
 
   getValidColorMarkers: -> @getColorMarkers().filter (m) -> m.color.isValid()
 
+  getColorMarkerAtBufferPosition: (bufferPosition) ->
+    marker = @editor.findMarkers({
+      type: 'pigments-color'
+      containsBufferPosition: bufferPosition
+    })[0]
+
+    @colorMarkersByMarkerId[marker.id] if marker?
+
   createColorMarkers: (results) ->
     return if @destroyed
     results.map (result) =>
