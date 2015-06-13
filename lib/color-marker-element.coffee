@@ -1,10 +1,10 @@
 {CompositeDisposable, Emitter} = require 'atom'
 
 RENDERERS =
-  background: require './renderers/background'
-  outline: require './renderers/outline'
-  underline: require './renderers/underline'
-  dot: require './renderers/dot'
+  'background': require './renderers/background'
+  'outline': require './renderers/outline'
+  'underline': require './renderers/underline'
+  'dot': require './renderers/dot'
   'square-dot': require './renderers/square-dot'
 
 class ColorMarkerElement extends HTMLElement
