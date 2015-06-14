@@ -85,6 +85,27 @@ module.exports =
       'pigments:show-palette': => @showPalette()
       'pigments:reload': => @reloadProjectVariables()
 
+
+    convertMethod = (action) => (event) =>
+      marker = if @lastEvent?
+        action @colorMarkerForMouseEvent(@lastEvent)
+      else
+        editor = atom.workspace.getActiveTextEditor()
+        colorBuffer = @project.colorBufferForEditor(editor)
+
+        editor.getCursors().forEach (cursor) =>
+          marker = colorBuffer.getColorMarkerAtBufferPosition(cursor.getBufferPosition())
+          action(marker)
+
+      @lastEvent = null
+
+    atom.commands.add 'atom-text-editor',
+      'pigments:convert-to-hex': convertMethod (marker) ->
+        marker.convertContentToHex() if marker?
+
+      'pigments:convert-to-rgba': convertMethod (marker) ->
+        marker.convertContentToRGBA() if marker?
+
     atom.workspace.addOpener (uriToOpen) =>
       url ||= require 'url'
 
@@ -101,6 +122,16 @@ module.exports =
 
       atom.views.getView(@project.getPalette())
 
+    atom.contextMenu.add
+      'atom-text-editor': [{
+        label: 'Pigments'
+        submenu: [
+          {label: 'Convert to hexadecimal', command: 'pigments:convert-to-hex'}
+          {label: 'Convert to rgba', command: 'pigments:convert-to-rgba'}
+        ]
+        shouldDisplay: (event) => @shouldDisplayContextMenu(event)
+      }]
+
   deactivate: ->
     @getProject()?.destroy?()
 
@@ -111,6 +142,16 @@ module.exports =
   provideAPI: ->
     PigmentsAPI ?= require './pigments-api'
     new PigmentsAPI(@getProject())
+
+  shouldDisplayContextMenu: (event) ->
+    @lastEvent = event
+    setTimeout (=> @lastEvent = null), 10
+    @colorMarkerForMouseEvent(event)?
+
+  colorMarkerForMouseEvent: (event) ->
+    editor = atom.workspace.getActiveTextEditor()
+    colorBuffer = @project.colorBufferForEditor(editor)
+    colorBuffer.colorMarkerForMouseEvent(event)
 
   serialize: -> {project: @project.serialize()}
 

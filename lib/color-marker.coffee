@@ -51,8 +51,8 @@ class ColorMarker
 
   convertContentToRGBA: ->
     if @color.alpha is 1
-      rgba = "rgb(#{@color.red}, #{@color.green}, #{@color.blue})"
+      rgba = "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
     else
-      rgba = "rgba(#{@color.red}, #{@color.green}, #{@color.blue}, #{@color.alpha})"
+      rgba = "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
 
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)
