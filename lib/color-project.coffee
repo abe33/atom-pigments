@@ -23,7 +23,6 @@ class ColorProject
 
   @deserialize: (state) ->
     markersVersion = SERIALIZE_MARKERS_VERSION
-    markersVersion += '-dev' if atom.inDevMode() and !atom.inSpecMode()
     state = {} if state?.version isnt SERIALIZE_VERSION
 
     if state?.markersVersion isnt markersVersion
