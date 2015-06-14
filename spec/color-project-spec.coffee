@@ -168,7 +168,7 @@ describe 'ColorProject', ->
       atom.config.set 'pigments.sourceNames', ['*.sass']
 
       [fixturesPath] = atom.project.getPaths()
-      rootPath = "#{fixturesPath}/project-no-sources"
+      rootPath = "#{fixturesPath}-no-sources"
       atom.project.setPaths([rootPath])
 
       project = new ColorProject({})
