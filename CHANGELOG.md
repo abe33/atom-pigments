@@ -1,3 +1,23 @@
+<a name="v0.7.0"></a>
+# v0.7.0 (2015-06-14)
+
+## Features
+
+- Add convert to hex and convert to rgba commands ([592157b3](https://github.com/abe33/atom-pigments/commit/592157b31bf1e6fe813071745b09e68bf1922c4e), [#22](https://github.com/abe33/atom-pigments/issues/22))
+  <br>Available in the context when over a color.
+- Add method on color buffer to retrieve color markers with buffer position ([ba00c5d8](https://github.com/abe33/atom-pigments/commit/ba00c5d894dfd88dfae9dba02c686fdfa7d5669f))
+- Add method on color markers to convert its content to hex or rgba ([3ef5a337](https://github.com/abe33/atom-pigments/commit/3ef5a3374b555e1ed1ef47b9b15692c88676e4fc))
+- Add support for sass complement function ([75e03377](https://github.com/abe33/atom-pigments/commit/75e03377639d0896c470bfe11a9b484180eb4632))
+- Add support for stylus blend function ([c601c647](https://github.com/abe33/atom-pigments/commit/c601c647213f5cce0d6deae5809a284bc0e08390))
+- Add support for less blending functions ([30fbe00e](https://github.com/abe33/atom-pigments/commit/30fbe00ef207923fbcd2390a15ecbb057e731f0c))
+- Add support for less contrast function ([ffb6904b](https://github.com/abe33/atom-pigments/commit/ffb6904bd05b3a0f89975b79a0f93e6740f139da))
+- Add support for less fade function ([5470dabb](https://github.com/abe33/atom-pigments/commit/5470dabba1d6570cce79a0e385ce15cbfbb59a29))
+- Add support for less spin function ([e47ed885](https://github.com/abe33/atom-pigments/commit/e47ed8856838a94a2ee4acc6575519710abc0016))
+
+## Bug Fixes
+
+- Fix mix operation not working with color expression with paranthesis ([4bef6832](https://github.com/abe33/atom-pigments/commit/4bef6832d53b74b7d6e171404320fa57d7e304a1))
+
 <a name="v0.6.0"></a>
 # v0.6.0 (2015-06-11)
 
