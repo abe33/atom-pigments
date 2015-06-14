@@ -24,15 +24,53 @@ You can display the project's palette through the `Pigments: Show Palette` comma
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/palette.gif?raw=true)
 
+This command can be triggered using the keyboard by defining a keybinding like this:
+
+```coffee
+'atom-workspace':
+  'alt-shift-p': 'pigments:show-palette'
+```
+
 ### Pigments: Find Colors
 
 You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
 
+This command can be triggered using the keyboard by defining a keybinding like this:
+
+```coffee
+'atom-workspace':
+  'alt-shift-f': 'pigments:find-colors'
+```
+
 ### Pigments: Reload
 
 This command will force a reload of all variables in the project, this can be useful when the serialized state of the plugin contains invalid data and you want to get rid of them without having to touch to the content of the `.atom/storage` directory.
+
+This command can be triggered using the keyboard by defining a keybinding like this:
+
+```coffee
+'atom-workspace':
+  'alt-shift-r': 'pigments:reload'
+```
+
+### Pigments: Convert To Hexadecimal/Pigments: Convert to RGBA
+
+It evaluates and replace a color by either its hexadecimal notation or rgba notation.
+Accessible from the command palette or by right clicking on a color.
+
+![pigments-conversion](https://github.com/abe33/atom-pigments/blob/master/resources/context-menu-conversion.gif?raw=true)
+
+These commands can be triggered using the keyboard by defining a keybinding like this:
+
+```coffee
+'atom-workspace':
+  'alt-shift-h': 'pigments:convert-to-hex'
+  'alt-shift-g': 'pigments:convert-to-rgba'
+```
+
+When triggered from the command palette or from the keyboard, the conversion will operate on every cursors positioned on color markers.
 
 ## Settings
 
