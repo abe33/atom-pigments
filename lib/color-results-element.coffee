@@ -76,7 +76,7 @@ class ColorResultsElement extends HTMLElement
     @updateMessage()
 
   searchComplete: ->
-    @udpateMessage()
+    @updateMessage()
 
     if @colors is 0
       @pane.classList.add 'no-results'
