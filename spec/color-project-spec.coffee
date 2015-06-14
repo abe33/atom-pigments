@@ -4,7 +4,6 @@ path = require 'path'
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require '../lib/versions'
 ColorProject = require '../lib/color-project'
 ColorBuffer = require '../lib/color-buffer'
-ProjectVariable = require '../lib/project-variable'
 jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
 require '../lib/register-elements'
 {click} = require './helpers/events'

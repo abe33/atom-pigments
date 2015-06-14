@@ -8,7 +8,6 @@ ColorSearch = require './color-search'
 Palette = require './palette'
 PathsLoader = require './paths-loader'
 PathsScanner = require './paths-scanner'
-ProjectVariable = require './project-variable'
 ColorMarkerElement = require './color-marker-element'
 VariablesCollection = require './variables-collection'
 
@@ -344,22 +343,6 @@ class ColorProject
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
       PathsScanner.startTask paths, (results) -> callback(results)
-
-  createProjectVariable: (result) => new ProjectVariable(result, this)
-
-  removeProjectVariable: (variable) ->
-    @variables = @variables.filter (v) -> v isnt variable
-    @clearProjectVariableSubscriptions(variable)
-
-  createProjectVariableSubscriptions: (variable) ->
-    unless @variablesSubscriptionsById[variable.id]?
-      @variablesSubscriptionsById[variable.id] = variable.onDidDestroy =>
-        @removeProjectVariable(variable)
-        @reloadVariablesForPath(variable.path) if @isInitialized()
-
-  clearProjectVariableSubscriptions: (variable) ->
-    @variablesSubscriptionsById[variable.id].dispose()
-    delete @variablesSubscriptionsById[variable.id]
 
   getTimestamp: -> new Date()
 

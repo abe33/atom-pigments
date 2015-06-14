@@ -1,5 +1,4 @@
 {Emitter, CompositeDisposable, Task, Range} = require 'atom'
-ProjectVariable = require './project-variable'
 Color = require './color'
 ColorMarker = require './color-marker'
 VariablesCollection = require './variables-collection'
