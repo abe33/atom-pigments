@@ -25,4 +25,4 @@ class ColorParser
         res.variables = context.readUsedVariables()
         return res
 
-    return
+    return undefined
