@@ -1,3 +1,11 @@
+<a name="v0.7.1"></a>
+# v0.7.1 (2015-06-14)
+
+## Bug Fixes
+
+- Fix infinite recursion when parsing a color ([0c4ed7c6](https://github.com/abe33/atom-pigments/commit/0c4ed7c6e8c1e2a6d391c6ec08a7117372de5a0a), [#19](https://github.com/abe33/atom-pigments/issues/19))
+- Fix typo in method name ([8e5c9423](https://github.com/abe33/atom-pigments/commit/8e5c9423124f994b37f7d0d1cf634cdc98fa710f))
+
 <a name="v0.7.0"></a>
 # v0.7.0 (2015-06-14)
 
