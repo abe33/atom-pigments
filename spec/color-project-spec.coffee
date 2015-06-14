@@ -181,6 +181,22 @@ describe 'ColorProject', ->
     it 'initializes the variables with an empty array', ->
       expect(project.getVariables()).toEqual([])
 
+  describe 'when the project has looping variable definition', ->
+    beforeEach ->
+      atom.config.set 'pigments.sourceNames', ['*.sass']
+
+      [fixturesPath] = atom.project.getPaths()
+      rootPath = "#{fixturesPath}-with-recursion"
+      atom.project.setPaths([rootPath])
+
+      project = new ColorProject({})
+
+      waitsForPromise -> project.initialize()
+
+    it 'ignores the looping definition', ->
+      expect(project.getVariables().length).toEqual(4)
+      expect(project.getColorVariables().length).toEqual(4)
+
   describe 'when the variables have been loaded', ->
     beforeEach ->
       waitsForPromise -> project.initialize()

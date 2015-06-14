@@ -34,7 +34,9 @@ class VariableExpression
           parsingAborted = true
         appendResult: ([name, value, start, end]) ->
           range = [start, end]
-          results.push {name, value, range}
+          reName = name.replace('$', '\\$')
+          unless ///#{reName}(?![-_])///.test(value)
+            results.push {name, value, range}
 
       @handle(match, solver)
 
