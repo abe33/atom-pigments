@@ -77,30 +77,29 @@ describe "Pigments", ->
         runs ->
           expect(spy.calls.length).toEqual(2)
 
-
   describe 'when deactivated', ->
-    [editor, editorElement, buffer] = []
+    [editor, editorElement, colorBuffer] = []
     beforeEach ->
       waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
         editor = e
         editorElement = atom.views.getView(e)
-        buffer = project.colorBufferForEditor(editor)
+        colorBuffer = project.colorBufferForEditor(editor)
 
       waitsFor -> editorElement.shadowRoot.querySelector('pigments-markers')
 
       runs ->
         spyOn(project, 'destroy').andCallThrough()
-        spyOn(buffer, 'destroy').andCallThrough()
+        spyOn(colorBuffer, 'destroy').andCallThrough()
 
         pigments.deactivate()
 
     it 'destroys the pigments project', ->
       expect(project.destroy).toHaveBeenCalled()
 
-    it 'destroys all the buffer that were created', ->
+    it 'destroys all the color buffers that were created', ->
       expect(project.colorBufferForEditor(editor)).toBeUndefined()
       expect(project.colorBuffersByEditorId).toBeNull()
-      expect(buffer.destroy).toHaveBeenCalled()
+      expect(colorBuffer.destroy).toHaveBeenCalled()
 
-    it 'destroys the buffer element that were added to the DOM', ->
+    it 'destroys the color buffer element that were added to the DOM', ->
       expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()
