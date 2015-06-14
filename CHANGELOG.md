@@ -1,3 +1,8 @@
+<a name="v0.7.2"></a>
+# v0.7.2 (2015-06-15)
+
+- Bump markers version ([6921bea2](https://github.com/abe33/atom-pigments/commit/6921bea2e0ab4fe49edd4fbcfa2cdad0c17471f0))
+
 <a name="v0.7.1"></a>
 # v0.7.1 (2015-06-14)
 
