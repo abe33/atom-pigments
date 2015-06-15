@@ -574,6 +574,26 @@ describe 'ColorProject', ->
       it 'drops the whole serialized state and rescans all the project', ->
         expect(project.getVariables().length).toEqual(32)
 
+    describe 'with a serialized path that no longer exist', ->
+      beforeEach ->
+        project = createProject
+          stateFixture: "rename-file-project.json"
+
+        waitsForPromise -> project.initialize()
+
+      it 'drops drops the non-existing and reload the paths', ->
+        expect(project.getPaths()).toEqual([
+          "#{rootPath}/styles/buttons.styl"
+          "#{rootPath}/styles/variables.styl"
+        ])
+
+      it 'drops the variables from the removed paths', ->
+        expect(project.getVariablesForPath("#{rootPath}/styles/foo.styl").length).toEqual(0)
+
+      it 'loads the variables from the new file', ->
+        expect(project.getVariablesForPath("#{rootPath}/styles/variables.styl").length).toEqual(12)
+
+
     describe 'with a sourceNames setting value different than when serialized', ->
       beforeEach ->
         atom.config.set('pigments.sourceNames', [])

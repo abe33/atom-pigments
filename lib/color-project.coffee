@@ -109,23 +109,29 @@ class ColorProject
   loadPathsAndVariables: ->
     destroyed = null
 
-    @loadPaths().then (paths) =>
+    @loadPaths().then ({dirtied, removed}) =>
+      # We can find removed files only when there's already paths from
+      # a serialized state
+      if removed.length > 0
+        @paths = @paths.filter (p) -> p not in removed
+        @deleteVariablesForPaths(removed)
+
       # There was serialized paths, and the initialization discovered
       # some new or dirty ones.
-      if @paths? and paths.length > 0
-        @paths.push path for path in paths when path not in @paths
+      if @paths? and dirtied.length > 0
+        @paths.push path for path in dirtied when path not in @paths
 
         # There was also serialized variables, so we'll rescan only the
         # dirty paths
         if @variables.length
-          paths
+          dirtied
         # There was no variables, so it's probably because the markers
         # version changed, we'll rescan all the files
         else
           @paths
       # There was no serialized paths, so there's no variables neither
       else unless @paths?
-        @paths = paths
+        @paths = dirtied
       # Only the markers version changed, all the paths from the serialized
       # state will be rescanned
       else unless @variables.length
@@ -216,22 +222,13 @@ class ColorProject
   updatePaths: ->
     return Promise.resolve() unless @initialized
 
-    previousPaths = @getPaths()
-    @loadPaths().then (paths) =>
-      newPaths = []
-      removedPaths = []
+    @loadPaths().then ({dirtied, removed}) =>
+      @deleteVariablesForPaths(removed)
 
-      for p in paths
-        newPaths.push(p) if p not in previousPaths
+      @paths = @paths.filter (p) -> p not in removed
+      @paths.push(p) for p in dirtied when p not in @paths
 
-      for p in previousPaths
-        removedPaths.push(p) if p not in paths
-
-      @deleteVariablesForPaths(removedPaths)
-
-      @paths = paths
-
-      @reloadVariablesForPaths(newPaths)
+      @reloadVariablesForPaths(dirtied)
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []

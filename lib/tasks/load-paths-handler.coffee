@@ -12,6 +12,9 @@ class PathLoader
 
     @knownPaths ?= []
     @paths = []
+    @lostPaths = []
+    @scannedPaths = []
+
     @repo = null
     if ignoreVcsIgnores
       repo = GitRepository.open(@rootPath, refreshOnWindowFocus: false)
@@ -20,6 +23,7 @@ class PathLoader
 
   load: (done) ->
     @loadPath @rootPath, =>
+      @lostPaths.push(p) for p in @knownPaths when p not in @scannedPaths
       @flushPaths()
       @repo?.destroy()
       done()
@@ -37,22 +41,34 @@ class PathLoader
       for ignoredName in @ignoredNames
         return true if ignoredName.match(relativePath)
 
-      if stats and @knownPaths? and @timestamp? and loadedPath in @knownPaths
-        stats.ctime <= @timestamp
-      else
-        false
+      return false
+
+  isKnown: (loadedPath) -> loadedPath in @knownPaths
+
+  hasChanged: (loadedPath, stats) ->
+    if stats and @timestamp?
+      stats.ctime >= @timestamp
+    else
+      false
 
   pathLoaded: (loadedPath, stats, done) ->
+    @scannedPaths.push(loadedPath)
     if @isSource(loadedPath) and !@isIgnored(loadedPath, stats)
-      @paths.push(loadedPath)
+      if @isKnown(loadedPath)
+        @paths.push(loadedPath) if @hasChanged(loadedPath, stats)
+      else
+        @paths.push(loadedPath)
+    else
+      @lostPaths.push(loadedPath) if loadedPath in @knownPaths
 
-    if @paths.length is PathsChunkSize
-      @flushPaths()
+    @flushPaths() if @paths.length + @lostPaths.length is PathsChunkSize
     done()
 
   flushPaths: ->
-    emit('load-paths:paths-found', @paths)
+    emit('load-paths:paths-found', @paths) if @paths.length
+    emit('load-paths:paths-lost', @lostPaths) if @lostPaths.length
     @paths = []
+    @lostPaths = []
 
   loadPath: (pathToLoad, done) ->
     return done() if @isIgnored(pathToLoad)

@@ -2,16 +2,17 @@
 
 module.exports =
   startTask: (config, callback) ->
-    projectPaths = []
+    dirtied = []
+    removed = []
     taskPath = require.resolve('./tasks/load-paths-handler')
 
     task = Task.once(
       taskPath,
       config,
-      -> callback(projectPaths)
+      -> callback({dirtied, removed})
     )
 
-    task.on 'load-paths:paths-found', (paths) ->
-      projectPaths.push(paths...)
+    task.on 'load-paths:paths-found', (paths) -> dirtied.push(paths...)
+    task.on 'load-paths:paths-lost', (paths) -> removed.push(paths...)
 
     task
