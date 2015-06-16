@@ -176,4 +176,4 @@ module.exports =
 
   reloadProjectVariables: ->
     @project.initialize().then =>
-      @project.reloadVariablesForPaths(@project.getPaths())
+      @project.loadPathsAndVariables()
