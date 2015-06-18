@@ -1,3 +1,11 @@
+<a name="v0.7.4"></a>
+# v0.7.4 (2015-06-19)
+
+## Bug Fixes
+
+- Fix positionning of dot markers ([6bb32743](https://github.com/abe33/atom-pigments/commit/6bb32743a101f9bf49580c5cf548111009be5502), [#35](https://github.com/abe33/atom-pigments/issues/35))
+- Fix attaching a color buffer element to an editor without shadow root ([a3dff949](https://github.com/abe33/atom-pigments/commit/a3dff949b1574a6f055e8b714bc4d69eaad7f07a), [#34](https://github.com/abe33/atom-pigments/issues/34))
+
 <a name="v0.7.3"></a>
 # v0.7.3 (2015-06-18)
 
