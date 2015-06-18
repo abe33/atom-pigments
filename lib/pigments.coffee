@@ -151,7 +151,7 @@ module.exports =
   colorMarkerForMouseEvent: (event) ->
     editor = atom.workspace.getActiveTextEditor()
     colorBuffer = @project.colorBufferForEditor(editor)
-    colorBuffer.colorMarkerForMouseEvent(event)
+    colorBuffer?.colorMarkerForMouseEvent(event)
 
   serialize: -> {project: @project.serialize()}
 
