@@ -13,6 +13,7 @@ class DotRenderer
 
     index = markers.indexOf(colorMarker.marker)
     screenLine = displayBuffer.screenLines[range.end.row]
+    lineHeight = displayBuffer.getLineHeightInPixels()
 
     column = (screenLine.getMaxScreenColumn() + 1) * charWidth
     pixelPosition = displayBuffer.pixelPositionForScreenPosition(range.end)
@@ -20,5 +21,5 @@ class DotRenderer
     class: 'dot'
     style:
       backgroundColor: colorMarker.color.toCSS()
-      top: pixelPosition.top + 'px'
+      top: (pixelPosition.top + lineHeight / 2) + 'px'
       left: (column + index * 18) + 'px'
