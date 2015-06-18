@@ -59,6 +59,25 @@ describe 'ColorBufferElement', ->
       expect(colorBufferElement.parentNode).toExist()
       expect(editorElement.shadowRoot.querySelector('.lines pigments-markers')).toExist()
 
+    describe 'when the editor shadow dom setting is not enabled', ->
+      beforeEach ->
+        editor.destroy()
+
+        atom.config.set('editor.useShadowDOM', false)
+
+        waitsForPromise ->
+          atom.workspace.open('four-variables.styl').then (o) -> editor = o
+
+        runs ->
+            editorElement = atom.views.getView(editor)
+            colorBuffer = project.colorBufferForEditor(editor)
+            colorBufferElement = atom.views.getView(colorBuffer)
+            colorBufferElement.attach()
+
+      it 'attaches itself in the target text editor element', ->
+        expect(colorBufferElement.parentNode).toExist()
+        expect(editorElement.querySelector('.lines pigments-markers')).toExist()
+
     describe 'when the color buffer is initialized', ->
       beforeEach ->
         waitsForPromise -> colorBuffer.initialize()

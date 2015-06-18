@@ -72,7 +72,7 @@ class ColorBufferElement extends HTMLElement
 
   attach: ->
     return if @parentNode?
-    @editorElement.shadowRoot.querySelector('.lines')?.appendChild(this)
+    @getEditorRoot().querySelector('.lines')?.appendChild(this)
 
   detach: ->
     return unless @parentNode?
@@ -87,6 +87,8 @@ class ColorBufferElement extends HTMLElement
     @detach()
     @subscriptions.dispose()
     @releaseAllMarkerViews()
+
+  getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
 
   editorConfigChanged: ->
     return unless @parentNode?
