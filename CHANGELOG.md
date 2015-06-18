@@ -1,3 +1,12 @@
+<a name="v0.7.3"></a>
+# v0.7.3 (2015-06-18)
+
+## Bug Fixes
+
+- Fix right click broken in mini text-editor ([85135805](https://github.com/abe33/atom-pigments/commit/8513580500e540d2e08f12030c5541963446750b), [#32](https://github.com/abe33/atom-pigments/issues/32))
+- Remove negative margin in markers styles ([9afbde03](https://github.com/abe33/atom-pigments/commit/9afbde032465ab60addc694703c9d83f218ed355), [#33](https://github.com/abe33/atom-pigments/issues/33))
+- Fix variables and path kept on reload after the file was removed ([37105157](https://github.com/abe33/atom-pigments/commit/37105157453ac56426bcdb58b06ff900bfb4778c))
+
 <a name="v0.7.2"></a>
 # v0.7.2 (2015-06-15)
 
