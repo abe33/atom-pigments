@@ -173,7 +173,11 @@ module.exports =
       pane ||= atom.workspace.getActivePane()
 
       atom.workspace.openURIInPane(uri, pane, {})
+    .catch (reason) ->
+      console.error reason
 
   reloadProjectVariables: ->
     @project.initialize().then =>
       @project.loadPathsAndVariables()
+    .catch (reason) ->
+      console.error reason
