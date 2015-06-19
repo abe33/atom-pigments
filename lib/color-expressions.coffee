@@ -105,13 +105,23 @@ module.exports = getRegistry: (context) ->
   registry.createExpression 'css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", (match, expression, context) ->
     [_, hexa] = match
 
-    @hexARGB = hexa
+    @hexRGBA = hexa
 
   # #3489ef
   registry.createExpression 'css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w])", (match, expression, context) ->
     [_, hexa] = match
 
     @hex = hexa
+
+  # #6f34
+  registry.createExpression 'css_hexa_4', "#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
+    [_, hexa] = match
+    colorAsInt = context.readInt(hexa, 16)
+
+    @red = (colorAsInt >> 12 & 0xf) * 17
+    @green = (colorAsInt >> 8 & 0xf) * 17
+    @blue = (colorAsInt >> 4 & 0xf) * 17
+    @alpha = ((colorAsInt & 0xf) * 17) / 255
 
   # #38e
   registry.createExpression 'css_hexa_3', "#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->

@@ -54,6 +54,29 @@ rgbToHexARGB = (r, g, b, a) ->
 
   value
 
+# Public: Converts a color defined with its red, green,
+# blue and alpha components into an hexadecimal {String}.
+#
+# r - An integer in the range [O-255] for the red component
+# g - An integer in the range [O-255] for the green component
+# b - An integer in the range [O-255] for the blue component
+# a - A float in the range [O-1] for the alpha component
+#
+# Returns an hexadecimal {String} as `RRGGBBAA`
+rgbToHexRGBA = (r, g, b, a) ->
+  rnd = Math.round
+  value = (
+    (rnd(r) << 24) +
+    (rnd(g) << 16) +
+    (rnd(b) << 8) +
+    rnd(a * 255)
+  ).toString 16
+
+  # The value is filled with `0` to match a length of 8.
+  value = "0#{value}" while value.length < 8
+
+  value
+
 # Public: Converts an hexadecimal {String} such as `aarrggbb` into an array
 # with the red, green, blue and alpha components values.
 #
@@ -68,6 +91,24 @@ hexARGBToRGB = (hex) ->
   r = (color >> 16) & 0xff
   g = (color >> 8) & 0xff
   b = color & 0xff
+
+  [r, g, b, a]
+
+
+# Public: Converts an hexadecimal {String} such as `rrggbbaa` into an array
+# with the red, green, blue and alpha components values.
+#
+# hex - A {String} such as `RRGGBBAA`
+#
+# Returns an {Array} containing the red, green, blue and alpha components
+# of the color
+hexRGBAToRGB = (hex) ->
+  color = parseInt hex, 16
+
+  r = ((color >> 24) & 0xff)
+  g = (color >> 16) & 0xff
+  b = (color >> 8) & 0xff
+  a = (color & 0xff) / 255
 
   [r, g, b, a]
 
@@ -299,6 +340,7 @@ hwbToRGB = (h,w,b) -> hsvToRGB(hwbToHSV(h,w,b)...)
 
 module.exports = {
   hexARGBToRGB
+  hexRGBAToRGB
   hexToRGB
   hslToRGB
   hsvToHWB
@@ -310,4 +352,5 @@ module.exports = {
   rgbToHWB
   rgbToHex
   rgbToHexARGB
+  rgbToHexRGBA
 }

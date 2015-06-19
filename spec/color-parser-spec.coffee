@@ -63,9 +63,11 @@ describe 'ColorParser', ->
     'e': 'c'
   }).asUndefined()
 
-  itParses('#7fff7f00').asColor(255, 127, 0, 0.5)
   itParses('#ff7f00').asColor(255, 127, 0)
   itParses('#f70').asColor(255, 119, 0)
+
+  itParses('#ff7f00cc').asColor(255, 127, 0, 0.8)
+  itParses('#f70c').asColor(255, 119, 0, 0.8)
 
   itParses('0xff7f00').asColor(255, 127, 0)
   itParses('0x00ff7f00').asColor(255, 127, 0, 0)
