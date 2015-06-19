@@ -1,3 +1,11 @@
+<a name="v0.8.0"></a>
+# v0.8.0 (2015-06-19)
+
+## Features
+
+- Implement CSS hexa 4 and 8 digit notations ([5fb21fb3](https://github.com/abe33/atom-pigments/commit/5fb21fb3d0f8399fb0b702fa4e687a3757bc59d4), [#36](https://github.com/abe33/atom-pigments/issues/36))
+- Add `rebeccapurple` as named color ([0169c0b9](https://github.com/abe33/atom-pigments/commit/0169c0b93200c519cb6816e6e88b3f62686bcb48), [#37](https://github.com/abe33/atom-pigments/issues/37))
+
 <a name="v0.7.4"></a>
 # v0.7.4 (2015-06-19)
 
