@@ -118,6 +118,7 @@ colors =
   plum: '#dda0dd'
   powder_blue: '#b0e0e6'
   purple: '#800080'
+  rebecca_purple: '#663399'
   red: '#ff0000'
   rosy_brown: '#bc8f8f'
   royal_blue: '#4169e1'
