@@ -45,6 +45,11 @@ class ColorSearch
         # FIXME it should be handled way before, but it'll need a change
         # in how we test if a variable is a color.
         continue unless result.color?.isValid()
+        # FIXME Seems like, sometime the range of the result is undefined,
+        # we'll ignore that for now and log the faulting result.
+        unless result.range[0]?
+          console.warn "Color search returned a result with an invalid range", result
+          continue
         result.range[0][1] += result.matchText.indexOf(result.color.colorExpression)
         result.matchText = result.color.colorExpression
 
