@@ -283,7 +283,8 @@ class ColorBuffer
     {clientX, clientY} = event
 
     editorElement = atom.views.getView(@editor)
-    {top, left} = editorElement.querySelector('::shadow .lines').getBoundingClientRect()
+    rootElement = editorElement.shadowRoot ? editorElement
+    {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
     top = clientY - top + @editor.getScrollTop()
     left = clientX - left + @editor.getScrollLeft()
     {top, left}
