@@ -26,6 +26,20 @@ describe 'ColorScanner', ->
       do block
 
   describe '::search', ->
+    withScannerForTextEditor 'html-entities.html', ->
+      beforeEach ->
+        result = scanner.search(text)
+
+      it 'returns nothing', ->
+        expect(result).toBeUndefined()
+
+    withScannerForTextEditor 'css-color-with-prefix.less', ->
+      beforeEach ->
+        result = scanner.search(text)
+
+      it 'returns nothing', ->
+        expect(result).toBeUndefined()
+
     withScannerForTextEditor 'four-variables.styl', ->
       beforeEach ->
         result = scanner.search(text)

@@ -114,20 +114,22 @@ module.exports = getRegistry: (context) ->
     @hex = hexa
 
   # #6f34
-  registry.createExpression 'css_hexa_4', "#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
-    [_, hexa] = match
+  registry.createExpression 'css_hexa_4', "(#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
+    [_, _, hexa] = match
     colorAsInt = context.readInt(hexa, 16)
 
+    @colorExpression = "##{hexa}"
     @red = (colorAsInt >> 12 & 0xf) * 17
     @green = (colorAsInt >> 8 & 0xf) * 17
     @blue = (colorAsInt >> 4 & 0xf) * 17
     @alpha = ((colorAsInt & 0xf) * 17) / 255
 
   # #38e
-  registry.createExpression 'css_hexa_3', "#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
-    [_, hexa] = match
+  registry.createExpression 'css_hexa_3', "(#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
+    [_, _, hexa] = match
     colorAsInt = context.readInt(hexa, 16)
 
+    @colorExpression = "##{hexa}"
     @red = (colorAsInt >> 8 & 0xf) * 17
     @green = (colorAsInt >> 4 & 0xf) * 17
     @blue = (colorAsInt & 0xf) * 17
@@ -691,10 +693,12 @@ module.exports = getRegistry: (context) ->
     {@rgb} = contrast(baseColor)
 
   # color(green tint(50%))
-  registry.createExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+  registry.createExpression 'css_color_function', "(#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", (match, expression, context) ->
     try
-      rgba = cssColor.convert(expression)
+      [_,_,expr] = match
+      rgba = cssColor.convert(expr)
       @rgba = context.readColor(rgba).rgba
+      @colorExpression = expr
     catch e
       @invalid = true
 
@@ -809,7 +813,7 @@ module.exports = getRegistry: (context) ->
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())
 
     registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
-      [d,d,name] = match
+      [_,_,name] = match
       baseColor = context.readColor(name)
       @colorExpression = name
       @variables = baseColor?.variables
