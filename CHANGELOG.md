@@ -1,3 +1,12 @@
+<a name="v0.8.1"></a>
+# v0.8.1 (2015-06-27)
+
+## Bug Fixes
+
+- Fix XML entities and CSS color function improperly highlighted ([60545015](https://github.com/abe33/atom-pigments/commit/60545015230feed7a7896834e5950e1bb693f4af), [#39](https://github.com/abe33/atom-pigments/issues/39))
+- Fix error raised when right clicking an editor without a shadow root ([30e21092](https://github.com/abe33/atom-pigments/commit/30e2109273e36e4012e799620b289b3fdaaf8768), [#44](https://github.com/abe33/atom-pigments/issues/44))
+- Prevent error raised in color search ([ebb02279](https://github.com/abe33/atom-pigments/commit/ebb02279743370b4054ab2358761989b90397d51))
+
 <a name="v0.8.0"></a>
 # v0.8.0 (2015-06-19)
 
