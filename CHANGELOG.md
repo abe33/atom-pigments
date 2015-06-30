@@ -1,3 +1,11 @@
+<a name="v0.8.2"></a>
+# v0.8.2 (2015-06-30)
+
+## Bug Fixes
+
+- Prevent errors when reading scopes in a buffer ([cc4ccaa7](https://github.com/abe33/atom-pigments/commit/cc4ccaa73f7ea156d3cafaee4b06035b25d6dc75), [#46](https://github.com/abe33/atom-pigments/issues/46))
+- Prevent errors raised when rendering a color marker view ([adff568f](https://github.com/abe33/atom-pigments/commit/adff568f0d20e55262be8d8a2321aa338153d604), [#27](https://github.com/abe33/atom-pigments/issues/27))
+
 <a name="v0.8.1"></a>
 # v0.8.1 (2015-06-27)
 
