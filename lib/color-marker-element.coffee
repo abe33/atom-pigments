@@ -61,8 +61,9 @@ class ColorMarkerElement extends HTMLElement
   release: (dispatchEvent=true) ->
     return if @released
     @subscriptions.dispose()
+    marker = @colorMarker
     @clear()
-    @emitter.emit('did-release') if dispatchEvent
+    @emitter.emit('did-release', {marker, view: this}) if dispatchEvent
 
   clear: ->
     @subscriptions = null

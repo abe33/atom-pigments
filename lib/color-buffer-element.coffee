@@ -92,7 +92,13 @@ class ColorBufferElement extends HTMLElement
 
   editorConfigChanged: ->
     return unless @parentNode?
-    @usedMarkers.forEach (marker) -> marker.render()
+    @usedMarkers.forEach (marker) =>
+      if marker.colorMarker?
+        marker.render()
+      else
+        console.warn "A marker view was found in the used instance pool while having a null model", marker
+        @releaseMarkerElement(marker)
+
     @updateMarkers()
 
   requestSelectionUpdate: ->
@@ -108,9 +114,11 @@ class ColorBufferElement extends HTMLElement
     return if @editor.isDestroyed()
     for marker in @displayedMarkers
       view = @viewsByMarkers.get(marker)
-      view.style.display = ''
-
-      @hideMarkerIfInSelection(marker, view)
+      if view?
+        view.style.display = ''
+        @hideMarkerIfInSelection(marker, view)
+      else
+        console.warn "A color marker was found in the displayed markers array without an associated view", marker
 
   updateMarkers: ->
     markers = @colorBuffer.findValidColorMarkers({
@@ -132,7 +140,7 @@ class ColorBufferElement extends HTMLElement
       view = @unusedMarkers.shift()
     else
       view = new ColorMarkerElement
-      view.onDidRelease => @releaseMarkerView(view)
+      view.onDidRelease ({marker}) => @releaseMarkerView(marker)
       @shadowRoot.appendChild view
 
     view.setModel(marker)
@@ -142,13 +150,18 @@ class ColorBufferElement extends HTMLElement
     @viewsByMarkers.set(marker, view)
     view
 
-  releaseMarkerView: (marker) ->
-    view = @viewsByMarkers.get(marker)
+  releaseMarkerView: (markerOrView) ->
+    marker = markerOrView
+    view = @viewsByMarkers.get(markerOrView)
+
     if view?
-      @viewsByMarkers.delete(marker)
-      @usedMarkers.splice(@usedMarkers.indexOf(view), 1)
-      view.release(false) unless view.isReleased()
-      @unusedMarkers.push(view)
+      @viewsByMarkers.delete(marker) if marker?
+      @releaseMarkerElement(view)
+
+  releaseMarkerElement: (view) ->
+    @usedMarkers.splice(@usedMarkers.indexOf(view), 1)
+    view.release(false) unless view.isReleased()
+    @unusedMarkers.push(view)
 
   releaseAllMarkerViews: ->
     view.destroy() for view in @usedMarkers
