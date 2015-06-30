@@ -334,14 +334,17 @@ class ColorBuffer
 
   markerScopeIsIgnored: (marker) ->
     range = marker.marker.getBufferRange()
-    scope = @editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
-    scopeChain = scope.getScopeChain()
+    try
+      scope = @editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
+      scopeChain = scope.getScopeChain()
 
-    @ignoredScopes.some (scopeRegExp) ->
-      try
-        scopeChain.match(new RegExp(scopeRegExp))
-      catch
-        return false
+      @ignoredScopes.some (scopeRegExp) ->
+        try
+          scopeChain.match(new RegExp(scopeRegExp))
+        catch
+          return false
+    catch e
+      console.warn "Unable to find a scope at the given buffer position", @editor
 
   serialize: ->
     {
