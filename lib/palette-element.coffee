@@ -125,7 +125,10 @@ class PaletteElement extends HTMLElement
     palettes = {}
 
     @palette.eachColor (name, color) =>
-      {path} = @project.getVariableByName(name)
+      variable = @project.getVariableByName(name)
+      return unless variable?
+
+      {path} = variable
 
       palettes[path] ?= new Palette
       palettes[path].colors[name] = color
