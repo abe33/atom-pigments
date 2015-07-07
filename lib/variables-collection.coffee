@@ -343,6 +343,7 @@ class VariablesCollection
 
     variables = variables.concat(updated) if updated?
     variables = variables.concat(destroyed) if destroyed?
+    variables = variables.filter (v) -> v?
 
     for variable in variables
       if dependencies = @dependencyGraph[variable.name]
