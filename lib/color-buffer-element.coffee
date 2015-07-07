@@ -140,7 +140,9 @@ class ColorBufferElement extends HTMLElement
       view = @unusedMarkers.shift()
     else
       view = new ColorMarkerElement
-      view.onDidRelease ({marker}) => @releaseMarkerView(marker)
+      view.onDidRelease ({marker}) =>
+        @displayedMarkers.splice(@displayedMarkers.indexOf(marker), 1)
+        @releaseMarkerView(marker)
       @shadowRoot.appendChild view
 
     view.setModel(marker)
