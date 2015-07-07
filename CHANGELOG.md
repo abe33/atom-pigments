@@ -1,3 +1,12 @@
+<a name="v0.8.3"></a>
+# v0.8.3 (2015-07-07)
+
+## Bug Fixes
+
+- Fix error raised in the palette view if a color is destroyed inbetween ([fd0f9a41](https://github.com/abe33/atom-pigments/commit/fd0f9a41cab80dfc370d8e2aa88dd7d29764fb2a), [#47](https://github.com/abe33/atom-pigments/issues/47))
+- Fix error when updating dependencies if a null variable is present ([22a3f0fb](https://github.com/abe33/atom-pigments/commit/22a3f0fbf165f83136d0a7ca9cd60b1297c46d44), [#48](https://github.com/abe33/atom-pigments/issues/48))
+- Removes color markers from display markers when destroyed ([d16e0f86](https://github.com/abe33/atom-pigments/commit/d16e0f861f085dede89c69d8a96c794c3950e63b))
+
 <a name="v0.8.2"></a>
 # v0.8.2 (2015-06-30)
 
