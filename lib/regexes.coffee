@@ -9,6 +9,7 @@ module.exports =
   int: int
   float: float
   percent: percent
+  optionalPercent: "#{float}%?"
   intOrPercent: "(#{percent}|#{int})"
   floatOrPercent: "(#{percent}|#{float})"
   comma: '\\s*,\\s*'

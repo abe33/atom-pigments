@@ -4,6 +4,7 @@ cssColor = require 'css-color-function'
   int
   float
   percent
+  optionalPercent
   intOrPercent
   floatOrPercent
   comma
@@ -373,7 +374,7 @@ module.exports = getRegistry: (context) ->
     darken#{ps}
       (#{notQuote})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
     [_, subexpr, amount] = match
@@ -393,7 +394,7 @@ module.exports = getRegistry: (context) ->
     lighten#{ps}
       (#{notQuote})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
     [_, subexpr, amount] = match
@@ -471,7 +472,7 @@ module.exports = getRegistry: (context) ->
     adjust-hue#{ps}
       (#{notQuote})
       #{comma}
-      (-?#{int}deg|#{variables}|-?#{percent})
+      (-?#{int}deg|#{variables}|-?#{optionalPercent})
     #{pe}
   "), (match, expression, context) ->
     [_, subexpr, amount] = match

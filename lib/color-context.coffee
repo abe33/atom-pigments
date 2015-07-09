@@ -97,5 +97,7 @@ class ColorContext
       res = parseFloat(amount) / 100
     else
       res = parseFloat(amount)
+      res = res / 100 if res > 1
+      res
 
     res

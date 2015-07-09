@@ -207,6 +207,7 @@ describe 'ColorParser', ->
   itParses('YELLOW_GREEN').asColor('#9acd32')
 
   itParses('darken(cyan, 20%)').asColor(0, 153, 153)
+  itParses('darken(cyan, 20)').asColor(0, 153, 153)
   itParses('darken(#fff, 100%)').asColor(0, 0, 0)
   itParses('darken(cyan, $r)').asInvalid()
   itParses('darken($c, $r)').withContext({
@@ -224,6 +225,7 @@ describe 'ColorParser', ->
   }).asColor(0, 153, 153)
 
   itParses('lighten(cyan, 20%)').asColor(102, 255, 255)
+  itParses('lighten(cyan, 20)').asColor(102, 255, 255)
   itParses('lighten(#000, 100%)').asColor(255, 255, 255)
   itParses('lighten(cyan, $r)').asInvalid()
   itParses('lighten($c, $r)').withContext({
@@ -241,6 +243,7 @@ describe 'ColorParser', ->
   }).asColor(102, 255, 255)
 
   itParses('transparentize(cyan, 50%)').asColor(0, 255, 255, 0.5)
+  itParses('transparentize(cyan, 50)').asColor(0, 255, 255, 0.5)
   itParses('transparentize(cyan, 0.5)').asColor(0, 255, 255, 0.5)
   itParses('transparentize(cyan, .5)').asColor(0, 255, 255, 0.5)
   itParses('fadeout(cyan, 0.5)').asColor(0, 255, 255, 0.5)
@@ -261,6 +264,7 @@ describe 'ColorParser', ->
   }).asColor(0, 255, 255, 0.5)
 
   itParses('opacify(0x7800FFFF, 50%)').asColor(0, 255, 255, 1)
+  itParses('opacify(0x7800FFFF, 50)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
   itParses('fadein(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
@@ -281,6 +285,7 @@ describe 'ColorParser', ->
   }).asColor(0, 255, 255, 1)
 
   itParses('saturate(#855, 20%)').asColor(158, 63, 63)
+  itParses('saturate(#855, 20)').asColor(158, 63, 63)
   itParses('saturate(#855, 0.2)').asColor(158, 63, 63)
   itParses('saturate(#855, @r)').asInvalid()
   itParses('saturate($c, $r)').withContext({
@@ -298,6 +303,7 @@ describe 'ColorParser', ->
   }).asColor(158, 63, 63)
 
   itParses('desaturate(#9e3f3f, 20%)').asColor(136, 85, 85)
+  itParses('desaturate(#9e3f3f, 20)').asColor(136, 85, 85)
   itParses('desaturate(#9e3f3f, 0.2)').asColor(136, 85, 85)
   itParses('desaturate(#9e3f3f, .2)').asColor(136, 85, 85)
   itParses('desaturate(#9e3f3f, @r)').asInvalid()
@@ -346,6 +352,8 @@ describe 'ColorParser', ->
   itParses('adjust-hue(#811, -45deg)').asColor(136, 17, 106)
   itParses('adjust-hue(#811, 45%)').asColor(136, 106, 17)
   itParses('adjust-hue(#811, -45%)').asColor(136, 17, 106)
+  itParses('adjust-hue(#811, 45)').asColor(136, 106, 17)
+  itParses('adjust-hue(#811, -45)').asColor(136, 17, 106)
   itParses('adjust-hue($c, $r)').asInvalid()
   itParses('adjust-hue($c, $r)').withContext({
     '$c': asColor 'hsv($h, $s, $v)'
@@ -363,6 +371,7 @@ describe 'ColorParser', ->
 
   itParses('mix(rgb(255,0,0), blue)').asColor(127, 0, 127)
   itParses('mix(red, rgb(0,0,255), 25%)').asColor(63, 0, 191)
+  itParses('mix(red, rgb(0,0,255), 25)').asColor(63, 0, 191)
   itParses('mix($a, $b, $r)').asInvalid()
   itParses('mix($a, $b, $r)').withContext({
     '$a': asColor 'hsv($h, $s, $v)'
@@ -388,6 +397,7 @@ describe 'ColorParser', ->
   }).asColor(63, 0, 191)
 
   itParses('tint(#fd0cc7,66%)').asColor(254, 172, 235)
+  itParses('tint(#fd0cc7,66)').asColor(254, 172, 235)
   itParses('tint($c,$r)').asInvalid()
   itParses('tint($c, $r)').withContext({
     '$c': asColor 'hsv($h, $s, $v)'
@@ -404,6 +414,7 @@ describe 'ColorParser', ->
   }).asColor(254, 172, 235, 0.966)
 
   itParses('shade(#fd0cc7,66%)').asColor(86, 4, 67)
+  itParses('shade(#fd0cc7,66)').asColor(86, 4, 67)
   itParses('shade($c,$r)').asInvalid()
   itParses('shade($c, $r)').withContext({
     '$c': asColor 'hsv($h, $s, $v)'
@@ -462,6 +473,7 @@ describe 'ColorParser', ->
   }).asColor(200, 90, 230)
 
   itParses('spin(#F00, 120)').asColor(0, 255, 0)
+  itParses('spin(#F00, 120)').asColor(0, 255, 0)
   itParses('spin(#F00, -120)').asColor(0, 0, 255)
   itParses('spin(@c, @a)').withContext({
     '@c': asColor '#F00'
@@ -477,6 +489,7 @@ describe 'ColorParser', ->
 
   itParses('fade(#F00, 0.5)').asColor(255, 0, 0, 0.5)
   itParses('fade(#F00, 50%)').asColor(255, 0, 0, 0.5)
+  itParses('fade(#F00, 50)').asColor(255, 0, 0, 0.5)
   itParses('fade(@c, @a)').withContext({
     '@c': asColor '#F00'
     '@a': '0.5'
