@@ -1,3 +1,10 @@
+<a name="v0.8.4"></a>
+# v0.8.4 (2015-07-10)
+
+## Bug Fixes
+
+- Fix percentage with % treated as float in 0-1 range ([107d781b](https://github.com/abe33/atom-pigments/commit/107d781b4caa41db98b57bbca8cd24bfcb164676), [#49](https://github.com/abe33/atom-pigments/issues/49))
+
 <a name="v0.8.3"></a>
 # v0.8.3 (2015-07-07)
 
