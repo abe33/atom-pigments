@@ -67,6 +67,9 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add atom.config.observe 'editor.lineHeight', =>
       @editorConfigChanged()
 
+    @subscriptions.add atom.styles.onDidAddStyleElement =>
+      @editorConfigChanged()
+
     @subscriptions.add @editorElement.onDidAttach => @attach()
     @subscriptions.add @editorElement.onDidDetach => @detach()
 
