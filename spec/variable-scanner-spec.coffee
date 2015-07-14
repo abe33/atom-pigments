@@ -119,3 +119,13 @@ describe 'VariableScanner', ->
 
       it 'finds the variable after the mixin', ->
         expect(result).toBeDefined()
+
+    withScannerForTextEditor 'variables-from-other-process.less', ->
+      beforeEach ->
+        result = null
+        doSearch = -> result = scanner.search(text, result?.lastIndex)
+
+        doSearch()
+
+      it 'finds the variable with an interpolation tag', ->
+        expect(result).toBeDefined()
