@@ -469,6 +469,23 @@ describe 'ColorProject', ->
           expect(project.getPaths().length).toEqual(0)
           expect(project.getVariables().length).toEqual(0)
 
+    describe 'when the project has multiple root directory', ->
+      beforeEach ->
+        atom.config.set 'pigments.sourceNames', ['**/*.sass', '**/*.styl']
+
+        [fixturesPath] = atom.project.getPaths()
+        atom.project.setPaths([
+          "#{fixturesPath}"
+          "#{fixturesPath}-with-recursion"
+        ])
+
+        project = new ColorProject({})
+
+        waitsForPromise -> project.initialize()
+
+      it 'finds the variables from the two directories', ->
+        expect(project.getVariables().length).toEqual(16)
+
     ##     ######  ######## ######## ######## #### ##    ##  ######    ######
     ##    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
     ##    ##       ##          ##       ##     ##  ####  ## ##        ##
