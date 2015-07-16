@@ -1,5 +1,6 @@
-fs = require 'fs'
+fs = require 'fs-plus'
 path = require 'path'
+temp = require 'temp'
 
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require '../lib/versions'
 ColorProject = require '../lib/color-project'
@@ -485,6 +486,73 @@ describe 'ColorProject', ->
 
       it 'finds the variables from the two directories', ->
         expect(project.getVariables().length).toEqual(16)
+
+    describe 'when the project has VCS ignored files', ->
+      [projectPath] = []
+      beforeEach ->
+        atom.config.set 'pigments.sourceNames', ['*.sass']
+
+        fixture = path.join(__dirname, 'fixtures', 'project-with-gitignore')
+
+        projectPath = temp.mkdirSync('pigments-project')
+        dotGitFixture = path.join(fixture, 'git.git')
+        dotGit = path.join(projectPath, '.git')
+        fs.copySync(dotGitFixture, dotGit)
+        fs.writeFileSync(path.join(projectPath, '.gitignore'), fs.readFileSync(path.join(fixture, '.gitignore')))
+        fs.writeFileSync(path.join(projectPath, 'base.sass'), fs.readFileSync(path.join(fixture, 'base.sass')))
+        fs.writeFileSync(path.join(projectPath, 'ignored.sass'), fs.readFileSync(path.join(fixture, 'ignored.sass')))
+
+        # FIXME repo.getWorkingDirectory returns the project path prefixed with
+        # /private
+        atom.project.setPaths([path.join('/private', projectPath)])
+
+      describe 'when the ignoreVcsIgnoredPaths setting is enabled', ->
+        beforeEach ->
+          atom.config.set 'pigments.ignoreVcsIgnoredPaths', true
+          project = new ColorProject({})
+
+          waitsForPromise -> project.initialize()
+
+        it 'finds the variables from the two directories', ->
+          expect(project.getVariables().length).toEqual(3)
+
+        describe 'and then disabled', ->
+          beforeEach ->
+            spy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(spy)
+            atom.config.set 'pigments.ignoreVcsIgnoredPaths', false
+
+            waitsFor -> spy.callCount > 0
+
+          it 'reloads the paths', ->
+            expect(project.getPaths().length).toEqual(2)
+
+          it 'reloads the variables', ->
+            expect(project.getVariables().length).toEqual(6)
+
+      describe 'when the ignoreVcsIgnoredPaths setting is disabled', ->
+        beforeEach ->
+          atom.config.set 'pigments.ignoreVcsIgnoredPaths', false
+          project = new ColorProject({})
+
+          waitsForPromise -> project.initialize()
+
+        it 'finds the variables from the two directories', ->
+          expect(project.getVariables().length).toEqual(6)
+
+        describe 'and then enabled', ->
+          beforeEach ->
+            spy = jasmine.createSpy('did-update-variables')
+            project.onDidUpdateVariables(spy)
+            atom.config.set 'pigments.ignoreVcsIgnoredPaths', true
+
+            waitsFor -> spy.callCount > 0
+
+          it 'reloads the paths', ->
+            expect(project.getPaths().length).toEqual(1)
+
+          it 'reloads the variables', ->
+            expect(project.getVariables().length).toEqual(3)
 
     ##     ######  ######## ######## ######## #### ##    ##  ######    ######
     ##    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##

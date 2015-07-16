@@ -71,6 +71,10 @@ module.exports =
       type: 'integer'
       default: 500
       description: 'Number of milliseconds after which the current buffer will be scanned for changes in the colors. This delay starts at the end of the text input and will be aborted if you start typing again during the interval.'
+    ignoreVcsIgnoredPaths:
+      type: 'boolean'
+      default: true
+      title: 'Ignore VCS Ignored Paths'
 
   activate: (state) ->
     require './register-elements'

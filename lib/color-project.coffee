@@ -62,6 +62,9 @@ class ColorProject
 
     @subscriptions.add atom.config.observe 'pigments.sourcesWarningThreshold', (@sourcesWarningThreshold) =>
 
+    @subscriptions.add atom.config.observe 'pigments.ignoreVcsIgnoredPaths', =>
+      @loadPathsAndVariables()
+
     @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
@@ -215,7 +218,7 @@ class ColorProject
         paths: atom.project.getPaths()
         traverseIntoSymlinkDirectories: atom.config.get 'pigments.traverseIntoSymlinkDirectories'
         sourceNames: atom.config.get('pigments.sourceNames') ? []
-        ignoreVcsIgnores: atom.config.get('core.excludeVcsIgnoredPaths')
+        ignoreVcsIgnores: atom.config.get('pigments.ignoreVcsIgnoredPaths')
       }
       PathsLoader.startTask config, (results) -> resolve(results)
 
