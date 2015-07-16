@@ -272,7 +272,6 @@ class VariablesCollection
         when 'identical' then return ['unchanged', v]
         when 'move' then return ['moved', v]
         when 'update' then return ['updated', v]
-        when 'different' then return ['created', variable]
 
     return ['created', variable]
 
