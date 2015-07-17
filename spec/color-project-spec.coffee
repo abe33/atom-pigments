@@ -498,7 +498,7 @@ describe 'ColorProject', ->
         dotGitFixture = path.join(fixture, 'git.git')
         dotGit = path.join(projectPath, '.git')
         fs.copySync(dotGitFixture, dotGit)
-        fs.writeFileSync(path.join(projectPath, '.gitignore'), fs.readFileSync(path.join(fixture, '.gitignore')))
+        fs.writeFileSync(path.join(projectPath, '.gitignore'), fs.readFileSync(path.join(fixture, 'git.gitignore')))
         fs.writeFileSync(path.join(projectPath, 'base.sass'), fs.readFileSync(path.join(fixture, 'base.sass')))
         fs.writeFileSync(path.join(projectPath, 'ignored.sass'), fs.readFileSync(path.join(fixture, 'ignored.sass')))
 
