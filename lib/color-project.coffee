@@ -75,6 +75,9 @@ class ColorProject
   onDidInitialize: (callback) ->
     @emitter.on 'did-initialize', callback
 
+  onDidDestroy: (callback) ->
+    @emitter.on 'did-destroy', callback
+
   onDidUpdateVariables: (callback) ->
     @emitter.on 'did-update-variables', callback
 
@@ -109,6 +112,7 @@ class ColorProject
 
     @colorBuffersByEditorId = null
 
+    @emitter.emit 'did-destroy', this
   loadPathsAndVariables: ->
     destroyed = null
 
