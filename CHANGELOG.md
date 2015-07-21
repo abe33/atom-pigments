@@ -1,3 +1,18 @@
+<a name="v0.9.0"></a>
+# v0.9.0 (2015-07-21)
+
+## Features
+
+- Add destroy event on project ([3752bf23](https://github.com/abe33/atom-pigments/commit/3752bf23bdf7148db23181feacf153180c8ace9b))
+- Add ignoreVcsIgnoredPaths setting instead of using the core setting ([11c78185](https://github.com/abe33/atom-pigments/commit/11c7818512d1dec04a32cbf0fa0f7900353eb785))
+
+## Bug Fixes
+
+- Fix markers out of sync when a line gets wrapped during typing ([f9f2015b](https://github.com/abe33/atom-pigments/commit/f9f2015ba49823b87968c09c7bb7dc0ae24f4d5c), [#55](https://github.com/abe33/atom-pigments/issues/55))
+- Prevent error when an event is dispatched after destruction ([3c6d3a12](https://github.com/abe33/atom-pigments/commit/3c6d3a12185552a6792ef3d44ef625dbd5b9c143))
+- Fix project variables not destroyed when reload find nothing ([16701793](https://github.com/abe33/atom-pigments/commit/167017931c21fcc3c53c6e04115c2bc5d447f163))
+- Make sure to update markers when stylesheets are added ([61f00898](https://github.com/abe33/atom-pigments/commit/61f00898d1a244f14f4ac6da0e4cf36794740fe0), [#51](https://github.com/abe33/atom-pigments/issues/51))
+
 <a name="v0.8.4"></a>
 # v0.8.4 (2015-07-10)
 
