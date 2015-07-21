@@ -45,6 +45,10 @@ describe 'ColorBufferElement', ->
       pigments = pkg.mainModule
       project = pigments.getProject()
 
+  afterEach ->
+    if colorBuffer?
+      waitsForPromise -> colorBuffer.variablesAvailable()
+
   describe 'when an editor is opened', ->
     beforeEach ->
       colorBuffer = project.colorBufferForEditor(editor)
