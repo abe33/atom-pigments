@@ -63,7 +63,7 @@ class VariablesCollection
       else
         v[k] is properties[k]
 
-  updateCollection: (collection) ->
+  updateCollection: (collection, paths) ->
     pathsCollection = {}
 
     for v in collection
@@ -82,6 +82,14 @@ class VariablesCollection
       results.created = results.created.concat(created) if created?
       results.updated = results.updated.concat(updated) if updated?
       results.destroyed = results.destroyed.concat(destroyed) if destroyed?
+
+    if collection.length is 0 and paths
+      for path in paths
+        {created, updated, destroyed} = @updatePathCollection(path, collection, true) or {}
+
+        results.created = results.created.concat(created) if created?
+        results.updated = results.updated.concat(updated) if updated?
+        results.destroyed = results.destroyed.concat(destroyed) if destroyed?
 
     results = @updateDependencies(results)
 

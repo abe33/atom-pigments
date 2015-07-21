@@ -344,7 +344,7 @@ class ColorProject
 
       @loadVariablesForPaths(paths)
     .then (results) =>
-      @variables.updateCollection(results)
+      @variables.updateCollection(results, paths)
 
   scanPathsForVariables: (paths, callback) ->
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])

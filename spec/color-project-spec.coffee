@@ -442,6 +442,35 @@ describe 'ColorProject', ->
         it 'dispatches a did-update-variables event', ->
           expect(eventSpy).toHaveBeenCalled()
 
+      describe 'when all the colors are removed', ->
+        [variablesTextRanges] = []
+        beforeEach ->
+          runs ->
+            variablesTextRanges = {}
+            project.getVariablesForPath(editor.getPath()).forEach (variable) ->
+              variablesTextRanges[variable.name] = variable.range
+
+            editor.setSelectedBufferRange([[0,0],[Infinity,Infinity]])
+            editor.insertText('')
+            editor.getBuffer().emitter.emit('did-stop-changing')
+
+          waitsFor -> eventSpy.callCount > 0
+
+        it 'removes every variables from the file', ->
+          expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
+          expect(project.getVariables().length).toEqual(0)
+
+          expect(eventSpy.argsForCall[0][0].destroyed.length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+          expect(eventSpy.argsForCall[0][0].created).toBeUndefined()
+          expect(eventSpy.argsForCall[0][0].updated).toBeUndefined()
+
+        it 'can no longer be found in the project variables', ->
+          expect(project.getVariables().some (v) -> v.name is 'colors.red').toBeFalsy()
+          expect(project.getColorVariables().some (v) -> v.name is 'colors.red').toBeFalsy()
+
+        it 'dispatches a did-update-variables event', ->
+          expect(eventSpy).toHaveBeenCalled()
+
     describe '::setIgnoredNames', ->
       describe 'with an empty array', ->
         beforeEach ->
