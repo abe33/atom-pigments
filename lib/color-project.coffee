@@ -116,7 +116,6 @@ class ColorProject
 
     @emitter.emit 'did-destroy', this
     @emitter.dispose()
-    @emitter = null
 
   loadPathsAndVariables: ->
     destroyed = null
