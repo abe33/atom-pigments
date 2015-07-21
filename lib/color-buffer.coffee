@@ -132,11 +132,14 @@ class ColorBuffer
   terminateRunningTask: -> @task?.terminate()
 
   destroy: ->
+    return if @destroyed
+
     @terminateRunningTask()
     @subscriptions.dispose()
-    @emitter.emit 'did-destroy'
     @colorMarkers?.forEach (marker) -> marker.destroy()
     @destroyed = true
+    @emitter.emit 'did-destroy'
+    @emitter.dispose()
 
   isVariablesSource: -> @project.isVariablesSourcePath(@editor.getPath())
 

@@ -90,6 +90,7 @@ class ColorBufferElement extends HTMLElement
     @detach()
     @subscriptions.dispose()
     @releaseAllMarkerViews()
+    @colorModel = null
 
   getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
 
