@@ -40,7 +40,6 @@ class ColorProject
     {@ignoredNames, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
-    @variablesSubscriptionsById = {}
     @colorBuffersByEditorId = {}
 
     if variables?
@@ -108,11 +107,17 @@ class ColorProject
     @destroyed = true
 
     PathsScanner.terminateRunningTask()
-    buffer.destroy() for id,buffer of @colorBuffersByEditorId
 
+    buffer.destroy() for id,buffer of @colorBuffersByEditorId
     @colorBuffersByEditorId = null
 
+    @subscriptions.dispose()
+    @subscriptions = null
+
     @emitter.emit 'did-destroy', this
+    @emitter.dispose()
+    @emitter = null
+
   loadPathsAndVariables: ->
     destroyed = null
 
