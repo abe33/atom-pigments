@@ -46,6 +46,9 @@ class ColorBufferElement extends HTMLElement
       @updateScroll()
       @updateMarkers()
 
+    @subscriptions.add @editor.onDidChange =>
+      @usedMarkers.forEach (marker) -> marker.checkScreenRange()
+
     @subscriptions.add @editor.onDidAddCursor =>
       @requestSelectionUpdate()
     @subscriptions.add @editor.onDidRemoveCursor =>

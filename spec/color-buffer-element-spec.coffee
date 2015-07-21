@@ -30,6 +30,10 @@ describe 'ColorBufferElement', ->
 
     jasmineContent.appendChild(workspaceElement)
 
+    atom.config.set 'editor.softWrap', true
+    atom.config.set 'editor.softWrapAtPreferredLineLength', true
+    atom.config.set 'editor.preferredLineLength', 40
+
     atom.config.set 'pigments.delayBeforeScan', 0
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
@@ -140,6 +144,23 @@ describe 'ColorBufferElement', ->
               expect(markers[1].style.display).toEqual('')
               expect(markers[2].style.display).toEqual('')
               expect(markers[3].style.display).toEqual('none')
+
+      describe 'when a line is edited and gets wrapped', ->
+        marker = null
+        beforeEach ->
+          waitsForPromise -> colorBuffer.variablesAvailable()
+
+          runs ->
+            marker = colorBufferElement.usedMarkers[colorBufferElement.usedMarkers.length-1]
+            spyOn(marker, 'render').andCallThrough()
+
+            editBuffer new Array(20).join("foo "), start: [1,0], end: [1,0]
+
+          waitsFor ->
+            marker.render.callCount > 0
+
+        it 'updates the markers whose screen range have changed', ->
+          expect(marker.render).toHaveBeenCalled()
 
       describe 'when some markers are destroyed', ->
         [spy] = []

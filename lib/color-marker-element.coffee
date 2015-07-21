@@ -56,6 +56,12 @@ class ColorMarkerElement extends HTMLElement
     else
       @style.cssText = ''
 
+    @lastMarkerScreenRange = @colorMarker.marker.getScreenRange()
+
+  checkScreenRange: ->
+    unless @lastMarkerScreenRange.isEqual(@colorMarker.marker.getScreenRange())
+      @render()
+
   isReleased: -> @released
 
   release: (dispatchEvent=true) ->
