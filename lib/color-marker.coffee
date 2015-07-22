@@ -3,11 +3,16 @@
 
 module.exports =
 class ColorMarker
-  constructor: ({@marker, @color, @text, @invalid}) ->
+  constructor: ({@marker, @color, @text, @invalid, @colorBuffer}) ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add @marker.onDidDestroy => @destroyed()
     @subscriptions.add @marker.onDidChange =>
-      @destroy() unless @marker.isValid()
+      if @marker.isValid()
+        @checkMarkerScope()
+      else
+        @destroy()
+
+    @checkMarkerScope()
 
   destroy: ->
     return if @wasDestroyed
@@ -16,7 +21,7 @@ class ColorMarker
   destroyed: ->
     return if @wasDestroyed
     @subscriptions.dispose()
-    {@marker, @color, @text} = {}
+    {@marker, @color, @text, @colorBuffer} = {}
     @wasDestroyed = true
 
   match: (properties) ->
@@ -43,6 +48,24 @@ class ColorMarker
     }
     out.invalid = true unless @color.isValid()
     out
+
+  checkMarkerScope: ->
+    range = @marker.getBufferRange()
+
+    try
+      scope = @marker.displayBuffer.scopeDescriptorForBufferPosition(range.start)
+      scopeChain = scope.getScopeChain()
+
+      return if not scopeChain or scopeChain is @lastScopeChain
+
+      @ignored = @colorBuffer.ignoredScopes.some (scopeRegExp) ->
+        scopeChain.match(new RegExp(scopeRegExp))
+
+      @lastScopeChain = scopeChain
+    catch e
+      console.error e
+
+  isIgnored: -> @ignored
 
   convertContentToHex: ->
     hex = '#' + fill(@color.hex, 6)

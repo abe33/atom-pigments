@@ -15,6 +15,8 @@ class ColorBuffer
     @colorMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
+    @subscriptions.add @editor.displayBuffer.onDidTokenize =>
+      @getColorMarkers()?.forEach (marker) -> marker.checkMarkerScope()
 
     @subscriptions.add @editor.onDidChange =>
       @terminateRunningTask() if @initialized and @variableInitialized
@@ -41,6 +43,7 @@ class ColorBuffer
     @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
 
     @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes=[]) =>
+      @getColorMarkers()?.forEach (marker) -> marker.checkMarkerScope()
       @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}
 
     # Needed to clean the serialized markers from previous versions
@@ -89,6 +92,7 @@ class ColorBuffer
         marker
         color
         text: state.text
+        colorBuffer: this
       }
 
   cleanUnusedTextEditorMarkers: ->
@@ -229,8 +233,12 @@ class ColorBuffer
         type: 'pigments-color'
         invalidate: 'touch'
       })
-      @colorMarkersByMarkerId[marker.id] =
-      new ColorMarker {marker, color: result.color, text: result.match}
+      @colorMarkersByMarkerId[marker.id] = new ColorMarker {
+        marker
+        color: result.color
+        text: result.match
+        colorBuffer: this
+      }
 
   updateColorMarkers: (results) ->
     newMarkers = []
@@ -294,7 +302,7 @@ class ColorBuffer
 
   findValidColorMarkers: (properties) ->
     @findColorMarkers(properties).filter (marker) =>
-      marker?.color?.isValid() and not @markerScopeIsIgnored(marker)
+      marker? and marker.color?.isValid() and not marker?.isIgnored()
 
   scanBufferForColors: (options={}) ->
     return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
@@ -334,20 +342,6 @@ class ColorBuffer
             buffer.positionForCharacterIndex(res.range[1])
           ]
           res
-
-  markerScopeIsIgnored: (marker) ->
-    range = marker.marker.getBufferRange()
-    try
-      scope = @editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
-      scopeChain = scope.getScopeChain()
-
-      @ignoredScopes.some (scopeRegExp) ->
-        try
-          scopeChain.match(new RegExp(scopeRegExp))
-        catch
-          return false
-    catch e
-      console.warn "Unable to find a scope at the given buffer position", @editor
 
   serialize: ->
     {
