@@ -9,6 +9,7 @@ cssColor = require 'css-color-function'
   floatOrPercent
   comma
   notQuote
+  notQuoteOrPe
   hexadecimal
   ps
   pe
@@ -66,7 +67,7 @@ blendMethod = (registry, name, method) ->
       (
         #{notQuote}
         #{comma}
-        #{notQuote}
+        #{notQuoteOrPe}
       )
     #{pe}
   "), (match, expression, context) ->
