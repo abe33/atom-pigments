@@ -4,8 +4,9 @@
 module.exports =
 class ColorMarker
   constructor: ({@marker, @color, @text, @invalid, @colorBuffer}) ->
+    @id = @marker.id
     @subscriptions = new CompositeDisposable
-    @subscriptions.add @marker.onDidDestroy => @destroyed()
+    @subscriptions.add @marker.onDidDestroy => @markerWasDestroyed()
     @subscriptions.add @marker.onDidChange =>
       if @marker.isValid()
         @checkMarkerScope()
@@ -15,17 +16,17 @@ class ColorMarker
     @checkMarkerScope()
 
   destroy: ->
-    return if @wasDestroyed
+    return if @destroyed
     @marker.destroy()
 
-  destroyed: ->
-    return if @wasDestroyed
+  markerWasDestroyed: ->
+    return if @destroyed
     @subscriptions.dispose()
     {@marker, @color, @text, @colorBuffer} = {}
-    @wasDestroyed = true
+    @destroyed = true
 
   match: (properties) ->
-    return false if @wasDestroyed
+    return false if @destroyed
 
     bool = true
 
@@ -38,7 +39,7 @@ class ColorMarker
     bool
 
   serialize: ->
-    return if @wasDestroyed
+    return if @destroyed
     out = {
       markerId: String(@marker.id)
       bufferRange: @marker.getBufferRange().serialize()
@@ -50,6 +51,7 @@ class ColorMarker
     out
 
   checkMarkerScope: (forceEvaluation=false) ->
+    return if @destroyed
     range = @marker.getBufferRange()
 
     try
