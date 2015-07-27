@@ -36,7 +36,7 @@ class PaletteElement extends HTMLElement
             @input optAttrs merge, 'checked', type: 'checkbox', id: 'merge-duplicates', outlet: 'merge'
             @label for: 'merge-duplicates', 'Merge Duplicates'
 
-      @div class: 'pigments-palette-list', =>
+      @div class: 'pigments-palette-list native-key-bindings', tabindex: -1, =>
         @ol outlet: 'list'
 
   createdCallback: ->
