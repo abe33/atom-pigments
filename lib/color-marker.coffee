@@ -51,7 +51,7 @@ class ColorMarker
     out
 
   checkMarkerScope: (forceEvaluation=false) ->
-    return if @destroyed
+    return if @destroyed or !@colorBuffer?
     range = @marker.getBufferRange()
 
     try
