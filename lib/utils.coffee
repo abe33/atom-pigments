@@ -73,12 +73,18 @@ utils =
     l = s.length
     i = 0
     start = 0
+    `whileLoop: //`
     while i < l
       c = s.substr(i, 1)
 
       switch(c)
         when "("
           i = utils.findClosingIndex s, i + 1, c, ")"
+        # A parser regexp will end with the last ), so sequences like (...)(...)
+        # will end after the second parenthesis pair, by mathing ) we prevent
+        # an infinite loop when splitting the string.
+        when ")"
+          `break whileLoop`
         when "["
           i = utils.findClosingIndex s, i + 1, c, "]"
         when ""
