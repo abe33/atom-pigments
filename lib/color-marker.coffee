@@ -49,17 +49,18 @@ class ColorMarker
     out.invalid = true unless @color.isValid()
     out
 
-  checkMarkerScope: ->
+  checkMarkerScope: (forceEvaluation=false) ->
     range = @marker.getBufferRange()
 
     try
       scope = @marker.displayBuffer.scopeDescriptorForBufferPosition(range.start)
       scopeChain = scope.getScopeChain()
 
-      return if not scopeChain or scopeChain is @lastScopeChain
+      return if not scopeChain or (!forceEvaluation and scopeChain is @lastScopeChain)
 
       @ignored = @colorBuffer.ignoredScopes.some (scopeRegExp) ->
-        scopeChain.match(new RegExp(scopeRegExp))
+        scopeChain.match(scopeRegExp)
+
 
       @lastScopeChain = scopeChain
     catch e

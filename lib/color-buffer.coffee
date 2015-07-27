@@ -42,8 +42,12 @@ class ColorBuffer
 
     @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
 
-    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (@ignoredScopes=[]) =>
-      @getColorMarkers()?.forEach (marker) -> marker.checkMarkerScope()
+    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (ignoredScopes=[]) =>
+      @ignoredScopes = ignoredScopes.map (scope) ->
+        try new RegExp(scope)
+      .filter (re) -> re?
+
+      @getColorMarkers()?.forEach (marker) -> marker.checkMarkerScope(true)
       @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}
 
     # Needed to clean the serialized markers from previous versions
