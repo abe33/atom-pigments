@@ -21,7 +21,7 @@ class ColorResultsElement extends HTMLElement
             @span outlet: 'searchedCount', class: 'searched-count'
             @span ' paths searched'
 
-      @ol outlet: 'resultsList', class: 'search-colors-results results-view list-tree focusable-panel has-collapsable-children', tabindex: -1
+      @ol outlet: 'resultsList', class: 'search-colors-results results-view list-tree focusable-panel has-collapsable-children native-key-bindings', tabindex: -1
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable

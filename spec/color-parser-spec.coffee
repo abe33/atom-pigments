@@ -572,6 +572,7 @@ describe 'ColorParser', ->
   itParses('hardlight(@base, @modifier)').asInvalid()
 
   itParses('difference(#ff6600, 0x666666)').asColor('#990066')
+  itParses('difference(#ff6600,)()').asInvalid()
   itParses('difference(@base, @modifier)').withContext({
     '@base': asColor '#ff6600'
     '@modifier': asColor '#666666'
