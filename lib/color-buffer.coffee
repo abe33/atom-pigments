@@ -242,6 +242,8 @@ class ColorBuffer
       processResults = =>
         startDate = new Date
 
+        return resolve([]) if @editor.isDestroyed()
+
         while results.length
           result = results.shift()
 

@@ -33,6 +33,7 @@ class ColorBufferElement extends HTMLElement
 
   setModel: (@colorBuffer) ->
     {@editor} = @colorBuffer
+    return if @editor.isDestroyed()
     @editorElement = atom.views.getView(@editor)
 
     @colorBuffer.initialize().then => @updateMarkers()
@@ -128,6 +129,8 @@ class ColorBufferElement extends HTMLElement
         console.warn "A color marker was found in the displayed markers array without an associated view", marker
 
   updateMarkers: ->
+    return if @editor.isDestroyed()
+
     markers = @colorBuffer.findValidColorMarkers({
       intersectsScreenRowRange: @editor.displayBuffer.getVisibleRowRange()
     })
