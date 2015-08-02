@@ -1,3 +1,10 @@
+<a name="v0.9.3"></a>
+# v0.9.3 (2015-08-02)
+
+## Bug Fixes
+
+- Prevent markers creation and render after text editor was destroyed ([0b7e598b](https://github.com/abe33/atom-pigments/commit/0b7e598be84409c4b21e058a030e08124b4c52c1), [#63](https://github.com/abe33/atom-pigments/issues/63))
+
 <a name="v0.9.2"></a>
 # v0.9.2 (2015-07-27)
 
