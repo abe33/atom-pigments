@@ -14,6 +14,7 @@ module.exports =
   floatOrPercent: "(#{percent}|#{float})"
   comma: '\\s*,\\s*'
   notQuote: "[^\"'\\n]+"
+  notQuoteOrPe: "[^\"'\\n\)]+"
   hexadecimal: '[\\da-fA-F]'
   ps: '\\(\\s*'
   pe: '\\s*\\)'
