@@ -1,6 +1,5 @@
 _ = require 'underscore-plus'
 {CompositeDisposable, Range}  = require 'atom'
-fuzzaldrin = require 'fuzzaldrin'
 {variables: variablesRegExp} = require './regexes'
 
 module.exports =

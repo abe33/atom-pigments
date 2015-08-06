@@ -19,7 +19,6 @@
     "css-color-function": "0.1.x",
     "minimatch": "0.3.x",
     "delegato": "^1.0.0",
-    "fuzzaldrin": "2.x",
     "atom-utils": ">=0.5.0"
   },
   "devDependencies": {
