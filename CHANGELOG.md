@@ -1,3 +1,15 @@
+<a name="v0.11.0"></a>
+# v0.11.0 (2015-08-13)
+
+## Features
+
+- Implement support for stylus channel modification functions ([6d783fd6](https://github.com/abe33/atom-pigments/commit/6d783fd6c74f08c8684002d9374a0a9340647630), [#72](https://github.com/abe33/atom-pigments/issues/72))
+- Add support for Stylus transparentify function ([86834c1a](https://github.com/abe33/atom-pigments/commit/86834c1a2cec64956ca29e9fb5bb977151aac021), [#72](https://github.com/abe33/atom-pigments/issues/72))
+
+## Bug Fixes
+
+- Fix spin function called with degrees not parsed properly ([92a5e890](https://github.com/abe33/atom-pigments/commit/92a5e890b8c090bdf63f0947c3c781f43eadc259), [#72](https://github.com/abe33/atom-pigments/issues/72))
+
 <a name="v0.10.0"></a>
 # v0.10.0 (2015-08-13)
 
