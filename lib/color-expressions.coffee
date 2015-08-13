@@ -410,14 +410,15 @@ module.exports = getRegistry: (context) ->
     @alpha = baseColor.alpha
 
   # fade(#ffffff, 0.5)
+  # alpha(#ffffff, 0.5)
   registry.createExpression 'fade', strip("
-    fade#{ps}
+    (fade|alpha)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_, subexpr, amount] = match
+    [_, _, subexpr, amount] = match
 
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
@@ -450,6 +451,7 @@ module.exports = getRegistry: (context) ->
   # opacify(0x78ffffff, 0.5)
   # opacify(0x78ffffff, 50%)
   # fadein(0x78ffffff, 0.5)
+  # alpha(0x78ffffff, 0.5)
   registry.createExpression 'opacify', strip("
     (opacify|fadein)#{ps}
       (#{notQuote})
@@ -466,6 +468,26 @@ module.exports = getRegistry: (context) ->
 
     @rgb = baseColor.rgb
     @alpha = clamp(baseColor.alpha + amount)
+
+  # red(#000,255)
+  # green(#000,255)
+  # blue(#000,255)
+  registry.createExpression 'stylus_component_functions', strip("
+    (red|green|blue)#{ps}
+      (#{notQuote})
+      #{comma}
+      (#{int}|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, channel, subexpr, amount] = match
+
+    amount = context.readInt(amount)
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+    return @invalid = true if isNaN(amount)
+
+    @[channel] = amount
 
   # transparentify(#808080)
   registry.createExpression 'transparentify', strip("
@@ -504,6 +526,47 @@ module.exports = getRegistry: (context) ->
     @green = processChannel('green')
     @blue = processChannel('blue')
     @alpha = Math.round(bestAlpha * 100) / 100
+
+  # hue(#855, 60deg)
+  registry.createExpression 'hue', strip("
+    hue#{ps}
+      (#{notQuote})
+      #{comma}
+      (#{int}deg|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, subexpr, amount] = match
+
+    amount = context.readFloat(amount)
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+    return @invalid = true if isNaN(amount)
+
+    [h,s,l] = baseColor.hsl
+
+    @hsl = [amount % 360, s, l]
+    @alpha = baseColor.alpha
+
+  # saturation(#855, 60deg)
+  # lightness(#855, 60deg)
+  registry.createExpression 'stylus_sl_component_functions', strip("
+    (saturation|lightness)#{ps}
+      (#{notQuote})
+      #{comma}
+      (#{intOrPercent}|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, channel, subexpr, amount] = match
+
+    amount = context.readInt(amount)
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+    return @invalid = true if isNaN(amount)
+
+    baseColor[channel] = amount
+    @rgba = baseColor.rgba
 
   # adjust-hue(#855, 60deg)
   registry.createExpression 'adjust-hue', strip("
@@ -669,6 +732,7 @@ module.exports = getRegistry: (context) ->
     @alpha = baseColor.alpha
 
   # spin(green, 20)
+  # spin(green, 20deg)
   registry.createExpression 'spin', strip("
     spin#{ps}
       (#{notQuote})
