@@ -616,8 +616,8 @@ describe 'ColorParser', ->
   itParses('complement(@base)').asInvalid()
 
   itParses('transparentify(#808080)').asColor(0,0,0,0.5)
-  itParses('transparentify(#414141, #000)').asColor(255,255,255,0.25)
-  itParses('transparentify(#91974C, #F34949, 0.5)').asColor(47,229,79,0.5)
+  itParses('transparentify(#414141, black)').asColor(255,255,255,0.25)
+  itParses('transparentify(#91974C, 0xF34949, 0.5)').asColor(47,229,79,0.5)
   itParses('transparentify(a)').withContext({
     'a': asColor '#808080'
   }).asColor(0,0,0,0.5)

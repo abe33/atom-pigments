@@ -506,12 +506,13 @@ module.exports = getRegistry: (context) ->
     return @invalid = true if isInvalid(top)
     return @invalid = true if bottom? and isInvalid(bottom)
 
-    bottom ?= new Color(255,255,255)
+    bottom ?= new Color(255,255,255,1)
     alpha = undefined if isNaN(alpha)
 
-    bestAlpha = ['red','green','blue'].map (channel) ->
-      (top[channel] - (bottom[channel])) / ((if 0 < top[channel] - (bottom[channel]) then 255 else 0) - (bottom[channel]))
-    .sort((a, b) ->a < b)[0]
+    bestAlpha = ['red','green','blue'].map((channel) ->
+      res = (top[channel] - (bottom[channel])) / ((if 0 < top[channel] - (bottom[channel]) then 255 else 0) - (bottom[channel]))
+      res
+    ).sort((a, b) -> a < b)[0]
 
     processChannel = (channel) ->
       if bestAlpha is 0
