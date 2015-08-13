@@ -54,6 +54,33 @@ describe 'ColorMarker', ->
       it 'replaces the text in the editor by the rgba version', ->
         expect(editor.getText()).toEqual("""
         body {
+          color: rgba(255, 0, 0, 1);
+          bar: foo;
+          foo: bar;
+        }
+        """)
+
+  describe '::convertContentToRGB', ->
+    beforeEach ->
+      colorMarker.color.alpha = 1
+      colorMarker.convertContentToRGB()
+
+    it 'replaces the text in the editor by the rgba version', ->
+      expect(editor.getText()).toEqual("""
+      body {
+        color: rgb(255, 0, 0);
+        bar: foo;
+        foo: bar;
+      }
+      """)
+
+    describe 'when the color alpha is not 1', ->
+      beforeEach ->
+        colorMarker.convertContentToRGB()
+
+      it 'replaces the text in the editor by the rgba version', ->
+        expect(editor.getText()).toEqual("""
+        body {
           color: rgb(255, 0, 0);
           bar: foo;
           foo: bar;

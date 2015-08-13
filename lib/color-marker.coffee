@@ -75,10 +75,12 @@ class ColorMarker
 
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hex)
 
+  convertContentToRGB: ->
+    rgba = "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
+
+    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)
+
   convertContentToRGBA: ->
-    if @color.alpha is 1
-      rgba = "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
-    else
-      rgba = "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
+    rgba = "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
 
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)

@@ -107,6 +107,9 @@ module.exports =
       'pigments:convert-to-hex': convertMethod (marker) ->
         marker.convertContentToHex() if marker?
 
+      'pigments:convert-to-rgb': convertMethod (marker) ->
+        marker.convertContentToRGB() if marker?
+
       'pigments:convert-to-rgba': convertMethod (marker) ->
         marker.convertContentToRGBA() if marker?
 
@@ -131,7 +134,8 @@ module.exports =
         label: 'Pigments'
         submenu: [
           {label: 'Convert to hexadecimal', command: 'pigments:convert-to-hex'}
-          {label: 'Convert to rgba', command: 'pigments:convert-to-rgba'}
+          {label: 'Convert to RGB', command: 'pigments:convert-to-rgb'}
+          {label: 'Convert to RGBA', command: 'pigments:convert-to-rgba'}
         ]
         shouldDisplay: (event) => @shouldDisplayContextMenu(event)
       }]
