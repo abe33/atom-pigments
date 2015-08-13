@@ -474,7 +474,9 @@ describe 'ColorParser', ->
 
   itParses('spin(#F00, 120)').asColor(0, 255, 0)
   itParses('spin(#F00, 120)').asColor(0, 255, 0)
+  itParses('spin(#F00, 120deg)').asColor(0, 255, 0)
   itParses('spin(#F00, -120)').asColor(0, 0, 255)
+  itParses('spin(#F00, -120deg)').asColor(0, 0, 255)
   itParses('spin(@c, @a)').withContext({
     '@c': asColor '#F00'
     '@a': '120'

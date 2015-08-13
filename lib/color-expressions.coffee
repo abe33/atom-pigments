@@ -673,7 +673,7 @@ module.exports = getRegistry: (context) ->
     spin#{ps}
       (#{notQuote})
       #{comma}
-      (-?#{int}|#{variables})
+      (-?(#{int})(deg)?|#{variables})
     #{pe}
   "), (match, expression, context) ->
     [_, subexpr, angle] = match
