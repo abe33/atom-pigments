@@ -467,6 +467,44 @@ module.exports = getRegistry: (context) ->
     @rgb = baseColor.rgb
     @alpha = clamp(baseColor.alpha + amount)
 
+  # transparentify(#808080)
+  registry.createExpression 'transparentify', strip("
+    transparentify#{ps}
+    (#{notQuote})
+    #{pe}
+  "), (match, expression, context) ->
+    [_, expr] = match
+
+    [top, bottom, alpha] = split(expr)
+
+    top = context.readColor(top)
+    bottom = context.readColor(bottom)
+    alpha = context.readFloatOrPercent(alpha)
+
+    return @invalid = true if isInvalid(top)
+    return @invalid = true if bottom? and isInvalid(bottom)
+
+    bottom ?= new Color(255,255,255)
+    alpha = undefined if isNaN(alpha)
+
+    bestAlpha = ['red','green','blue'].map (channel) ->
+      (top[channel] - (bottom[channel])) / ((if 0 < top[channel] - (bottom[channel]) then 255 else 0) - (bottom[channel]))
+    .sort((a, b) ->a < b)[0]
+
+    processChannel = (channel) ->
+      if bestAlpha is 0
+        bottom[channel]
+      else
+        bottom[channel] + (top[channel] - (bottom[channel])) / bestAlpha
+
+    bestAlpha = alpha if alpha?
+    bestAlpha = Math.max(Math.min(bestAlpha, 1), 0)
+
+    @red = processChannel('red')
+    @green = processChannel('green')
+    @blue = processChannel('blue')
+    @alpha = Math.round(bestAlpha * 100) / 100
+
   # adjust-hue(#855, 60deg)
   registry.createExpression 'adjust-hue', strip("
     adjust-hue#{ps}
