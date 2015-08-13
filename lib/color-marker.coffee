@@ -9,6 +9,7 @@ class ColorMarker
     @subscriptions.add @marker.onDidDestroy => @markerWasDestroyed()
     @subscriptions.add @marker.onDidChange =>
       if @marker.isValid()
+        @invalidateScreenRangeCache()
         @checkMarkerScope()
       else
         @destroy()
@@ -63,12 +64,15 @@ class ColorMarker
       @ignored = @colorBuffer.ignoredScopes.some (scopeRegExp) ->
         scopeChain.match(scopeRegExp)
 
-
       @lastScopeChain = scopeChain
     catch e
       console.error e
 
   isIgnored: -> @ignored
+
+  getScreenRange: -> @screenRangeCache ?= @marker.getScreenRange()
+
+  invalidateScreenRangeCache: -> @screenRangeCache = null
 
   convertContentToHex: ->
     hex = '#' + fill(@color.hex, 6)

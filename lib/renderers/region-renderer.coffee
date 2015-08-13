@@ -4,7 +4,7 @@ class RegionRenderer
   includeTextInRegion: false
 
   renderRegions: (colorMarker) ->
-    range = colorMarker.marker.getScreenRange()
+    range = colorMarker.getScreenRange()
     return [] if range.isEmpty()
 
     rowSpan = range.end.row - range.start.row

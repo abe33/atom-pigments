@@ -2,7 +2,7 @@
 module.exports =
 class DotRenderer
   render: (colorMarker) ->
-    range = colorMarker.marker.getScreenRange()
+    range = colorMarker.getScreenRange()
     displayBuffer = colorMarker.marker.displayBuffer
     charWidth = displayBuffer.getDefaultCharWidth()
 

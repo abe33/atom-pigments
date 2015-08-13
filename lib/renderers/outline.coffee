@@ -3,7 +3,7 @@ RegionRenderer = require './region-renderer'
 module.exports =
 class OutlineRenderer extends RegionRenderer
   render: (colorMarker) ->
-    range = colorMarker.marker.getScreenRange()
+    range = colorMarker.getScreenRange()
     return [] if range.isEmpty()
 
     color = colorMarker.color.toCSS()
