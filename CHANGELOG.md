@@ -1,3 +1,18 @@
+<a name="v0.10.0"></a>
+# v0.10.0 (2015-08-13)
+
+## Features
+
+- Separate conversions to RGB and RGBA in two commands ([2f2da668](https://github.com/abe33/atom-pigments/commit/2f2da668187a709f24b5c18732684e9a1805d7da), [#71](https://github.com/abe33/atom-pigments/issues/71))
+
+## Bug Fixes
+
+- Prevent attaching a buffer if the editor element is undefined ([5fa6964c](https://github.com/abe33/atom-pigments/commit/5fa6964c5598a96ee243377c0f765640897e9217), [#70](https://github.com/abe33/atom-pigments/issues/70))
+
+## Performances
+
+- Cache marker's screen range to speed up updates and renders ([1746e1fe](https://github.com/abe33/atom-pigments/commit/1746e1fed9411311f9f8bd92b0a1da5516fe27ac))
+
 <a name="v0.9.3"></a>
 # v0.9.3 (2015-08-02)
 
