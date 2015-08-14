@@ -493,7 +493,7 @@ describe 'ColorProject', ->
           project.onDidUpdateVariables(spy)
           project.setIgnoredNames(['vendor/*', '**/*.styl'])
 
-          waitsFor -> spy.callCount > 0
+          waitsFor -> project.getVariables().length < 12
 
         it 'clears all the variables as there is no legible paths', ->
           expect(project.getPaths().length).toEqual(0)
