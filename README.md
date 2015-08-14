@@ -55,9 +55,9 @@ This command can be triggered using the keyboard by defining a keybinding like t
   'alt-shift-r': 'pigments:reload'
 ```
 
-### Pigments: Convert To Hexadecimal/Pigments: Convert to RGBA
+### Pigments: Convert To Hexadecimal/Pigments: Convert to RGB(A)
 
-It evaluates and replace a color by either its hexadecimal notation or rgba notation.
+It evaluates and replace a color by either its hexadecimal notation or rgb/rgba notation.
 Accessible from the command palette or by right clicking on a color.
 
 ![pigments-conversion](https://github.com/abe33/atom-pigments/blob/master/resources/context-menu-conversion.gif?raw=true)
@@ -67,7 +67,8 @@ These commands can be triggered using the keyboard by defining a keybinding like
 ```coffee
 'atom-workspace':
   'alt-shift-h': 'pigments:convert-to-hex'
-  'alt-shift-g': 'pigments:convert-to-rgba'
+  'alt-shift-g': 'pigments:convert-to-rgb'
+  'alt-shift-j': 'pigments:convert-to-rgba'
 ```
 
 When triggered from the command palette or from the keyboard, the conversion will operate on every cursors positioned on color markers.
