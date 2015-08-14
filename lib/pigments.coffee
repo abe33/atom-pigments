@@ -30,6 +30,12 @@ module.exports =
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
         type: 'string'
+    extendedSearchNames:
+      type: 'array'
+      default: [
+        '**/*.css'
+      ]
+      description: "When performing the `find-colors` command, the search will scans all the files that match the `sourceNames` glob patterns and the one defined in this setting."
     ignoredScopes:
       type: 'array'
       default: []

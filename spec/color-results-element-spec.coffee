@@ -40,7 +40,7 @@ describe 'ColorResultsElement', ->
     it 'groups results by files', ->
       fileResults = resultsElement.querySelectorAll('.list-nested-item')
 
-      expect(fileResults.length).toEqual(6)
+      expect(fileResults.length).toEqual(7)
 
       expect(fileResults[0].querySelectorAll('li.list-item').length).toEqual(3)
 

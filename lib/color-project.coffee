@@ -156,8 +156,9 @@ class ColorProject
       @variables.updateCollection(results) if results?
 
   findAllColors: ->
+    patterns = atom.config.get('pigments.sourceNames').concat(atom.config.get 'pigments.extendedSearchNames')
     new ColorSearch
-      sourceNames: atom.config.get 'pigments.sourceNames'
+      sourceNames: patterns
       ignoredNames: @getIgnoredNames()
       context: @getContext()
 
