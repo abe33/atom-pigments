@@ -2,7 +2,7 @@
 
 ## ![Pigments Logo](https://cdn.rawgit.com/abe33/atom-pigments/master/resources/pigments-logo.svg)
 
-A package to display colors in project and files.
+A package to display colors in project and files:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/pigments.gif?raw=true)
 
@@ -18,13 +18,31 @@ Or search for `pigments` in Atom settings view.
 
 ## Commands
 
+**Note:** Pigments doesn't define any keybindings for the provided commands, instead it'll let you define your own keybindings.
+
 ### Pigments: Show Palette
 
 You can display the project's palette through the `Pigments: Show Palette` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/palette.gif?raw=true)
 
-This command can be triggered using the keyboard by defining a keybinding like this:
+The project palette is made of all the colors that are affected to a variable, which means it won't display hardcoded colors affected to a CSS property. If you want to find every colors used in a project, including the hardcoded colors in CSS files, use the `Pigments: Find Colors` instead.
+
+Patterns for Less, Sass, Scss and Stylus variables are currently supported, which includes:
+
+```stylus
+my-var = #123456 // stylus
+```
+```sass
+$my-var: #123456 // sass
+$my-var: #123456; // scss
+```
+```css
+@my-var: #123456; /* less */
+
+```
+
+As with every commands, this command can be triggered using the keyboard by defining a keybinding like this:
 
 ```coffee
 'atom-workspace':
@@ -33,26 +51,28 @@ This command can be triggered using the keyboard by defining a keybinding like t
 
 ### Pigments: Find Colors
 
-You can search for all colors in every source files using the `Pigments: Find Colors` command from the command palette:
+You can search for all colors in your project using the `Pigments: Find Colors` command from the command palette:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
+
+The results will include colors declared in variables, places where the color variables are used as well as hardcoded color values in every files that matches one of the patterns defined in both `pigments.sourceNames` and `pigments.extendedSearchNames` settings.
+
+By default this includes:
+
+```
+**/*.css
+**/*.less
+**/*.scss
+**/*.sass
+**/*.styl
+**/*.stylus
+```
 
 This command can be triggered using the keyboard by defining a keybinding like this:
 
 ```coffee
 'atom-workspace':
   'alt-shift-f': 'pigments:find-colors'
-```
-
-### Pigments: Reload
-
-This command will force a reload of all variables in the project, this can be useful when the serialized state of the plugin contains invalid data and you want to get rid of them without having to touch to the content of the `.atom/storage` directory.
-
-This command can be triggered using the keyboard by defining a keybinding like this:
-
-```coffee
-'atom-workspace':
-  'alt-shift-r': 'pigments:reload'
 ```
 
 ### Pigments: Convert To Hexadecimal/Pigments: Convert to RGB(A)
@@ -73,6 +93,17 @@ These commands can be triggered using the keyboard by defining a keybinding like
 
 When triggered from the command palette or from the keyboard, the conversion will operate on every cursors positioned on color markers.
 
+### Pigments: Reload
+
+This command will force a reload of all variables in the project, this can be useful when the serialized state of the plugin contains invalid data and you want to get rid of them without having to touch to the content of the `.atom/storage` directory.
+
+This command can be triggered using the keyboard by defining a keybinding like this:
+
+```coffee
+'atom-workspace':
+  'alt-shift-r': 'pigments:reload'
+```
+
 ## Settings
 
 ### Source Names
@@ -80,7 +111,7 @@ When triggered from the command palette or from the keyboard, the conversion wil
 An array of glob patterns of the files to use as source for the project's variables and colors.
 
 * Key: `pigments.sourceNames`
-* Default: `'**/*.styl', '**/*.stylus', '**/*.less', '**/*.sass', '**/*.scss'`
+* Default: `['**/*.styl', '**/*.stylus', '**/*.less', '**/*.sass', '**/*.scss']`
 
 ### Ignored Names
 
@@ -88,6 +119,13 @@ An array of glob patterns of the files to ignore as source files for the project
 
 * Key: `pigments.ignoredNames`
 * Default: `['node_modules/*']`
+
+### Extended Search Names
+
+An array of glob patterns of files to include in the `Pigments: Find Colors` scanning process.
+
+* Key: `pigments.extendedSearchNames`
+* Default: `['**/*.css']`
 
 ### Ignored Scopes
 
@@ -99,6 +137,18 @@ For instance, if you want to ignore colors in comments and strings in your sourc
 \.comment, \.string
 ```
 
+As you can notice, the `.` character in scopes are escaped. This is due to the fact that this setting uses javascript `RegExp` to test the token's scope and the `.` is used to match against any character.
+
+For instance, to ignores colors in html attributes you can use the following expression:
+
+```
+\.text\.html(.*)\.string
+```
+
+Note the `(.*)` in the middle of the expression. It'll ensure that we're searching for the `.string` scope in the `.text.html` grammar even if there's other scope between them by catching any character between the two classnames.
+
+To find which scope is applied at a given position in a buffer you can use the `editor:log-cursor-scope` command. From that you'll be able to determine what expression to use to match the scope.
+
 * Key: `pigments.ignoredScopes`
 * Default: `[]`
 
@@ -107,7 +157,7 @@ For instance, if you want to ignore colors in comments and strings in your sourc
 The autocomplete provider will only complete color names in editors whose scope is present in this list.
 
 * Key: `pigments.autocompleteScopes`
-* Default: `'.source.css', '.source.css.less', '.source.sass', '.source.css.scss', '.source.stylus'`
+* Default: `['.source.css', '.source.css.less', '.source.sass', '.source.css.scss', '.source.stylus']`
 
 ### Extend Autocomplete To Variables
 
@@ -122,6 +172,13 @@ Whether to traverse symlinked directories to find source files or not.
 
 * Key: `pigments.traverseIntoSymlinkDirectories`
 * Default: `false`
+
+### Ignore VCS Ignored Paths
+
+When this setting is enabled, every files that are ignored by the VCS will also be ignored in Pigments. That means they'll be excluded when searching for colors and when building the project palette.
+
+* Key: `pigments.ignoreVcsIgnoredPaths`
+* Default: `true`
 
 ### Marker Type
 
@@ -181,3 +238,10 @@ Defines whether to merge colors duplicates together as a single result in the pa
 
 * Key: `pigments.mergeDuplicates`
 * Default: `false`
+
+### Delay Before Scan
+
+Pigments rescans the text buffer once you stopped editing it, however as the process can be sometime expensive, it'll apply an extra delay after the dispatch of the `did-stop-changing` event before starting the scanning process. This setting define the number of milliseconds to wait after the `did-stop-changing` event before starting to scan the buffer again. If your start typing in the buffer again in this interval, the rescan process will be aborted.
+
+* Key: `pigments.delayBeforeScan`
+* Default: `500` (ms)
