@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/abe33/atom-pigments.svg?branch=master)](https://travis-ci.org/abe33/atom-pigments)
 
-![Pigments Logo](https://cdn.rawgit.com/abe33/atom-pigments/master/resources/pigments-logo.svg)
+## ![Pigments Logo](https://cdn.rawgit.com/abe33/atom-pigments/master/resources/pigments-logo.svg)
 
 A package to display colors in project and files.
 
