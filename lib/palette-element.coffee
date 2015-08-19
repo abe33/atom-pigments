@@ -17,7 +17,7 @@ class PaletteElement extends HTMLElement
       attrs
 
     @div class: 'pigments-palette-panel', =>
-      @div class: 'pigments-palette-controls settings-view', =>
+      @div class: 'pigments-palette-controls settings-view pane-item', =>
         @div class: 'pigments-palette-controls-wrapper', =>
           @span class: 'input-group-inline', =>
             @label for: 'sort-palette-colors', 'Sort Colors'
