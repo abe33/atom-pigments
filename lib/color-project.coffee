@@ -23,7 +23,8 @@ class ColorProject
 
   @deserialize: (state) ->
     markersVersion = SERIALIZE_MARKERS_VERSION
-    state = {} if state?.version isnt SERIALIZE_VERSION
+    if state?.version isnt SERIALIZE_VERSION
+      state = {}
 
     if state?.markersVersion isnt markersVersion
       delete state.variables
@@ -37,7 +38,7 @@ class ColorProject
     new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignoredNames, @paths, variables, timestamp, buffers} = state
+    {@ignoredNames, @sourceNames, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @colorBuffersByEditorId = {}
@@ -156,7 +157,7 @@ class ColorProject
       @variables.updateCollection(results) if results?
 
   findAllColors: ->
-    patterns = atom.config.get('pigments.sourceNames').concat(atom.config.get 'pigments.extendedSearchNames')
+    patterns = @getSearchNames()
     new ColorSearch
       sourceNames: patterns
       ignoredNames: @getIgnoredNames()
@@ -226,7 +227,7 @@ class ColorProject
         knownPaths: if noKnownPaths then [] else @paths
         paths: atom.project.getPaths()
         traverseIntoSymlinkDirectories: atom.config.get 'pigments.traverseIntoSymlinkDirectories'
-        sourceNames: atom.config.get('pigments.sourceNames') ? []
+        sourceNames: @getSourceNames()
         ignoreVcsIgnores: atom.config.get('pigments.ignoreVcsIgnoredPaths')
       }
       PathsLoader.startTask config, (results) -> resolve(results)
@@ -241,6 +242,13 @@ class ColorProject
       @paths.push(p) for p in dirtied when p not in @paths
 
       @reloadVariablesForPaths(dirtied)
+
+  getSourceNames: ->
+    sourceNames = @sourceNames ? []
+    sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
+
+  getSearchNames: ->
+    @getSourceNames().concat(atom.config.get 'pigments.extendedSearchNames')
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []
@@ -266,7 +274,7 @@ class ColorProject
   isVariablesSourcePath: (path) ->
     return false unless path
     path = atom.project.relativize(path)
-    sources = atom.config.get('pigments.sourceNames')
+    sources = @getSourceNames()
     return true for source in sources when minimatch(path, source, matchBase: true, dot: true)
 
   isIgnoredPath: (path) ->
@@ -364,6 +372,7 @@ class ColorProject
       globalIgnoredNames: atom.config.get('pigments.ignoredNames')
 
     data.ignoredNames = @ignoredNames if @ignoredNames?
+    data.sourceNames = @sourceNames if @sourceNames?
     data.buffers = @serializeBuffers()
 
     if @isInitialized()

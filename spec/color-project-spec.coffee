@@ -19,7 +19,6 @@ describe 'ColorProject', ->
   beforeEach ->
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
-      '*.less'
     ]
     atom.config.set 'pigments.ignoredNames', []
 
@@ -29,6 +28,7 @@ describe 'ColorProject', ->
 
     project = new ColorProject({
       ignoredNames: ['vendor/*']
+      sourceNames: ['*.less']
     })
 
   describe '.deserialize', ->
@@ -100,9 +100,10 @@ describe 'ColorProject', ->
           timestamp: date
           version: SERIALIZE_VERSION
           markersVersion: SERIALIZE_MARKERS_VERSION
-          globalSourceNames: ['*.styl', '*.less']
+          globalSourceNames: ['*.styl']
           globalIgnoredNames: []
           ignoredNames: ['vendor/*']
+          sourceNames: ['*.less']
           buffers: {}
         }
         expect(project.serialize()).toEqual(expected)
@@ -182,6 +183,23 @@ describe 'ColorProject', ->
     it 'initializes the variables with an empty array', ->
       expect(project.getVariables()).toEqual([])
 
+  describe 'when the project has custom source names defined', ->
+    beforeEach ->
+      atom.config.set 'pigments.sourceNames', ['*.sass']
+
+      [fixturesPath] = atom.project.getPaths()
+
+      project = new ColorProject({sourceNames: ['*.styl']})
+
+      waitsForPromise -> project.initialize()
+
+    it 'initializes the paths with an empty array', ->
+      expect(project.getPaths().length).toEqual(2)
+
+    it 'initializes the variables with an empty array', ->
+      expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
+      expect(project.getColorVariables().length).toEqual(TOTAL_COLORS_VARIABLES_IN_PROJECT)
+
   describe 'when the project has looping variable definition', ->
     beforeEach ->
       atom.config.set 'pigments.sourceNames', ['*.sass']
@@ -209,6 +227,7 @@ describe 'ColorProject', ->
         expect(project.serialize()).toEqual({
           deserializer: 'ColorProject'
           ignoredNames: ['vendor/*']
+          sourceNames: ['*.less']
           timestamp: date
           version: SERIALIZE_VERSION
           markersVersion: SERIALIZE_MARKERS_VERSION
@@ -216,7 +235,7 @@ describe 'ColorProject', ->
             "#{rootPath}/styles/buttons.styl"
             "#{rootPath}/styles/variables.styl"
           ]
-          globalSourceNames: ['*.styl', '*.less']
+          globalSourceNames: ['*.styl']
           globalIgnoredNames: []
           buffers: {}
           variables: project.variables.serialize()
@@ -686,7 +705,7 @@ describe 'ColorProject', ->
         waitsForPromise -> project.initialize()
 
       it 'drops the whole serialized state and rescans all the project', ->
-        expect(project.getVariables().length).toEqual(32)
+        expect(project.getVariables().length).toEqual(12)
 
     describe 'with a serialized path that no longer exist', ->
       beforeEach ->

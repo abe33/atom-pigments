@@ -4,12 +4,14 @@
   "version": "#{version}",
   "markersVersion": "#{markersVersion}",
   "globalSourceNames": [
-    "*.styl",
-    "*.less"
+    "*.styl"
   ],
   "globalIgnoredNames": [],
   "ignoredNames": [
     "vendor/*"
+  ],
+  "sourceNames": [
+    "*.less"
   ],
   "paths": [
     "#{root}/styles/buttons.styl",
