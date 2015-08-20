@@ -127,9 +127,9 @@ module.exports =
       return unless protocol is 'pigments:'
 
       switch host
-        when 'search' then @project.findAllColors()
-        when 'palette' then @project.getPalette()
-        when 'settings' then @project
+        when 'search' then atom.views.getView(@project.findAllColors())
+        when 'palette' then atom.views.getView(@project.getPalette())
+        when 'settings' then atom.views.getView(@project)
 
     atom.contextMenu.add
       'atom-text-editor': [{

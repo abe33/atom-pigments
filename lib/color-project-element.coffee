@@ -11,6 +11,12 @@ class ColorProjectElement extends HTMLElement
 
   setModel: (@project) ->
 
+  getTitle: -> 'Pigments Settings'
+
+  getURI: -> 'pigments://settings'
+
+  getIconName: -> "pigments"
+
 module.exports = ColorProjectElement =
 document.registerElement 'pigments-color-project', {
   prototype: ColorProjectElement.prototype

@@ -111,6 +111,7 @@ describe "Pigments", ->
 
       waitsFor ->
         item = atom.workspace.getActivePaneItem()
-        item is project
+        item?
 
     it 'opens a settings view in the active pane', ->
+      item.matches('pigments-color-project')
