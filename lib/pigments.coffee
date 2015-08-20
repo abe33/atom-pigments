@@ -147,7 +147,7 @@ module.exports =
 
   provideAutocomplete: ->
     PigmentsProvider ?= require './pigments-provider'
-    new PigmentsProvider(@getProject())
+    new PigmentsProvider(this)
 
   provideAPI: ->
     PigmentsAPI ?= require './pigments-api'
