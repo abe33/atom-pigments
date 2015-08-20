@@ -6,7 +6,6 @@ path = require 'path'
 
 removeLeadingWhitespace = (string) -> string.replace(/^\s+/, '')
 
-module.exports =
 class ColorResultsElement extends HTMLElement
   SpacePenDSL.includeInto(this)
   EventsDelegation.includeInto(this)
