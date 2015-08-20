@@ -126,7 +126,7 @@ class ColorBufferElement extends HTMLElement
     for marker in @displayedMarkers
       view = @viewsByMarkers.get(marker)
       if view?
-        view.style.display = ''
+        view.classList.remove('hidden') 
         @hideMarkerIfInSelection(marker, view)
       else
         console.warn "A color marker was found in the displayed markers array without an associated view", marker
@@ -194,8 +194,7 @@ class ColorBufferElement extends HTMLElement
 
       continue unless markerRange? and range?
 
-      if markerRange.intersectsWith(range)
-        view.style.display = 'none'
+      view.classList.add('hidden') if markerRange.intersectsWith(range)
 
 module.exports = ColorBufferElement =
 document.registerElement 'pigments-markers', {

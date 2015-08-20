@@ -5,6 +5,8 @@ ColorMarkerElement = require '../lib/color-marker-element'
 describe 'ColorBufferElement', ->
   [editor, editorElement, colorBuffer, pigments, project, colorBufferElement, jasmineContent] = []
 
+  isVisible = (node) -> not node.classList.contains('hidden')
+
   editBuffer = (text, options={}) ->
     if options.start?
       if options.end?
@@ -117,10 +119,10 @@ describe 'ColorBufferElement', ->
           it 'hides the intersected marker', ->
             markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
 
-            expect(markers[0].style.display).toEqual('')
-            expect(markers[1].style.display).toEqual('')
-            expect(markers[2].style.display).toEqual('')
-            expect(markers[3].style.display).toEqual('none')
+            expect(isVisible(markers[0])).toBeTruthy()
+            expect(isVisible(markers[1])).toBeTruthy()
+            expect(isVisible(markers[2])).toBeTruthy()
+            expect(isVisible(markers[3])).toBeFalsy()
 
         describe 'before all the markers views was created', ->
           beforeEach ->
@@ -130,9 +132,9 @@ describe 'ColorBufferElement', ->
           it 'hides the existing markers', ->
             markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
 
-            expect(markers[0].style.display).toEqual('none')
-            expect(markers[1].style.display).toEqual('')
-            expect(markers[2].style.display).toEqual('')
+            expect(isVisible(markers[0])).toBeFalsy()
+            expect(isVisible(markers[1])).toBeTruthy()
+            expect(isVisible(markers[2])).toBeTruthy()
 
           describe 'and the markers are updated', ->
             beforeEach ->
@@ -140,10 +142,10 @@ describe 'ColorBufferElement', ->
 
             it 'hides the created markers', ->
               markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
-              expect(markers[0].style.display).toEqual('none')
-              expect(markers[1].style.display).toEqual('')
-              expect(markers[2].style.display).toEqual('')
-              expect(markers[3].style.display).toEqual('none')
+              expect(isVisible(markers[0])).toBeFalsy()
+              expect(isVisible(markers[1])).toBeTruthy()
+              expect(isVisible(markers[2])).toBeTruthy()
+              expect(isVisible(markers[3])).toBeFalsy()
 
       describe 'when a line is edited and gets wrapped', ->
         marker = null
