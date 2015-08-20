@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 ColorProject = require './color-project'
+ColorProjectElement = null
 [PigmentsProvider, PigmentsAPI, url] = []
 
 module.exports =
@@ -93,8 +94,8 @@ module.exports =
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
       'pigments:show-palette': => @showPalette()
+      'pigments:settings': => @showSettings()
       'pigments:reload': => @reloadProjectVariables()
-
 
     convertMethod = (action) => (event) =>
       marker = if @lastEvent?
@@ -123,17 +124,12 @@ module.exports =
       url ||= require 'url'
 
       {protocol, host} = url.parse uriToOpen
-      return unless protocol is 'pigments:' and host is 'search'
+      return unless protocol is 'pigments:'
 
-      atom.views.getView(@project.findAllColors())
-
-    atom.workspace.addOpener (uriToOpen) =>
-      url ||= require 'url'
-
-      {protocol, host} = url.parse uriToOpen
-      return unless protocol is 'pigments:' and host is 'palette'
-
-      atom.views.getView(@project.getPalette())
+      switch host
+        when 'search' then @project.findAllColors()
+        when 'palette' then @project.getPalette()
+        when 'settings' then @project
 
     atom.contextMenu.add
       'atom-text-editor': [{
@@ -182,6 +178,21 @@ module.exports =
   showPalette: ->
     @project.initialize().then ->
       uri = "pigments://palette"
+
+      pane = atom.workspace.paneForURI(uri)
+      pane ||= atom.workspace.getActivePane()
+
+      atom.workspace.openURIInPane(uri, pane, {})
+    .catch (reason) ->
+      console.error reason
+
+  showSettings: ->
+    @project.initialize().then ->
+      unless ColorProjectElement?
+        ColorProjectElement = require './color-project-element'
+        ColorProjectElement.registerViewProvider(ColorProject)
+
+      uri = "pigments://settings"
 
       pane = atom.workspace.paneForURI(uri)
       pane ||= atom.workspace.getActivePane()
