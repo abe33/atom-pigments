@@ -1,6 +1,5 @@
 {CompositeDisposable} = require 'atom'
 ColorProject = require './color-project'
-ColorProjectElement = null
 [PigmentsProvider, PigmentsAPI, url] = []
 
 module.exports =
@@ -188,10 +187,6 @@ module.exports =
 
   showSettings: ->
     @project.initialize().then ->
-      unless ColorProjectElement?
-        ColorProjectElement = require './color-project-element'
-        ColorProjectElement.registerViewProvider(ColorProject)
-
       uri = "pigments://settings"
 
       pane = atom.workspace.paneForURI(uri)
