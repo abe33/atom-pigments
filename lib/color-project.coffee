@@ -247,6 +247,13 @@ class ColorProject
     sourceNames = @sourceNames ? []
     sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
 
+  setSourceNames: (sourceNames) ->
+    @sourceNames = sourceNames ? []
+
+    return if not @initialized? and not @initializePromise?
+
+    @initialize().then => @loadPathsAndVariables(true)
+
   getSearchNames: ->
     @getSourceNames().concat(atom.config.get 'pigments.extendedSearchNames')
 

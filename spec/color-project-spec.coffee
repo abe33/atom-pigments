@@ -149,6 +149,15 @@ describe 'ColorProject', ->
       it 'initializes the project with the new paths', ->
         expect(project.getVariables().length).toEqual(32)
 
+    describe '::setSourceNames', ->
+      beforeEach ->
+        project.setSourceNames([])
+
+        waitsForPromise -> project.initialize()
+
+      it 'initializes the project with the new paths', ->
+        expect(project.getVariables().length).toEqual(12)
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
