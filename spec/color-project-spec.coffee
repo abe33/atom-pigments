@@ -29,6 +29,7 @@ describe 'ColorProject', ->
     project = new ColorProject({
       ignoredNames: ['vendor/*']
       sourceNames: ['*.less']
+      ignoredScopes: ['\\.comment']
     })
 
   describe '.deserialize', ->
@@ -104,6 +105,7 @@ describe 'ColorProject', ->
           globalIgnoredNames: []
           ignoredNames: ['vendor/*']
           sourceNames: ['*.less']
+          ignoredScopes: ['\\.comment']
           buffers: {}
         }
         expect(project.serialize()).toEqual(expected)
@@ -237,6 +239,7 @@ describe 'ColorProject', ->
           deserializer: 'ColorProject'
           ignoredNames: ['vendor/*']
           sourceNames: ['*.less']
+          ignoredScopes: ['\\.comment']
           timestamp: date
           version: SERIALIZE_VERSION
           markersVersion: SERIALIZE_MARKERS_VERSION

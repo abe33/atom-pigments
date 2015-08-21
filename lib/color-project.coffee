@@ -38,7 +38,7 @@ class ColorProject
     new ColorProject(state)
 
   constructor: (state={}) ->
-    {@ignoredNames, @sourceNames, @paths, variables, timestamp, buffers} = state
+    {@ignoredNames, @sourceNames, @ignoredScopes, @paths, variables, timestamp, buffers} = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @colorBuffersByEditorId = {}
@@ -393,6 +393,7 @@ class ColorProject
       globalSourceNames: atom.config.get('pigments.sourceNames')
       globalIgnoredNames: atom.config.get('pigments.ignoredNames')
 
+    data.ignoredScopes = @ignoredScopes if @ignoredScopes?
     data.ignoredNames = @ignoredNames if @ignoredNames?
     data.sourceNames = @sourceNames if @sourceNames?
     data.buffers = @serializeBuffers()
