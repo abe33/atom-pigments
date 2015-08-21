@@ -47,6 +47,8 @@ class ColorProjectElement extends HTMLElement
     @initializeTextEditors()
 
   initializeTextEditors: ->
+    grammar = atom.grammars.grammarForScopeName('source.js.regexp')
+
     @sourceNamesProject.getModel().setText((@project.sourceNames ? []).join(', '))
     @ignoredNamesProject.getModel().setText((@project.ignoredNames ? []).join(', '))
     @ignoredScopesProject.getModel().setText((@project.ignoredScopes ? []).join(', '))
@@ -54,6 +56,9 @@ class ColorProjectElement extends HTMLElement
     @sourceNamesSetting.getModel().setText(atom.config.get('pigments.sourceNames').join(', '))
     @ignoredNamesSetting.getModel().setText(atom.config.get('pigments.ignoredNames').join(', '))
     @ignoredScopesSetting.getModel().setText(atom.config.get('pigments.ignoredScopes').join(', '))
+
+    @ignoredScopesProject.getModel().setGrammar(grammar)
+    @ignoredScopesSetting.getModel().setGrammar(grammar)
 
   getTitle: -> 'Pigments Settings'
 
