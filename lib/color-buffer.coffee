@@ -40,15 +40,15 @@ class ColorBuffer
       return unless @variableInitialized
       @scanBufferForColors().then (results) => @updateColorMarkers(results)
 
-    @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
-
-    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', (ignoredScopes=[]) =>
+    @subscriptions.add @project.onDidChangeIgnoredScopes (ignoredScopes=[]) =>
       @ignoredScopes = ignoredScopes.map (scope) ->
         try new RegExp(scope)
       .filter (re) -> re?
 
       @getColorMarkers()?.forEach (marker) -> marker.checkMarkerScope(true)
       @emitter.emit 'did-update-color-markers', {created: [], destroyed: []}
+
+    @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
 
     # Needed to clean the serialized markers from previous versions
     @editor.findMarkers(type: 'pigments-variable').forEach (m) -> m.destroy()

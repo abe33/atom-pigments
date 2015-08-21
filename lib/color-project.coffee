@@ -57,6 +57,9 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.ignoredNames', =>
       @updatePaths()
 
+    @subscriptions.add atom.config.observe 'pigments.ignoredScopes', =>
+      @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
       ColorMarkerElement.setMarkerType(type) if type?
 
@@ -83,6 +86,9 @@ class ColorProject
 
   onDidCreateColorBuffer: (callback) ->
     @emitter.on 'did-create-color-buffer', callback
+
+  onDidChangeIgnoredScopes: (callback) ->
+    @emitter.on 'did-change-ignored-scopes', callback
 
   observeColorBuffers: (callback) ->
     callback(colorBuffer) for id,colorBuffer of @colorBuffersByEditorId
@@ -316,6 +322,15 @@ class ColorProject
   getVariableByName: (name) -> @variables.getVariableByName(name)
 
   getColorVariables: -> @variables.getColorVariables()
+
+  getIgnoredScopes: ->
+    ignoredScopes = @ignoredScopes ? []
+    ignoredScopes = ignoredScopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
+
+  setIgnoredScopes: (ignoredScopes=[]) ->
+    @ignoredScopes = ignoredScopes
+
+    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
