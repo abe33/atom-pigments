@@ -422,3 +422,79 @@ pigments-palette {
     margin-right: 1em;
   }
 }
+
+//     ######  ######## ######## ######## #### ##    ##  ######    ######
+//    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
+//    ##       ##          ##       ##     ##  ####  ## ##        ##
+//     ######  ######      ##       ##     ##  ## ## ## ##   ####  ######
+//          ## ##          ##       ##     ##  ##  #### ##    ##        ##
+//    ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
+//     ######  ########    ##       ##    #### ##    ##  ######    ######
+
+pigments-color-project {
+  color: @text-color;
+  position: relative;
+
+  .logo {
+    border-bottom: 1px solid @input-border-color;
+    padding-bottom: 20px;
+  }
+
+  .settings-view {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .settings-wrapper {
+    max-width: 750px;
+  }
+
+  .control-group {
+    margin-bottom: 10px;
+  }
+
+  .fields {
+    margin-top: 20px;
+  }
+
+  .fields .controls, .fields .fields-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+
+    h5 {
+      text-align: center;
+      font-size: 1.6em;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    .control-label {
+      margin: 0;
+      line-height: 1em;
+      width: 150px;
+
+      & + .control-wrapper {
+        padding-left: 0;
+      }
+    }
+
+    .control-wrapper {
+      width: 300px;
+      padding: 0 10px;
+
+      & + .control-wrapper {
+        padding-right: 0;
+      }
+    }
+  }
+}
