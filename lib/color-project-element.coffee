@@ -16,7 +16,7 @@ class ColorProjectElement extends HTMLElement
             @span class: 'setting-title', label
 
           @div class: 'control-wrapper', =>
-            @tag 'atom-text-editor', mini: true, outlet: "#{name}Project", type: 'array', property: name
+            @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
             @div class: 'setting-description', "Global value: #{atom.config.get(settingName).join(', ')}"
 
     @section class: 'settings-view pane-item', =>
@@ -36,12 +36,14 @@ class ColorProjectElement extends HTMLElement
 
   initializeTextEditors: ->
     grammar = atom.grammars.grammarForScopeName('source.js.regexp')
+    @ignoredScopes.getModel().setGrammar(grammar)
 
-    @sourceNamesProject.getModel().setText((@project.sourceNames ? []).join(', '))
-    @ignoredNamesProject.getModel().setText((@project.ignoredNames ? []).join(', '))
-    @ignoredScopesProject.getModel().setText((@project.ignoredScopes ? []).join(', '))
+    @initializeTextEditor('sourceNames')
+    @initializeTextEditor('ignoredNames')
+    @initializeTextEditor('ignoredScopes')
 
-    @ignoredScopesProject.getModel().setGrammar(grammar)
+  initializeTextEditor: (name) ->
+    @[name].getModel().setText((@project[name] ? []).join(', '))
 
   getTitle: -> 'Pigments Settings'
 
