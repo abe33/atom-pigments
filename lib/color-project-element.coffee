@@ -6,7 +6,7 @@ class ColorProjectElement extends HTMLElement
   EventsDelegation.includeInto(this)
 
   @content: ->
-    combinedField = (name, label) =>
+    projectField = (name, label) =>
       settingName = "pigments.#{name}"
       schema = atom.config.getSchema(settingName)
 
@@ -17,9 +17,7 @@ class ColorProjectElement extends HTMLElement
 
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: "#{name}Project", type: 'array', property: name
-
-          @div class: 'control-wrapper', =>
-            @tag 'atom-text-editor', mini: true, outlet: "#{name}Setting", type: 'array', setting: settingName
+            @div class: 'setting-description', "Global value: #{atom.config.get(settingName).join(', ')}"
 
     @section class: 'settings-view pane-item', =>
       @div class: 'settings-wrapper', =>
@@ -27,19 +25,9 @@ class ColorProjectElement extends HTMLElement
           @img src: 'atom://pigments/resources/logo.svg', width: 320, height: 80
 
         @div class: 'fields', =>
-          @div class: 'fields-header', =>
-            @label class: 'control-label'
-
-            @div class: 'control-wrapper', =>
-              @h5 'Project settings'
-
-            @div class: 'control-wrapper', =>
-              @h5 'Global settings'
-
-          combinedField('sourceNames', 'Source Names')
-          combinedField('ignoredNames', 'Ignored Names')
-          combinedField('ignoredScopes', 'Ignored Scopes')
-
+          projectField('sourceNames', 'Source Names')
+          projectField('ignoredNames', 'Ignored Names')
+          projectField('ignoredScopes', 'Ignored Scopes')
 
   createdCallback: ->
 
@@ -53,12 +41,7 @@ class ColorProjectElement extends HTMLElement
     @ignoredNamesProject.getModel().setText((@project.ignoredNames ? []).join(', '))
     @ignoredScopesProject.getModel().setText((@project.ignoredScopes ? []).join(', '))
 
-    @sourceNamesSetting.getModel().setText(atom.config.get('pigments.sourceNames').join(', '))
-    @ignoredNamesSetting.getModel().setText(atom.config.get('pigments.ignoredNames').join(', '))
-    @ignoredScopesSetting.getModel().setText(atom.config.get('pigments.ignoredScopes').join(', '))
-
     @ignoredScopesProject.getModel().setGrammar(grammar)
-    @ignoredScopesSetting.getModel().setGrammar(grammar)
 
   getTitle: -> 'Pigments Settings'
 

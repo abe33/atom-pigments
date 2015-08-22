@@ -454,7 +454,7 @@ pigments-color-project {
     bottom: 0;
   }
   .settings-wrapper {
-    max-width: 750px;
+    width: 750px;
   }
 
   .control-group {
@@ -468,7 +468,6 @@ pigments-color-project {
   .fields .controls, .fields .fields-header {
     display: flex;
     flex-direction: row;
-    align-items: center;
     text-align: left;
 
     h5 {
@@ -480,20 +479,16 @@ pigments-color-project {
 
     .control-label {
       margin: 0;
-      line-height: 1em;
+      line-height: 2em;
       width: 150px;
-
-      & + .control-wrapper {
-        padding-left: 0;
-      }
     }
 
     .control-wrapper {
-      width: 300px;
       padding: 0 10px;
+      flex: 1 1 0;
 
-      & + .control-wrapper {
-        padding-right: 0;
+      .setting-description {
+        margin-top: 4px;
       }
     }
   }
