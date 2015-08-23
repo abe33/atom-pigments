@@ -104,10 +104,10 @@ describe "Pigments", ->
     it 'destroys the color buffer element that were added to the DOM', ->
       expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()
 
-  describe 'pigments:settings', ->
+  describe 'pigments:project-settings', ->
     item = null
     beforeEach ->
-      atom.commands.dispatch(workspaceElement, 'pigments:settings')
+      atom.commands.dispatch(workspaceElement, 'pigments:project-settings')
 
       waitsFor ->
         item = atom.workspace.getActivePaneItem()
