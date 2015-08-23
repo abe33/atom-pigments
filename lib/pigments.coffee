@@ -93,7 +93,7 @@ module.exports =
     atom.commands.add 'atom-workspace',
       'pigments:find-colors': => @findColors()
       'pigments:show-palette': => @showPalette()
-      'pigments:settings': => @showSettings()
+      'pigments:project-settings': => @showSettings()
       'pigments:reload': => @reloadProjectVariables()
 
     convertMethod = (action) => (event) =>
