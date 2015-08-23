@@ -470,6 +470,26 @@ pigments-color-project {
 
   .control-group {
     margin-bottom: 10px;
+
+    &.boolean {
+      padding-left: 150px;
+
+      .controls {
+        display: block;
+      }
+
+      .control-label {
+        width: auto;
+      }
+
+      input {
+        margin: 0.3em 0.75em 0 0;
+      }
+
+      .setting-description {
+        margin-top: 4px;
+      }
+    }
   }
 
   .fields {
@@ -488,19 +508,19 @@ pigments-color-project {
       margin-bottom: 20px;
     }
 
-    .control-label {
-      margin: 0;
-      line-height: 2em;
-      width: 150px;
-    }
+  }
+  .control-label {
+    margin: 0;
+    line-height: 2em;
+    width: 150px;
+  }
 
-    .control-wrapper {
-      padding: 0;
-      flex: 1 1 0;
+  .control-wrapper {
+    padding: 0;
+    flex: 1 1 0;
 
-      .setting-description {
-        margin-top: 4px;
-      }
+    .setting-description {
+      margin-top: 4px;
     }
   }
 }

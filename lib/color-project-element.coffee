@@ -8,9 +8,8 @@ class ColorProjectElement extends HTMLElement
   @content: ->
     arrayField = (name, label) =>
       settingName = "pigments.#{name}"
-      schema = atom.config.getSchema(settingName)
 
-      @div class: 'control-group', =>
+      @div class: 'control-group array', =>
         @div class: 'controls', =>
           @label class: 'control-label', =>
             @span class: 'setting-title', label
@@ -18,6 +17,17 @@ class ColorProjectElement extends HTMLElement
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
             @div class: 'setting-description', "Package config: #{atom.config.get(settingName).join(', ')}"
+
+    booleanField = (name, label, description) =>
+      @div class: 'control-group boolean', =>
+        @div class: 'controls', =>
+          @input type: 'checkbox', id: "pigments-#{name}"
+          @label class: 'control-label', for: "pigments-#{name}", =>
+            @span class: 'setting-title', label
+
+          if description?
+            @div class: 'setting-description', =>
+              @raw description
 
     @section class: 'settings-view pane-item', =>
       @div class: 'settings-wrapper', =>
@@ -31,9 +41,17 @@ class ColorProjectElement extends HTMLElement
           """
 
         @div class: 'fields', =>
+          themes = atom.themes.getActiveThemeNames()
           arrayField('sourceNames', 'Source Names')
           arrayField('ignoredNames', 'Ignored Names')
           arrayField('ignoredScopes', 'Ignored Scopes')
+
+          booleanField('includeThemes', 'Include Atom Themes Stylesheets', """
+          The paths to <code>#{themes[0]}</code> and <code>#{themes[1]}</code>
+          stylesheets will be automatically added to the source names and their
+          variables will be made available when evaluating or completing
+          a color.
+          """)
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
