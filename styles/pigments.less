@@ -435,9 +435,20 @@ pigments-color-project {
   color: @text-color;
   position: relative;
 
-  .logo {
+  .header {
     border-bottom: 1px solid @input-border-color;
     padding-bottom: 20px;
+    text-align: left;
+    overflow: hidden;
+
+    .logo {
+      float: left;
+      margin-right: 10px;
+    }
+
+    p {
+      margin: 15px 0 0;
+    }
   }
 
   .settings-view {
@@ -484,7 +495,7 @@ pigments-color-project {
     }
 
     .control-wrapper {
-      padding: 0 10px;
+      padding: 0;
       flex: 1 1 0;
 
       .setting-description {

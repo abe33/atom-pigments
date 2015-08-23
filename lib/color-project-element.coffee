@@ -17,12 +17,18 @@ class ColorProjectElement extends HTMLElement
 
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
-            @div class: 'setting-description', "Global value: #{atom.config.get(settingName).join(', ')}"
+            @div class: 'setting-description', "Package config: #{atom.config.get(settingName).join(', ')}"
 
     @section class: 'settings-view pane-item', =>
       @div class: 'settings-wrapper', =>
-        @div class: 'logo', =>
-          @img src: 'atom://pigments/resources/logo.svg', width: 320, height: 80
+        @div class: 'header', =>
+          @div class: 'logo', =>
+            @img src: 'atom://pigments/resources/logo.svg', width: 140, height: 35
+
+          @p class: 'setting-description', """
+          These settings apply on the current project only and are complementary
+          to the package settings.
+          """
 
         @div class: 'fields', =>
           arrayField('sourceNames', 'Source Names')
