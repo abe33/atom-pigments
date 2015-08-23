@@ -6,7 +6,7 @@ class ColorProjectElement extends HTMLElement
   EventsDelegation.includeInto(this)
 
   @content: ->
-    projectField = (name, label) =>
+    arrayField = (name, label) =>
       settingName = "pigments.#{name}"
       schema = atom.config.getSchema(settingName)
 
@@ -25,11 +25,12 @@ class ColorProjectElement extends HTMLElement
           @img src: 'atom://pigments/resources/logo.svg', width: 320, height: 80
 
         @div class: 'fields', =>
-          projectField('sourceNames', 'Source Names')
-          projectField('ignoredNames', 'Ignored Names')
-          projectField('ignoredScopes', 'Ignored Scopes')
+          arrayField('sourceNames', 'Source Names')
+          arrayField('ignoredNames', 'Ignored Names')
+          arrayField('ignoredScopes', 'Ignored Scopes')
 
   createdCallback: ->
+    @subscriptions = new CompositeDisposable
 
   setModel: (@project) ->
     @initializeTextEditors()
@@ -43,7 +44,13 @@ class ColorProjectElement extends HTMLElement
     @initializeTextEditor('ignoredScopes')
 
   initializeTextEditor: (name) ->
-    @[name].getModel().setText((@project[name] ? []).join(', '))
+    capitalizedName = name.replace /^./, (m) -> m.toUpperCase()
+    editor = @[name].getModel()
+
+    editor.setText((@project[name] ? []).join(', '))
+
+    @subscriptions.add editor.onDidStopChanging =>
+      @project["set#{capitalizedName}"](editor.getText().split(/\s*,\s*/g))
 
   getTitle: -> 'Pigments Settings'
 

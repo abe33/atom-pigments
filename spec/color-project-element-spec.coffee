@@ -13,3 +13,30 @@ describe 'ColorProjectElement', ->
 
   it 'is bound to the ColorProject model', ->
     expect(projectElement).toExist()
+
+  describe 'typing in the sourceNames input', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setSourceNames')
+
+      projectElement.sourceNames.getModel().setText('foo, bar')
+      projectElement.sourceNames.getModel().getBuffer().emitter.emit('did-stop-changing')
+
+      expect(project.setSourceNames).toHaveBeenCalledWith(['foo','bar'])
+
+  describe 'typing in the ignoredNames input', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setIgnoredNames')
+
+      projectElement.ignoredNames.getModel().setText('foo, bar')
+      projectElement.ignoredNames.getModel().getBuffer().emitter.emit('did-stop-changing')
+
+      expect(project.setIgnoredNames).toHaveBeenCalledWith(['foo','bar'])
+
+  describe 'typing in the ignoredScopes input', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setIgnoredScopes')
+
+      projectElement.ignoredScopes.getModel().setText('foo, bar')
+      projectElement.ignoredScopes.getModel().getBuffer().emitter.emit('did-stop-changing')
+
+      expect(project.setIgnoredScopes).toHaveBeenCalledWith(['foo','bar'])
