@@ -691,8 +691,7 @@ describe 'ColorProject', ->
           project.initialize()
 
         waitsForPromise ->
-          project.includeThemes = true
-          project.updatePaths()
+          project.setIncludeThemes(true)
 
       afterEach ->
         atom.themes.deactivateThemes()

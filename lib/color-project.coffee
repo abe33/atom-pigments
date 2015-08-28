@@ -398,7 +398,7 @@ class ColorProject
   themesIncluded: -> @includeThemes
 
   setIncludeThemes: (includeThemes) ->
-    return if includeThemes is @includeThemes
+    return Promise.resolve() if includeThemes is @includeThemes
 
     @includeThemes = includeThemes
     @updatePaths()
