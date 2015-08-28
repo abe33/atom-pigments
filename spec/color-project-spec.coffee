@@ -675,6 +675,31 @@ describe 'ColorProject', ->
         it 'loads the variables from these new paths', ->
           expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
+    describe 'when the includeThemes setting is enabled', ->
+      beforeEach ->
+        expect(project.getPaths().length).toEqual(2)
+
+        atom.packages.activatePackage('atom-light-ui')
+        atom.packages.activatePackage('atom-light-syntax')
+
+        atom.config.set('core.themes', ['atom-light-ui', 'atom-light-syntax'])
+
+        waitsForPromise ->
+          atom.themes.activateThemes()
+
+        waitsForPromise ->
+          project.initialize()
+
+        waitsForPromise ->
+          project.includeThemes = true
+          project.updatePaths()
+
+      afterEach ->
+        atom.themes.deactivateThemes()
+
+      it 'includes all the paths to the themes stylesheets', ->
+        expect(project.getPaths().length).toBeGreaterThan(2)
+
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
   ##    ##     ## ##       ##          ##    ##     ## ##     ## ##

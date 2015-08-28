@@ -178,7 +178,7 @@ class VariablesCollection
       results
     else
       results = @updateDependencies(results)
-      @deleteVariableReferences(v) for v in destroyed
+      @deleteVariableReferences(v) for v in destroyed when v?
       @emitChangeEvent(results)
 
   deleteVariablesForPaths: (paths) -> @removeMany(@getVariablesForPaths(paths))
@@ -191,7 +191,6 @@ class VariablesCollection
 
     a = @variableNames
     a.splice(a.indexOf(variable.name), 1)
-
     @removeDependencies(variable.name, dependencies)
 
     delete @dependencyGraph[variable.name]

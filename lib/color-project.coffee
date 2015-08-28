@@ -229,7 +229,7 @@ class ColorProject
         @timestamp
         ignoredNames: @getIgnoredNames()
         knownPaths: if noKnownPaths then [] else @paths
-        paths: atom.project.getPaths()
+        paths: @getRootPaths()
         traverseIntoSymlinkDirectories: atom.config.get 'pigments.traverseIntoSymlinkDirectories'
         sourceNames: @getSourceNames()
         ignoreVcsIgnores: atom.config.get('pigments.ignoreVcsIgnoredPaths')
@@ -246,41 +246,6 @@ class ColorProject
       @paths.push(p) for p in dirtied when p not in @paths
 
       @reloadVariablesForPaths(dirtied)
-
-  getSourceNames: ->
-    sourceNames = @sourceNames ? []
-    sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
-
-  setSourceNames: (sourceNames) ->
-    @sourceNames = sourceNames ? []
-
-    return if not @initialized? and not @initializePromise?
-
-    @initialize().then => @loadPathsAndVariables(true)
-
-  getSearchNames: ->
-    @getSourceNames().concat(atom.config.get 'pigments.extendedSearchNames')
-
-  getIgnoredNames: ->
-    ignoredNames = @ignoredNames ? []
-    ignoredNames = ignoredNames.concat(@getGlobalIgnoredNames() ? [])
-    ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
-
-  getGlobalIgnoredNames: ->
-    atom.config.get('pigments.ignoredNames')?.map (p) ->
-      if /\/\*$/.test(p) then p + '*' else p
-
-  setIgnoredNames: (ignoredNames) ->
-    @ignoredNames = ignoredNames ? []
-
-    return if not @initialized? and not @initializePromise?
-
-    @initialize().then =>
-      dirtied = @paths.filter (p) => @isIgnoredPath(p)
-      @deleteVariablesForPaths(dirtied)
-
-      @paths = @paths.filter (p) => !@isIgnoredPath(p)
-      @loadPathsAndVariables(true)
 
   isVariablesSourcePath: (path) ->
     return false unless path
@@ -320,15 +285,6 @@ class ColorProject
   getVariableByName: (name) -> @variables.getVariableByName(name)
 
   getColorVariables: -> @variables.getColorVariables()
-
-  getIgnoredScopes: ->
-    ignoredScopes = @ignoredScopes ? []
-    ignoredScopes = ignoredScopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
-
-  setIgnoredScopes: (ignoredScopes=[]) ->
-    @ignoredScopes = ignoredScopes
-
-    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
@@ -379,6 +335,73 @@ class ColorProject
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
       PathsScanner.startTask paths, (results) -> callback(results)
+
+  ##     ######  ######## ######## ######## #### ##    ##  ######    ######
+  ##    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
+  ##    ##       ##          ##       ##     ##  ####  ## ##        ##
+  ##     ######  ######      ##       ##     ##  ## ## ## ##   ####  ######
+  ##          ## ##          ##       ##     ##  ##  #### ##    ##        ##
+  ##    ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
+  ##     ######  ########    ##       ##    #### ##    ##  ######    ######
+
+  getRootPaths: ->
+    rootPaths = atom.project.getPaths()
+    if @includeThemes
+      rootPaths = rootPaths.concat atom.themes.getActiveThemes().map (t) ->
+        t.path
+    rootPaths
+
+  getSourceNames: ->
+    sourceNames = @sourceNames ? []
+    sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
+
+  setSourceNames: (sourceNames) ->
+    @sourceNames = sourceNames ? []
+
+    return if not @initialized? and not @initializePromise?
+
+    @initialize().then => @loadPathsAndVariables(true)
+
+  getSearchNames: ->
+    @getSourceNames().concat(atom.config.get 'pigments.extendedSearchNames')
+
+  getIgnoredNames: ->
+    ignoredNames = @ignoredNames ? []
+    ignoredNames = ignoredNames.concat(@getGlobalIgnoredNames() ? [])
+    ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
+
+  getGlobalIgnoredNames: ->
+    atom.config.get('pigments.ignoredNames')?.map (p) ->
+      if /\/\*$/.test(p) then p + '*' else p
+
+  setIgnoredNames: (ignoredNames) ->
+    @ignoredNames = ignoredNames ? []
+
+    return if not @initialized? and not @initializePromise?
+
+    @initialize().then =>
+      dirtied = @paths.filter (p) => @isIgnoredPath(p)
+      @deleteVariablesForPaths(dirtied)
+
+      @paths = @paths.filter (p) => !@isIgnoredPath(p)
+      @loadPathsAndVariables(true)
+
+  getIgnoredScopes: ->
+    ignoredScopes = @ignoredScopes ? []
+    ignoredScopes = ignoredScopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
+
+  setIgnoredScopes: (ignoredScopes=[]) ->
+    @ignoredScopes = ignoredScopes
+
+    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
+  themesIncluded: -> @includeThemes
+
+  setIncludeThemes: (includeThemes) ->
+    return if includeThemes is @includeThemes
+
+    @includeThemes = includeThemes
+    @updatePaths()
 
   getTimestamp: -> new Date()
 
