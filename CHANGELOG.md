@@ -1,3 +1,15 @@
+<a name="v0.12.0"></a>
+# v0.12.0 (2015-08-28)
+
+## Features
+
+- Add new setting to extend the color search to files not in source names ([ed38956b](https://github.com/abe33/atom-pigments/commit/ed38956b201e600fb9dcc167dc586364239423a0))
+  <br>The default now allow to catch colors in CSS files.
+
+## Bug Fixes
+
+- Fix access to undefined project in autocomplete provider ([f1c1227a](https://github.com/abe33/atom-pigments/commit/f1c1227abf71505f8a554357b7000667b27950b0), [#6](https://github.com/abe33/atom-pigments/issues/6))
+
 <a name="v0.11.0"></a>
 # v0.11.0 (2015-08-13)
 
