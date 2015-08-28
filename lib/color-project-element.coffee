@@ -1,6 +1,8 @@
 {CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
 
+capitalize = (s) -> s.replace /^./, (m) -> m.toUpperCase()
+
 class ColorProjectElement extends HTMLElement
   SpacePenDSL.includeInto(this)
   EventsDelegation.includeInto(this)
@@ -21,7 +23,7 @@ class ColorProjectElement extends HTMLElement
     booleanField = (name, label, description) =>
       @div class: 'control-group boolean', =>
         @div class: 'controls', =>
-          @input type: 'checkbox', id: "pigments-#{name}"
+          @input type: 'checkbox', id: "pigments-#{name}", outlet: name
           @label class: 'control-label', for: "pigments-#{name}", =>
             @span class: 'setting-title', label
 
@@ -57,24 +59,32 @@ class ColorProjectElement extends HTMLElement
     @subscriptions = new CompositeDisposable
 
   setModel: (@project) ->
-    @initializeTextEditors()
+    @initializeBindings()
 
-  initializeTextEditors: ->
+  initializeBindings: ->
     grammar = atom.grammars.grammarForScopeName('source.js.regexp')
     @ignoredScopes.getModel().setGrammar(grammar)
 
     @initializeTextEditor('sourceNames')
     @initializeTextEditor('ignoredNames')
     @initializeTextEditor('ignoredScopes')
+    @initializeCheckbox('includeThemes')
 
   initializeTextEditor: (name) ->
-    capitalizedName = name.replace /^./, (m) -> m.toUpperCase()
+    capitalizedName = capitalize name
     editor = @[name].getModel()
 
     editor.setText((@project[name] ? []).join(', '))
 
     @subscriptions.add editor.onDidStopChanging =>
       @project["set#{capitalizedName}"](editor.getText().split(/\s*,\s*/g))
+
+  initializeCheckbox: (name) ->
+    capitalizedName = capitalize name
+    checkbox = @[name]
+
+    @subscriptions.add @subscribeTo checkbox, change: =>
+      @project["set#{capitalizedName}"](checkbox.checked)
 
   getTitle: -> 'Pigments Settings'
 

@@ -225,16 +225,27 @@ class ColorProject
 
   loadPaths: (noKnownPaths=false) ->
     new Promise (resolve, reject) =>
+      rootPaths = @getRootPaths()
+      knownPaths = if noKnownPaths then [] else @paths ? []
       config = {
+        knownPaths
         @timestamp
         ignoredNames: @getIgnoredNames()
-        knownPaths: if noKnownPaths then [] else @paths
-        paths: @getRootPaths()
+        paths: rootPaths
         traverseIntoSymlinkDirectories: atom.config.get 'pigments.traverseIntoSymlinkDirectories'
         sourceNames: @getSourceNames()
         ignoreVcsIgnores: atom.config.get('pigments.ignoreVcsIgnoredPaths')
       }
-      PathsLoader.startTask config, (results) -> resolve(results)
+      PathsLoader.startTask config, (results) =>
+        for p in knownPaths
+          isDescendentOfRootPaths = rootPaths.some (root) ->
+            p.indexOf(root) is 0
+
+          unless isDescendentOfRootPaths
+            results.removed ?= []
+            results.removed.push(p)
+
+        resolve(results)
 
   updatePaths: ->
     return Promise.resolve() unless @initialized
@@ -401,6 +412,13 @@ class ColorProject
     return Promise.resolve() if includeThemes is @includeThemes
 
     @includeThemes = includeThemes
+    if @includeThemes
+      @themesSubscription = atom.config.observe 'core.themes', => @updatePaths()
+      @subscriptions.add @themesSubscription
+    else
+      @subscriptions.remove @themesSubscription
+      @themesSubscription.dispose()
+
     @updatePaths()
 
   getTimestamp: -> new Date()

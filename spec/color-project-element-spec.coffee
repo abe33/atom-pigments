@@ -1,3 +1,4 @@
+{change} = require './helpers/events'
 
 describe 'ColorProjectElement', ->
   [pigments, project, projectElement] = []
@@ -40,3 +41,17 @@ describe 'ColorProjectElement', ->
       projectElement.ignoredScopes.getModel().getBuffer().emitter.emit('did-stop-changing')
 
       expect(project.setIgnoredScopes).toHaveBeenCalledWith(['foo','bar'])
+
+  describe 'toggling on the includeThemes checkbox', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setIncludeThemes')
+
+      projectElement.includeThemes.checked = true
+      change(projectElement.includeThemes)
+
+      expect(project.setIncludeThemes).toHaveBeenCalledWith(true)
+
+      projectElement.includeThemes.checked = false
+      change(projectElement.includeThemes)
+
+      expect(project.setIncludeThemes).toHaveBeenCalledWith(false)

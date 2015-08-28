@@ -676,8 +676,10 @@ describe 'ColorProject', ->
           expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
     describe 'when the includeThemes setting is enabled', ->
+      [paths] = []
       beforeEach ->
-        expect(project.getPaths().length).toEqual(2)
+        paths = project.getPaths()
+        expect(paths.length).toEqual(2)
 
         atom.packages.activatePackage('atom-light-ui')
         atom.packages.activatePackage('atom-light-syntax')
@@ -698,6 +700,34 @@ describe 'ColorProject', ->
 
       it 'includes all the paths to the themes stylesheets', ->
         expect(project.getPaths().length).toBeGreaterThan(2)
+
+      it 'still includes the paths from the project', ->
+        for p in paths
+          expect(project.getPaths().indexOf p).not.toEqual(-1)
+
+      describe 'and then disabled', ->
+        beforeEach ->
+          waitsForPromise ->
+            project.setIncludeThemes(false)
+
+        it 'removes all the paths to the themes stylesheets', ->
+          expect(project.getPaths().length).toEqual(2)
+
+        describe 'when the core.themes setting is modified', ->
+          beforeEach ->
+            spyOn(project, 'updatePaths')
+            atom.config.set('core.themes', ['atom-dark-ui', 'atom-dark-syntax'])
+
+          it 'does not trigger a paths update', ->
+            expect(project.updatePaths).not.toHaveBeenCalled()
+
+      describe 'when the core.themes setting is modified', ->
+        beforeEach ->
+          spyOn(project, 'updatePaths')
+          atom.config.set('core.themes', ['atom-dark-ui', 'atom-dark-syntax'])
+
+        it 'triggers a paths update', ->
+          expect(project.updatePaths).toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
