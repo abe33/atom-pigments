@@ -82,6 +82,7 @@ class ColorProjectElement extends HTMLElement
   initializeCheckbox: (name) ->
     capitalizedName = capitalize name
     checkbox = @[name]
+    checkbox.checked = @project[name] 
 
     @subscriptions.add @subscribeTo checkbox, change: =>
       @project["set#{capitalizedName}"](checkbox.checked)

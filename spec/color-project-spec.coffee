@@ -705,6 +705,11 @@ describe 'ColorProject', ->
         for p in paths
           expect(project.getPaths().indexOf p).not.toEqual(-1)
 
+      it 'serializes the setting with the project', ->
+        serialized = project.serialize()
+
+        expect(serialized.includeThemes).toEqual(true)
+
       describe 'and then disabled', ->
         beforeEach ->
           waitsForPromise ->
