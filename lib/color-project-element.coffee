@@ -77,12 +77,13 @@ class ColorProjectElement extends HTMLElement
     editor.setText((@project[name] ? []).join(', '))
 
     @subscriptions.add editor.onDidStopChanging =>
-      @project["set#{capitalizedName}"](editor.getText().split(/\s*,\s*/g))
+      array = editor.getText().split(/\s*,\s*/g).filter (s) -> s.length > 0
+      @project["set#{capitalizedName}"](array)
 
   initializeCheckbox: (name) ->
     capitalizedName = capitalize name
     checkbox = @[name]
-    checkbox.checked = @project[name] 
+    checkbox.checked = @project[name]
 
     @subscriptions.add @subscribeTo checkbox, change: =>
       @project["set#{capitalizedName}"](checkbox.checked)
