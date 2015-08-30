@@ -64,3 +64,17 @@ describe 'ColorProjectElement', ->
       change(projectElement.includeThemes)
 
       expect(project.setIncludeThemes).toHaveBeenCalledWith(false)
+
+  describe 'toggling on the ignoreGlobalConfig checkbox', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setIgnoreGlobalConfig')
+
+      projectElement.ignoreGlobalConfig.checked = true
+      change(projectElement.ignoreGlobalConfig)
+
+      expect(project.setIgnoreGlobalConfig).toHaveBeenCalledWith(true)
+
+      projectElement.ignoreGlobalConfig.checked = false
+      change(projectElement.ignoreGlobalConfig)
+
+      expect(project.setIgnoreGlobalConfig).toHaveBeenCalledWith(false)

@@ -18,7 +18,7 @@ class ColorProjectElement extends HTMLElement
 
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
-            @div class: 'setting-description', "Package config: #{atom.config.get(setting ? settingName).join(', ')}"
+            @div class: 'setting-description', "Global config: #{atom.config.get(setting ? settingName).join(', ')}"
 
             @p(=> @raw description) if description?
 
@@ -58,6 +58,11 @@ class ColorProjectElement extends HTMLElement
           a color.
           """)
 
+          booleanField('ignoreGlobalConfig', 'Ignore Global Config', """
+          When checked, only the project settings will be used and the package
+          level configuration will be ignored.
+          """)
+
   createdCallback: ->
     @subscriptions = new CompositeDisposable
 
@@ -73,6 +78,7 @@ class ColorProjectElement extends HTMLElement
     @initializeTextEditor('ignoredNames')
     @initializeTextEditor('ignoredScopes')
     @initializeCheckbox('includeThemes')
+    @initializeCheckbox('ignoreGlobalConfig')
 
   initializeTextEditor: (name) ->
     capitalizedName = capitalize name
@@ -92,7 +98,7 @@ class ColorProjectElement extends HTMLElement
     @subscriptions.add @subscribeTo checkbox, change: =>
       @project["set#{capitalizedName}"](checkbox.checked)
 
-  getTitle: -> 'Pigments Settings'
+  getTitle: -> 'Project Settings'
 
   getURI: -> 'pigments://settings'
 

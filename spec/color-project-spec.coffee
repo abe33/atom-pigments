@@ -687,6 +687,26 @@ describe 'ColorProject', ->
       it 'serializes the setting', ->
         expect(project.serialize().searchNames).toEqual(['*.foo'])
 
+    describe 'when the ignoreGlobalConfig setting is enabled', ->
+      beforeEach ->
+        atom.config.set 'pigments.ignoredScopes', ['\\.comment']
+        atom.config.set 'pigments.extendedSearchNames', ['*.rab']
+        project.sourceNames = ['*.foo']
+        project.ignoredNames = ['*.bar']
+        project.ignoredScopes = ['\\.source']
+        project.searchNames = ['*.baz']
+
+        waitsForPromise -> project.setIgnoreGlobalConfig(true)
+
+      it 'ignores the content of the global config', ->
+        expect(project.getSourceNames()).toEqual(['.pigments','*.foo'])
+        expect(project.getIgnoredNames()).toEqual(['*.bar'])
+        expect(project.getIgnoredScopes()).toEqual(['\\.source'])
+        expect(project.getSearchNames()).toEqual(['*.foo','*.baz'])
+
+      it 'serializes the project setting', ->
+        expect(project.serialize().ignoreGlobalConfig).toBeTruthy()
+
     describe 'when the includeThemes setting is enabled', ->
       [paths] = []
       beforeEach ->
