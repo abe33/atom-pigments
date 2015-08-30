@@ -31,6 +31,24 @@ class ColorContext
 
   getVariablesCount: -> @varCount ?= @getVariablesNames().length
 
+  getValue: (value) ->
+    [realValue, lastRealValue] = []
+
+    while realValue = @vars[value]?.value
+      @usedVariables.push(value)
+      value = lastRealValue = realValue
+
+    lastRealValue
+
+  getColorValue: (value) ->
+    [realValue, lastRealValue] = []
+
+    while realValue = @colorVars[value]?.value
+      @usedVariables.push(value)
+      value = lastRealValue = realValue
+
+    lastRealValue
+
   readUsedVariables: ->
     usedVariables = []
     usedVariables.push v for v in @usedVariables when v not in usedVariables
@@ -38,9 +56,8 @@ class ColorContext
     usedVariables
 
   readColorExpression: (value) ->
-    if @colorVars[value]?
-      @usedVariables.push(value)
-      @colorVars[value].value
+    if realValue = @getColorValue(value)
+      realValue
     else
       value
 
@@ -53,29 +70,28 @@ class ColorContext
 
   readFloat: (value) ->
     res = parseFloat(value)
-    if isNaN(res) and @vars[value]?
-      @usedVariables.push(value)
-      res = parseFloat(@vars[value].value)
+    if isNaN(res) and realValue = @getValue(value)
+      res = parseFloat(realValue)
     res
 
   readInt: (value, base=10) ->
     res = parseInt(value, base)
-    if isNaN(res) and @vars[value]?
-      @usedVariables.push(value)
-      res = parseInt(@vars[value].value, base)
+    if isNaN(res) and realValue = @getValue(value)
+      console.log realValue
+      res = parseInt(realValue, base)
+      console.log res
+
     res
 
   readPercent: (value) ->
-    if not /\d+/.test(value) and @vars[value]?
-      @usedVariables.push(value)
-      value = @vars[value].value
+    if not /\d+/.test(value) and realValue = @getValue(value)
+      value = realValue
 
     Math.round(parseFloat(value) * 2.55)
 
   readIntOrPercent: (value) ->
-    if not /\d+/.test(value) and @vars[value]?
-      @usedVariables.push(value)
-      value = @vars[value].value
+    if not /\d+/.test(value) and realValue = @getValue(value)
+      value = realValue
 
     return NaN unless value?
 
@@ -86,17 +102,16 @@ class ColorContext
 
     res
 
-  readFloatOrPercent: (amount) ->
-    if not /\d+/.test(amount) and @vars[amount]?
-      @usedVariables.push(amount)
-      amount = @vars[amount].value
+  readFloatOrPercent: (value) ->
+    if not /\d+/.test(value) and realValue = @getValue(value)
+      value = realValue
 
-    return NaN unless amount?
+    return NaN unless value?
 
-    if amount.indexOf('%') isnt -1
-      res = parseFloat(amount) / 100
+    if value.indexOf('%') isnt -1
+      res = parseFloat(value) / 100
     else
-      res = parseFloat(amount)
+      res = parseFloat(value)
       res = res / 100 if res > 1
       res
 
