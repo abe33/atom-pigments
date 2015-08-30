@@ -56,7 +56,6 @@ class PathLoader
 
   pathLoaded: (loadedPath, stats, done) ->
     @scannedPaths.push(loadedPath)
-    # console.log loadedPath, 'source', @isSource(loadedPath), 'ignored', @isIgnored(loadedPath, stats) if @knownPaths.length
     if @isSource(loadedPath) and !@isIgnored(loadedPath, stats)
       if @isKnown(loadedPath)
         @paths.push(loadedPath) if @hasChanged(loadedPath, stats)
