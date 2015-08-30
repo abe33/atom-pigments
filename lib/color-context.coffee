@@ -109,25 +109,40 @@ class ColorContext
     usedVariables
 
   readColorExpression: (value) ->
-    if realValue = @getColorValue(value)
-      realValue
+    if @colorVars[value]?
+      @usedVariables.push(value)
+      @colorVars[value].value
     else
       value
 
   readColor: (value, keepAllVariables=false) ->
-    result = @parser.parse(@readColorExpression(value), @clone())
+    realValue = @readColorExpression(value)
+    result = @parser.parse(realValue, @clone())
+
     if result?
-      if keepAllVariables or value not in @usedVariables
-        result.variables = result.variables.concat(@readUsedVariables())
-      return result
+      if result.invalid and @defaultColorVars[realValue]?
+        @usedVariables.push(realValue)
+        result = @readColor(@defaultColorVars[realValue].value)
+        value = realValue
+
+    else if @defaultColorVars[value]?
+      @usedVariables.push(realValue)
+      result = @readColor(@defaultColorVars[value].value)
+
+    if result? and (keepAllVariables or value not in @usedVariables)
+      result.variables = result.variables.concat(@readUsedVariables())
+
+    return result
 
   readFloat: (value) ->
     res = parseFloat(value)
 
     if isNaN(res) and @vars[value]?
+      @usedVariables.push value
       res = @readFloat(@vars[value].value)
 
     if isNaN(res) and @defaultVars[value]?
+      @usedVariables.push value
       res = @readFloat(@defaultVars[value].value)
 
     res
@@ -136,27 +151,33 @@ class ColorContext
     res = parseInt(value, base)
 
     if isNaN(res) and @vars[value]?
+      @usedVariables.push value
       res = @readInt(@vars[value].value)
 
     if isNaN(res) and @defaultVars[value]?
+      @usedVariables.push value
       res = @readInt(@defaultVars[value].value)
 
     res
 
   readPercent: (value) ->
     if not /\d+/.test(value) and @vars[value]?
+      @usedVariables.push value
       value = @readPercent(@vars[value].value)
 
     if not /\d+/.test(value) and @defaultVars[value]?
+      @usedVariables.push value
       value = @readPercent(@defaultVars[value].value)
 
     Math.round(parseFloat(value) * 2.55)
 
   readIntOrPercent: (value) ->
     if not /\d+/.test(value) and @vars[value]?
+      @usedVariables.push value
       value = @readIntOrPercent(@vars[value].value)
 
     if not /\d+/.test(value) and @defaultVars[value]?
+      @usedVariables.push value
       value = @readIntOrPercent(@defaultVars[value].value)
 
     return NaN unless value?
@@ -171,9 +192,11 @@ class ColorContext
 
   readFloatOrPercent: (value) ->
     if not /\d+/.test(value) and @vars[value]?
+      @usedVariables.push value
       value = @readFloatOrPercent(@vars[value].value)
 
     if not /\d+/.test(value) and @defaultVars[value]?
+      @usedVariables.push value
       value = @readFloatOrPercent(@defaultVars[value].value)
 
     return NaN unless value?

@@ -34,14 +34,15 @@ describe 'ColorParser', ->
     withContext: (variables) ->
       vars = []
       colorVars = []
+      path = "/path/to/file.styl"
       for name,value of variables
         if value.indexOf('color:') isnt -1
           value = value.replace('color:', '')
-          vars.push {name, value}
-          colorVars.push {name, value}
+          vars.push {name, value, path}
+          colorVars.push {name, value, path}
 
         else
-          vars.push {name, value}
+          vars.push {name, value, path}
       @context = new ColorContext({variables: vars, colorVariables: colorVars})
       @description = "with variables context #{jasmine.pp variables} "
 

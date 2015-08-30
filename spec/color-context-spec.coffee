@@ -103,8 +103,8 @@ describe 'ColorContext', ->
       path ?= "#{projectPath}/file.styl"
       {value, name, path}
 
-    createColorVar = (name, value) ->
-      v = createVar(name, value)
+    createColorVar = (name, value, path) ->
+      v = createVar(name, value, path)
       v.isColor = true
       v
 
@@ -130,7 +130,6 @@ describe 'ColorContext', ->
 
       itParses('a').asInt(20)
 
-
     describe 'when there is no another valid value', ->
       beforeEach ->
         projectPath = atom.project.getPaths()[0]
@@ -152,6 +151,50 @@ describe 'ColorContext', ->
         })
 
       itParses('a').asInt(10)
+
+    describe 'when there is another valid color', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createColorVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createColorVar 'b', '#ff0000', "#{projectPath}/.pigments"
+          createColorVar 'b', '#0000ff', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asColor(0, 0, 255)
+
+    describe 'when there is no another valid color', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createColorVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createColorVar 'b', '#ff0000', "#{projectPath}/.pigments"
+          createColorVar 'b', 'c', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asColor(255, 0, 0)
 
   describe 'with a reference variable', ->
     [projectPath, referenceVariable] = []
