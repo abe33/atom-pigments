@@ -366,7 +366,8 @@ class ColorProject
     rootPaths
 
   getSourceNames: ->
-    sourceNames = @sourceNames ? []
+    sourceNames = ['.pigments']
+    sourceNames = sourceNames.concat(@sourceNames ? [])
     sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
 
   setSourceNames: (sourceNames) ->
@@ -377,7 +378,10 @@ class ColorProject
     @initialize().then => @loadPathsAndVariables(true)
 
   getSearchNames: ->
-    @getSourceNames().concat(atom.config.get 'pigments.extendedSearchNames')
+    searchNames = []
+    searchNames = searchNames.concat(@searchNames ? [])
+    searchNames = searchNames.concat(atom.config.get('pigments.sourceNames') ? [])
+    searchNames.concat(atom.config.get 'pigments.extendedSearchNames')
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []

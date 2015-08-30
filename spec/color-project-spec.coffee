@@ -898,7 +898,7 @@ describe 'ColorProject', ->
 ##    ##     ## ##       ##       ##     ## ##     ## ##          ##
 ##    ########  ######## ##       ##     ##  #######  ########    ##
 
-xdescribe 'ColorProject', ->
+describe 'ColorProject', ->
   [project, rootPath] = []
   describe 'when the project has a pigments defaults file', ->
     beforeEach ->
@@ -912,6 +912,5 @@ xdescribe 'ColorProject', ->
 
       waitsForPromise -> project.initialize()
 
-    it 'uses the defaults in the .pigments file in priority', ->
-      expect(project.getColorVariables().length).toEqual(4)
-      expect(project.getVariableByName('$button-color').getColor()).toBeColor(255,255,255,1)
+    it 'loads the defaults file content', ->
+      expect(project.getColorVariables().length).toEqual(6)
