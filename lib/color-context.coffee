@@ -5,7 +5,7 @@ ColorExpression = require './color-expression'
 module.exports =
 class ColorContext
   constructor: (options={}) ->
-    {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, sorted} = options
+    {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, @defaultVars, @defaultColorVars, sorted} = options
 
     variables ?= []
     colorVariables ?= []
@@ -22,8 +22,15 @@ class ColorContext
     unless @vars?
       @vars = {}
       @colorVars = {}
-      @vars[v.name] = v for v in @variables
-      @colorVars[v.name] = v for v in @colorVariables
+      @defaultVars = {}
+      @defaultColorVars = {}
+      for v in @variables
+        @vars[v.name] = v
+        @defaultVars[v.name] = v if v.path.match /\/.pigments$/
+
+      for v in @colorVariables
+        @colorVars[v.name] = v
+        @defaultColorVars[v.name] = v if v.path.match /\/.pigments$/
 
     unless @parser?
       ColorParser = require './color-parser'
@@ -60,6 +67,8 @@ class ColorContext
       @parser
       @vars
       @colorVars
+      @defaultVars
+      @defaultColorVars
       sorted: true
     })
 
@@ -114,28 +123,44 @@ class ColorContext
 
   readFloat: (value) ->
     res = parseFloat(value)
-    if isNaN(res) and realValue = @getValue(value)
-      res = parseFloat(realValue)
+
+    if isNaN(res) and @vars[value]?
+      res = @readFloat(@vars[value].value)
+
+    if isNaN(res) and @defaultVars[value]?
+      res = @readFloat(@defaultVars[value].value)
+
     res
 
   readInt: (value, base=10) ->
     res = parseInt(value, base)
-    if isNaN(res) and realValue = @getValue(value)
-      res = parseInt(realValue, base)
+
+    if isNaN(res) and @vars[value]?
+      res = @readInt(@vars[value].value)
+
+    if isNaN(res) and @defaultVars[value]?
+      res = @readInt(@defaultVars[value].value)
 
     res
 
   readPercent: (value) ->
-    if not /\d+/.test(value) and realValue = @getValue(value)
-      value = realValue
+    if not /\d+/.test(value) and @vars[value]?
+      value = @readPercent(@vars[value].value)
+
+    if not /\d+/.test(value) and @defaultVars[value]?
+      value = @readPercent(@defaultVars[value].value)
 
     Math.round(parseFloat(value) * 2.55)
 
   readIntOrPercent: (value) ->
-    if not /\d+/.test(value) and realValue = @getValue(value)
-      value = realValue
+    if not /\d+/.test(value) and @vars[value]?
+      value = @readIntOrPercent(@vars[value].value)
+
+    if not /\d+/.test(value) and @defaultVars[value]?
+      value = @readIntOrPercent(@defaultVars[value].value)
 
     return NaN unless value?
+    return value if typeof value is 'number'
 
     if value.indexOf('%') isnt -1
       res = Math.round(parseFloat(value) * 2.55)
@@ -145,10 +170,14 @@ class ColorContext
     res
 
   readFloatOrPercent: (value) ->
-    if not /\d+/.test(value) and realValue = @getValue(value)
-      value = realValue
+    if not /\d+/.test(value) and @vars[value]?
+      value = @readFloatOrPercent(@vars[value].value)
+
+    if not /\d+/.test(value) and @defaultVars[value]?
+      value = @readFloatOrPercent(@defaultVars[value].value)
 
     return NaN unless value?
+    return value if typeof value is 'number'
 
     if value.indexOf('%') isnt -1
       res = parseFloat(value) / 100

@@ -57,7 +57,7 @@ describe 'ColorContext', ->
     itParses('rgb(255,127,0)').asColor(255, 127, 0)
 
   describe 'with a variables array', ->
-    createVar = (name, value) -> {value, name}
+    createVar = (name, value) -> {value, name, path: '/path/to/file.coffee'}
 
     createColorVar = (name, value) ->
       v = createVar(name, value)
@@ -96,6 +96,62 @@ describe 'ColorContext', ->
         context = new ColorContext({variables})
 
       itParses('@list-item-height').asUndefinedColor()
+
+  describe 'with variables from a default file', ->
+    [projectPath, referenceVariable] = []
+    createVar = (name, value, path) ->
+      path ?= "#{projectPath}/file.styl"
+      {value, name, path}
+
+    createColorVar = (name, value) ->
+      v = createVar(name, value)
+      v.isColor = true
+      v
+
+    describe 'when there is another valid value', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'b', '10', "#{projectPath}/.pigments"
+          createVar 'b', '20', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asInt(20)
+
+
+    describe 'when there is no another valid value', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'b', '10', "#{projectPath}/.pigments"
+          createVar 'b', 'c', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asInt(10)
 
   describe 'with a reference variable', ->
     [projectPath, referenceVariable] = []
