@@ -93,11 +93,11 @@ describe 'PaletteElement', ->
 
       it 'renders the list with sublists for each files', ->
         ols = paletteElement.querySelectorAll('ol ol')
-        expect(ols.length).toEqual(3)
+        expect(ols.length).toEqual(4)
 
       it 'adds a header with the file path for each sublist', ->
         ols = paletteElement.querySelectorAll('.pigments-color-group-header')
-        expect(ols.length).toEqual(3)
+        expect(ols.length).toEqual(4)
 
       describe 'and the sortPaletteColors is set to name', ->
         beforeEach ->
@@ -123,7 +123,7 @@ describe 'PaletteElement', ->
         it 'groups identical colors together', ->
           lis = paletteElement.querySelectorAll('li')
 
-          expect(lis.length).not.toEqual(37)
+          expect(lis.length).toEqual(37)
 
     describe 'sorting selector', ->
       [sortSelect] = []
