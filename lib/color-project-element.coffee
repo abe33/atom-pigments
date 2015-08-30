@@ -18,16 +18,20 @@ class ColorProjectElement extends HTMLElement
 
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
-            @div class: 'setting-description', "Global config: #{atom.config.get(setting ? settingName).join(', ')}"
+            @div class: 'setting-description', =>
+              @div =>
+                @raw "Global config: <code>#{atom.config.get(setting ? settingName).join(', ')}</code>"
 
-            @p(=> @raw description) if description?
+                @p(=> @raw description) if description?
 
-    booleanField = (name, label, description) =>
+              booleanField("ignoreGlobal#{capitalize name}", 'Ignore Global', null, true)
+
+    booleanField = (name, label, description, nested) =>
       @div class: 'control-group boolean', =>
         @div class: 'controls', =>
           @input type: 'checkbox', id: "pigments-#{name}", outlet: name
           @label class: 'control-label', for: "pigments-#{name}", =>
-            @span class: 'setting-title', label
+            @span class: (if nested then 'setting-description' else 'setting-title'), label
 
           if description?
             @div class: 'setting-description', =>
@@ -58,11 +62,6 @@ class ColorProjectElement extends HTMLElement
           a color.
           """)
 
-          booleanField('ignoreGlobalConfig', 'Ignore Global Config', """
-          When checked, only the project settings will be used and the package
-          level configuration will be ignored.
-          """)
-
   createdCallback: ->
     @subscriptions = new CompositeDisposable
 
@@ -78,7 +77,10 @@ class ColorProjectElement extends HTMLElement
     @initializeTextEditor('ignoredNames')
     @initializeTextEditor('ignoredScopes')
     @initializeCheckbox('includeThemes')
-    @initializeCheckbox('ignoreGlobalConfig')
+    @initializeCheckbox('ignoreGlobalSourceNames')
+    @initializeCheckbox('ignoreGlobalIgnoredNames')
+    @initializeCheckbox('ignoreGlobalIgnoredScopes')
+    @initializeCheckbox('ignoreGlobalSearchNames')
 
   initializeTextEditor: (name) ->
     capitalizedName = capitalize name

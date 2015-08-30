@@ -65,16 +65,58 @@ describe 'ColorProjectElement', ->
 
       expect(project.setIncludeThemes).toHaveBeenCalledWith(false)
 
-  describe 'toggling on the ignoreGlobalConfig checkbox', ->
+  describe 'toggling on the ignoreGlobalSourceNames checkbox', ->
     it 'update the source names in the project', ->
-      spyOn(project, 'setIgnoreGlobalConfig')
+      spyOn(project, 'setIgnoreGlobalSourceNames')
 
-      projectElement.ignoreGlobalConfig.checked = true
-      change(projectElement.ignoreGlobalConfig)
+      projectElement.ignoreGlobalSourceNames.checked = true
+      change(projectElement.ignoreGlobalSourceNames)
 
-      expect(project.setIgnoreGlobalConfig).toHaveBeenCalledWith(true)
+      expect(project.setIgnoreGlobalSourceNames).toHaveBeenCalledWith(true)
 
-      projectElement.ignoreGlobalConfig.checked = false
-      change(projectElement.ignoreGlobalConfig)
+      projectElement.ignoreGlobalSourceNames.checked = false
+      change(projectElement.ignoreGlobalSourceNames)
 
-      expect(project.setIgnoreGlobalConfig).toHaveBeenCalledWith(false)
+      expect(project.setIgnoreGlobalSourceNames).toHaveBeenCalledWith(false)
+
+  describe 'toggling on the ignoreGlobalIgnoredNames checkbox', ->
+    it 'update the ignored names in the project', ->
+      spyOn(project, 'setIgnoreGlobalIgnoredNames')
+
+      projectElement.ignoreGlobalIgnoredNames.checked = true
+      change(projectElement.ignoreGlobalIgnoredNames)
+
+      expect(project.setIgnoreGlobalIgnoredNames).toHaveBeenCalledWith(true)
+
+      projectElement.ignoreGlobalIgnoredNames.checked = false
+      change(projectElement.ignoreGlobalIgnoredNames)
+
+      expect(project.setIgnoreGlobalIgnoredNames).toHaveBeenCalledWith(false)
+
+  describe 'toggling on the ignoreGlobalIgnoredScopes checkbox', ->
+    it 'update the ignored scopes in the project', ->
+      spyOn(project, 'setIgnoreGlobalIgnoredScopes')
+
+      projectElement.ignoreGlobalIgnoredScopes.checked = true
+      change(projectElement.ignoreGlobalIgnoredScopes)
+
+      expect(project.setIgnoreGlobalIgnoredScopes).toHaveBeenCalledWith(true)
+
+      projectElement.ignoreGlobalIgnoredScopes.checked = false
+      change(projectElement.ignoreGlobalIgnoredScopes)
+
+      expect(project.setIgnoreGlobalIgnoredScopes).toHaveBeenCalledWith(false)
+
+  describe 'toggling on the ignoreGlobalSearchNames checkbox', ->
+    it 'update the search names in the project', ->
+      spyOn(project, 'setIgnoreGlobalSearchNames')
+
+      projectElement.ignoreGlobalSearchNames.checked = true
+      change(projectElement.ignoreGlobalSearchNames)
+
+      expect(project.setIgnoreGlobalSearchNames).toHaveBeenCalledWith(true)
+
+      projectElement.ignoreGlobalSearchNames.checked = false
+      change(projectElement.ignoreGlobalSearchNames)
+
+      expect(project.setIgnoreGlobalSearchNames).toHaveBeenCalledWith(false)

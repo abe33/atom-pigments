@@ -501,6 +501,38 @@ pigments-color-project {
         margin-top: 4px;
       }
     }
+
+    &.array {
+      .setting-description {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        & > div:first-child {
+          flex: 1 1 0;
+          padding-right: 20px;
+        }
+      }
+
+      .boolean {
+        margin: 0;
+        padding-left: 0;
+
+        input {
+          margin-right: 0;
+          order: 2;
+        }
+        .controls {
+          display: flex;
+        }
+        .control-label {
+          padding-right: 8px;
+        }
+        .setting-description {
+          margin: 0;
+        }
+      }
+    }
   }
 
   .fields {

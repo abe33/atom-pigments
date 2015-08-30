@@ -687,25 +687,56 @@ describe 'ColorProject', ->
       it 'serializes the setting', ->
         expect(project.serialize().searchNames).toEqual(['*.foo'])
 
-    describe 'when the ignoreGlobalConfig setting is enabled', ->
-      beforeEach ->
-        atom.config.set 'pigments.ignoredScopes', ['\\.comment']
-        atom.config.set 'pigments.extendedSearchNames', ['*.rab']
-        project.sourceNames = ['*.foo']
-        project.ignoredNames = ['*.bar']
-        project.ignoredScopes = ['\\.source']
-        project.searchNames = ['*.baz']
+    describe 'when the ignore global config settings are enabled', ->
+      describe 'for the sourceNames field', ->
+        beforeEach ->
+          project.sourceNames = ['*.foo']
+          waitsForPromise -> project.setIgnoreGlobalSourceNames(true)
 
-        waitsForPromise -> project.setIgnoreGlobalConfig(true)
+        it 'ignores the content of the global config', ->
+          expect(project.getSourceNames()).toEqual(['.pigments','*.foo'])
 
-      it 'ignores the content of the global config', ->
-        expect(project.getSourceNames()).toEqual(['.pigments','*.foo'])
-        expect(project.getIgnoredNames()).toEqual(['*.bar'])
-        expect(project.getIgnoredScopes()).toEqual(['\\.source'])
-        expect(project.getSearchNames()).toEqual(['*.foo','*.baz'])
+        it 'serializes the project setting', ->
+          expect(project.serialize().ignoreGlobalSourceNames).toBeTruthy()
 
-      it 'serializes the project setting', ->
-        expect(project.serialize().ignoreGlobalConfig).toBeTruthy()
+      describe 'for the ignoredNames field', ->
+        beforeEach ->
+          atom.config.set 'pigments.ignoredNames', ['*.foo']
+          project.ignoredNames = ['*.bar']
+
+          project.setIgnoreGlobalIgnoredNames(true)
+
+        it 'ignores the content of the global config', ->
+          expect(project.getIgnoredNames()).toEqual(['*.bar'])
+
+        it 'serializes the project setting', ->
+          expect(project.serialize().ignoreGlobalIgnoredNames).toBeTruthy()
+
+      describe 'for the ignoredScopes field', ->
+        beforeEach ->
+          atom.config.set 'pigments.ignoredScopes', ['\\.comment']
+          project.ignoredScopes = ['\\.source']
+
+          project.setIgnoreGlobalIgnoredScopes(true)
+
+        it 'ignores the content of the global config', ->
+          expect(project.getIgnoredScopes()).toEqual(['\\.source'])
+
+        it 'serializes the project setting', ->
+          expect(project.serialize().ignoreGlobalIgnoredScopes).toBeTruthy()
+
+      describe 'for the searchNames field', ->
+        beforeEach ->
+          atom.config.set 'pigments.extendedSearchNames', ['*.css']
+          project.searchNames = ['*.foo']
+
+          project.setIgnoreGlobalSearchNames(true)
+
+        it 'ignores the content of the global config', ->
+          expect(project.getSearchNames()).toEqual(['*.less','*.foo'])
+
+        it 'serializes the project setting', ->
+          expect(project.serialize().ignoreGlobalSearchNames).toBeTruthy()
 
     describe 'when the includeThemes setting is enabled', ->
       [paths] = []

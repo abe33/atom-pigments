@@ -39,7 +39,7 @@ class ColorProject
 
   constructor: (state={}) ->
     {
-      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalConfig, variables, timestamp, buffers
+      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, variables, timestamp, buffers
     } = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -367,7 +367,7 @@ class ColorProject
   getSourceNames: ->
     names = ['.pigments']
     names = names.concat(@sourceNames ? [])
-    unless @ignoreGlobalConfig
+    unless @ignoreGlobalSourceNames
       names = names.concat(atom.config.get('pigments.sourceNames') ? [])
     names
 
@@ -376,21 +376,26 @@ class ColorProject
 
     @initialize().then => @loadPathsAndVariables(true)
 
+  setIgnoreGlobalSourceNames: (@ignoreGlobalSourceNames) ->
+    @updatePaths()
+
   getSearchNames: ->
     names = []
     names = names.concat(@sourceNames ? [])
     names = names.concat(@searchNames ? [])
-    unless @ignoreGlobalConfig
+    unless @ignoreGlobalSearchNames
       names = names.concat(atom.config.get('pigments.sourceNames') ? [])
       names = names.concat(atom.config.get('pigments.extendedSearchNames') ? [])
     names
 
   setSearchNames: (@searchNames=[]) ->
 
+  setIgnoreGlobalSearchNames: (@ignoreGlobalSearchNames) ->
+
   getIgnoredNames: ->
     names = @ignoredNames ? []
-    names = names.concat(@getGlobalIgnoredNames() ? [])
-    unless @ignoreGlobalConfig
+    unless @ignoreGlobalIgnoredNames
+      names = names.concat(@getGlobalIgnoredNames() ? [])
       names = names.concat(atom.config.get('core.ignoredNames') ? [])
     names
 
@@ -408,13 +413,19 @@ class ColorProject
       @paths = @paths.filter (p) => !@isIgnoredPath(p)
       @loadPathsAndVariables(true)
 
+  setIgnoreGlobalIgnoredNames: (@ignoreGlobalIgnoredNames) ->
+    @updatePaths()
+
   getIgnoredScopes: ->
     scopes = @ignoredScopes ? []
-    unless @ignoreGlobalConfig
+    unless @ignoreGlobalIgnoredScopes
       scopes = scopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
     scopes
 
   setIgnoredScopes: (@ignoredScopes=[]) ->
+    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
+  setIgnoreGlobalIgnoredScopes: (@ignoreGlobalIgnoredScopes) ->
     @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   themesIncluded: -> @includeThemes
@@ -432,9 +443,6 @@ class ColorProject
 
     @updatePaths()
 
-  setIgnoreGlobalConfig: (@ignoreGlobalConfig) ->
-    @updatePaths()
-
   getTimestamp: -> new Date()
 
   serialize: ->
@@ -446,12 +454,25 @@ class ColorProject
       globalSourceNames: atom.config.get('pigments.sourceNames')
       globalIgnoredNames: atom.config.get('pigments.ignoredNames')
 
-    data.ignoreGlobalConfig = @ignoreGlobalConfig if @ignoreGlobalConfig?
-    data.includeThemes = @includeThemes if @includeThemes?
-    data.ignoredScopes = @ignoredScopes if @ignoredScopes?
-    data.ignoredNames = @ignoredNames if @ignoredNames?
-    data.sourceNames = @sourceNames if @sourceNames?
-    data.searchNames = @searchNames if @searchNames?
+    if @ignoreGlobalSourceNames?
+      data.ignoreGlobalSourceNames = @ignoreGlobalSourceNames
+    if @ignoreGlobalSearchNames?
+      data.ignoreGlobalSearchNames = @ignoreGlobalSearchNames
+    if @ignoreGlobalIgnoredNames?
+      data.ignoreGlobalIgnoredNames = @ignoreGlobalIgnoredNames
+    if @ignoreGlobalIgnoredScopes?
+      data.ignoreGlobalIgnoredScopes = @ignoreGlobalIgnoredScopes
+    if @includeThemes?
+      data.includeThemes = @includeThemes
+    if @ignoredScopes?
+      data.ignoredScopes = @ignoredScopes
+    if @ignoredNames?
+      data.ignoredNames = @ignoredNames
+    if @sourceNames?
+      data.sourceNames = @sourceNames
+    if @searchNames?
+      data.searchNames = @searchNames
+
     data.buffers = @serializeBuffers()
 
     if @isInitialized()
