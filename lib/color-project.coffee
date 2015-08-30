@@ -39,8 +39,7 @@ class ColorProject
 
   constructor: (state={}) ->
     {
-      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths,
-      variables, timestamp, buffers
+      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, variables, timestamp, buffers
     } = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -370,9 +369,7 @@ class ColorProject
     sourceNames = sourceNames.concat(@sourceNames ? [])
     sourceNames = sourceNames.concat(atom.config.get('pigments.sourceNames') ? [])
 
-  setSourceNames: (sourceNames) ->
-    @sourceNames = sourceNames ? []
-
+  setSourceNames: (@sourceNames=[]) ->
     return if not @initialized? and not @initializePromise?
 
     @initialize().then => @loadPathsAndVariables(true)
@@ -381,7 +378,9 @@ class ColorProject
     searchNames = []
     searchNames = searchNames.concat(@searchNames ? [])
     searchNames = searchNames.concat(atom.config.get('pigments.sourceNames') ? [])
-    searchNames.concat(atom.config.get 'pigments.extendedSearchNames')
+    searchNames = searchNames.concat(atom.config.get('pigments.extendedSearchNames') ? [])
+
+  setSearchNames: (@searchNames=[]) ->
 
   getIgnoredNames: ->
     ignoredNames = @ignoredNames ? []
@@ -392,9 +391,7 @@ class ColorProject
     atom.config.get('pigments.ignoredNames')?.map (p) ->
       if /\/\*$/.test(p) then p + '*' else p
 
-  setIgnoredNames: (ignoredNames) ->
-    @ignoredNames = ignoredNames ? []
-
+  setIgnoredNames: (@ignoredNames=[]) ->
     return if not @initialized? and not @initializePromise?
 
     @initialize().then =>
@@ -408,9 +405,7 @@ class ColorProject
     ignoredScopes = @ignoredScopes ? []
     ignoredScopes = ignoredScopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
 
-  setIgnoredScopes: (ignoredScopes=[]) ->
-    @ignoredScopes = ignoredScopes
-
+  setIgnoredScopes: (@ignoredScopes=[]) ->
     @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   themesIncluded: -> @includeThemes
@@ -443,6 +438,7 @@ class ColorProject
     data.ignoredScopes = @ignoredScopes if @ignoredScopes?
     data.ignoredNames = @ignoredNames if @ignoredNames?
     data.sourceNames = @sourceNames if @sourceNames?
+    data.searchNames = @searchNames if @searchNames?
     data.buffers = @serializeBuffers()
 
     if @isInitialized()

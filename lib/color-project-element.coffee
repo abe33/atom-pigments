@@ -8,7 +8,7 @@ class ColorProjectElement extends HTMLElement
   EventsDelegation.includeInto(this)
 
   @content: ->
-    arrayField = (name, label) =>
+    arrayField = (name, label, setting, description) =>
       settingName = "pigments.#{name}"
 
       @div class: 'control-group array', =>
@@ -18,7 +18,9 @@ class ColorProjectElement extends HTMLElement
 
           @div class: 'control-wrapper', =>
             @tag 'atom-text-editor', mini: true, outlet: name, type: 'array', property: name
-            @div class: 'setting-description', "Package config: #{atom.config.get(settingName).join(', ')}"
+            @div class: 'setting-description', "Package config: #{atom.config.get(setting ? settingName).join(', ')}"
+
+            @p(=> @raw description) if description?
 
     booleanField = (name, label, description) =>
       @div class: 'control-group boolean', =>
@@ -47,6 +49,7 @@ class ColorProjectElement extends HTMLElement
           arrayField('sourceNames', 'Source Names')
           arrayField('ignoredNames', 'Ignored Names')
           arrayField('ignoredScopes', 'Ignored Scopes')
+          arrayField('searchNames', 'Extended Search Names', 'pigments.extendedSearchNames')
 
           booleanField('includeThemes', 'Include Atom Themes Stylesheets', """
           The paths to <code>#{themes[0]}</code> and <code>#{themes[1]}</code>
@@ -66,6 +69,7 @@ class ColorProjectElement extends HTMLElement
     @ignoredScopes.getModel().setGrammar(grammar)
 
     @initializeTextEditor('sourceNames')
+    @initializeTextEditor('searchNames')
     @initializeTextEditor('ignoredNames')
     @initializeTextEditor('ignoredScopes')
     @initializeCheckbox('includeThemes')

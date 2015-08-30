@@ -24,6 +24,15 @@ describe 'ColorProjectElement', ->
 
       expect(project.setSourceNames).toHaveBeenCalledWith(['foo','bar'])
 
+  describe 'typing in the searchNames input', ->
+    it 'update the search names in the project', ->
+      spyOn(project, 'setSearchNames')
+
+      projectElement.searchNames.getModel().setText('foo, bar')
+      projectElement.searchNames.getModel().getBuffer().emitter.emit('did-stop-changing')
+
+      expect(project.setSearchNames).toHaveBeenCalledWith(['foo','bar'])
+
   describe 'typing in the ignoredNames input', ->
     it 'update the source names in the project', ->
       spyOn(project, 'setIgnoredNames')

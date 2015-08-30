@@ -675,6 +675,18 @@ describe 'ColorProject', ->
         it 'loads the variables from these new paths', ->
           expect(project.getVariables().length).toEqual(TOTAL_VARIABLES_IN_PROJECT)
 
+    describe 'when the extendedSearchNames setting is changed', ->
+      [updateSpy] = []
+
+      beforeEach ->
+        project.setSearchNames(['*.foo'])
+
+      it 'updates the search names', ->
+        expect(project.getSearchNames().length).toEqual(3)
+
+      it 'serializes the setting', ->
+        expect(project.serialize().searchNames).toEqual(['*.foo'])
+
     describe 'when the includeThemes setting is enabled', ->
       [paths] = []
       beforeEach ->
