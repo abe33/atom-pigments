@@ -4,12 +4,26 @@ ColorExpression = require './color-expression'
 
 module.exports =
 class ColorContext
-  constructor: (@variables=[], @colorVariables=[], @parser) ->
-    @vars = {}
-    @colorVars = {}
+  constructor: (options={}) ->
+    {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, sorted} = options
 
-    @vars[v.name] = v for v in @variables
-    @colorVars[v.name] = v for v in @colorVariables
+    variables ?= []
+    colorVariables ?= []
+    @rootPaths ?= []
+    @referencePath ?= @referenceVariable.path if @referenceVariable?
+
+    if @sorted
+      @variables = variables
+      @colorVariables = colorVariables
+    else
+      @variables = variables.slice().sort(@sortPaths)
+      @colorVariables = colorVariables.slice().sort(@sortPaths)
+
+    unless @vars?
+      @vars = {}
+      @colorVars = {}
+      @vars[v.name] = v for v in @variables
+      @colorVars[v.name] = v for v in @colorVariables
 
     unless @parser?
       ColorParser = require './color-parser'
@@ -17,7 +31,37 @@ class ColorContext
 
     @usedVariables = []
 
-  clone: -> new ColorContext(@variables, @colorVariables, @parser)
+  sortPaths: (a,b) =>
+    if @referencePath?
+      return 0 if a.path is b.path
+      return 1 if a.path is @referencePath
+      return -1 if b.path is @referencePath
+
+      rootReference = @rootPathForPath(@referencePath)
+      rootA = @rootPathForPath(a.path)
+      rootB = @rootPathForPath(b.path)
+
+      return 0 if rootA is rootB
+      return 1 if rootA is rootReference
+      return -1 if rootB is rootReference
+
+      0
+    else
+      0
+
+  rootPathForPath: (path) ->
+    return root for root in @rootPaths when path.indexOf("#{root}/") is 0
+
+  clone: ->
+    new ColorContext({
+      @variables
+      @colorVariables
+      @referenceVariable
+      @parser
+      @vars
+      @colorVars
+      sorted: true
+    })
 
   containsVariable: (variableName) -> variableName in @getVariablesNames()
 
@@ -77,9 +121,7 @@ class ColorContext
   readInt: (value, base=10) ->
     res = parseInt(value, base)
     if isNaN(res) and realValue = @getValue(value)
-      console.log realValue
       res = parseInt(realValue, base)
-      console.log res
 
     res
 

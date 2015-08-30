@@ -56,7 +56,7 @@ describe 'ColorContext', ->
     itParses('#ff0000').asColor(255, 0, 0)
     itParses('rgb(255,127,0)').asColor(255, 127, 0)
 
-  describe 'with a variables hash', ->
+  describe 'with a variables array', ->
     createVar = (name, value) -> {value, name}
 
     createColorVar = (name, value) ->
@@ -75,7 +75,7 @@ describe 'ColorContext', ->
 
       colorVariables = variables.filter (v) -> v.isColor
 
-      context = new ColorContext(variables, colorVariables)
+      context = new ColorContext({variables, colorVariables})
 
     itParses('x').asInt(10)
     itParses('y').asFloat(0.1)
@@ -93,6 +93,114 @@ describe 'ColorContext', ->
           createVar '@list-item-height', '@component-line-height'
         ]
 
-        context = new ColorContext(variables)
+        context = new ColorContext({variables})
 
       itParses('@list-item-height').asUndefinedColor()
+
+  describe 'with a reference variable', ->
+    [projectPath, referenceVariable] = []
+    createVar = (name, value, path) ->
+      path ?= "#{projectPath}/file.styl"
+      {value, name, path}
+
+    createColorVar = (name, value) ->
+      v = createVar(name, value)
+      v.isColor = true
+      v
+
+    describe 'when there is a single root path', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', '10', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'a', '20', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asInt(10)
+
+    describe 'when there are many root paths', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'b', '10', "#{projectPath}/b.styl"
+          createVar 'b', '20', "#{projectPath}2/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referenceVariable
+          rootPaths: [projectPath, "#{projectPath}2"]
+        })
+
+      itParses('a').asInt(10)
+
+  describe 'with a reference path', ->
+    [projectPath, referenceVariable] = []
+    createVar = (name, value, path) ->
+      path ?= "#{projectPath}/file.styl"
+      {value, name, path}
+
+    createColorVar = (name, value) ->
+      v = createVar(name, value)
+      v.isColor = true
+      v
+
+    describe 'when there is a single root path', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', '10', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'a', '20', "#{projectPath}/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referencePath: "#{projectPath}/a.styl"
+          rootPaths: [projectPath]
+        })
+
+      itParses('a').asInt(10)
+
+    describe 'when there are many root paths', ->
+      beforeEach ->
+        projectPath = atom.project.getPaths()[0]
+        referenceVariable = createVar 'a', 'b', "#{projectPath}/a.styl"
+
+        variables = [
+          referenceVariable
+          createVar 'b', '10', "#{projectPath}/b.styl"
+          createVar 'b', '20', "#{projectPath}2/b.styl"
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({
+          variables
+          colorVariables
+          referencePath: "#{projectPath}/a.styl"
+          rootPaths: [projectPath, "#{projectPath}2"]
+        })
+
+      itParses('a').asInt(10)

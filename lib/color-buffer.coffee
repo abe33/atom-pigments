@@ -160,6 +160,8 @@ class ColorBuffer
 
   isDestroyed: -> @destroyed
 
+  getPath: -> @editor.getPath()
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
@@ -369,6 +371,7 @@ class ColorBuffer
 
     config =
       buffer: @editor.getText()
+      bufferPath: @getPath()
       variables: variables
       colorVariables: variables.filter (v) -> v.isColor
 

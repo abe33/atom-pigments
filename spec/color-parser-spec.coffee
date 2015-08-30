@@ -42,7 +42,7 @@ describe 'ColorParser', ->
 
         else
           vars.push {name, value}
-      @context = new ColorContext(vars, colorVars)
+      @context = new ColorContext({variables: vars, colorVariables: colorVars})
       @description = "with variables context #{jasmine.pp variables} "
 
       return this

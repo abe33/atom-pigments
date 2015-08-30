@@ -6,8 +6,8 @@ ColorsChunkSize = 100
 
 class BufferColorsScanner
   constructor: (config) ->
-    {@buffer, variables, colorVariables} = config
-    @context = new ColorContext(variables, colorVariables)
+    {@buffer, variables, colorVariables, bufferPath} = config
+    @context = new ColorContext({variables, colorVariables, referencePath: bufferPath})
     @scanner = new ColorScanner({@context})
     @results = []
 
