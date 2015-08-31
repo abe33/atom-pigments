@@ -1,3 +1,15 @@
+<a name="v0.13.1"></a>
+# v0.13.1 (2015-09-01)
+
+## Bug Fixes
+
+- Fix backslash escaping preventing to open files on windows ([0874de30](https://github.com/abe33/atom-pigments/commit/0874de30e26297aa5ee58221c4de19c0f18c1cf7), [#68](https://github.com/abe33/atom-pigments/issues/68))
+- Fix error raised when a change force a range check on a destroyed marker ([dfcb055d](https://github.com/abe33/atom-pigments/commit/dfcb055d9d0ad417b3bee53a5e7dfadf0586b023), [#74](https://github.com/abe33/atom-pigments/issues/74))
+- Fix error raised when there's no screen line for a marker ([f187e6c8](https://github.com/abe33/atom-pigments/commit/f187e6c88d5d3626187f1da081c7b20e172d1594), [#73](https://github.com/abe33/atom-pigments/issues/73))
+- Fix find view font not following find-and-replace style ([9db9ff28](https://github.com/abe33/atom-pigments/commit/9db9ff283772d7681bb0bfd1bf4433fe83226e01), [#78](https://github.com/abe33/atom-pigments/issues/78))
+- Fix marker classes not properly removed when type change ([3b2b6dd2](https://github.com/abe33/atom-pigments/commit/3b2b6dd29a36ad5b0092212cf29aef0805d6ba14), [#80](https://github.com/abe33/atom-pigments/issues/80))
+- Fix palette using flawed javascript sort ([df242f8f](https://github.com/abe33/atom-pigments/commit/df242f8ff03e4a0f917d968f7a38c556778f9fbe))
+
 <a name="v0.13.0"></a>
 # v0.13.0 (2015-08-31)
 
