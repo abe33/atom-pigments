@@ -49,7 +49,7 @@ class ColorBufferElement extends HTMLElement
 
     @subscriptions.add @editor.onDidChange =>
       @usedMarkers.forEach (marker) ->
-        marker.colorMarker.invalidateScreenRangeCache()
+        marker.colorMarker?.invalidateScreenRangeCache()
         marker.checkScreenRange()
 
     @subscriptions.add @editor.onDidAddCursor =>
@@ -126,7 +126,7 @@ class ColorBufferElement extends HTMLElement
     for marker in @displayedMarkers
       view = @viewsByMarkers.get(marker)
       if view?
-        view.classList.remove('hidden') 
+        view.classList.remove('hidden')
         @hideMarkerIfInSelection(marker, view)
       else
         console.warn "A color marker was found in the displayed markers array without an associated view", marker
