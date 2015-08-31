@@ -738,12 +738,9 @@ describe 'ColorProject', ->
         it 'serializes the project setting', ->
           expect(project.serialize().ignoreGlobalSearchNames).toBeTruthy()
 
-    describe 'when the includeThemes setting is enabled', ->
-      [paths] = []
-      beforeEach ->
-        paths = project.getPaths()
-        expect(paths.length).toEqual(2)
 
+    describe '::loadThemesVariables', ->
+      beforeEach ->
         atom.packages.activatePackage('atom-light-ui')
         atom.packages.activatePackage('atom-light-syntax')
 
@@ -753,16 +750,49 @@ describe 'ColorProject', ->
           atom.themes.activateThemes()
 
         waitsForPromise ->
-          project.initialize()
+          atom.packages.activatePackage('pigments')
+
+      afterEach ->
+        atom.themes.deactivateThemes()
+        atom.themes.unwatchUserStylesheet()
+
+      it 'returns an array of 62 variables', ->
+        themeVariables = project.loadThemesVariables()
+        expect(themeVariables.length).toEqual(62)
+
+    describe 'when the includeThemes setting is enabled', ->
+      [paths, spy] = []
+      beforeEach ->
+        paths = project.getPaths()
+        expect(project.getColorVariables().length).toEqual(10)
+
+        atom.packages.activatePackage('atom-light-ui')
+        atom.packages.activatePackage('atom-light-syntax')
+        atom.packages.activatePackage('atom-dark-ui')
+        atom.packages.activatePackage('atom-dark-syntax')
+
+        atom.config.set('core.themes', ['atom-light-ui', 'atom-light-syntax'])
 
         waitsForPromise ->
+          atom.themes.activateThemes()
+
+        waitsForPromise ->
+          atom.packages.activatePackage('pigments')
+
+        waitsForPromise ->
+          project.initialize()
+
+        runs ->
+          spy = jasmine.createSpy('did-change-active-themes')
+          atom.themes.onDidChangeActiveThemes(spy)
           project.setIncludeThemes(true)
 
       afterEach ->
         atom.themes.deactivateThemes()
+        atom.themes.unwatchUserStylesheet()
 
-      it 'includes all the paths to the themes stylesheets', ->
-        expect(project.getPaths().length).toBeGreaterThan(2)
+      it 'includes the variables set for ui and syntaxt themes in the palette', ->
+        expect(project.getColorVariables().length).toEqual(72)
 
       it 'still includes the paths from the project', ->
         for p in paths
@@ -775,27 +805,30 @@ describe 'ColorProject', ->
 
       describe 'and then disabled', ->
         beforeEach ->
-          waitsForPromise ->
-            project.setIncludeThemes(false)
+          project.setIncludeThemes(false)
 
         it 'removes all the paths to the themes stylesheets', ->
-          expect(project.getPaths().length).toEqual(2)
+          expect(project.getColorVariables().length).toEqual(10)
 
         describe 'when the core.themes setting is modified', ->
           beforeEach ->
-            spyOn(project, 'updatePaths')
+            spyOn(project, 'loadThemesVariables').andCallThrough()
             atom.config.set('core.themes', ['atom-dark-ui', 'atom-dark-syntax'])
 
+            waitsFor -> spy.callCount > 0
+
           it 'does not trigger a paths update', ->
-            expect(project.updatePaths).not.toHaveBeenCalled()
+            expect(project.loadThemesVariables).not.toHaveBeenCalled()
 
       describe 'when the core.themes setting is modified', ->
         beforeEach ->
-          spyOn(project, 'updatePaths')
+          spyOn(project, 'loadThemesVariables').andCallThrough()
           atom.config.set('core.themes', ['atom-dark-ui', 'atom-dark-syntax'])
 
+          waitsFor -> spy.callCount > 0
+
         it 'triggers a paths update', ->
-          expect(project.updatePaths).toHaveBeenCalled()
+          expect(project.loadThemesVariables).toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##

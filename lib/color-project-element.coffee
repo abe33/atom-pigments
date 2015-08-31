@@ -56,10 +56,9 @@ class ColorProjectElement extends HTMLElement
           arrayField('searchNames', 'Extended Search Names', 'pigments.extendedSearchNames')
 
           booleanField('includeThemes', 'Include Atom Themes Stylesheets', """
-          The paths to <code>#{themes[0]}</code> and <code>#{themes[1]}</code>
-          stylesheets will be automatically added to the source names and their
-          variables will be made available when evaluating or completing
-          a color.
+          The variables from <code>#{themes[0]}</code> and
+          <code>#{themes[1]}</code> themes will be automatically added to the
+          project palette.
           """)
 
   createdCallback: ->

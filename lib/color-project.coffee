@@ -11,6 +11,71 @@ PathsScanner = require './paths-scanner'
 ColorMarkerElement = require './color-marker-element'
 VariablesCollection = require './variables-collection'
 
+THEME_VARIABLES = [
+  'text-color'
+  'text-color-subtle'
+  'text-color-highlight'
+  'text-color-selected'
+  'text-color-info'
+  'text-color-success'
+  'text-color-warning'
+  'text-color-error'
+  'background-color-info'
+  'background-color-success'
+  'background-color-warning'
+  'background-color-error'
+  'background-color-highlight'
+  'background-color-selected'
+  'app-background-color'
+  'base-background-color'
+  'base-border-color'
+  'pane-item-background-color'
+  'pane-item-border-color'
+  'input-background-color'
+  'input-border-color'
+  'tool-panel-background-color'
+  'tool-panel-border-color'
+  'inset-panel-background-color'
+  'inset-panel-border-color'
+  'panel-heading-background-color'
+  'panel-heading-border-color'
+  'overlay-background-color'
+  'overlay-border-color'
+  'button-background-color'
+  'button-background-color-hover'
+  'button-background-color-selected'
+  'button-border-color'
+  'tab-bar-background-color'
+  'tab-bar-border-color'
+  'tab-background-color'
+  'tab-background-color-active'
+  'tab-border-color'
+  'tree-view-background-color'
+  'tree-view-border-color'
+  'ui-site-color-1'
+  'ui-site-color-2'
+  'ui-site-color-3'
+  'ui-site-color-4'
+  'ui-site-color-5'
+  'syntax-text-color'
+  'syntax-cursor-color'
+  'syntax-selection-color'
+  'syntax-background-color'
+  'syntax-wrap-guide-color'
+  'syntax-indent-guide-color'
+  'syntax-invisible-character-color'
+  'syntax-result-marker-color'
+  'syntax-result-marker-color-selected'
+  'syntax-gutter-text-color'
+  'syntax-gutter-text-color-selected'
+  'syntax-gutter-background-color'
+  'syntax-gutter-background-color-selected'
+  'syntax-color-renamed'
+  'syntax-color-added'
+  'syntax-color-modified'
+  'syntax-color-removed'
+]
+
 compareArray = (a,b) ->
   return false if not a? or not b?
   return false unless a.length is b.length
@@ -39,7 +104,7 @@ class ColorProject
 
   constructor: (state={}) ->
     {
-      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, variables, timestamp, buffers
+      includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, variables, timestamp, buffers
     } = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -71,6 +136,8 @@ class ColorProject
     @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
+
+    @setIncludeThemes(includeThemes) if includeThemes
 
     @initialize() if @paths? and @variables.length?
     @initializeBuffers()
@@ -349,6 +416,34 @@ class ColorProject
     else
       PathsScanner.startTask paths, (results) -> callback(results)
 
+  loadThemesVariables: ->
+    iterator = 0
+    variables = []
+    html = ''
+    THEME_VARIABLES.forEach (v) -> html += "<div class='#{v}'>#{v}</div>"
+
+    div = document.createElement('div')
+    div.innerHTML = html
+    document.body.appendChild(div)
+
+    THEME_VARIABLES.forEach (v,i) ->
+      node = div.children[i]
+      color = getComputedStyle(node).color
+      end = iterator + v.length + color.length + 4
+
+      variable =
+        name: "@#{v}"
+        line: i
+        value: color
+        range: [iterator,end]
+        path: "pigments://themes.less"
+
+      iterator = end
+      variables.push(variable)
+
+    document.body.removeChild(div)
+    return variables
+
   ##     ######  ######## ######## ######## #### ##    ##  ######    ######
   ##    ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
   ##    ##       ##          ##       ##     ##  ####  ## ##        ##
@@ -357,12 +452,7 @@ class ColorProject
   ##    ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
   ##     ######  ########    ##       ##    #### ##    ##  ######    ######
 
-  getRootPaths: ->
-    rootPaths = atom.project.getPaths()
-    if @includeThemes
-      rootPaths = rootPaths.concat atom.themes.getActiveThemes().map (t) ->
-        t.path
-    rootPaths
+  getRootPaths: -> atom.project.getPaths()
 
   getSourceNames: ->
     names = ['.pigments']
@@ -435,13 +525,18 @@ class ColorProject
 
     @includeThemes = includeThemes
     if @includeThemes
-      @themesSubscription = atom.config.observe 'core.themes', => @updatePaths()
+      @themesSubscription = atom.themes.onDidChangeActiveThemes =>
+        return unless @includeThemes
+
+        variables = @loadThemesVariables()
+        @variables.updatePathCollection('pigments://themes.less', variables)
+
       @subscriptions.add @themesSubscription
+      @variables.addMany(@loadThemesVariables())
     else
       @subscriptions.remove @themesSubscription
+      @variables.deleteVariablesForPaths(['pigments://themes.less'])
       @themesSubscription.dispose()
-
-    @updatePaths()
 
   getTimestamp: -> new Date()
 
