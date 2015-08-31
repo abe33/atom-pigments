@@ -38,7 +38,7 @@ class ColorResultsElement extends HTMLElement
         fileItem.classList.toggle('collapsed')
 
     @subscriptions.add @subscribeTo this, '.search-result',
-      click: (e) ->
+      click: (e) =>
         e.stopPropagation()
         matchItem = if e.target.matches('.search-result')
           e.target
