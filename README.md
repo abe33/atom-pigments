@@ -6,6 +6,10 @@ A package to display colors in project and files:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/pigments.gif?raw=true)
 
+Pigments will scan source files in your project directories looking for colors and will build a palette with all of them. Then for each opened file, it will use the palette to evaluate the value of a given color. The legible source paths can be defined through various settings either at the global or per project level.
+
+Pigments supports out of the box most of the color transformations functions and expressions of the three biggest CSS pre-processors out there, namely LESS, Sass and Stylus. However, it doesn't mean pigments is able to parse and understand all of these languages constructs. For the moment, Pigments' aim is to support the widest range of usage, even if it implies reducing its ability to parse certain complex constructs. You can refer to the [parser specs](https://github.com/abe33/atom-pigments/blob/master/spec/color-parser-spec.coffee) for an exhaustive list of the supported expressions.
+
 ## Install
 
 Using `apm`:
@@ -15,6 +19,14 @@ apm install pigments
 ```
 
 Or search for `pigments` in Atom settings view.
+
+## Defaults File
+
+Pigments is able to follow variables uses up to a certain point, if a color refers to several variables whose values can't be evaluated (because they use unsupported language-specific features) the color will be flagged as invalid and not displayed. This can be problematic when it happens on the core components of a complex palette.
+
+To solve that issue, you can define a *defaults file* named `.pigments` at the root of a project directory and you can put in it all the variables declarations to use if a value from the sources files can't be evaluated.
+
+This can also be used when your project core palette is dynamically defined so that pigments can evaluate properly the rest of the project colors.
 
 ## Commands
 
@@ -39,7 +51,6 @@ $my-var: #123456; // scss
 ```
 ```css
 @my-var: #123456; /* less */
-
 ```
 
 As with every commands, this command can be triggered using the keyboard by defining a keybinding like this:
@@ -92,6 +103,22 @@ These commands can be triggered using the keyboard by defining a keybinding like
 ```
 
 When triggered from the command palette or from the keyboard, the conversion will operate on every cursors positioned on color markers.
+
+### Pigments: Project Settings
+
+Each Pigments project has its own set of settings that can extend or replace the global configuration. These settings are available through the `pigments:project-settings` command:
+
+![pigments-conversion](https://github.com/abe33/atom-pigments/blob/master/resources/project-settings.png?raw=true)
+
+The `Source Names`, `Ignored Names`, `Ignored Scopes` and `Extended Search Names` fields all match a global configuration. When defined the project will use both the global config and the one of the current project, except when the `Ignore Global` checkbox is checked.
+
+The `Include Atom Themes Stylesheets` setting is specific to the project and can't be defined globally. When enabled, it'll add all the public themes variables in the current project palette:
+
+![pigments-conversion](https://github.com/abe33/atom-pigments/blob/master/resources/project-settings.gif?raw=true)
+
+**Note that it won't add all the variables defined in the less files of the syntax and ui themes, only the ones that must be present as defined in the [themes documentation](https://atom.io/docs/latest/hacking-atom-creating-a-theme).**
+
+**This feature is still quite experimental at this stage.**
 
 ### Pigments: Reload
 
