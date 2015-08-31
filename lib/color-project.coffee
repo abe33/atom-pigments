@@ -423,6 +423,7 @@ class ColorProject
     THEME_VARIABLES.forEach (v) -> html += "<div class='#{v}'>#{v}</div>"
 
     div = document.createElement('div')
+    div.className = 'pigments-sampler'
     div.innerHTML = html
     document.body.appendChild(div)
 
