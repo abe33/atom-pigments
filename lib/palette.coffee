@@ -14,7 +14,8 @@ class Palette
     @tuple().sort ([_, a], [__, b]) => @compareColors(a,b)
 
   sortedByName: ->
-    @tuple().sort ([a],[b]) -> if a > b then 1 else if a < b then -1 else 0
+    collator = new Intl.Collator("en-US", numeric: true)
+    @tuple().sort(collator.compare)
 
   getColorsNames: -> Object.keys(@colors)
 
