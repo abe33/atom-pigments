@@ -1,3 +1,14 @@
+<a name="v0.13.2"></a>
+# v0.13.2 (2015-09-01)
+
+## Bug Fixes
+
+- Fix callback binding in search results ([447fe35b](https://github.com/abe33/atom-pigments/commit/447fe35b45cc9bcf249df46f93bfea68aded4d68))
+
+## Other
+
+- Bump markers version ([9d15495a](https://github.com/abe33/atom-pigments/commit/9d15495a2607f39695dc7430b7863052f2a88a32))
+
 <a name="v0.13.1"></a>
 # v0.13.1 (2015-09-01)
 
