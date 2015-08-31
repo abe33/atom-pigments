@@ -11,11 +11,11 @@ describe 'Palette', ->
 
   beforeEach ->
     colors = [
-      createVar 'red', new Color '#ff0000', 'file.styl', 0
-      createVar 'green', new Color '#00ff00', 'file.styl', 1
-      createVar 'blue', new Color '#0000ff', 'file.styl', 2
-      createVar 'redCopy', new Color '#ff0000', 'file.styl', 3
-      createVar 'red', new Color '#ff0000', 'file2.styl', 0
+      createVar 'red', new Color('#ff0000'), 'file.styl', 0
+      createVar 'green', new Color('#00ff00'), 'file.styl', 1
+      createVar 'blue', new Color('#0000ff'), 'file.styl', 2
+      createVar 'redCopy', new Color('#ff0000'), 'file.styl', 3
+      createVar 'red', new Color('#ff0000'), 'file2.styl', 0
     ]
     palette = new Palette(colors)
 

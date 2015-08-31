@@ -2,6 +2,7 @@
 minimatch = require 'minimatch'
 
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require './versions'
+{THEME_VARIABLES} = require './uris'
 ColorBuffer = require './color-buffer'
 ColorContext = require './color-context'
 ColorSearch = require './color-search'
@@ -11,7 +12,7 @@ PathsScanner = require './paths-scanner'
 ColorMarkerElement = require './color-marker-element'
 VariablesCollection = require './variables-collection'
 
-THEME_VARIABLES = [
+ATOM_VARIABLES = [
   'text-color'
   'text-color-subtle'
   'text-color-highlight'
@@ -415,14 +416,14 @@ class ColorProject
     iterator = 0
     variables = []
     html = ''
-    THEME_VARIABLES.forEach (v) -> html += "<div class='#{v}'>#{v}</div>"
+    ATOM_VARIABLES.forEach (v) -> html += "<div class='#{v}'>#{v}</div>"
 
     div = document.createElement('div')
     div.className = 'pigments-sampler'
     div.innerHTML = html
     document.body.appendChild(div)
 
-    THEME_VARIABLES.forEach (v,i) ->
+    ATOM_VARIABLES.forEach (v,i) ->
       node = div.children[i]
       color = getComputedStyle(node).color
       end = iterator + v.length + color.length + 4
@@ -432,7 +433,7 @@ class ColorProject
         line: i
         value: color
         range: [iterator,end]
-        path: "pigments://themes.less"
+        path: THEME_VARIABLES
 
       iterator = end
       variables.push(variable)
@@ -525,13 +526,13 @@ class ColorProject
         return unless @includeThemes
 
         variables = @loadThemesVariables()
-        @variables.updatePathCollection('pigments://themes.less', variables)
+        @variables.updatePathCollection(THEME_VARIABLES, variables)
 
       @subscriptions.add @themesSubscription
       @variables.addMany(@loadThemesVariables())
     else
       @subscriptions.remove @themesSubscription
-      @variables.deleteVariablesForPaths(['pigments://themes.less'])
+      @variables.deleteVariablesForPaths([THEME_VARIABLES])
       @themesSubscription.dispose()
 
   getTimestamp: -> new Date()

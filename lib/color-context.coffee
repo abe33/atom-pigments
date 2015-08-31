@@ -24,6 +24,7 @@ class ColorContext
       @colorVars = {}
       @defaultVars = {}
       @defaultColorVars = {}
+
       for v in @variables
         @vars[v.name] = v
         @defaultVars[v.name] = v if v.path.match /\/.pigments$/

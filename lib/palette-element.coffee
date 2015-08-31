@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation} = require 'atom-utils'
+{THEME_VARIABLES} = require './uris'
 pigments = require './pigments'
 Palette = require './palette'
 StickyTitle = require './sticky-title'
@@ -116,7 +117,10 @@ class PaletteElement extends HTMLElement
 
     content = document.createElement('div')
     content.className = 'pigments-color-group-header-content'
-    content.textContent = label
+    if label is THEME_VARIABLES
+      content.textContent = 'Atom Themes'
+    else
+      content.textContent = label
 
     header.appendChild(content)
     header
@@ -159,12 +163,13 @@ class PaletteElement extends HTMLElement
             <span class="name">#{name}</span>
         """
 
-        html += """
-        <span data-variable-id="#{id}">
-          <span class="path">#{atom.project.relativize(path)}</span>
-          <span class="line">at line #{line + 1}</span>
-        </span>
-        """
+        if path isnt THEME_VARIABLES
+          html += """
+          <span data-variable-id="#{id}">
+            <span class="path">#{atom.project.relativize(path)}</span>
+            <span class="line">at line #{line + 1}</span>
+          </span>
+          """
 
         html += '</span>'
 

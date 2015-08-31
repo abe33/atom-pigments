@@ -1,5 +1,6 @@
 Color = require '../lib/color'
 Palette = require '../lib/palette'
+{THEME_VARIABLES} = require '../lib/uris'
 {change, click} = require './helpers/events'
 
 describe 'PaletteElement', ->
@@ -24,17 +25,21 @@ describe 'PaletteElement', ->
   describe 'as a view provider', ->
     beforeEach ->
       palette = new Palette([
-        createVar 'red', new Color '#ff0000', 'file.styl', 0
-        createVar 'green', new Color '#00ff00', 'file.styl', 1
-        createVar 'blue', new Color '#0000ff', 'file.styl', 2
-        createVar 'redCopy', new Color '#ff0000', 'file.styl', 3
-        createVar 'red', new Color '#ff0000', 'file2.styl', 0
+        createVar 'red', new Color('#ff0000'), 'file.styl', 0
+        createVar 'green', new Color('#00ff00'), 'file.styl', 1
+        createVar 'blue', new Color('#0000ff'), 'file.styl', 2
+        createVar 'redCopy', new Color('#ff0000'), 'file.styl', 3
+        createVar 'red', new Color('#ff0000'), THEME_VARIABLES, 0
       ])
 
       paletteElement = atom.views.getView(palette)
+      jasmine.attachToDOM(paletteElement)
 
     it 'is associated with the Palette model', ->
       expect(paletteElement).toBeDefined()
+
+    it 'does not render the file link when the variable comes from a theme', ->
+      expect(paletteElement.querySelectorAll('li')[4].querySelector(' [data-variable-id]')).not.toExist()
 
   describe 'when pigments:show-palette commands is triggered', ->
     beforeEach ->
