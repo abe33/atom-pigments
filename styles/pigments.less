@@ -44,11 +44,11 @@
 
 .icon-pigments::before {
   content: '';
-  width: 16px;
-  height: 16px;
+  width: 1.6em;
+  height: 1.6em;
   display: inline-block;
   background-image: url(atom://pigments/resources/icon.svg);
-  background-size: 16px;
+  background-size: 1.6em;
   vertical-align: middle;
 }
 
@@ -206,7 +206,7 @@ pigments-color-results {
   }
 
   .match.color-match {
-    padding: 2px 4px
+    padding: 0.25em 0.4em;
   }
 
   .preview-pane {
@@ -217,7 +217,7 @@ pigments-color-results {
     .results-view {
       overflow: auto;
       position: relative;
-      padding: 0 10px;
+      padding: 0 @component-padding;
       -webkit-flex: 1;
 
       .line-number {
@@ -227,8 +227,8 @@ pigments-color-results {
       }
 
       .search-result {
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding-top: 0.25em;
+        padding-bottom: 0.25em;
         cursor: alias;
 
         &:hover {
@@ -287,7 +287,7 @@ pigments-palette {
   }
 
   li {
-    padding: 10px;
+    padding: @component-padding;
     list-style: none;
     border-bottom: 1px solid @base-border-color;
     display: -webkit-flex;
@@ -321,7 +321,7 @@ pigments-palette {
     border-bottom: 1px solid @base-border-color;
     display: inline-block;
     background: @syntax-background-color;
-    padding: 10px;
+    padding: @component-padding;
     width: 100%;
 
     &.fixed {
@@ -375,7 +375,7 @@ pigments-palette {
     position: relative;
     width: 3em;
     height: 3em;
-    margin-right: 10px;
+    margin-right: @component-padding;
     z-index: 0;
 
     &:before {
@@ -424,7 +424,7 @@ pigments-palette {
 
   .pigments-palette-controls-wrapper {
     border-bottom: 1px solid @base-border-color;
-    padding: 10px;
+    padding: @component-padding;
     width: 100%;
   }
 
@@ -447,17 +447,17 @@ pigments-color-project {
 
   .header {
     border-bottom: 1px solid @input-border-color;
-    padding-bottom: 20px;
+    padding-bottom: @component-padding * 2;
     text-align: left;
     overflow: hidden;
 
     .logo {
       float: left;
-      margin-right: 10px;
+      margin-right: @component-padding;
     }
 
     p {
-      margin: 15px 0 0;
+      margin: (@component-padding * 1.5) 0 0;
     }
   }
 
@@ -480,7 +480,7 @@ pigments-color-project {
   }
 
   .control-group {
-    margin-bottom: 20px;
+    margin-bottom: @component-padding * 2;
 
     &.boolean {
       padding-left: 150px;
@@ -498,7 +498,7 @@ pigments-color-project {
       }
 
       .setting-description {
-        margin-top: 4px;
+        margin-top: 0.6em;
       }
     }
 
@@ -510,7 +510,7 @@ pigments-color-project {
 
         & > div:first-child {
           flex: 1 1 0;
-          padding-right: 20px;
+          padding-right: @component-padding * 2;
         }
       }
 
@@ -526,7 +526,7 @@ pigments-color-project {
           display: flex;
         }
         .control-label {
-          padding-right: 8px;
+          padding-right: @component-padding;
         }
         .setting-description {
           margin: 0;
@@ -536,7 +536,7 @@ pigments-color-project {
   }
 
   .fields {
-    margin-top: 20px;
+    margin-top: @component-padding * 2;
   }
 
   .fields .controls, .fields .fields-header {
@@ -548,7 +548,7 @@ pigments-color-project {
       text-align: center;
       font-size: 1.6em;
       font-weight: normal;
-      margin-bottom: 20px;
+      margin-bottom: @component-padding * 2;
     }
 
   }
@@ -556,7 +556,7 @@ pigments-color-project {
     margin: 0;
     line-height: 2em;
     width: 150px;
-    padding-right: 10px;
+    padding-right: @component-padding;
   }
 
   .control-wrapper {
@@ -564,7 +564,7 @@ pigments-color-project {
     flex: 1 1 0;
 
     .setting-description {
-      margin-top: 4px;
+      margin-top: 0.4em;
     }
   }
 }
