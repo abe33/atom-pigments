@@ -49,8 +49,9 @@ class ColorMarkerElement extends HTMLElement
 
     @appendChild(region) for region in regions if regions?
     if cls?
-      classes = cls.split(' ')
-      @classList.add(cls) for cls in classes
+      @className = cls
+    else
+      @className = ''
 
     if style?
       @style[k] = v for k,v of style
