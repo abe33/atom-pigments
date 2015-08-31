@@ -1,3 +1,22 @@
+<a name="v0.13.0"></a>
+# v0.13.0 (2015-08-31)
+
+## Features
+
+- Implement project settings to ignore global config ([f9d3d168](https://github.com/abe33/atom-pigments/commit/f9d3d168840a7ade4626c0b9c7ad120271225b14))
+- Implement project level support of extended search names ([d5aacf13](https://github.com/abe33/atom-pigments/commit/d5aacf132d7d0336a75dd3a7d4d659a1ef991cb0))
+- Implement falling back to defaults whenever a value is invalid ([135b9564](https://github.com/abe33/atom-pigments/commit/135b9564985f54cad89e722f60634ad13efcc477))
+- Implement sorting paths when building the evaluation context ([91570135](https://github.com/abe33/atom-pigments/commit/915701350a9b49ad730fd7c70b4fc9830b9b84dc), [#79](https://github.com/abe33/atom-pigments/issues/79))  <br>The variables are sorted based on a reference path and end up as below:
+  - variables from the other root paths
+  - variables from the same root path
+  - variables from the same path
+- Implement watching for themes changes when includeThemes is set ([643f3aa6](https://github.com/abe33/atom-pigments/commit/643f3aa6390066bff28d7a273a389d39ea6d1fe9))
+- Add regular expression highlighting in corresponding text editor ([daaa176e](https://github.com/abe33/atom-pigments/commit/daaa176e75c9acfa10a469c2b67da4a3db1b5908))
+
+## Bug Fixes
+
+- Fix ignored scopes not honored on buffer initialization ([a681ebfa](https://github.com/abe33/atom-pigments/commit/a681ebfa381bc54eade1163e9937d5a1f63b8aa3), [#57](https://github.com/abe33/atom-pigments/issues/57))
+
 <a name="v0.12.0"></a>
 # v0.12.0 (2015-08-28)
 
