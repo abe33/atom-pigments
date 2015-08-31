@@ -349,12 +349,7 @@ class ColorProject
 
   getPalette: ->
     return new Palette unless @isInitialized()
-
-    colors = {}
-    @getColorVariables().forEach (variable) ->
-      colors[variable.name] = variable.color
-
-    new Palette(colors)
+    new Palette(@getColorVariables())
 
   getContext: -> @variables.getContext()
 

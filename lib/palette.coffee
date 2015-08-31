@@ -1,29 +1,20 @@
 
 module.exports =
 class Palette
-  constructor: (@colors={}) ->
-
-  getColor: (name) -> @colors[name]
-
-  getNames: (ref) ->
-    @tuple()
-    .filter ([_,color]) -> color.isEqual(ref)
-    .map ([name]) -> name
+  constructor: (@variables=[]) ->
 
   sortedByColor: ->
-    @tuple().sort ([_, a], [__, b]) => @compareColors(a,b)
+    @variables.slice().sort ({color:a}, {color:b}) => @compareColors(a,b)
 
   sortedByName: ->
     collator = new Intl.Collator("en-US", numeric: true)
-    @tuple().sort(collator.compare)
+    @variables.slice().sort ({name:a}, {name:b}) -> collator.compare(a,b)
 
-  getColorsNames: -> Object.keys(@colors)
+  getColorsNames: -> @variables.map (v) -> v.name
 
-  getColorsCount: -> @getColorsNames().length
+  getColorsCount: -> @variables.length
 
-  eachColor: (iterator) -> iterator(k,v) for k,v of @colors
-
-  tuple: -> @eachColor (name, color) -> [name, color]
+  eachColor: (iterator) -> iterator(v) for v in @variables
 
   compareColors: (a,b) ->
     [aHue, aSaturation, aLightness] = a.hsl

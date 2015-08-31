@@ -4,20 +4,24 @@ Color = require '../lib/color'
 Palette = require '../lib/palette'
 
 describe 'Palette', ->
-  [colors, palette] = []
+  [palette, colors] = []
+
+  createVar = (name, color, path, line) ->
+    {name, color, path, line}
 
   beforeEach ->
-    colors =
-      red: new Color '#ff0000'
-      green: new Color '#00ff00'
-      blue: new Color '#0000ff'
-      redCopy: new Color '#ff0000'
-
+    colors = [
+      createVar 'red', new Color '#ff0000', 'file.styl', 0
+      createVar 'green', new Color '#00ff00', 'file.styl', 1
+      createVar 'blue', new Color '#0000ff', 'file.styl', 2
+      createVar 'redCopy', new Color '#ff0000', 'file.styl', 3
+      createVar 'red', new Color '#ff0000', 'file2.styl', 0
+    ]
     palette = new Palette(colors)
 
   describe '::getColorsCount', ->
     it 'returns the number of colors in the palette', ->
-      expect(palette.getColorsCount()).toEqual(4)
+      expect(palette.getColorsCount()).toEqual(5)
 
   describe '::getColorsNames', ->
     it 'returns the names of the colors in the palette', ->
@@ -26,34 +30,25 @@ describe 'Palette', ->
         'green'
         'blue'
         'redCopy'
+        'red'
       ])
-
-  describe '::getColor', ->
-    it 'returns the color with the given name', ->
-      expect(palette.getColor('red')).toBeColor('#ff0000')
-
-    it 'returns undefined if the name does not exist in this palette', ->
-      expect(palette.getColor('foo')).toBeUndefined()
-
-  describe '::getNames', ->
-    it 'returns all the names a color have in the palette', ->
-      expect(palette.getNames(new Color('#ff0000'))).toEqual(['red', 'redCopy'])
-      expect(palette.getNames(new Color('#00ff00'))).toEqual(['green'])
 
   describe '::sortedByName', ->
     it 'returns the colors and names sorted by name', ->
       expect(palette.sortedByName()).toEqual([
-        ['blue', palette.getColor('blue')]
-        ['green', palette.getColor('green')]
-        ['red', palette.getColor('red')]
-        ['redCopy', palette.getColor('redCopy')]
+        colors[2]
+        colors[1]
+        colors[0]
+        colors[4]
+        colors[3]
       ])
 
   describe '::sortedByColor', ->
     it 'returns the colors and names sorted by colors', ->
       expect(palette.sortedByColor()).toEqual([
-        ['red', palette.getColor('red')]
-        ['redCopy', palette.getColor('redCopy')]
-        ['green', palette.getColor('green')]
-        ['blue', palette.getColor('blue')]
+        colors[0]
+        colors[3]
+        colors[4]
+        colors[1]
+        colors[2]
       ])
