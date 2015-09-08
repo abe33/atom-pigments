@@ -141,6 +141,7 @@ describe 'ColorParser', ->
   }).asColor(64, 149, 191, 0.5)
 
   itParses('hsv(200,50%,50%)').asColor(64, 106, 128)
+  itParses('hsb(200,50%,50%)').asColor(64, 106, 128)
   itParses('hsv($h,$s,$v,)').asUndefined()
   itParses('hsv($h,$s,$v)').asInvalid()
   itParses('hsv($h,0%,0%)').asInvalid()
@@ -153,6 +154,7 @@ describe 'ColorParser', ->
   }).asColor(64, 106, 128)
 
   itParses('hsva(200,50%,50%,0.5)').asColor(64, 106, 128, 0.5)
+  itParses('hsba(200,50%,50%,0.5)').asColor(64, 106, 128, 0.5)
   itParses('hsva(200,50%,50%,.5)').asColor(64, 106, 128, 0.5)
   itParses('hsva(200,50%,50%,)').asUndefined()
   itParses('hsva($h,$s,$v,$a)').asInvalid()

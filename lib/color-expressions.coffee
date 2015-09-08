@@ -250,7 +250,7 @@ module.exports = getRegistry: (context) ->
 
   # hsv(210,70%,90%)
   registry.createExpression 'hsv', strip("
-    hsv#{ps}\\s*
+    (hsv|hsb)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
       (#{percent}|#{variables})
@@ -258,7 +258,7 @@ module.exports = getRegistry: (context) ->
       (#{percent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,h,_,s,_,v] = match
+    [_,_,h,_,s,_,v] = match
 
     hsv = [
       context.readInt(h)
@@ -273,7 +273,7 @@ module.exports = getRegistry: (context) ->
 
   # hsva(210,70%,90%,0.7)
   registry.createExpression 'hsva', strip("
-    hsva#{ps}\\s*
+    (hsva|hsba)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
       (#{percent}|#{variables})
@@ -283,7 +283,7 @@ module.exports = getRegistry: (context) ->
       (#{float}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,h,_,s,_,v,_,a] = match
+    [_,_,h,_,s,_,v,_,a] = match
 
     hsv = [
       context.readInt(h)
