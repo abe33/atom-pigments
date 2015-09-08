@@ -248,6 +248,8 @@ describe 'ColorParser', ->
   itParses('transparentize(cyan, 0.5)').asColor(0, 255, 255, 0.5)
   itParses('transparentize(cyan, .5)').asColor(0, 255, 255, 0.5)
   itParses('fadeout(cyan, 0.5)').asColor(0, 255, 255, 0.5)
+  itParses('fade-out(cyan, 0.5)').asColor(0, 255, 255, 0.5)
+  itParses('fade_out(cyan, 0.5)').asColor(0, 255, 255, 0.5)
   itParses('fadeout(cyan, .5)').asColor(0, 255, 255, 0.5)
   itParses('fadeout(cyan, @r)').asInvalid()
   itParses('fadeout($c, $r)').withContext({
@@ -269,6 +271,8 @@ describe 'ColorParser', ->
   itParses('opacify(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
   itParses('opacify(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
   itParses('fadein(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
+  itParses('fade-in(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
+  itParses('fade_in(0x7800FFFF, 0.5)').asColor(0, 255, 255, 1)
   itParses('fadein(0x7800FFFF, .5)').asColor(0, 255, 255, 1)
   itParses('fadein(0x7800FFFF, @r)').asInvalid()
   itParses('fadein($c, $r)').withContext({

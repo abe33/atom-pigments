@@ -432,7 +432,7 @@ module.exports = getRegistry: (context) ->
   # transparentize(#ffffff, 50%)
   # fadeout(#ffffff, 0.5)
   registry.createExpression 'transparentize', strip("
-    (transparentize|fadeout)#{ps}
+    (transparentize|fadeout|fade-out|fade_out)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
@@ -453,7 +453,7 @@ module.exports = getRegistry: (context) ->
   # fadein(0x78ffffff, 0.5)
   # alpha(0x78ffffff, 0.5)
   registry.createExpression 'opacify', strip("
-    (opacify|fadein)#{ps}
+    (opacify|fadein|fade-in|fade_in)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
