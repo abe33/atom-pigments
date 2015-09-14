@@ -1,3 +1,10 @@
+<a name="v0.15.0"></a>
+# v0.15.0 (2015-09-14)
+
+## Features
+
+- Add optional percent support for hsl, hsla, hsb, hsba, hsv, hsva, hwb and gray expressions ([dd97b2ec](https://github.com/abe33/atom-pigments/commit/dd97b2ec4b982b26206a975b6d89f8e515c2607b))
+
 <a name="v0.14.0"></a>
 # v0.14.0 (2015-09-08)
 
