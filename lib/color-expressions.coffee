@@ -205,9 +205,9 @@ module.exports = getRegistry: (context) ->
     hsl#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
     [_,h,_,s,_,l] = match
@@ -228,9 +228,9 @@ module.exports = getRegistry: (context) ->
     hsla#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
       (#{float}|#{variables})
     #{pe}
@@ -253,9 +253,9 @@ module.exports = getRegistry: (context) ->
     (hsv|hsb)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
     [_,_,h,_,s,_,v] = match
@@ -276,9 +276,9 @@ module.exports = getRegistry: (context) ->
     (hsva|hsba)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
       (#{float}|#{variables})
     #{pe}
@@ -322,9 +322,9 @@ module.exports = getRegistry: (context) ->
     hwb#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       #{comma}
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       (#{comma}(#{float}|#{variables}))?
     #{pe}
   "), (match, expression, context) ->
@@ -341,7 +341,7 @@ module.exports = getRegistry: (context) ->
   # The priority is set to 1 to make sure that it appears before named colors
   registry.createExpression 'gray', strip("
     gray#{ps}\\s*
-      (#{percent}|#{variables})
+      (#{optionalPercent}|#{variables})
       (#{comma}(#{float}|#{variables}))?
     #{pe}"), 1, (match, expression, context) ->
 
