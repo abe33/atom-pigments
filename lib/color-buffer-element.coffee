@@ -41,9 +41,9 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
 
-    @subscriptions.add @editor.onDidChangeScrollLeft (@editorScrollLeft) =>
+    @subscriptions.add @editorElement.onDidChangeScrollLeft (@editorScrollLeft) =>
       @updateScroll()
-    @subscriptions.add @editor.onDidChangeScrollTop (@editorScrollTop) =>
+    @subscriptions.add @editorElement.onDidChangeScrollTop (@editorScrollTop) =>
       @updateScroll()
       @updateMarkers()
 
