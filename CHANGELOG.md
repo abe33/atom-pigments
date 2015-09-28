@@ -1,3 +1,16 @@
+<a name="v0.16.0"></a>
+# v0.16.0 (2015-09-28)
+
+## Bug Fixes
+
+- Fix broken marker element specs ([1db49ee8](https://github.com/abe33/atom-pigments/commit/1db49ee87e9790e136dabde7655968d0bb25c5da))
+- Fix use of deprecated scroll event on table editor ([ce94dc11](https://github.com/abe33/atom-pigments/commit/ce94dc11f16e074677c57a5e4e86fc77914bc6aa))
+- Fix broken buffer element due to change in display buffer ([5a3100ef](https://github.com/abe33/atom-pigments/commit/5a3100efab71775da4e3c622cb11ac0e77756d4d))
+
+## Dependencies Update
+
+- Bump atom-utils version ([a2e7edd4](https://github.com/abe33/atom-pigments/commit/a2e7edd470b943a7717629955e70ac6f7d39e924))
+
 <a name="v0.15.0"></a>
 # v0.15.0 (2015-09-14)
 
