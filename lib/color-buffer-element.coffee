@@ -135,7 +135,7 @@ class ColorBufferElement extends HTMLElement
     return if @editor.isDestroyed()
 
     markers = @colorBuffer.findValidColorMarkers({
-      intersectsScreenRowRange: @editor.displayBuffer.getVisibleRowRange()
+      intersectsScreenRowRange: @editorElement.getVisibleRowRange?() ? @editor.displayBuffer.getVisibleRowRange?()
     })
 
     for m in @displayedMarkers when m not in markers
