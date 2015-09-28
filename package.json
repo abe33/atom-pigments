@@ -15,7 +15,7 @@
   "repository": "https://github.com/abe33/atom-pigments",
   "license": "MIT",
   "engines": {
-    "atom": ">=0.174.0 <2.0.0"
+    "atom": ">=1.0.20 <2.0.0"
   },
   "dependencies": {
     "underscore-plus": "1.x",
