@@ -3,6 +3,9 @@ module.exports =
 class DotRenderer
   render: (colorMarker) ->
     range = colorMarker.getScreenRange()
+
+    textEditor = colorMarker.colorBuffer.editor
+    textEditorElement = atom.views.getView(textEditor)
     displayBuffer = colorMarker.marker.displayBuffer
     charWidth = displayBuffer.getDefaultCharWidth()
 
@@ -16,9 +19,9 @@ class DotRenderer
 
     return {} unless screenLine?
 
-    lineHeight = displayBuffer.getLineHeightInPixels()
+    lineHeight = textEditor.getLineHeightInPixels()
     column = (screenLine.getMaxScreenColumn() + 1) * charWidth
-    pixelPosition = displayBuffer.pixelPositionForScreenPosition(range.end)
+    pixelPosition = textEditorElement.pixelPositionForScreenPosition(range.end)
 
     class: 'dot'
     style:

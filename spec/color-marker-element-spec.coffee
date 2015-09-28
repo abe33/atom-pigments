@@ -35,7 +35,7 @@ describe 'ColorMarkerElement', ->
     color = new Color('#ff0000')
     text = 'red'
 
-    colorMarker = new ColorMarker({marker, color, text})
+    colorMarker = new ColorMarker({marker, color, text, colorBuffer: {editor}})
 
   it 'releases itself when the marker is destroyed', ->
     colorMarkerElement = new ColorMarkerElement
@@ -207,7 +207,7 @@ describe 'ColorMarkerElement', ->
       color = new Color(color)
       text = text
 
-      colorMarker = new ColorMarker({marker, color, text})
+      colorMarker = new ColorMarker({marker, color, text, colorBuffer: {editor}})
 
     beforeEach ->
       editor = new TextEditor({})
@@ -258,7 +258,7 @@ describe 'ColorMarkerElement', ->
       color = new Color(color)
       text = text
 
-      colorMarker = new ColorMarker({marker, color, text})
+      colorMarker = new ColorMarker({marker, color, text, colorBuffer: {editor}})
 
     beforeEach ->
       editor = new TextEditor({})
