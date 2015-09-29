@@ -1,3 +1,10 @@
+<a name="v0.16.1"></a>
+# v0.16.1 (2015-09-29)
+
+## Bug Fixes
+
+- Fix error raised when a variable doesn't have any dependencies ([e6845d94](https://github.com/abe33/atom-pigments/commit/e6845d947feb611afb35ba6fcf88584fff6d145e))
+
 <a name="v0.16.0"></a>
 # v0.16.0 (2015-09-28)
 
