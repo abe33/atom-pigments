@@ -312,7 +312,7 @@ class VariablesCollection
     dependencies = []
     dependencies.push(variable.value) if variable.value in @variableNames
 
-    if variable.color?.variables.length > 0
+    if variable.color?.variables?.length > 0
       variables = variable.color.variables
 
       for v in variables
