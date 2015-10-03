@@ -335,26 +335,6 @@ class ColorBuffer
       @colorMarkersByMarkerId[marker.id]
     .filter (marker) -> marker?
 
-  colorMarkerForMouseEvent: (event) ->
-    position = @screenPositionForMouseEvent(event)
-    bufferPosition = @displayBuffer.bufferPositionForScreenPosition(position)
-
-    @getColorMarkerAtBufferPosition(bufferPosition)
-
-  screenPositionForMouseEvent: (event) ->
-    pixelPosition = @pixelPositionForMouseEvent(event)
-    @editor.screenPositionForPixelPosition(pixelPosition)
-
-  pixelPositionForMouseEvent: (event) ->
-    {clientX, clientY} = event
-
-    editorElement = atom.views.getView(@editor)
-    rootElement = editorElement.shadowRoot ? editorElement
-    {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
-    top = clientY - top + @editor.getScrollTop()
-    left = clientX - left + @editor.getScrollLeft()
-    {top, left}
-
   findValidColorMarkers: (properties) ->
     @findColorMarkers(properties).filter (marker) =>
       marker? and marker.color?.isValid() and not marker?.isIgnored()

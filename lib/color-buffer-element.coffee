@@ -196,6 +196,26 @@ class ColorBufferElement extends HTMLElement
 
       view.classList.add('hidden') if markerRange.intersectsWith(range)
 
+  colorMarkerForMouseEvent: (event) ->
+    position = @screenPositionForMouseEvent(event)
+    bufferPosition = @colorBuffer.displayBuffer.bufferPositionForScreenPosition(position)
+
+    @colorBuffer.getColorMarkerAtBufferPosition(bufferPosition)
+
+  screenPositionForMouseEvent: (event) ->
+    pixelPosition = @pixelPositionForMouseEvent(event)
+    @editorElement.screenPositionForPixelPosition(pixelPosition)
+
+  pixelPositionForMouseEvent: (event) ->
+    {clientX, clientY} = event
+
+    editorElement = atom.views.getView(@editor)
+    rootElement = editorElement.shadowRoot ? editorElement
+    {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
+    top = clientY - top + @editorElement.getScrollTop()
+    left = clientX - left + @editorElement.getScrollLeft()
+    {top, left}
+
 module.exports = ColorBufferElement =
 document.registerElement 'pigments-markers', {
   prototype: ColorBufferElement.prototype
