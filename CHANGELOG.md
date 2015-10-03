@@ -1,3 +1,10 @@
+<a name="v0.16.2"></a>
+# v0.16.2 (2015-10-03)
+
+## Bug Fixes
+
+- Fix remaining deprecations triggered by context menu ([f551e012](https://github.com/abe33/atom-pigments/commit/f551e0123b02e21fe70984b1ea2f202ac4dd845d))
+
 <a name="v0.16.1"></a>
 # v0.16.1 (2015-09-29)
 
