@@ -48,7 +48,7 @@ You can display the project's palette through the `Pigments: Show Palette` comma
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/palette.gif?raw=true)
 
-The project palette is made of all the colors that are affected to a variable, which means it won't display hardcoded colors affected to a CSS property. If you want to find every colors used in a project, including the hardcoded colors in CSS files, use the `Pigments: Find Colors` instead.
+The project palette is made of all the colors that are affected to a variable, which means it won't display hardcoded colors affected to a CSS property. If you want to find every color used in a project, including the hardcoded colors in CSS files, use the `Pigments: Find Colors` instead.
 
 Patterns for Less, Sass, Scss and Stylus variables are currently supported, which includes:
 
@@ -63,7 +63,7 @@ $my-var: #123456; // scss
 @my-var: #123456; /* less */
 ```
 
-As with every commands, this command can be triggered using the keyboard by defining a keybinding like this:
+As with every command, this command can be triggered using the keyboard by defining a keybinding like this:
 
 ```coffee
 'atom-workspace':
@@ -76,7 +76,7 @@ You can search for all colors in your project using the `Pigments: Find Colors` 
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/search.gif?raw=true)
 
-The results will include colors declared in variables, places where the color variables are used as well as hardcoded color values in every files that matches one of the patterns defined in both `pigments.sourceNames` and `pigments.extendedSearchNames` settings.
+The results will include colors declared in variables, places where the color variables are used as well as hardcoded color values in every file that matches one of the patterns defined in both `pigments.sourceNames` and `pigments.extendedSearchNames` settings.
 
 By default this includes:
 
@@ -112,7 +112,7 @@ These commands can be triggered using the keyboard by defining a keybinding like
   'alt-shift-j': 'pigments:convert-to-rgba'
 ```
 
-When triggered from the command palette or from the keyboard, the conversion will operate on every cursors positioned on color markers.
+When triggered from the command palette or from the keyboard, the conversion will operate on every cursor positioned on color markers.
 
 ### Pigments: Project Settings
 
@@ -219,7 +219,7 @@ Whether to traverse symlinked directories to find source files or not.
 
 ### Ignore VCS Ignored Paths
 
-When this setting is enabled, every files that are ignored by the VCS will also be ignored in Pigments. That means they'll be excluded when searching for colors and when building the project palette.
+When this setting is enabled, every file that are ignored by the VCS will also be ignored in Pigments. That means they'll be excluded when searching for colors and when building the project palette.
 
 * Key: `pigments.ignoreVcsIgnoredPaths`
 * Default: `true`

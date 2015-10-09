@@ -486,7 +486,7 @@ describe 'ColorProject', ->
 
           waitsFor -> eventSpy.callCount > 0
 
-        it 'removes every variables from the file', ->
+        it 'removes every variable from the file', ->
           expect(colorBuffer.scanBufferForVariables).toHaveBeenCalled()
           expect(project.getVariables().length).toEqual(0)
 

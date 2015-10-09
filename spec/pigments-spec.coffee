@@ -66,7 +66,7 @@ describe "Pigments", ->
         spy = jasmine.createSpy('did-create-color-buffer')
         service.observeColorBuffers(spy)
 
-      it 'calls the callback for every existing color buffers', ->
+      it 'calls the callback for every existing color buffer', ->
         expect(spy).toHaveBeenCalled()
         expect(spy.calls.length).toEqual(1)
 

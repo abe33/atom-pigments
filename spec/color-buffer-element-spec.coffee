@@ -92,7 +92,7 @@ describe 'ColorBufferElement', ->
       beforeEach ->
         waitsForPromise -> colorBuffer.initialize()
 
-      it 'creates markers views for every visible buffer markers', ->
+      it 'creates markers views for every visible buffer marker', ->
         markersElements = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
 
         expect(markersElements.length).toEqual(3)
