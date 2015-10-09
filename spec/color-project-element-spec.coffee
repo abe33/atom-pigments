@@ -24,6 +24,15 @@ describe 'ColorProjectElement', ->
 
       expect(project.setSourceNames).toHaveBeenCalledWith(['foo','bar'])
 
+  describe 'typing in the supportedFiletypes input', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setSupportedFiletypes')
+
+      projectElement.supportedFiletypes.getModel().setText('foo, bar')
+      projectElement.supportedFiletypes.getModel().getBuffer().emitter.emit('did-stop-changing')
+
+      expect(project.setSupportedFiletypes).toHaveBeenCalledWith(['foo','bar'])
+
   describe 'typing in the searchNames input', ->
     it 'update the search names in the project', ->
       spyOn(project, 'setSearchNames')
@@ -78,6 +87,20 @@ describe 'ColorProjectElement', ->
       change(projectElement.ignoreGlobalSourceNames)
 
       expect(project.setIgnoreGlobalSourceNames).toHaveBeenCalledWith(false)
+
+  describe 'toggling on the ignoreGlobalSupportedFiletypes checkbox', ->
+    it 'update the source names in the project', ->
+      spyOn(project, 'setIgnoreGlobalSupportedFiletypes')
+
+      projectElement.ignoreGlobalSupportedFiletypes.checked = true
+      change(projectElement.ignoreGlobalSupportedFiletypes)
+
+      expect(project.setIgnoreGlobalSupportedFiletypes).toHaveBeenCalledWith(true)
+
+      projectElement.ignoreGlobalSupportedFiletypes.checked = false
+      change(projectElement.ignoreGlobalSupportedFiletypes)
+
+      expect(project.setIgnoreGlobalSupportedFiletypes).toHaveBeenCalledWith(false)
 
   describe 'toggling on the ignoreGlobalIgnoredNames checkbox', ->
     it 'update the ignored names in the project', ->

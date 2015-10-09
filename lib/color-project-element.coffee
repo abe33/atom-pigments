@@ -52,6 +52,7 @@ class ColorProjectElement extends HTMLElement
           themes = atom.themes.getActiveThemeNames()
           arrayField('sourceNames', 'Source Names')
           arrayField('ignoredNames', 'Ignored Names')
+          arrayField('supportedFiletypes', 'Supported Filetypes')
           arrayField('ignoredScopes', 'Ignored Scopes')
           arrayField('searchNames', 'Extended Search Names', 'pigments.extendedSearchNames')
 
@@ -75,11 +76,13 @@ class ColorProjectElement extends HTMLElement
     @initializeTextEditor('searchNames')
     @initializeTextEditor('ignoredNames')
     @initializeTextEditor('ignoredScopes')
+    @initializeTextEditor('supportedFiletypes')
     @initializeCheckbox('includeThemes')
     @initializeCheckbox('ignoreGlobalSourceNames')
     @initializeCheckbox('ignoreGlobalIgnoredNames')
     @initializeCheckbox('ignoreGlobalIgnoredScopes')
     @initializeCheckbox('ignoreGlobalSearchNames')
+    @initializeCheckbox('ignoreGlobalSupportedFiletypes')
 
   initializeTextEditor: (name) ->
     capitalizedName = capitalize name

@@ -33,10 +33,12 @@ module.exports =
         type: 'string'
     extendedSearchNames:
       type: 'array'
-      default: [
-        '**/*.css'
-      ]
+      default: ['**/*.css']
       description: "When performing the `find-colors` command, the search will scans all the files that match the `sourceNames` glob patterns and the one defined in this setting."
+    supportedFiletypes:
+      type: 'array'
+      default: ['*']
+      description: "An array of file extensions where colors will be highlighted. If the wildcard `*` is present in this array then colors in every file will be highlighted."
     ignoredScopes:
       type: 'array'
       default: []

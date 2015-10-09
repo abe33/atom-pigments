@@ -105,7 +105,7 @@ class ColorProject
 
   constructor: (state={}) ->
     {
-      includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, variables, timestamp, buffers
+      includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, @ignoreGlobalSupportedFiletypes, @supportedFiletypes, variables, timestamp, buffers
     } = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -128,6 +128,10 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.ignoredScopes', =>
       @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
+    @subscriptions.add atom.config.observe 'pigments.supportedFiletypes', =>
+      @updateIgnoredFiletypes()
+      @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
       ColorMarkerElement.setMarkerType(type) if type?
 
@@ -139,6 +143,7 @@ class ColorProject
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
     @setIncludeThemes(includeThemes) if includeThemes
+    @updateIgnoredFiletypes()
 
     @initialize() if @paths? and @variables.length?
     @initializeBuffers()
@@ -507,12 +512,41 @@ class ColorProject
     scopes = @ignoredScopes ? []
     unless @ignoreGlobalIgnoredScopes
       scopes = scopes.concat(atom.config.get('pigments.ignoredScopes') ? [])
+
+    scopes = scopes.concat(@ignoredFiletypes)
     scopes
 
   setIgnoredScopes: (@ignoredScopes=[]) ->
     @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   setIgnoreGlobalIgnoredScopes: (@ignoreGlobalIgnoredScopes) ->
+    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
+  setSupportedFiletypes: (@supportedFiletypes=[]) ->
+    @updateIgnoredFiletypes()
+    @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
+
+  updateIgnoredFiletypes: ->
+    @ignoredFiletypes = @getIgnoredFiletypes()
+
+  getIgnoredFiletypes: ->
+    filetypes = @supportedFiletypes ? []
+
+    unless @ignoreGlobalSupportedFiletypes
+      filetypes = filetypes.concat(atom.config.get('pigments.supportedFiletypes') ? [])
+
+    filetypes = ['*'] if filetypes.length is 0
+
+    return [] if filetypes.some (type) -> type is '*'
+
+    scopes = filetypes.map (ext) ->
+      atom.grammars.selectGrammar("file.#{ext}")?.scopeName.replace(/\./g, '\\.')
+    .filter (scope) -> scope?
+
+    ["^(?!\\.(#{scopes.join('|')}))"]
+
+  setIgnoreGlobalSupportedFiletypes: (@ignoreGlobalSupportedFiletypes) ->
+    @updateIgnoredFiletypes()
     @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
 
   themesIncluded: -> @includeThemes

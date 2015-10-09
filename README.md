@@ -6,7 +6,7 @@ A package to display colors in project and files:
 
 ![Screenshot](https://github.com/abe33/atom-pigments/blob/master/resources/pigments.gif?raw=true)
 
-Pigments will scan source files in your project directories looking for colors and will build a palette with all of them. Then for each opened file, it will use the palette to evaluate the value of a given color. The legible source paths can be defined through various settings either at the global or per project level.
+Pigments will scan source files in your project directories looking for colors and will build a palette with all of them. Then for each opened file, it will use the palette to evaluate the value of a given color. The legible source paths can be defined through various settings either at the global or per project level. **By default colors in every file will be highlighted, to limit the display of colors to the desired filetype only please see the [Defining Where Pigments Applies](#defining-where-pigments-applies) below.**
 
 Pigments supports out of the box most of the color transformations functions and expressions of the three biggest CSS pre-processors out there, namely LESS, Sass and Stylus. However, it doesn't mean pigments is able to parse and understand all of these languages constructs. For the moment, Pigments' aim is to support the widest range of usage, even if it implies reducing its ability to parse certain complex constructs. You can refer to the [parser specs](https://github.com/abe33/atom-pigments/blob/master/spec/color-parser-spec.coffee) for an exhaustive list of the supported expressions.
 
@@ -19,6 +19,16 @@ apm install pigments
 ```
 
 Or search for `pigments` in Atom settings view.
+
+## Defining Where Pigments Applies
+
+By default, Pigments will highlight every color in every file, but you can limit that using the two settings [`Supported Filetypes`](#supported-filetypes) and [`Ignored Scopes`](#ignored-scopes).
+
+The first setting allow you to specify the list of extensions where pigments will apply. For instance, by using the values `css, less`, colors will be visible only in CSS and Less files.
+
+The second setting takes an array of regular expression strings used to exclude colors in specific scopes (like comments or strings). You can find the scope that applies at the cursor position with the `Editor: Log Cursor Scope` command (<kbd>cmd-alt-p</code> or <kbd>ctrl-alt-shift-p</kbd>).
+
+![get scope](https://github.com/abe33/atom-pigments/blob/master/resources/get-scope.gif?raw=true)
 
 ## Defaults File
 
@@ -153,6 +163,13 @@ An array of glob patterns of files to include in the `Pigments: Find Colors` sca
 
 * Key: `pigments.extendedSearchNames`
 * Default: `['**/*.css']`
+
+### Supported Filetypes
+
+An array of file extensions where colors will be highlighted. If the wildcard `*` is present in this array then colors in every file will be highlighted.
+
+* Key: `pigments.supportedFiletypes`
+* Default: `['*']`
 
 ### Ignored Scopes
 

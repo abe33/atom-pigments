@@ -232,6 +232,88 @@ describe 'ColorBufferElement', ->
         expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
         expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
 
+    describe 'when pigments.supportedFiletypes settings is defined', ->
+      loadBuffer = (filePath) ->
+        waitsForPromise ->
+          atom.workspace.open(filePath).then (o) ->
+            editor = o
+            editorElement = atom.views.getView(editor)
+            colorBuffer = project.colorBufferForEditor(editor)
+            colorBufferElement = atom.views.getView(colorBuffer)
+            colorBufferElement.attach()
+
+        waitsForPromise -> colorBuffer.initialize()
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+      beforeEach ->
+        waitsForPromise ->
+          atom.packages.activatePackage('language-coffee-script')
+        waitsForPromise ->
+          atom.packages.activatePackage('language-less')
+
+      describe 'with the default wildcard', ->
+        beforeEach ->
+          atom.config.set 'pigments.supportedFiletypes', ['*']
+
+        it 'supports every filetype', ->
+          loadBuffer('scope-filter.coffee')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+
+          loadBuffer('project/vendor/css/variables.less')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+
+      describe 'with a filetype', ->
+        beforeEach ->
+          atom.config.set 'pigments.supportedFiletypes', ['coffee']
+
+        it 'supports the specified file type', ->
+          loadBuffer('scope-filter.coffee')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+
+          loadBuffer('project/vendor/css/variables.less')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+
+      describe 'with many filetypes', ->
+        beforeEach ->
+          atom.config.set 'pigments.supportedFiletypes', ['coffee']
+          project.setSupportedFiletypes(['less'])
+
+        it 'supports the specified file types', ->
+          loadBuffer('scope-filter.coffee')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+
+          loadBuffer('project/vendor/css/variables.less')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+
+          loadBuffer('four-variables.styl')
+          runs ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+
+        describe 'with global file types ignored', ->
+          beforeEach ->
+            atom.config.set 'pigments.supportedFiletypes', ['coffee']
+            project.setIgnoreGlobalSupportedFiletypes(true)
+            project.setSupportedFiletypes(['less'])
+
+          it 'supports the specified file types', ->
+            loadBuffer('scope-filter.coffee')
+            runs ->
+              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+
+            loadBuffer('project/vendor/css/variables.less')
+            runs ->
+              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+
+            loadBuffer('four-variables.styl')
+            runs ->
+              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+
     describe 'when pigments.ignoredScopes settings is defined', ->
       beforeEach ->
         waitsForPromise ->
