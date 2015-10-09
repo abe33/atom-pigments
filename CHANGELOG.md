@@ -1,3 +1,10 @@
+<a name="v0.16.3"></a>
+# v0.16.3 (2015-10-09)
+
+## Bug Fixes
+
+- Support both new and old API until 1.0.20 is released ([660ca2c5](https://github.com/abe33/atom-pigments/commit/660ca2c5b8f5332f8a1c080a7632cb66ee07d7e2))
+
 <a name="v0.16.2"></a>
 # v0.16.2 (2015-10-03)
 

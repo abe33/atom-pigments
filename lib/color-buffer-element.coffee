@@ -41,11 +41,17 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
 
-    @subscriptions.add @editorElement.onDidChangeScrollLeft (@editorScrollLeft) =>
-      @updateScroll()
-    @subscriptions.add @editorElement.onDidChangeScrollTop (@editorScrollTop) =>
+    scrollLeftListener = (@editorScrollLeft) => @updateScroll()
+    scrollTopListener = (@editorScrollTop) =>
       @updateScroll()
       @updateMarkers()
+
+    if @editorElement.onDidChangeScrollLeft?
+      @subscriptions.add @editorElement.onDidChangeScrollLeft(scrollLeftListener)
+      @subscriptions.add @editorElement.onDidChangeScrollTop(scrollTopListener)
+    else
+      @subscriptions.add @editor.onDidChangeScrollLeft(scrollLeftListener)
+      @subscriptions.add @editor.onDidChangeScrollTop(scrollTopListener)
 
     @subscriptions.add @editor.onDidChange =>
       @usedMarkers.forEach (marker) ->
@@ -204,16 +210,24 @@ class ColorBufferElement extends HTMLElement
 
   screenPositionForMouseEvent: (event) ->
     pixelPosition = @pixelPositionForMouseEvent(event)
-    @editorElement.screenPositionForPixelPosition(pixelPosition)
+
+    if @editorElement.screenPositionForPixelPosition?
+      @editorElement.screenPositionForPixelPosition(pixelPosition)
+    else
+      @editor.screenPositionForPixelPosition(pixelPosition)
 
   pixelPositionForMouseEvent: (event) ->
     {clientX, clientY} = event
 
-    editorElement = atom.views.getView(@editor)
-    rootElement = editorElement.shadowRoot ? editorElement
+    scrollTarget = if @editorElement.getScrollTop?
+      @editorElement
+    else
+      @editor
+
+    rootElement = @editorElement.shadowRoot ? @editorElement
     {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
-    top = clientY - top + @editorElement.getScrollTop()
-    left = clientX - left + @editorElement.getScrollLeft()
+    top = clientY - top + scrollTarget.getScrollTop()
+    left = clientX - left + scrollTarget.getScrollLeft()
     {top, left}
 
 module.exports = ColorBufferElement =

@@ -1,7 +1,7 @@
 {
   "name": "pigments",
   "main": "./lib/pigments",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "description": "A package to display colors in project and files.",
   "keywords": [
     "colors",
