@@ -229,7 +229,6 @@ class VariablesCollection
     @variablesByPath[variable.path] ?= []
     @variablesByPath[variable.path].push(variable)
 
-    @evaluateVariableColor(variable)
     @buildDependencyGraph(variable)
 
   createVariable: (variable, batch) ->
