@@ -1,3 +1,15 @@
+<a name="undefined"></a>
+# undefined (2015-10-10)
+
+## Features
+
+- Add supportedFiletypes setting ([c99fce03](https://github.com/abe33/atom-pigments/commit/c99fce031776bbd5810d7fba95bad14eee6c0d94))  <br>It should help avoiding users to be confused by the ignored scopes
+  setting as discussed in [#93](https://github.com/abe33/atom-pigments/issues/93).
+
+## Performances
+
+- Avoid evaluating a restored color ([d98d0e45](https://github.com/abe33/atom-pigments/commit/d98d0e45274467e701ab5b2ad4f8db741fc3d4f1))
+
 <a name="v0.16.3"></a>
 # v0.16.3 (2015-10-09)
 
