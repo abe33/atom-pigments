@@ -26,7 +26,7 @@ By default, Pigments will highlight every color in every file, but you can limit
 
 The first setting allow you to specify the list of extensions where pigments will apply. For instance, by using the values `css, less`, colors will be visible only in CSS and Less files.
 
-The second setting takes an array of regular expression strings used to exclude colors in specific scopes (like comments or strings). You can find the scope that applies at the cursor position with the `Editor: Log Cursor Scope` command (<kbd>cmd-alt-p</code> or <kbd>ctrl-alt-shift-p</kbd>).
+The second setting takes an array of regular expression strings used to exclude colors in specific scopes (like comments or strings). You can find the scope that applies at the cursor position with the `Editor: Log Cursor Scope` command (<kbd>cmd-alt-p</kdb> or <kbd>ctrl-alt-shift-p</kbd>).
 
 ![get scope](https://github.com/abe33/atom-pigments/blob/master/resources/get-scope.gif?raw=true)
 
