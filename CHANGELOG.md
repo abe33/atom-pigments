@@ -1,3 +1,10 @@
+<a name="v0.17.1"></a>
+# v0.17.1 (2015-10-12)
+
+## Bug Fixes
+
+- Remove engine restriction now that pigments support for old API is back ([2d4d8282](https://github.com/abe33/atom-pigments/commit/2d4d828205a0a7ebbc77bde6617f3af9e5c2176d))
+
 <a name="v0.17.0"></a>
 # v0.17.0 (2015-10-10)
 
