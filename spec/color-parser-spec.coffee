@@ -698,7 +698,7 @@ describe 'ColorParser', ->
   }).asColor(255,0,0)
   itParses('Color(r, g, b, a)').asInvalid()
 
-  fdescribe 'elm-lang support', ->
+  describe 'elm-lang support', ->
     itParses('rgba 255 0 0 1').asColor(255,0,0)
     itParses('rgba r g b a').withContext({
       'r': '255'
