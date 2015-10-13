@@ -913,6 +913,25 @@ module.exports = getRegistry: (context) ->
   # negation(#f00, #00F)
   blendMethod registry, 'negation', BlendModes.NEGATION
 
+  # Color(50,120,200,255)
+  registry.createExpression 'lua_rgba', strip("
+    Color#{ps}\\s*
+      (#{int}|#{variables})
+      #{comma}
+      (#{int}|#{variables})
+      #{comma}
+      (#{int}|#{variables})
+      #{comma}
+      (#{int}|#{variables})
+    #{pe}
+  "), (match, expression, context) ->
+    [_,r,_,g,_,b,_,a] = match
+
+    @red = context.readInt(r)
+    @green = context.readInt(g)
+    @blue = context.readInt(b)
+    @alpha = context.readInt(a) / 255
+
   if context?.hasColorVariables()
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())
 

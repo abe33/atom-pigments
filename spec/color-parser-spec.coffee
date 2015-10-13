@@ -688,3 +688,13 @@ describe 'ColorParser', ->
     'b': '80%'
   }).asColor(0x99,0x99,0xff)
   itParses('lightness(a, b)').asInvalid()
+
+  itParses('Color(255, 0, 0, 255)').asColor(255,0,0)
+  itParses('Color(r, g, b, a)').withContext({
+    'r': '255'
+    'g': '0'
+    'b': '0'
+    'a': '255'
+  }).asColor(255,0,0)
+  itParses('Color(r, g, b, a)').asInvalid()
+
