@@ -698,3 +698,20 @@ describe 'ColorParser', ->
   }).asColor(255,0,0)
   itParses('Color(r, g, b, a)').asInvalid()
 
+  fdescribe 'elm-lang support', ->
+    itParses('rgba 255 0 0 1').asColor(255,0,0)
+    itParses('rgba r g b a').withContext({
+      'r': '255'
+      'g': '0'
+      'b': '0'
+      'a': '1'
+    }).asColor(255,0,0)
+    itParses('rgba r g b a').asInvalid()
+
+    itParses('rgb 255 0 0').asColor(255,0,0)
+    itParses('rgb r g b').withContext({
+      'r': '255'
+      'g': '0'
+      'b': '0'
+    }).asColor(255,0,0)
+    itParses('rgb r g b').asInvalid()

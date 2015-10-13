@@ -932,6 +932,39 @@ module.exports = getRegistry: (context) ->
     @blue = context.readInt(b)
     @alpha = context.readInt(a) / 255
 
+  # rgba 50 120 200 1
+  registry.createExpression 'elm_rgba', strip("
+    rgba\\s+
+      (#{int}|#{variables})
+      \\s+
+      (#{int}|#{variables})
+      \\s+
+      (#{int}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+  "), (match, expression, context) ->
+    [_,r,_,g,_,b,_,a] = match
+
+    @red = context.readInt(r)
+    @green = context.readInt(g)
+    @blue = context.readInt(b)
+    @alpha = context.readFloat(a)
+
+  # rgb 50 120 200
+  registry.createExpression 'elm_rgb', strip("
+    rgb\\s+
+      (#{int}|#{variables})
+      \\s+
+      (#{int}|#{variables})
+      \\s+
+      (#{int}|#{variables})
+  "), (match, expression, context) ->
+    [_,r,_,g,_,b] = match
+
+    @red = context.readInt(r)
+    @green = context.readInt(g)
+    @blue = context.readInt(b)
+
   if context?.hasColorVariables()
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())
 
