@@ -1,6 +1,6 @@
 int = '\\d+'
 decimal = "\\.#{int}"
-float = "(?:#{int}|#{int}#{decimal}|#{decimal})"
+float = "(?:#{int}#{decimal}|#{int}|#{decimal})"
 percent = "#{float}%"
 variables = '(?:@[a-zA-Z0-9\\-_]+|\\$[a-zA-Z0-9\\-_]+|[a-zA-Z_][a-zA-Z0-9\\-_]*)'
 namePrefixes = '^| |:|=|,|\\n|\'|"|\\(|\\[|\\{'
