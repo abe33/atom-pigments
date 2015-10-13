@@ -932,6 +932,14 @@ module.exports = getRegistry: (context) ->
     @blue = context.readInt(b)
     @alpha = context.readInt(a) / 255
 
+  ##    ######## ##       ##     ##
+  ##    ##       ##       ###   ###
+  ##    ##       ##       #### ####
+  ##    ######   ##       ## ### ##
+  ##    ##       ##       ##     ##
+  ##    ##       ##       ##     ##
+  ##    ######## ######## ##     ##
+
   # rgba 50 120 200 1
   registry.createExpression 'elm_rgba', strip("
     rgba\\s+
@@ -964,6 +972,73 @@ module.exports = getRegistry: (context) ->
     @red = context.readInt(r)
     @green = context.readInt(g)
     @blue = context.readInt(b)
+
+  elmAngle = "(?:#{float}|\\(degrees\\s+(?:#{int}|#{variables})\\))"
+  elmDegreesRegexp = new RegExp("\\(degrees\\s+(#{int}|#{variables})\\)")
+
+  # hsl 210 50 50
+  registry.createExpression 'elm_hsl', strip("
+    hsl\\s+
+      (#{elmAngle}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+  "), (match, expression, context) ->
+    [_,h,s,l] = match
+
+    if m = elmDegreesRegexp.exec(h)
+      h = context.readInt(m[1])
+    else
+      h = context.readFloat(h) * 180 / Math.PI
+
+    hsl = [
+      h
+      context.readFloat(s)
+      context.readFloat(l)
+    ]
+
+    return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+    @hsl = hsl
+    @alpha = 1
+
+  # hsla 210 50 50 0.7
+  registry.createExpression 'elm_hsla', strip("
+    hsla\\s+
+      (#{elmAngle}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+      \\s+
+      (#{float}|#{variables})
+  "), (match, expression, context) ->
+    [_,h,s,l,a] = match
+
+    if m = elmDegreesRegexp.exec(h)
+      h = context.readInt(m[1])
+    else
+      h = context.readFloat(h) * 180 / Math.PI
+
+    hsl = [
+      h
+      context.readFloat(s)
+      context.readFloat(l)
+    ]
+
+    return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+    @hsl = hsl
+    @alpha = context.readFloat(a)
+
+  ##    ##     ##    ###    ########   ######
+  ##    ##     ##   ## ##   ##     ## ##    ##
+  ##    ##     ##  ##   ##  ##     ## ##
+  ##    ##     ## ##     ## ########   ######
+  ##     ##   ##  ######### ##   ##         ##
+  ##      ## ##   ##     ## ##    ##  ##    ##
+  ##       ###    ##     ## ##     ##  ######
 
   if context?.hasColorVariables()
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())

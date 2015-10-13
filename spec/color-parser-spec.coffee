@@ -715,3 +715,37 @@ describe 'ColorParser', ->
       'b': '0'
     }).asColor(255,0,0)
     itParses('rgb r g b').asInvalid()
+
+    itParses('hsla (degrees 200) 50 50 0.5').asColor(64, 149, 191, 0.5)
+    itParses('hsla (degrees h) s l a').withContext({
+      'h': '200'
+      's': '50'
+      'l': '50'
+      'a': '0.5'
+    }).asColor(64, 149, 191, 0.5)
+    itParses('hsla (degrees h) s l a').asInvalid()
+
+    itParses('hsla 3.49 50 50 0.5').asColor(64, 149, 191, 0.5)
+    itParses('hsla h s l a').withContext({
+      'h': '3.49'
+      's': '50'
+      'l': '50'
+      'a': '0.5'
+    }).asColor(64, 149, 191, 0.5)
+    itParses('hsla h s l a').asInvalid()
+
+    itParses('hsl (degrees 200) 50 50').asColor(64, 149, 191)
+    itParses('hsl (degrees h) s l').withContext({
+      'h': '200'
+      's': '50'
+      'l': '50'
+    }).asColor(64, 149, 191)
+    itParses('hsl (degrees h) s l').asInvalid()
+
+    itParses('hsl 3.49 50 50').asColor(64, 149, 191)
+    itParses('hsl h s l').withContext({
+      'h': '3.49'
+      's': '50'
+      'l': '50'
+    }).asColor(64, 149, 191)
+    itParses('hsl h s l').asInvalid()
