@@ -115,8 +115,8 @@ module.exports = getRegistry: (context) ->
     @hex = hexa
 
   # #6f34
-  registry.createExpression 'css_hexa_4', "(#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
-    [_, _, hexa] = match
+  registry.createExpression 'css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
+    [_, hexa] = match
     colorAsInt = context.readInt(hexa, 16)
 
     @colorExpression = "##{hexa}"
@@ -126,8 +126,8 @@ module.exports = getRegistry: (context) ->
     @alpha = ((colorAsInt & 0xf) * 17) / 255
 
   # #38e
-  registry.createExpression 'css_hexa_3', "(#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
-    [_, _, hexa] = match
+  registry.createExpression 'css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
+    [_, hexa] = match
     colorAsInt = context.readInt(hexa, 16)
 
     @colorExpression = "##{hexa}"
@@ -157,7 +157,7 @@ module.exports = getRegistry: (context) ->
       (#{intOrPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,r,_,_,g,_,_,b] = match
+    [_,r,g,b] = match
 
     @red = context.readIntOrPercent(r)
     @green = context.readIntOrPercent(g)
@@ -176,7 +176,7 @@ module.exports = getRegistry: (context) ->
       (#{float}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,r,_,_,g,_,_,b,_,_,a] = match
+    [_,r,g,b,a] = match
 
     @red = context.readIntOrPercent(r)
     @green = context.readIntOrPercent(g)
@@ -210,7 +210,7 @@ module.exports = getRegistry: (context) ->
       (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,h,_,s,_,l] = match
+    [_,h,s,l] = match
 
     hsl = [
       context.readInt(h)
@@ -235,7 +235,7 @@ module.exports = getRegistry: (context) ->
       (#{float}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,h,_,s,_,l,_,a] = match
+    [_,h,s,l,a] = match
 
     hsl = [
       context.readInt(h)
@@ -250,7 +250,7 @@ module.exports = getRegistry: (context) ->
 
   # hsv(210,70%,90%)
   registry.createExpression 'hsv', strip("
-    (hsv|hsb)#{ps}\\s*
+    (?:hsv|hsb)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
       (#{optionalPercent}|#{variables})
@@ -258,7 +258,7 @@ module.exports = getRegistry: (context) ->
       (#{optionalPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,_,h,_,s,_,v] = match
+    [_,h,s,v] = match
 
     hsv = [
       context.readInt(h)
@@ -273,7 +273,7 @@ module.exports = getRegistry: (context) ->
 
   # hsva(210,70%,90%,0.7)
   registry.createExpression 'hsva', strip("
-    (hsva|hsba)#{ps}\\s*
+    (?:hsva|hsba)#{ps}\\s*
       (#{int}|#{variables})
       #{comma}
       (#{optionalPercent}|#{variables})
@@ -283,7 +283,7 @@ module.exports = getRegistry: (context) ->
       (#{float}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,_,h,_,s,_,v,_,a] = match
+    [_,h,s,v,a] = match
 
     hsv = [
       context.readInt(h)
@@ -325,10 +325,10 @@ module.exports = getRegistry: (context) ->
       (#{optionalPercent}|#{variables})
       #{comma}
       (#{optionalPercent}|#{variables})
-      (#{comma}(#{float}|#{variables}))?
+      (?:#{comma}(#{float}|#{variables}))?
     #{pe}
   "), (match, expression, context) ->
-    [_,h,_,w,_,b,_,_,a] = match
+    [_,h,w,b,a] = match
 
     @hwb = [
       context.readInt(h)
@@ -342,10 +342,10 @@ module.exports = getRegistry: (context) ->
   registry.createExpression 'gray', strip("
     gray#{ps}\\s*
       (#{optionalPercent}|#{variables})
-      (#{comma}(#{float}|#{variables}))?
+      (?:#{comma}(#{float}|#{variables}))?
     #{pe}"), 1, (match, expression, context) ->
 
-    [_,p,_,_,a] = match
+    [_,p,a] = match
 
     p = context.readFloat(p) / 100 * 255
     @rgb = [p, p, p]
@@ -353,10 +353,10 @@ module.exports = getRegistry: (context) ->
 
   # dodgerblue
   colors = Object.keys(SVGColors.allCases)
-  colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
+  colorRegexp = "(?:#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
 
   registry.createExpression 'named_colors', colorRegexp, (match, expression, context) ->
-    [_,_,name] = match
+    [_,name] = match
 
     @colorExpression = @name = name
     @hex = SVGColors.allCases[name].replace('#','')
@@ -412,13 +412,13 @@ module.exports = getRegistry: (context) ->
   # fade(#ffffff, 0.5)
   # alpha(#ffffff, 0.5)
   registry.createExpression 'fade', strip("
-    (fade|alpha)#{ps}
+    (?:fade|alpha)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_, _, subexpr, amount] = match
+    [_, subexpr, amount] = match
 
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
@@ -432,13 +432,13 @@ module.exports = getRegistry: (context) ->
   # transparentize(#ffffff, 50%)
   # fadeout(#ffffff, 0.5)
   registry.createExpression 'transparentize', strip("
-    (transparentize|fadeout|fade-out|fade_out)#{ps}
+    (?:transparentize|fadeout|fade-out|fade_out)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_, _, subexpr, amount] = match
+    [_, subexpr, amount] = match
 
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
@@ -453,13 +453,13 @@ module.exports = getRegistry: (context) ->
   # fadein(0x78ffffff, 0.5)
   # alpha(0x78ffffff, 0.5)
   registry.createExpression 'opacify', strip("
-    (opacify|fadein|fade-in|fade_in)#{ps}
+    (?:opacify|fadein|fade-in|fade_in)#{ps}
       (#{notQuote})
       #{comma}
       (#{floatOrPercent}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_, _, subexpr, amount] = match
+    [_, subexpr, amount] = match
 
     amount = context.readFloatOrPercent(amount)
     baseColor = context.readColor(subexpr)
@@ -694,8 +694,8 @@ module.exports = getRegistry: (context) ->
 
   # grayscale(red)
   # greyscale(red)
-  registry.createExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
-    [_, _, subexpr] = match
+  registry.createExpression 'grayscale', "gr(?:a|e)yscale#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+    [_, subexpr] = match
 
     baseColor = context.readColor(subexpr)
 
@@ -797,9 +797,9 @@ module.exports = getRegistry: (context) ->
     {@rgb} = contrast(baseColor)
 
   # color(green tint(50%))
-  registry.createExpression 'css_color_function', "(#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", (match, expression, context) ->
+  registry.createExpression 'css_color_function', "(?:#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", (match, expression, context) ->
     try
-      [_,_,expr] = match
+      [_,expr] = match
       rgba = cssColor.convert(expr)
       @rgba = context.readColor(rgba).rgba
       @colorExpression = expr
@@ -925,7 +925,7 @@ module.exports = getRegistry: (context) ->
       (#{int}|#{variables})
     #{pe}
   "), (match, expression, context) ->
-    [_,r,_,g,_,b,_,a] = match
+    [_,r,g,b,a] = match
 
     @red = context.readInt(r)
     @green = context.readInt(g)
@@ -943,7 +943,7 @@ module.exports = getRegistry: (context) ->
       \\s+
       (#{float}|#{variables})
   "), (match, expression, context) ->
-    [_,r,_,g,_,b,_,a] = match
+    [_,r,g,b,a] = match
 
     @red = context.readInt(r)
     @green = context.readInt(g)
@@ -959,7 +959,7 @@ module.exports = getRegistry: (context) ->
       \\s+
       (#{int}|#{variables})
   "), (match, expression, context) ->
-    [_,r,_,g,_,b] = match
+    [_,r,g,b] = match
 
     @red = context.readInt(r)
     @green = context.readInt(g)
@@ -969,7 +969,7 @@ module.exports = getRegistry: (context) ->
     paletteRegexpString = createVariableRegExpString(context.getColorVariables())
 
     registry.createExpression 'variables', paletteRegexpString, 1, (match, expression, context) ->
-      [_,_,name] = match
+      [_,name] = match
       baseColor = context.readColor(name)
       @colorExpression = name
       @variables = baseColor?.variables
