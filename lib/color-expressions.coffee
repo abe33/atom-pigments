@@ -1032,6 +1032,26 @@ module.exports = getRegistry: (context) ->
     @hsl = hsl
     @alpha = context.readFloat(a)
 
+  # grayscale 1
+  registry.createExpression 'elm_grayscale', "gr(?:a|e)yscale\\s+(#{float}|#{variables})", (match, expression, context) ->
+    [_,amount] = match
+    amount = Math.floor(255 - context.readFloat(amount) * 255)
+    @rgb = [amount, amount, amount]
+
+  registry.createExpression 'elm_complement', strip("
+    complement\\s+(#{notQuote})
+  "), (match, expression, context) ->
+    [_, subexpr] = match
+
+    baseColor = context.readColor(subexpr)
+
+    return @invalid = true if isInvalid(baseColor)
+
+    [h,s,l] = baseColor.hsl
+
+    @hsl = [(h + 180) % 360, s, l]
+    @alpha = baseColor.alpha
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##

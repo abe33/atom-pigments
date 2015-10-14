@@ -749,3 +749,17 @@ describe 'ColorParser', ->
       'l': '50'
     }).asColor(64, 149, 191)
     itParses('hsl h s l').asInvalid()
+
+    itParses('grayscale 1').asColor(0, 0, 0)
+    itParses('greyscale 0.5').asColor(127, 127, 127)
+    itParses('grayscale 0').asColor(255, 255, 255)
+    itParses('grayscale g').withContext({
+      'g': '0.5'
+    }).asColor(127, 127, 127)
+    itParses('grayscale g').asInvalid()
+
+    itParses('complement rgb 255 0 0').asColor('#00ffff')
+    itParses('complement base').withContext({
+      'base': asColor 'red'
+    }).asColor('#00ffff')
+    itParses('complement base').asInvalid()
