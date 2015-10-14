@@ -44,7 +44,7 @@ class ColorBufferElement extends HTMLElement
     scrollLeftListener = (@editorScrollLeft) => @updateScroll()
     scrollTopListener = (@editorScrollTop) =>
       @updateScroll()
-      @updateMarkers()
+      requestAnimationFrame => @updateMarkers()
 
     if @editorElement.onDidChangeScrollLeft?
       @subscriptions.add @editorElement.onDidChangeScrollLeft(scrollLeftListener)
