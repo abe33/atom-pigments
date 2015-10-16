@@ -1,3 +1,17 @@
+<a name="v0.18.0"></a>
+# v0.18.0 (2015-10-16)
+
+## Features
+
+- Implement support for elm grayscale and complement functions ([ace8dd17](https://github.com/abe33/atom-pigments/commit/ace8dd17f4534b4dd91328ba8dc0d44f331001bf))
+- Implement elm hsl and hsla functions ([75b059e0](https://github.com/abe33/atom-pigments/commit/75b059e09045bf7e060c3f9791dd7d98a44df133))
+- Implement support for elm rgb and rgba functions ([342b3d85](https://github.com/abe33/atom-pigments/commit/342b3d85bbb8b11d2ae2cc9ddd85067e01b400fd))
+- Implement support for Lua colors ([16843624](https://github.com/abe33/atom-pigments/commit/1684362444a44712839c49dedf524a3ce0f7704b), [#91](https://github.com/abe33/atom-pigments/issues/91))
+
+## Bug Fixes
+
+- Fix marker other than background disappearing when cursor is inside ([c6e469ad](https://github.com/abe33/atom-pigments/commit/c6e469ade8c45193ece6c8b9d9d7af2a5f65c293), [#99](https://github.com/abe33/atom-pigments/issues/99))
+
 <a name="v0.17.1"></a>
 # v0.17.1 (2015-10-12)
 
