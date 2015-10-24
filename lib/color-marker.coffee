@@ -70,7 +70,9 @@ class ColorMarker
 
   isIgnored: -> @ignored
 
-  getScreenRange: -> @screenRangeCache ?= @marker.getScreenRange()
+  getBufferRange: -> @marker.getBufferRange()
+
+  getScreenRange: -> @screenRangeCache ?= @marker?.getScreenRange()
 
   invalidateScreenRangeCache: -> @screenRangeCache = null
 

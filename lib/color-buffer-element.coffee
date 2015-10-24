@@ -133,7 +133,8 @@ class ColorBufferElement extends HTMLElement
       view = @viewsByMarkers.get(marker)
       if view?
         view.classList.remove('hidden')
-        @hideMarkerIfInSelection(marker, view)
+        view.classList.remove('in-fold')
+        @hideMarkerIfInSelectionOrFold(marker, view)
       else
         console.warn "A color marker was found in the displayed markers array without an associated view", marker
 
@@ -166,7 +167,7 @@ class ColorBufferElement extends HTMLElement
 
     view.setModel(marker)
 
-    @hideMarkerIfInSelection(marker, view)
+    @hideMarkerIfInSelectionOrFold(marker, view)
     @usedMarkers.push(view)
     @viewsByMarkers.set(marker, view)
     view
@@ -191,16 +192,17 @@ class ColorBufferElement extends HTMLElement
     @usedMarkers = []
     @unusedMarkers = []
 
-  hideMarkerIfInSelection: (marker, view) ->
+  hideMarkerIfInSelectionOrFold: (marker, view) ->
     selections = @editor.getSelections()
 
     for selection in selections
       range = selection.getScreenRange()
-      markerRange = marker.marker?.getScreenRange()
+      markerRange = marker.getScreenRange()
 
       continue unless markerRange? and range?
 
       view.classList.add('hidden') if markerRange.intersectsWith(range)
+      view.classList.add('in-fold') if  @editor.isFoldedAtBufferRow(marker.getBufferRange().start.row)
 
   colorMarkerForMouseEvent: (event) ->
     position = @screenPositionForMouseEvent(event)
