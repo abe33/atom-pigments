@@ -1,4 +1,5 @@
 VariableScanner = require '../lib/variable-scanner'
+registry = require '../lib/variable-expressions'
 
 describe 'VariableScanner', ->
   [scanner, editor, text] = []
@@ -17,7 +18,7 @@ describe 'VariableScanner', ->
 
   withScannerForTextEditor = (fixture, block) ->
     withTextEditor fixture, ->
-      beforeEach -> scanner = new VariableScanner
+      beforeEach -> scanner = new VariableScanner({registry})
 
       afterEach -> scanner = null
 
