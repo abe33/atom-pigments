@@ -53,13 +53,14 @@ describe 'ExpressionsRegistry', ->
 
       serialized = registry.serialize()
 
-      expect(serialized.dummy).toEqual({
+      expect(serialized.regexpString).toEqual('(foo)|(bar)')
+      expect(serialized.expressions.dummy).toEqual({
         name: 'dummy'
         regexpString: 'foo'
         handle: undefined
       })
 
-      expect(serialized.dummy2).toEqual({
+      expect(serialized.expressions.dummy2).toEqual({
         name: 'dummy2'
         regexpString: 'bar'
         handle: registry.getExpression('dummy2').handle.toString()
@@ -68,13 +69,16 @@ describe 'ExpressionsRegistry', ->
   describe '.deserialize', ->
     it 'deserializes the provided expressions using the specified model', ->
       serialized =
-        dummy:
-          name: 'dummy'
-          regexpString: 'foo'
-          handle: 'function (a,b,c) { return a + b - c; }'
+        regexpString: 'foo|bar'
+        expressions:
+          dummy:
+            name: 'dummy'
+            regexpString: 'foo'
+            handle: 'function (a,b,c) { return a + b - c; }'
 
       deserialized = ExpressionsRegistry.deserialize(serialized, Dummy)
 
+      expect(deserialized.getRegExp()).toEqual('foo|bar')
       expect(deserialized.getExpression('dummy').name).toEqual('dummy')
       expect(deserialized.getExpression('dummy').regexpString).toEqual('foo')
       expect(deserialized.getExpression('dummy').handle(1,2,3)).toEqual(0)

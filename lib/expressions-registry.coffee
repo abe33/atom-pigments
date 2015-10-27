@@ -6,9 +6,11 @@ class ExpressionsRegistry
   @deserialize: (serializedData, expressionsType) ->
     registry = new ExpressionsRegistry(expressionsType)
 
-    for name, data of serializedData
+    for name, data of serializedData.expressions
       handle = vm.runInNewContext("handle = " + data.handle)
       registry.createExpression(name, data.regexpString, handle)
+
+    registry.regexpString = serializedData.regexpString
 
     registry
 
@@ -22,7 +24,7 @@ class ExpressionsRegistry
   getExpression: (name) -> @colorExpressions[name]
 
   getRegExp: ->
-    @getExpressions().map((e) -> "(#{e.regexpString})").join('|')
+    @regexpString ?= @getExpressions().map((e) -> "(#{e.regexpString})").join('|')
 
   createExpression: (name, regexpString, priority=0, handle) ->
     [priority, handle] = [0, priority] if typeof priority is 'function'
@@ -31,14 +33,20 @@ class ExpressionsRegistry
     @addExpression newExpression
 
   addExpression: (expression) ->
+    delete @regexpString
     @colorExpressions[expression.name] = expression
 
-  removeExpression: (name) -> delete @colorExpressions[name]
+  removeExpression: (name) ->
+    delete @regexpString
+    delete @colorExpressions[name]
 
   serialize: ->
-    out = {}
+    out =
+      regexpString: @getRegExp()
+      expressions: {}
+
     for key, expression of @colorExpressions
-      out[key] =
+      out.expressions[key] =
         name: expression.name
         regexpString: expression.regexpString
         handle: expression.handle?.toString()
