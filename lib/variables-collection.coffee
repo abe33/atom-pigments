@@ -1,6 +1,8 @@
 {Emitter} = require 'atom'
 ColorContext = require './color-context'
+ColorExpression = require './color-expression'
 Color = require './color'
+registry = require './color-expressions'
 
 nextId = 0
 
@@ -195,7 +197,7 @@ class VariablesCollection
 
     delete @dependencyGraph[variable.name]
 
-  getContext: -> new ColorContext({@variables, @colorVariables})
+  getContext: -> new ColorContext({@variables, @colorVariables, registry})
 
   updateVariable: (previousVariable, variable, batch) ->
     previousDependencies = @getVariableDependencies(previousVariable)
@@ -367,6 +369,7 @@ class VariablesCollection
 
   emitChangeEvent: ({created, destroyed, updated}) ->
     if created?.length or destroyed?.length or updated?.length
+      registry.addExpression(ColorExpression.colorExpressionForColorVariables(@getColorVariables()))
       @emitter.emit 'did-change', {created, destroyed, updated}
 
   diffArrays: (a,b) ->

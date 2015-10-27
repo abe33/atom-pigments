@@ -1,6 +1,7 @@
 
 ColorContext = require '../lib/color-context'
 ColorParser = require '../lib/color-parser'
+registry = require '../lib/color-expressions'
 
 describe 'ColorContext', ->
   [context, parser] = []
@@ -36,7 +37,7 @@ describe 'ColorContext', ->
 
   describe 'created without any variables', ->
     beforeEach ->
-      context = new ColorContext
+      context = new ColorContext({registry})
 
     itParses('10').asInt(10)
 
@@ -75,7 +76,7 @@ describe 'ColorContext', ->
 
       colorVariables = variables.filter (v) -> v.isColor
 
-      context = new ColorContext({variables, colorVariables})
+      context = new ColorContext({variables, colorVariables, registry})
 
     itParses('x').asInt(10)
     itParses('y').asFloat(0.1)
@@ -93,7 +94,7 @@ describe 'ColorContext', ->
           createVar '@list-item-height', '@component-line-height'
         ]
 
-        context = new ColorContext({variables})
+        context = new ColorContext({variables, registry})
 
       itParses('@list-item-height').asUndefinedColor()
 
@@ -122,6 +123,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -144,6 +146,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -166,6 +169,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -188,6 +192,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -220,6 +225,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -242,6 +248,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referenceVariable
@@ -274,6 +281,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referencePath: "#{projectPath}/a.styl"
@@ -296,6 +304,7 @@ describe 'ColorContext', ->
         colorVariables = variables.filter (v) -> v.isColor
 
         context = new ColorContext({
+          registry
           variables
           colorVariables
           referencePath: "#{projectPath}/a.styl"

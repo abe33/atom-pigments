@@ -1,6 +1,6 @@
 {Emitter} = require 'atom'
 {Minimatch} = require 'minimatch'
-{getRegistry} = require './color-expressions'
+registry = require './color-expressions'
 ColorParser = require './color-parser'
 ColorContext = require './color-context'
 
@@ -30,8 +30,6 @@ class ColorSearch
     @emitter.on 'did-complete-search', callback
 
   search: ->
-    registry = getRegistry(@context)
-
     re = new RegExp registry.getRegExp()
     results = []
 

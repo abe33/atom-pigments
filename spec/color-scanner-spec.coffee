@@ -1,5 +1,7 @@
 ColorScanner = require '../lib/color-scanner'
+ColorContext = require '../lib/color-context'
 {TextEditor} = require 'atom'
+registry = require '../lib/color-expressions'
 
 describe 'ColorScanner', ->
   [scanner, editor, text, result, lastIndex] = []
@@ -19,7 +21,8 @@ describe 'ColorScanner', ->
   withScannerForTextEditor = (fixture, block) ->
     withTextEditor fixture, ->
       beforeEach ->
-        scanner = new ColorScanner
+        context = new ColorContext({registry})
+        scanner = new ColorScanner({context})
 
       afterEach -> scanner = null
 

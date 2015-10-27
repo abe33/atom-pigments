@@ -112,6 +112,7 @@ class ColorProject
     @colorBuffersByEditorId = {}
 
     @variableExpressionsRegistry = require './variable-expressions'
+    @colorExpressionsRegistry = require './color-expressions'
 
     if variables?
       @variables = atom.deserializers.deserialize(variables)
@@ -370,6 +371,8 @@ class ColorProject
   getVariableByName: (name) -> @variables.getVariableByName(name)
 
   getColorVariables: -> @variables.getColorVariables()
+
+  getColorExpressionsRegistry: -> @colorExpressionsRegistry
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->

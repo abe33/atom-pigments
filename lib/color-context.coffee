@@ -1,11 +1,28 @@
 Color = require './color'
 ColorParser = null
 ColorExpression = require './color-expression'
+SVGColors = require './svg-colors'
+{split, clamp, clampInt} = require './utils'
+{
+  int
+  float
+  percent
+  optionalPercent
+  intOrPercent
+  floatOrPercent
+  comma
+  notQuote
+  hexadecimal
+  ps
+  pe
+  variables
+  namePrefixes
+} = require './regexes'
 
 module.exports =
 class ColorContext
   constructor: (options={}) ->
-    {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, @defaultVars, @defaultColorVars, sorted} = options
+    {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, @defaultVars, @defaultColorVars, sorted, @registry} = options
 
     variables ?= []
     colorVariables ?= []
@@ -33,9 +50,13 @@ class ColorContext
         @colorVars[v.name] = v
         @defaultColorVars[v.name] = v if v.path.match /\/.pigments$/
 
+    if not @registry.getExpression('variables')? and @colorVariables.length > 0
+      expr = ColorExpression.colorExpressionForColorVariables(@colorVariables)
+      @registry.addExpression(expr)
+
     unless @parser?
       ColorParser = require './color-parser'
-      @parser = new ColorParser
+      @parser = new ColorParser(@registry, this)
 
     @usedVariables = []
 
@@ -73,6 +94,14 @@ class ColorContext
       sorted: true
     })
 
+  ##    ##     ##    ###    ########   ######
+  ##    ##     ##   ## ##   ##     ## ##    ##
+  ##    ##     ##  ##   ##  ##     ## ##
+  ##    ##     ## ##     ## ########   ######
+  ##     ##   ##  ######### ##   ##         ##
+  ##      ## ##   ##     ## ##    ##  ##    ##
+  ##       ###    ##     ## ##     ##  ######
+
   containsVariable: (variableName) -> variableName in @getVariablesNames()
 
   hasColorVariables: -> @colorVariables.length > 0
@@ -84,6 +113,20 @@ class ColorContext
   getVariablesNames: -> @varNames ?= Object.keys(@vars)
 
   getVariablesCount: -> @varCount ?= @getVariablesNames().length
+
+  readUsedVariables: ->
+    usedVariables = []
+    usedVariables.push v for v in @usedVariables when v not in usedVariables
+    @usedVariables = []
+    usedVariables
+
+  ##    ##     ##    ###    ##       ##     ## ########  ######
+  ##    ##     ##   ## ##   ##       ##     ## ##       ##    ##
+  ##    ##     ##  ##   ##  ##       ##     ## ##       ##
+  ##    ##     ## ##     ## ##       ##     ## ######    ######
+  ##     ##   ##  ######### ##       ##     ## ##             ##
+  ##      ## ##   ##     ## ##       ##     ## ##       ##    ##
+  ##       ###    ##     ## ########  #######  ########  ######
 
   getValue: (value) ->
     [realValue, lastRealValue] = []
@@ -103,12 +146,6 @@ class ColorContext
 
     lastRealValue
 
-  readUsedVariables: ->
-    usedVariables = []
-    usedVariables.push v for v in @usedVariables when v not in usedVariables
-    @usedVariables = []
-    usedVariables
-
   readColorExpression: (value) ->
     if @colorVars[value]?
       @usedVariables.push(value)
@@ -118,7 +155,9 @@ class ColorContext
 
   readColor: (value, keepAllVariables=false) ->
     realValue = @readColorExpression(value)
-    result = @parser.parse(realValue, @clone())
+    return unless realValue?
+
+    result = @parser.parse(realValue)
 
     if result?
       if result.invalid and @defaultColorVars[realValue]?
@@ -211,3 +250,83 @@ class ColorContext
       res
 
     res
+
+  ##    ##     ## ######## #### ##        ######
+  ##    ##     ##    ##     ##  ##       ##    ##
+  ##    ##     ##    ##     ##  ##       ##
+  ##    ##     ##    ##     ##  ##        ######
+  ##    ##     ##    ##     ##  ##             ##
+  ##    ##     ##    ##     ##  ##       ##    ##
+  ##     #######     ##    #### ########  ######
+
+  SVGColors: SVGColors
+
+  split: (value) -> split(value)
+
+  clamp: (value) -> clamp(value)
+
+  clampInt: (value) -> clampInt(value)
+
+  isInvalid: (color) -> not color?.isValid()
+
+  readParam: (param, block) ->
+    re = ///\$(\w+):\s*((-?#{@float})|#{@variablesRE})///
+    if re.test(param)
+      [_, name, value] = re.exec(param)
+
+      block(name, value)
+
+  contrast: (base, dark=new Color('black'), light=new Color('white'), threshold=0.43) ->
+    [light, dark] = [dark, light] if dark.luma > light.luma
+
+    if base.luma > threshold
+      dark
+    else
+      light
+
+  mixColors: (color1, color2, amount=0.5) ->
+    inverse = 1 - amount
+    color = new Color
+
+    color.rgba = [
+      Math.floor(color1.red * amount) + Math.floor(color2.red * inverse)
+      Math.floor(color1.green * amount) + Math.floor(color2.green * inverse)
+      Math.floor(color1.blue * amount) + Math.floor(color2.blue * inverse)
+      color1.alpha * amount + color2.alpha * inverse
+    ]
+
+    color
+
+  ##    ########  ########  ######   ######## ##     ## ########
+  ##    ##     ## ##       ##    ##  ##        ##   ##  ##     ##
+  ##    ##     ## ##       ##        ##         ## ##   ##     ##
+  ##    ########  ######   ##   #### ######      ###    ########
+  ##    ##   ##   ##       ##    ##  ##         ## ##   ##
+  ##    ##    ##  ##       ##    ##  ##        ##   ##  ##
+  ##    ##     ## ########  ######   ######## ##     ## ##
+
+  int: int
+
+  float: float
+
+  percent: percent
+
+  optionalPercent: optionalPercent
+
+  intOrPercent: intOrPercent
+
+  floatOrPercent: floatOrPercent
+
+  comma: comma
+
+  notQuote: notQuote
+
+  hexadecimal: hexadecimal
+
+  ps: ps
+
+  pe: pe
+
+  variablesRE: variables
+
+  namePrefixes: namePrefixes

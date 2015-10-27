@@ -1,6 +1,8 @@
 path = require 'path'
 ColorBuffer = require '../lib/color-buffer'
+registry = require '../lib/color-expressions'
 jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
+
 
 describe 'ColorBuffer', ->
   [editor, colorBuffer, pigments, project] = []
@@ -36,6 +38,9 @@ describe 'ColorBuffer', ->
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
       project = pigments.getProject()
+
+  afterEach ->
+    colorBuffer?.destroy()
 
   it 'creates a color buffer for each editor in the workspace', ->
     expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()

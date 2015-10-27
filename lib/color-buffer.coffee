@@ -361,6 +361,7 @@ class ColorBuffer
       bufferPath: @getPath()
       variables: variables
       colorVariables: variables.filter (v) -> v.isColor
+      registry: @project.getColorExpressionsRegistry().serialize()
 
     new Promise (resolve, reject) =>
       @task = Task.once(

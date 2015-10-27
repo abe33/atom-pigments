@@ -4,14 +4,12 @@ ColorParser = require './color-parser'
 
 module.exports =
 class ColorScanner
-  constructor: (params={}) ->
-    {@parser, @context} = params
-    @parser ?= new ColorParser
+  constructor: ({@context}={}) ->
+    @parser = @context.parser
+    @registry = @context.registry
 
   getRegExp: ->
-    registry = getRegistry(@context)
-
-    @regexp = new RegExp(registry.getRegExp(), 'g')
+    @regexp = new RegExp(@registry.getRegExp(), 'g')
 
   search: (text, start=0) ->
     @regexp = @getRegExp()
@@ -21,7 +19,7 @@ class ColorScanner
       [matchText] = match
       {lastIndex} = @regexp
 
-      color = @parser.parse(matchText, @context)
+      color = @parser.parse(matchText)
 
       if (index = matchText.indexOf(color.colorExpression)) > 0
         lastIndex += -matchText.length + index + color.colorExpression.length
