@@ -1,3 +1,10 @@
+<a name="v0.18.1"></a>
+# v0.18.1 (2015-10-27)
+
+## Bug Fixes
+
+- Fix dot markers still visible when rows are folded ([771d1004](https://github.com/abe33/atom-pigments/commit/771d100493e607161ca10366891d6695eba1fe7c), [#104](https://github.com/abe33/atom-pigments/issues/104))
+
 <a name="v0.18.0"></a>
 # v0.18.0 (2015-10-16)
 
