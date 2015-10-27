@@ -1,13 +1,12 @@
 {countLines} = require './utils'
 VariableParser = require './variable-parser'
-[registry] = []
 
 module.exports =
 class VariableScanner
   constructor: (params={}) ->
     {@parser, @registry} = params
-    @parser ?= new VariableParser
     @registry ?= require './variable-expressions'
+    @parser ?= new VariableParser(@registry)
 
   getRegExp: ->
     @regexp ?= new RegExp(@registry.getRegExp(), 'gm')
