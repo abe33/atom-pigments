@@ -24,3 +24,13 @@ class ExpressionsRegistry
     @colorExpressions[expression.name] = expression
 
   removeExpression: (name) -> delete @colorExpressions[name]
+
+  serialize: ->
+    out = {}
+    for key, expression of @colorExpressions
+      out[key] =
+        name: expression.name
+        regexpString: expression.regexpString
+        handle: expression.handle?.toString()
+
+    out

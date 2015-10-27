@@ -5,7 +5,7 @@ describe 'ExpressionsRegistry', ->
 
   beforeEach ->
     class Dummy
-      constructor: ({@name}) ->
+      constructor: ({@name, @regexpString, @handle}) ->
 
     registry = new ExpressionsRegistry(Dummy)
 
@@ -45,3 +45,22 @@ describe 'ExpressionsRegistry', ->
       registry.removeExpression('dummy')
 
       expect(registry.getExpressions()).toEqual([])
+
+  describe '::serialize', ->
+    it 'serializes the registry with the function content', ->
+      registry.createExpression 'dummy', 'foo'
+      registry.createExpression 'dummy2', 'bar', (a,b,c) -> a + b - c
+
+      serialized = registry.serialize()
+
+      expect(serialized.dummy).toEqual({
+        name: 'dummy'
+        regexpString: 'foo'
+        handle: undefined
+      })
+
+      expect(serialized.dummy2).toEqual({
+        name: 'dummy2'
+        regexpString: 'bar'
+        handle: registry.getExpression('dummy2').handle.toString()
+      })
