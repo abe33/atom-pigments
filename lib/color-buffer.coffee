@@ -192,6 +192,7 @@ class ColorBuffer
     buffer = @editor.getBuffer()
     config =
       buffer: @editor.getText()
+      registry: @project.getVariableExpressionsRegistry().serialize()
 
     new Promise (resolve, reject) =>
       @task = Task.once(

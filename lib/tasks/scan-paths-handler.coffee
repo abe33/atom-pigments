@@ -6,7 +6,7 @@ ExpressionsRegistry = require '../expressions-registry'
 
 class PathScanner
   constructor: (@path, registry) ->
-    @scanner = new VariableScanner(registry)
+    @scanner = new VariableScanner({registry})
 
   load: (done) ->
     currentChunk = ''

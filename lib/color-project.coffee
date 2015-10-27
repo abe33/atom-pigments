@@ -111,7 +111,7 @@ class ColorProject
     @subscriptions = new CompositeDisposable
     @colorBuffersByEditorId = {}
 
-    @variableRegistry = require './variable-expressions'
+    @variableExpressionsRegistry = require './variable-expressions'
 
     if variables?
       @variables = atom.deserializers.deserialize(variables)
@@ -363,6 +363,8 @@ class ColorProject
 
   getVariables: -> @variables.getVariables()
 
+  getVariableExpressionsRegistry: -> @variableExpressionsRegistry
+
   getVariableById: (id) -> @variables.getVariableById(id)
 
   getVariableByName: (name) -> @variables.getVariableByName(name)
@@ -417,7 +419,7 @@ class ColorProject
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
-      PathsScanner.startTask paths, @variableRegistry, (results) -> callback(results)
+      PathsScanner.startTask paths, @variableExpressionsRegistry, (results) -> callback(results)
 
   loadThemesVariables: ->
     iterator = 0

@@ -5,7 +5,6 @@ module.exports =
 class VariableScanner
   constructor: (params={}) ->
     {@parser, @registry} = params
-    @registry ?= require './variable-expressions'
     @parser ?= new VariableParser(@registry)
 
   getRegExp: ->
