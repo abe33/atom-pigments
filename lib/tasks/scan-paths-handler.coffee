@@ -1,10 +1,12 @@
 async = require 'async'
 fs = require 'fs'
 VariableScanner = require '../variable-scanner'
+VariableExpression = require '../variable-expression'
+ExpressionsRegistry = require '../expressions-registry'
 
 class PathScanner
-  constructor: (@path) ->
-    @scanner = new VariableScanner
+  constructor: (@path, registry) ->
+    @scanner = new VariableScanner(registry)
 
   load: (done) ->
     currentChunk = ''
@@ -45,10 +47,11 @@ class PathScanner
       emit('scan-paths:path-scanned', results)
       done()
 
-module.exports = (paths) ->
+module.exports = ([paths, registry]) ->
+  registry = ExpressionsRegistry.deserialize(registry, VariableExpression)
   async.each(
     paths,
     (path, next) ->
-      new PathScanner(path).load(next)
+      new PathScanner(path, registry).load(next)
     @async()
   )

@@ -1,13 +1,13 @@
 {Task} = require 'atom'
 
 module.exports =
-  startTask: (paths, callback) ->
+  startTask: (paths, registry, callback) ->
     results = []
     taskPath = require.resolve('./tasks/scan-paths-handler')
 
     @task = Task.once(
       taskPath,
-      paths,
+      [paths, registry.serialize()],
       =>
         @task = null
         callback(results)
