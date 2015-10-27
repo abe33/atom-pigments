@@ -1,7 +1,17 @@
 ColorExpression = require './color-expression'
+vm = require 'vm'
 
 module.exports =
 class ExpressionsRegistry
+  @deserialize: (serializedData, expressionsType) ->
+    registry = new ExpressionsRegistry(expressionsType)
+
+    for name, data of serializedData
+      handle = vm.runInNewContext("handle = " + data.handle)
+      registry.createExpression(name, data.regexpString, handle)
+
+    registry
+
   # The {Object} where color expression handlers are stored
   constructor: (@expressionsType) ->
     @colorExpressions = {}

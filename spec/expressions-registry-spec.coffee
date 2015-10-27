@@ -64,3 +64,17 @@ describe 'ExpressionsRegistry', ->
         regexpString: 'bar'
         handle: registry.getExpression('dummy2').handle.toString()
       })
+
+  describe '.deserialize', ->
+    it 'deserializes the provided expressions using the specified model', ->
+      serialized =
+        dummy:
+          name: 'dummy'
+          regexpString: 'foo'
+          handle: 'function (a,b,c) { return a + b - c; }'
+
+      deserialized = ExpressionsRegistry.deserialize(serialized, Dummy)
+
+      expect(deserialized.getExpression('dummy').name).toEqual('dummy')
+      expect(deserialized.getExpression('dummy').regexpString).toEqual('foo')
+      expect(deserialized.getExpression('dummy').handle(1,2,3)).toEqual(0)
