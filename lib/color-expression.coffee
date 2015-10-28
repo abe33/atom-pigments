@@ -14,6 +14,8 @@ class ColorExpression
       regexpString: paletteRegexpString
       handle: (match, expression, context) ->
         [_,name] = match
+        return @invalid = true if context.readColorExpression(name) is name
+
         baseColor = context.readColor(name)
         @colorExpression = name
         @variables = baseColor?.variables

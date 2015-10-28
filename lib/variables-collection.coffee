@@ -253,6 +253,8 @@ class VariablesCollection
     context = @getContext()
     color = context.readColor(variable.value, true)
 
+    console.log context.usedVariables
+
     if color?
       return false if wasColor and color.isEqual(variable.color)
 
@@ -339,6 +341,8 @@ class VariablesCollection
       @dependencyGraph[v].push(from)
 
   updateDependencies: ({created, updated, destroyed}) ->
+    @updateColorVariablesExpression()
+
     variables = []
     dirtyVariableNames = []
 
@@ -369,8 +373,11 @@ class VariablesCollection
 
   emitChangeEvent: ({created, destroyed, updated}) ->
     if created?.length or destroyed?.length or updated?.length
-      registry.addExpression(ColorExpression.colorExpressionForColorVariables(@getColorVariables()))
+      @updateColorVariablesExpression()
       @emitter.emit 'did-change', {created, destroyed, updated}
+
+  updateColorVariablesExpression: ->
+    registry.addExpression(ColorExpression.colorExpressionForColorVariables(@getColorVariables()))
 
   diffArrays: (a,b) ->
     removed = []

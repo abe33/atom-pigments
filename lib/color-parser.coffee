@@ -7,13 +7,13 @@ module.exports =
 class ColorParser
   constructor: (@registry, @context) ->
 
-  parse: (expression) ->
+  parse: (expression, collectVariables=true) ->
     return undefined if not expression? or expression is ''
 
     for e in @registry.getExpressions()
       if e.match(expression)
         res = e.parse(expression, @context)
-        res.variables = @context.readUsedVariables()
+        res.variables = @context.readUsedVariables() if collectVariables
         return res
 
     return undefined

@@ -157,7 +157,7 @@ class ColorContext
     realValue = @readColorExpression(value)
     return unless realValue?
 
-    result = @parser.parse(realValue)
+    result = @parser.parse(realValue, false)
 
     if result?
       if result.invalid and @defaultColorVars[realValue]?
@@ -170,7 +170,7 @@ class ColorContext
       result = @readColor(@defaultColorVars[value].value)
 
     if result? and (keepAllVariables or value not in @usedVariables)
-      result.variables = result.variables.concat(@readUsedVariables())
+      result.variables = (result.variables ? []).concat(@readUsedVariables())
 
     return result
 
