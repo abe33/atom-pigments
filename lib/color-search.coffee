@@ -9,11 +9,10 @@ class ColorSearch
   constructor: (options={}) ->
     {@sourceNames, ignoredNames, @context} = options
     @emitter = new Emitter
-    @parser = new ColorParser
-    @context ?= new ColorContext([])
+    @context ?= new ColorContext({registry})
+    @parser = @context.parser
     @variables = @context.getVariables()
     @sourceNames ?= []
-    @context.parser = @parser
     ignoredNames ?= []
 
     @ignoredNames = []
