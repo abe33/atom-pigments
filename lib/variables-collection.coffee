@@ -253,8 +253,6 @@ class VariablesCollection
     context = @getContext()
     color = context.readColor(variable.value, true)
 
-    console.log context.usedVariables
-
     if color?
       return false if wasColor and color.isEqual(variable.color)
 

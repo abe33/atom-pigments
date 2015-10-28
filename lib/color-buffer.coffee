@@ -1,6 +1,7 @@
 {Emitter, CompositeDisposable, Task, Range} = require 'atom'
 Color = require './color'
 ColorMarker = require './color-marker'
+ColorExpression = require './color-expression'
 VariablesCollection = require './variables-collection'
 
 module.exports =
@@ -356,12 +357,22 @@ class ColorBuffer
     else
       options.variables?.getVariables() ? []
 
+    colorVariables = variables.filter (v) -> v.isColor
+    registry = @project.getColorExpressionsRegistry().serialize()
+
+    if colorVariables.length > 0
+      registry.expressions.variables?.regexpString = ColorExpression.colorExpressionRegexpForColorVariables(colorVariables)
+    else
+      delete registry.expressions.variables
+
+    delete registry.regexpString
+
     config =
       buffer: @editor.getText()
       bufferPath: @getPath()
       variables: variables
-      colorVariables: variables.filter (v) -> v.isColor
-      registry: @project.getColorExpressionsRegistry().serialize()
+      colorVariables: colorVariables
+      registry: registry
 
     new Promise (resolve, reject) =>
       @task = Task.once(

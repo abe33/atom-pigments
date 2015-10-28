@@ -6,8 +6,11 @@ class ColorExpression
   @colorExpressionForContext: (context) ->
     @colorExpressionForColorVariables(context.getColorVariables())
 
+  @colorExpressionRegexpForColorVariables: (colorVariables) ->
+    createVariableRegExpString(colorVariables)
+
   @colorExpressionForColorVariables: (colorVariables) ->
-    paletteRegexpString = createVariableRegExpString(colorVariables)
+    paletteRegexpString = @colorExpressionRegexpForColorVariables(colorVariables)
 
     new ColorExpression
       name: 'variables'
