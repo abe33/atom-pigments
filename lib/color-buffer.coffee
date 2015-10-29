@@ -346,6 +346,7 @@ class ColorBuffer
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-colors-handler')
     buffer = @editor.getBuffer()
+    registry = @project.getColorExpressionsRegistry().serialize()
 
     if options.variables?
       collection = new VariablesCollection()
@@ -353,25 +354,23 @@ class ColorBuffer
       options.variables = collection
 
     variables = if @isVariablesSource()
+      # In the case of files considered as source, the variables in the project
+      # are needed when parsing the files.
       (options.variables?.getVariables() ? []).concat(@project.getVariables() ? [])
     else
-      options.variables?.getVariables() ? []
-
-    colorVariables = variables.filter (v) -> v.isColor
-    registry = @project.getColorExpressionsRegistry().serialize()
-
-    if colorVariables.length > 0
-      registry.expressions.variables?.regexpString = ColorExpression.colorExpressionRegexpForColorVariables(colorVariables)
-    else
+      # Files that are not part of the sources will only use the variables
+      # defined in them and so the global variables expression must be
+      # discarded before sending the registry to the child process.
       delete registry.expressions.variables
+      delete registry.regexpString
 
-    delete registry.regexpString
+      options.variables?.getVariables() ? []
 
     config =
       buffer: @editor.getText()
       bufferPath: @getPath()
       variables: variables
-      colorVariables: colorVariables
+      colorVariables: variables.filter (v) -> v.isColor
       registry: registry
 
     new Promise (resolve, reject) =>
