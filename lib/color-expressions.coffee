@@ -830,6 +830,32 @@ registry.createExpression 'stylus_blend', strip("
     baseColor1.alpha + baseColor2.alpha - baseColor1.alpha * baseColor2.alpha
   ]
 
+# Color(50,120,200,255)
+registry.createExpression 'lua_rgba', strip("
+  Color#{ps}\\s*
+    (#{int}|#{variables})
+    #{comma}
+    (#{int}|#{variables})
+    #{comma}
+    (#{int}|#{variables})
+    #{comma}
+    (#{int}|#{variables})
+  #{pe}
+"), (match, expression, context) ->
+  [_,r,g,b,a] = match
+
+  @red = context.readInt(r)
+  @green = context.readInt(g)
+  @blue = context.readInt(b)
+  @alpha = context.readInt(a) / 255
+
+##    ########  ##       ######## ##    ## ########
+##    ##     ## ##       ##       ###   ## ##     ##
+##    ##     ## ##       ##       ####  ## ##     ##
+##    ########  ##       ######   ## ## ## ##     ##
+##    ##     ## ##       ##       ##  #### ##     ##
+##    ##     ## ##       ##       ##   ### ##     ##
+##    ########  ######## ######## ##    ## ########
 
 # multiply(#f00, #00F)
 registry.createExpression 'multiply', strip("
@@ -1023,26 +1049,6 @@ registry.createExpression 'negation', strip("
   return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
 
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.NEGATION)
-
-
-# Color(50,120,200,255)
-registry.createExpression 'lua_rgba', strip("
-  Color#{ps}\\s*
-    (#{int}|#{variables})
-    #{comma}
-    (#{int}|#{variables})
-    #{comma}
-    (#{int}|#{variables})
-    #{comma}
-    (#{int}|#{variables})
-  #{pe}
-"), (match, expression, context) ->
-  [_,r,g,b,a] = match
-
-  @red = context.readInt(r)
-  @green = context.readInt(g)
-  @blue = context.readInt(b)
-  @alpha = context.readInt(a) / 255
 
 ##    ######## ##       ##     ##
 ##    ##       ##       ###   ###
