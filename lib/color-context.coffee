@@ -2,6 +2,7 @@ Color = require './color'
 ColorParser = null
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
+BlendModes = require './blend-modes'
 {split, clamp, clampInt} = require './utils'
 {
   int
@@ -260,6 +261,10 @@ class ColorContext
   ##     #######     ##    #### ########  ######
 
   SVGColors: SVGColors
+
+  Color: Color
+
+  BlendModes: BlendModes
 
   split: (value) -> split(value)
 

@@ -7,7 +7,7 @@ class ExpressionsRegistry
     registry = new ExpressionsRegistry(expressionsType)
 
     for name, data of serializedData.expressions
-      handle = vm.runInNewContext("handle = " + data.handle)
+      handle = vm.runInNewContext(data.handle.replace('function', "handle = function"))
       registry.createExpression(name, data.regexpString, handle)
 
     registry.regexpString = serializedData.regexpString

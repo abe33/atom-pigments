@@ -19,29 +19,6 @@
 ExpressionsRegistry = require './expressions-registry'
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
-Color = require './color'
-BlendModes = require './blend-modes'
-
-blendMethod = (registry, name, method) ->
-  registry.createExpression name, strip("
-    #{name}#{ps}
-      (
-        #{notQuote}
-        #{comma}
-        #{notQuote}
-      )
-    #{pe}
-  "), (match, expression, context) ->
-    [_, expr] = match
-
-    [color1, color2] = context.split(expr)
-
-    baseColor1 = context.readColor(color1)
-    baseColor2 = context.readColor(color2)
-
-    return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
-
-    {@rgba} = baseColor1.blend(baseColor2, method)
 
 module.exports =
 registry = new ExpressionsRegistry(ColorExpression)
@@ -458,7 +435,7 @@ registry.createExpression 'transparentify', strip("
   return @invalid = true if context.isInvalid(top)
   return @invalid = true if bottom? and context.isInvalid(bottom)
 
-  bottom ?= new Color(255,255,255,1)
+  bottom ?= new context.Color(255,255,255,1)
   alpha = undefined if isNaN(alpha)
 
   bestAlpha = ['red','green','blue'].map((channel) ->
@@ -585,7 +562,7 @@ registry.createExpression 'tint', strip("
 
   return @invalid = true if context.isInvalid(baseColor)
 
-  white = new Color(255, 255, 255)
+  white = new context.Color(255, 255, 255)
 
   @rgba = context.mixColors(white, baseColor, amount).rgba
 
@@ -604,7 +581,7 @@ registry.createExpression 'shade', strip("
 
   return @invalid = true if context.isInvalid(baseColor)
 
-  black = new Color(0,0,0)
+  black = new context.Color(0,0,0)
 
   @rgba = context.mixColors(black, baseColor, amount).rgba
 
@@ -762,7 +739,9 @@ registry.createExpression 'css_color_function', "(?:#{namePrefixes})(color#{ps}(
 # adjust-color(red, $lightness: 30%)
 registry.createExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
   [_, subexpr] = match
-  [subject, params...] = context.split(subexpr)
+  res = context.split(subexpr)
+  subject = res[0]
+  params = res.slice(1)
 
   baseColor = context.readColor(subject)
 
@@ -786,7 +765,9 @@ registry.createExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe
     lightness: 100
 
   [_, subexpr] = match
-  [subject, params...] = context.split(subexpr)
+  res = context.split(subexpr)
+  subject = res[0]
+  params = res.slice(1)
 
   baseColor = context.readColor(subject)
 
@@ -809,7 +790,9 @@ registry.createExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe
 # change-color(red, $lightness: 30%)
 registry.createExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
   [_, subexpr] = match
-  [subject, params...] = context.split(subexpr)
+  res = context.split(subexpr)
+  subject = res[0]
+  params = res.slice(1)
 
   baseColor = context.readColor(subject)
 
@@ -847,32 +830,200 @@ registry.createExpression 'stylus_blend', strip("
     baseColor1.alpha + baseColor2.alpha - baseColor1.alpha * baseColor2.alpha
   ]
 
+
 # multiply(#f00, #00F)
-blendMethod registry, 'multiply', BlendModes.MULTIPLY
+registry.createExpression 'multiply', strip("
+  multiply#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.MULTIPLY)
 
 # screen(#f00, #00F)
-blendMethod registry, 'screen', BlendModes.SCREEN
+registry.createExpression 'screen', strip("
+  screen#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.SCREEN)
+
 
 # overlay(#f00, #00F)
-blendMethod registry, 'overlay', BlendModes.OVERLAY
+registry.createExpression 'overlay', strip("
+  overlay#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.OVERLAY)
+
 
 # softlight(#f00, #00F)
-blendMethod registry, 'softlight', BlendModes.SOFT_LIGHT
+registry.createExpression 'softlight', strip("
+  softlight#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.SOFT_LIGHT)
+
 
 # hardlight(#f00, #00F)
-blendMethod registry, 'hardlight', BlendModes.HARD_LIGHT
+registry.createExpression 'hardlight', strip("
+  hardlight#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.HARD_LIGHT)
+
 
 # difference(#f00, #00F)
-blendMethod registry, 'difference', BlendModes.DIFFERENCE
+registry.createExpression 'difference', strip("
+  difference#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.DIFFERENCE)
 
 # exclusion(#f00, #00F)
-blendMethod registry, 'exclusion', BlendModes.EXCLUSION
+registry.createExpression 'exclusion', strip("
+  exclusion#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.EXCLUSION)
 
 # average(#f00, #00F)
-blendMethod registry, 'average', BlendModes.AVERAGE
+registry.createExpression 'average', strip("
+  average#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.AVERAGE)
 
 # negation(#f00, #00F)
-blendMethod registry, 'negation', BlendModes.NEGATION
+registry.createExpression 'negation', strip("
+  negation#{ps}
+    (
+      #{notQuote}
+      #{comma}
+      #{notQuote}
+    )
+  #{pe}
+"), (match, expression, context) ->
+  [_, expr] = match
+
+  [color1, color2] = context.split(expr)
+
+  baseColor1 = context.readColor(color1)
+  baseColor2 = context.readColor(color2)
+
+  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+
+  {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.NEGATION)
+
 
 # Color(50,120,200,255)
 registry.createExpression 'lua_rgba', strip("
