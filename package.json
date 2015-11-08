@@ -40,5 +40,13 @@
         "1.0.0": "provideAPI"
       }
     }
+  },
+  "consumedServices": {
+    "pigments.expressions.colors": {
+      "1.0.0": "consumeColorExpressions"
+    },
+    "pigments.expressions.variables": {
+      "1.0.0": "consumeVariableExpressions"
+    }
   }
 }

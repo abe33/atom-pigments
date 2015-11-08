@@ -141,6 +141,11 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.ignoreVcsIgnoredPaths', =>
       @loadPathsAndVariables()
 
+    @subscriptions.add @colorExpressionsRegistry.onDidUpdateExpressions ({name}) =>
+      return if not @paths? or name is 'variables'
+      @variables.evaluateVariables(@variables.getVariables())
+      colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
+
     @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
@@ -165,6 +170,9 @@ class ColorProject
 
   onDidChangeIgnoredScopes: (callback) ->
     @emitter.on 'did-change-ignored-scopes', callback
+
+  onDidChangePaths: (callback) ->
+    @emitter.on 'did-change-paths', callback
 
   observeColorBuffers: (callback) ->
     callback(colorBuffer) for id,colorBuffer of @colorBuffersByEditorId
@@ -334,6 +342,7 @@ class ColorProject
       @paths = @paths.filter (p) -> p not in removed
       @paths.push(p) for p in dirtied when p not in @paths
 
+      @emitter.emit 'did-change-paths', @getPaths()
       @reloadVariablesForPaths(dirtied)
 
   isVariablesSourcePath: (path) ->

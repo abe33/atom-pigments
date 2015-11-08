@@ -167,8 +167,11 @@ class ColorContext
         value = realValue
 
     else if @defaultColorVars[value]?
-      @usedVariables.push(realValue)
+      @usedVariables.push(value)
       result = @readColor(@defaultColorVars[value].value)
+
+    else
+      @usedVariables.push(value) if @vars[value]?
 
     if result? and (keepAllVariables or value not in @usedVariables)
       result.variables = (result.variables ? []).concat(@readUsedVariables())

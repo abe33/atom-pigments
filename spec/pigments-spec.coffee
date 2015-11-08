@@ -1,3 +1,4 @@
+{Disposable} = require 'atom'
 Pigments = require '../lib/pigments'
 PigmentsAPI = require '../lib/pigments-api'
 
@@ -36,7 +37,46 @@ describe "Pigments", ->
         buffers: {}
     })
 
-  describe 'service provider API', ->
+  describe 'when deactivated', ->
+    [editor, editorElement, colorBuffer] = []
+    beforeEach ->
+      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
+        editor = e
+        editorElement = atom.views.getView(e)
+        colorBuffer = project.colorBufferForEditor(editor)
+
+      waitsFor -> editorElement.shadowRoot.querySelector('pigments-markers')
+
+      runs ->
+        spyOn(project, 'destroy').andCallThrough()
+        spyOn(colorBuffer, 'destroy').andCallThrough()
+
+        pigments.deactivate()
+
+    it 'destroys the pigments project', ->
+      expect(project.destroy).toHaveBeenCalled()
+
+    it 'destroys all the color buffers that were created', ->
+      expect(project.colorBufferForEditor(editor)).toBeUndefined()
+      expect(project.colorBuffersByEditorId).toBeNull()
+      expect(colorBuffer.destroy).toHaveBeenCalled()
+
+    it 'destroys the color buffer element that were added to the DOM', ->
+      expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()
+
+  describe 'pigments:project-settings', ->
+    item = null
+    beforeEach ->
+      atom.commands.dispatch(workspaceElement, 'pigments:project-settings')
+
+      waitsFor ->
+        item = atom.workspace.getActivePaneItem()
+        item?
+
+    it 'opens a settings view in the active pane', ->
+      item.matches('pigments-color-project')
+
+  describe 'API provider', ->
     [service, editor, editorElement, buffer] = []
     beforeEach ->
       waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
@@ -77,41 +117,141 @@ describe "Pigments", ->
         runs ->
           expect(spy.calls.length).toEqual(2)
 
-  describe 'when deactivated', ->
-    [editor, editorElement, colorBuffer] = []
+  describe 'color expression consumer', ->
+    [colorProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement] = []
     beforeEach ->
-      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
-        editor = e
-        editorElement = atom.views.getView(e)
-        colorBuffer = project.colorBufferForEditor(editor)
+      colorProvider =
+        name: 'todo'
+        regexpString: 'TODO'
+        handle: (match, expression, context) ->
+          @red = 255
 
-      waitsFor -> editorElement.shadowRoot.querySelector('pigments-markers')
+    describe 'when consumed before opening a text editor', ->
+      beforeEach ->
+        consumerDisposable = pigments.consumeColorExpressions(colorProvider)
 
-      runs ->
-        spyOn(project, 'destroy').andCallThrough()
-        spyOn(colorBuffer, 'destroy').andCallThrough()
+        waitsForPromise -> atom.workspace.open('consumer-sample.txt').then (e) ->
+          editor = e
+          editorElement = atom.views.getView(e)
+          colorBuffer = project.colorBufferForEditor(editor)
 
-        pigments.deactivate()
+        waitsForPromise -> colorBuffer.initialize()
+        waitsForPromise -> colorBuffer.variablesAvailable()
 
-    it 'destroys the pigments project', ->
-      expect(project.destroy).toHaveBeenCalled()
+      it 'parses the new expression and renders a color', ->
+        expect(colorBuffer.getColorMarkers().length).toEqual(1)
 
-    it 'destroys all the color buffers that were created', ->
-      expect(project.colorBufferForEditor(editor)).toBeUndefined()
-      expect(project.colorBuffersByEditorId).toBeNull()
-      expect(colorBuffer.destroy).toHaveBeenCalled()
+      it 'returns a Disposable instance', ->
+        expect(consumerDisposable instanceof Disposable).toBeTruthy()
 
-    it 'destroys the color buffer element that were added to the DOM', ->
-      expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()
+      describe 'the returned disposable', ->
+        it 'removes the provided expression from the registry', ->
+          consumerDisposable.dispose()
 
-  describe 'pigments:project-settings', ->
-    item = null
-    beforeEach ->
-      atom.commands.dispatch(workspaceElement, 'pigments:project-settings')
+          expect(project.getColorExpressionsRegistry().getExpression('todo')).toBeUndefined()
 
-      waitsFor ->
-        item = atom.workspace.getActivePaneItem()
-        item?
+        it 'triggers an update in the opened editors', ->
+          updateSpy = jasmine.createSpy('did-update-color-markers')
 
-    it 'opens a settings view in the active pane', ->
-      item.matches('pigments-color-project')
+          colorBuffer.onDidUpdateColorMarkers(updateSpy)
+          consumerDisposable.dispose()
+
+          waitsFor 'did-update-color-markers event dispatched', ->
+            updateSpy.callCount > 0
+
+          runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
+
+    describe 'when consumed after opening a text editor', ->
+      beforeEach ->
+        waitsForPromise -> atom.workspace.open('consumer-sample.txt').then (e) ->
+          editor = e
+          editorElement = atom.views.getView(e)
+          colorBuffer = project.colorBufferForEditor(editor)
+
+        waitsForPromise -> colorBuffer.initialize()
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+      it 'triggers an update in the opened editors', ->
+        updateSpy = jasmine.createSpy('did-update-color-markers')
+
+        colorBuffer.onDidUpdateColorMarkers(updateSpy)
+        consumerDisposable = pigments.consumeColorExpressions(colorProvider)
+
+        waitsFor 'did-update-color-markers event dispatched', ->
+          updateSpy.callCount > 0
+
+        runs ->
+          expect(colorBuffer.getColorMarkers().length).toEqual(1)
+
+          consumerDisposable.dispose()
+
+        waitsFor 'did-update-color-markers event dispatched', ->
+          updateSpy.callCount > 1
+
+        runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
+
+    describe 'when the expression matches a variable value', ->
+      beforeEach ->
+        waitsForPromise -> project.initialize()
+
+      it 'detects the new variable as a color variable', ->
+        variableSpy = jasmine.createSpy('did-update-variables')
+
+        project.onDidUpdateVariables(variableSpy)
+
+        atom.config.set 'pigments.sourceNames', ['**/*.txt']
+
+        waitsFor 'variables updated', -> variableSpy.callCount > 1
+
+        runs ->
+          expect(project.getVariables().length).toEqual(4)
+          expect(project.getColorVariables().length).toEqual(2)
+
+          consumerDisposable = pigments.consumeColorExpressions(colorProvider)
+
+        waitsFor 'variables updated', -> variableSpy.callCount > 2
+
+        runs ->
+          expect(project.getVariables().length).toEqual(4)
+          expect(project.getColorVariables().length).toEqual(3)
+
+      describe 'and there was an expression that could not be resolved before', ->
+        it 'updates the invalid color as a now valid color', ->
+          variableSpy = jasmine.createSpy('did-update-variables')
+
+          project.onDidUpdateVariables(variableSpy)
+
+          atom.config.set 'pigments.sourceNames', ['**/*.txt']
+
+          waitsFor 'variables updated', -> variableSpy.callCount > 1
+
+          runs ->
+            pigments.consumeColorExpressions
+              name: 'bar'
+              regexpString: 'baz\\s+(\\w+)'
+              handle: (match, expression, context) ->
+                [_, expr] = match
+
+                color = context.readColor(expr)
+
+                return @invalid = true if context.isInvalid(color)
+
+                @rgba = color.rgba
+
+            consumerDisposable = pigments.consumeColorExpressions(colorProvider)
+
+            waitsFor 'variables updated', -> variableSpy.callCount > 2
+
+            runs ->
+              expect(project.getVariables().length).toEqual(4)
+              expect(project.getColorVariables().length).toEqual(4)
+              expect(project.getVariableByName('bar').color.invalid).toBeFalsy()
+
+              consumerDisposable.dispose()
+
+            waitsFor 'variables updated', -> variableSpy.callCount > 3
+
+            runs ->
+              expect(project.getVariables().length).toEqual(4)
+              expect(project.getColorVariables().length).toEqual(3)
+              expect(project.getVariableByName('bar').color.invalid).toBeTruthy()

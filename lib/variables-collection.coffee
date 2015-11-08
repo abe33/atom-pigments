@@ -34,6 +34,8 @@ class VariablesCollection
 
   getVariables: -> @variables.slice()
 
+  getNonColorVariables: -> @getVariables().filter (v) -> not v.isColor
+
   getVariablesForPath: (path) -> @variablesByPath[path] ? []
 
   getVariableByName: (name) -> @collectVariablesByName([name]).pop()
@@ -198,6 +200,23 @@ class VariablesCollection
     delete @dependencyGraph[variable.name]
 
   getContext: -> new ColorContext({@variables, @colorVariables, registry})
+
+  evaluateVariables: (variables) ->
+    updated = []
+
+    for v in variables
+      wasColor = v.isColor
+      @evaluateVariableColor(v, wasColor)
+      isColor = v.isColor
+
+      if isColor isnt wasColor
+        updated.push(v)
+
+        if isColor
+          @buildDependencyGraph(v)
+
+    if updated.length > 0
+      @emitChangeEvent(@updateDependencies({updated}))
 
   updateVariable: (previousVariable, variable, batch) ->
     previousDependencies = @getVariableDependencies(previousVariable)

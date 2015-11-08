@@ -1,4 +1,4 @@
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Disposable} = require 'atom'
 uris = require './uris'
 ColorProject = require './color-project'
 [PigmentsProvider, PigmentsAPI, url] = []
@@ -154,6 +154,12 @@ module.exports =
   provideAPI: ->
     PigmentsAPI ?= require './pigments-api'
     new PigmentsAPI(@getProject())
+
+  consumeColorExpressions: ({name, regexpString, handle, priority}={}) ->
+    registry = @getProject().getColorExpressionsRegistry()
+    registry.createExpression(name, regexpString, priority, handle)
+
+    new Disposable -> registry.removeExpression(name)
 
   shouldDisplayContextMenu: (event) ->
     @lastEvent = event

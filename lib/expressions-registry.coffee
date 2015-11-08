@@ -1,3 +1,4 @@
+{Emitter} = require 'atom'
 ColorExpression = require './color-expression'
 vm = require 'vm'
 
@@ -17,6 +18,19 @@ class ExpressionsRegistry
   # The {Object} where color expression handlers are stored
   constructor: (@expressionsType) ->
     @colorExpressions = {}
+    @emitter = new Emitter
+
+  dispose: ->
+    @emitter.dispose()
+
+  onDidAddExpression: (callback) ->
+    @emitter.on 'did-add-expression', callback
+
+  onDidRemoveExpression: (callback) ->
+    @emitter.on 'did-remove-expression', callback
+
+  onDidUpdateExpressions: (callback) ->
+    @emitter.on 'did-update-expressions', callback
 
   getExpressions: ->
     (e for k,e of @colorExpressions).sort((a,b) -> b.priority - a.priority)
@@ -35,10 +49,15 @@ class ExpressionsRegistry
   addExpression: (expression) ->
     delete @regexpString
     @colorExpressions[expression.name] = expression
+    @emitter.emit 'did-add-expression', {name: expression.name, registry: this}
+    @emitter.emit 'did-update-expressions', {name: expression.name, registry: this}
+    expression
 
   removeExpression: (name) ->
     delete @regexpString
     delete @colorExpressions[name]
+    @emitter.emit 'did-remove-expression', {name, registry: this}
+    @emitter.emit 'did-update-expressions', {name, registry: this}
 
   serialize: ->
     out =
