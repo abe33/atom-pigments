@@ -13,7 +13,7 @@ class ColorExpression
     paletteRegexpString = @colorExpressionRegexpForColorVariables(colorVariables)
 
     new ColorExpression
-      name: 'variables'
+      name: 'pigments:variables'
       regexpString: paletteRegexpString
       handle: (match, expression, context) ->
         [_,name] = match

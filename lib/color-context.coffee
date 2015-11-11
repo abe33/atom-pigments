@@ -51,7 +51,7 @@ class ColorContext
         @colorVars[v.name] = v
         @defaultColorVars[v.name] = v if v.path.match /\/.pigments$/
 
-    if not @registry.getExpression('variables')? and @colorVariables.length > 0
+    if not @registry.getExpression('pigments:variables')? and @colorVariables.length > 0
       expr = ColorExpression.colorExpressionForColorVariables(@colorVariables)
       @registry.addExpression(expr)
 

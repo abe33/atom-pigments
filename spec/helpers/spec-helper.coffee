@@ -1,7 +1,7 @@
 registry = require '../../lib/color-expressions'
 
 beforeEach ->
-  registry.removeExpression('variables')
+  registry.removeExpression('pigments:variables')
 
 afterEach ->
-  registry.removeExpression('variables')
+  registry.removeExpression('pigments:variables')

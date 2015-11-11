@@ -142,7 +142,7 @@ class ColorProject
       @loadPathsAndVariables()
 
     @subscriptions.add @colorExpressionsRegistry.onDidUpdateExpressions ({name}) =>
-      return if not @paths? or name is 'variables'
+      return if not @paths? or name is 'pigments:variables'
       @variables.evaluateVariables(@variables.getVariables())
       colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
 

@@ -361,7 +361,7 @@ class ColorBuffer
       # Files that are not part of the sources will only use the variables
       # defined in them and so the global variables expression must be
       # discarded before sending the registry to the child process.
-      delete registry.expressions.variables
+      delete registry.expressions['pigments:variables']
       delete registry.regexpString
 
       options.variables?.getVariables() ? []

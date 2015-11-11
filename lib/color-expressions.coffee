@@ -32,19 +32,19 @@ registry = new ExpressionsRegistry(ColorExpression)
 ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
 # #6f3489ef
-registry.createExpression 'css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
 
   @hexRGBA = hexa
 
 # #3489ef
-registry.createExpression 'css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w])", (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # #6f34
-registry.createExpression 'css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
   colorAsInt = context.readInt(hexa, 16)
 
@@ -55,7 +55,7 @@ registry.createExpression 'css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})
   @alpha = ((colorAsInt & 0xf) * 17) / 255
 
 # #38e
-registry.createExpression 'css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", (match, expression, context) ->
   [_, hexa] = match
   colorAsInt = context.readInt(hexa, 16)
 
@@ -65,19 +65,19 @@ registry.createExpression 'css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})
   @blue = (colorAsInt & 0xf) * 17
 
 # 0xab3489ef
-registry.createExpression 'int_hexa_8', "0x(#{hexadecimal}{8})(?!#{hexadecimal})", (match, expression, context) ->
+registry.createExpression 'pigments:int_hexa_8', "0x(#{hexadecimal}{8})(?!#{hexadecimal})", (match, expression, context) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # 0x3489ef
-registry.createExpression 'int_hexa_6', "0x(#{hexadecimal}{6})(?!#{hexadecimal})", (match, expression, context) ->
+registry.createExpression 'pigments:int_hexa_6', "0x(#{hexadecimal}{6})(?!#{hexadecimal})", (match, expression, context) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # rgb(50,120,200)
-registry.createExpression 'css_rgb', strip("
+registry.createExpression 'pigments:css_rgb', strip("
   rgb#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
@@ -94,7 +94,7 @@ registry.createExpression 'css_rgb', strip("
   @alpha = 1
 
 # rgba(50,120,200,0.7)
-registry.createExpression 'css_rgba', strip("
+registry.createExpression 'pigments:css_rgba', strip("
   rgba#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
@@ -113,7 +113,7 @@ registry.createExpression 'css_rgba', strip("
   @alpha = context.readFloat(a)
 
 # rgba(green,0.7)
-registry.createExpression 'stylus_rgba', strip("
+registry.createExpression 'pigments:stylus_rgba', strip("
   rgba#{ps}\\s*
     (#{notQuote})
     #{comma}
@@ -130,7 +130,7 @@ registry.createExpression 'stylus_rgba', strip("
   @alpha = context.readFloat(a)
 
 # hsl(210,50%,50%)
-registry.createExpression 'css_hsl', strip("
+registry.createExpression 'pigments:css_hsl', strip("
   hsl#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -153,7 +153,7 @@ registry.createExpression 'css_hsl', strip("
   @alpha = 1
 
 # hsla(210,50%,50%,0.7)
-registry.createExpression 'css_hsla', strip("
+registry.createExpression 'pigments:css_hsla', strip("
   hsla#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -178,7 +178,7 @@ registry.createExpression 'css_hsla', strip("
   @alpha = context.readFloat(a)
 
 # hsv(210,70%,90%)
-registry.createExpression 'hsv', strip("
+registry.createExpression 'pigments:hsv', strip("
   (?:hsv|hsb)#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -201,7 +201,7 @@ registry.createExpression 'hsv', strip("
   @alpha = 1
 
 # hsva(210,70%,90%,0.7)
-registry.createExpression 'hsva', strip("
+registry.createExpression 'pigments:hsva', strip("
   (?:hsva|hsba)#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -226,7 +226,7 @@ registry.createExpression 'hsva', strip("
   @alpha = context.readFloat(a)
 
 # vec4(0.2, 0.5, 0.9, 0.7)
-registry.createExpression 'vec4', strip("
+registry.createExpression 'pigments:vec4', strip("
   vec4#{ps}\\s*
     (#{float})
     #{comma}
@@ -247,7 +247,7 @@ registry.createExpression 'vec4', strip("
   ]
 
 # hwb(210,40%,40%)
-registry.createExpression 'hwb', strip("
+registry.createExpression 'pigments:hwb', strip("
   hwb#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -268,7 +268,7 @@ registry.createExpression 'hwb', strip("
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
-registry.createExpression 'gray', strip("
+registry.createExpression 'pigments:gray', strip("
   gray#{ps}\\s*
     (#{optionalPercent}|#{variables})
     (?:#{comma}(#{float}|#{variables}))?
@@ -284,7 +284,7 @@ registry.createExpression 'gray', strip("
 colors = Object.keys(SVGColors.allCases)
 colorRegexp = "(?:#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
 
-registry.createExpression 'named_colors', colorRegexp, (match, expression, context) ->
+registry.createExpression 'pigments:named_colors', colorRegexp, (match, expression, context) ->
   [_,name] = match
 
   @colorExpression = @name = name
@@ -299,7 +299,7 @@ registry.createExpression 'named_colors', colorRegexp, (match, expression, conte
 ##    ##        #######  ##    ##  ######
 
 # darken(#666666, 20%)
-registry.createExpression 'darken', strip("
+registry.createExpression 'pigments:darken', strip("
   darken#{ps}
     (#{notQuote})
     #{comma}
@@ -319,7 +319,7 @@ registry.createExpression 'darken', strip("
   @alpha = baseColor.alpha
 
 # lighten(#666666, 20%)
-registry.createExpression 'lighten', strip("
+registry.createExpression 'pigments:lighten', strip("
   lighten#{ps}
     (#{notQuote})
     #{comma}
@@ -340,7 +340,7 @@ registry.createExpression 'lighten', strip("
 
 # fade(#ffffff, 0.5)
 # alpha(#ffffff, 0.5)
-registry.createExpression 'fade', strip("
+registry.createExpression 'pigments:fade', strip("
   (?:fade|alpha)#{ps}
     (#{notQuote})
     #{comma}
@@ -360,7 +360,7 @@ registry.createExpression 'fade', strip("
 # transparentize(#ffffff, 0.5)
 # transparentize(#ffffff, 50%)
 # fadeout(#ffffff, 0.5)
-registry.createExpression 'transparentize', strip("
+registry.createExpression 'pigments:transparentize', strip("
   (?:transparentize|fadeout|fade-out|fade_out)#{ps}
     (#{notQuote})
     #{comma}
@@ -381,7 +381,7 @@ registry.createExpression 'transparentize', strip("
 # opacify(0x78ffffff, 50%)
 # fadein(0x78ffffff, 0.5)
 # alpha(0x78ffffff, 0.5)
-registry.createExpression 'opacify', strip("
+registry.createExpression 'pigments:opacify', strip("
   (?:opacify|fadein|fade-in|fade_in)#{ps}
     (#{notQuote})
     #{comma}
@@ -401,7 +401,7 @@ registry.createExpression 'opacify', strip("
 # red(#000,255)
 # green(#000,255)
 # blue(#000,255)
-registry.createExpression 'stylus_component_functions', strip("
+registry.createExpression 'pigments:stylus_component_functions', strip("
   (red|green|blue)#{ps}
     (#{notQuote})
     #{comma}
@@ -419,7 +419,7 @@ registry.createExpression 'stylus_component_functions', strip("
   @[channel] = amount
 
 # transparentify(#808080)
-registry.createExpression 'transparentify', strip("
+registry.createExpression 'pigments:transparentify', strip("
   transparentify#{ps}
   (#{notQuote})
   #{pe}
@@ -458,7 +458,7 @@ registry.createExpression 'transparentify', strip("
   @alpha = Math.round(bestAlpha * 100) / 100
 
 # hue(#855, 60deg)
-registry.createExpression 'hue', strip("
+registry.createExpression 'pigments:hue', strip("
   hue#{ps}
     (#{notQuote})
     #{comma}
@@ -480,7 +480,7 @@ registry.createExpression 'hue', strip("
 
 # saturation(#855, 60deg)
 # lightness(#855, 60deg)
-registry.createExpression 'stylus_sl_component_functions', strip("
+registry.createExpression 'pigments:stylus_sl_component_functions', strip("
   (saturation|lightness)#{ps}
     (#{notQuote})
     #{comma}
@@ -499,7 +499,7 @@ registry.createExpression 'stylus_sl_component_functions', strip("
   @rgba = baseColor.rgba
 
 # adjust-hue(#855, 60deg)
-registry.createExpression 'adjust-hue', strip("
+registry.createExpression 'pigments:adjust-hue', strip("
   adjust-hue#{ps}
     (#{notQuote})
     #{comma}
@@ -520,7 +520,7 @@ registry.createExpression 'adjust-hue', strip("
 
 # mix(#f00, #00F, 25%)
 # mix(#f00, #00F)
-registry.createExpression 'mix', strip("
+registry.createExpression 'pigments:mix', strip("
   mix#{ps}
     (
       #{notQuote}
@@ -548,7 +548,7 @@ registry.createExpression 'mix', strip("
   {@rgba} = context.mixColors(baseColor1, baseColor2, amount)
 
 # tint(red, 50%)
-registry.createExpression 'tint', strip("
+registry.createExpression 'pigments:tint', strip("
   tint#{ps}
     (#{notQuote})
     #{comma}
@@ -567,7 +567,7 @@ registry.createExpression 'tint', strip("
   @rgba = context.mixColors(white, baseColor, amount).rgba
 
 # shade(red, 50%)
-registry.createExpression 'shade', strip("
+registry.createExpression 'pigments:shade', strip("
   shade#{ps}
     (#{notQuote})
     #{comma}
@@ -587,7 +587,7 @@ registry.createExpression 'shade', strip("
 
 # desaturate(#855, 20%)
 # desaturate(#855, 0.2)
-registry.createExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
+registry.createExpression 'pigments:desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -602,7 +602,7 @@ registry.createExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{
 
 # saturate(#855, 20%)
 # saturate(#855, 0.2)
-registry.createExpression 'saturate', strip("
+registry.createExpression 'pigments:saturate', strip("
   saturate#{ps}
     (#{notQuote})
     #{comma}
@@ -623,7 +623,7 @@ registry.createExpression 'saturate', strip("
 
 # grayscale(red)
 # greyscale(red)
-registry.createExpression 'grayscale', "gr(?:a|e)yscale#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+registry.createExpression 'pigments:grayscale', "gr(?:a|e)yscale#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
   [_, subexpr] = match
 
   baseColor = context.readColor(subexpr)
@@ -636,7 +636,7 @@ registry.createExpression 'grayscale', "gr(?:a|e)yscale#{ps}(#{notQuote})#{pe}",
   @alpha = baseColor.alpha
 
 # invert(green)
-registry.createExpression 'invert', "invert#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+registry.createExpression 'pigments:invert', "invert#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
   [_, subexpr] = match
 
   baseColor = context.readColor(subexpr)
@@ -649,7 +649,7 @@ registry.createExpression 'invert', "invert#{ps}(#{notQuote})#{pe}", (match, exp
   @alpha = baseColor.alpha
 
 # complement(green)
-registry.createExpression 'complement', "complement#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
+registry.createExpression 'pigments:complement', "complement#{ps}(#{notQuote})#{pe}", (match, expression, context) ->
   [_, subexpr] = match
 
   baseColor = context.readColor(subexpr)
@@ -663,7 +663,7 @@ registry.createExpression 'complement', "complement#{ps}(#{notQuote})#{pe}", (ma
 
 # spin(green, 20)
 # spin(green, 20deg)
-registry.createExpression 'spin', strip("
+registry.createExpression 'pigments:spin', strip("
   spin#{ps}
     (#{notQuote})
     #{comma}
@@ -683,7 +683,7 @@ registry.createExpression 'spin', strip("
   @alpha = baseColor.alpha
 
 # contrast(#666666, #111111, #999999, threshold)
-registry.createExpression 'contrast_n_arguments', strip("
+registry.createExpression 'pigments:contrast_n_arguments', strip("
   contrast#{ps}
     (
       #{notQuote}
@@ -712,7 +712,7 @@ registry.createExpression 'contrast_n_arguments', strip("
   {@rgb} = context.contrast(baseColor, dark, light, threshold)
 
 # contrast(#666666)
-registry.createExpression 'contrast_1_argument', strip("
+registry.createExpression 'pigments:contrast_1_argument', strip("
   contrast#{ps}
     (#{notQuote})
   #{pe}
@@ -726,7 +726,7 @@ registry.createExpression 'contrast_1_argument', strip("
   {@rgb} = context.contrast(baseColor)
 
 # color(green tint(50%))
-registry.createExpression 'css_color_function', "(?:#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", (match, expression, context) ->
+registry.createExpression 'pigments:css_color_function', "(?:#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", (match, expression, context) ->
   try
     [_,expr] = match
     cssColor = require 'css-color-function'
@@ -737,7 +737,7 @@ registry.createExpression 'css_color_function', "(?:#{namePrefixes})(color#{ps}(
     @invalid = true
 
 # adjust-color(red, $lightness: 30%)
-registry.createExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+registry.createExpression 'pigments:sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
   [_, subexpr] = match
   res = context.split(subexpr)
   subject = res[0]
@@ -754,7 +754,7 @@ registry.createExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{
   @rgba = baseColor.rgba
 
 # scale-color(red, $lightness: 30%)
-registry.createExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+registry.createExpression 'pigments:sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
   MAX_PER_COMPONENT =
     red: 255
     green: 255
@@ -788,7 +788,7 @@ registry.createExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe
   @rgba = baseColor.rgba
 
 # change-color(red, $lightness: 30%)
-registry.createExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
+registry.createExpression 'pigments:sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (match, expression, context) ->
   [_, subexpr] = match
   res = context.split(subexpr)
   subject = res[0]
@@ -805,7 +805,7 @@ registry.createExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{
   @rgba = baseColor.rgba
 
 # blend(rgba(#FFDE00,.42), 0x19C261)
-registry.createExpression 'stylus_blend', strip("
+registry.createExpression 'pigments:stylus_blend', strip("
   blend#{ps}
     (
       #{notQuote}
@@ -831,7 +831,7 @@ registry.createExpression 'stylus_blend', strip("
   ]
 
 # Color(50,120,200,255)
-registry.createExpression 'lua_rgba', strip("
+registry.createExpression 'pigments:lua_rgba', strip("
   Color#{ps}\\s*
     (#{int}|#{variables})
     #{comma}
@@ -858,7 +858,7 @@ registry.createExpression 'lua_rgba', strip("
 ##    ########  ######## ######## ##    ## ########
 
 # multiply(#f00, #00F)
-registry.createExpression 'multiply', strip("
+registry.createExpression 'pigments:multiply', strip("
   multiply#{ps}
     (
       #{notQuote}
@@ -879,7 +879,7 @@ registry.createExpression 'multiply', strip("
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.MULTIPLY)
 
 # screen(#f00, #00F)
-registry.createExpression 'screen', strip("
+registry.createExpression 'pigments:screen', strip("
   screen#{ps}
     (
       #{notQuote}
@@ -901,7 +901,7 @@ registry.createExpression 'screen', strip("
 
 
 # overlay(#f00, #00F)
-registry.createExpression 'overlay', strip("
+registry.createExpression 'pigments:overlay', strip("
   overlay#{ps}
     (
       #{notQuote}
@@ -923,7 +923,7 @@ registry.createExpression 'overlay', strip("
 
 
 # softlight(#f00, #00F)
-registry.createExpression 'softlight', strip("
+registry.createExpression 'pigments:softlight', strip("
   softlight#{ps}
     (
       #{notQuote}
@@ -945,7 +945,7 @@ registry.createExpression 'softlight', strip("
 
 
 # hardlight(#f00, #00F)
-registry.createExpression 'hardlight', strip("
+registry.createExpression 'pigments:hardlight', strip("
   hardlight#{ps}
     (
       #{notQuote}
@@ -967,7 +967,7 @@ registry.createExpression 'hardlight', strip("
 
 
 # difference(#f00, #00F)
-registry.createExpression 'difference', strip("
+registry.createExpression 'pigments:difference', strip("
   difference#{ps}
     (
       #{notQuote}
@@ -988,7 +988,7 @@ registry.createExpression 'difference', strip("
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.DIFFERENCE)
 
 # exclusion(#f00, #00F)
-registry.createExpression 'exclusion', strip("
+registry.createExpression 'pigments:exclusion', strip("
   exclusion#{ps}
     (
       #{notQuote}
@@ -1009,7 +1009,7 @@ registry.createExpression 'exclusion', strip("
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.EXCLUSION)
 
 # average(#f00, #00F)
-registry.createExpression 'average', strip("
+registry.createExpression 'pigments:average', strip("
   average#{ps}
     (
       #{notQuote}
@@ -1030,7 +1030,7 @@ registry.createExpression 'average', strip("
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.AVERAGE)
 
 # negation(#f00, #00F)
-registry.createExpression 'negation', strip("
+registry.createExpression 'pigments:negation', strip("
   negation#{ps}
     (
       #{notQuote}
@@ -1059,7 +1059,7 @@ registry.createExpression 'negation', strip("
 ##    ######## ######## ##     ##
 
 # rgba 50 120 200 1
-registry.createExpression 'elm_rgba', strip("
+registry.createExpression 'pigments:elm_rgba', strip("
   rgba\\s+
     (#{int}|#{variables})
     \\s+
@@ -1077,7 +1077,7 @@ registry.createExpression 'elm_rgba', strip("
   @alpha = context.readFloat(a)
 
 # rgb 50 120 200
-registry.createExpression 'elm_rgb', strip("
+registry.createExpression 'pigments:elm_rgb', strip("
   rgb\\s+
     (#{int}|#{variables})
     \\s+
@@ -1094,7 +1094,7 @@ registry.createExpression 'elm_rgb', strip("
 elmAngle = "(?:#{float}|\\(degrees\\s+(?:#{int}|#{variables})\\))"
 
 # hsl 210 50 50
-registry.createExpression 'elm_hsl', strip("
+registry.createExpression 'pigments:elm_hsl', strip("
   hsl\\s+
     (#{elmAngle}|#{variables})
     \\s+
@@ -1123,7 +1123,7 @@ registry.createExpression 'elm_hsl', strip("
   @alpha = 1
 
 # hsla 210 50 50 0.7
-registry.createExpression 'elm_hsla', strip("
+registry.createExpression 'pigments:elm_hsla', strip("
   hsla\\s+
     (#{elmAngle}|#{variables})
     \\s+
@@ -1154,12 +1154,12 @@ registry.createExpression 'elm_hsla', strip("
   @alpha = context.readFloat(a)
 
 # grayscale 1
-registry.createExpression 'elm_grayscale', "gr(?:a|e)yscale\\s+(#{float}|#{variables})", (match, expression, context) ->
+registry.createExpression 'pigments:elm_grayscale', "gr(?:a|e)yscale\\s+(#{float}|#{variables})", (match, expression, context) ->
   [_,amount] = match
   amount = Math.floor(255 - context.readFloat(amount) * 255)
   @rgb = [amount, amount, amount]
 
-registry.createExpression 'elm_complement', strip("
+registry.createExpression 'pigments:elm_complement', strip("
   complement\\s+(#{notQuote})
 "), (match, expression, context) ->
   [_, subexpr] = match
