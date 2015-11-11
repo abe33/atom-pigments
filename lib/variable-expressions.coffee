@@ -1,4 +1,3 @@
-{strip} = require './utils'
 ExpressionsRegistry = require './expressions-registry'
 VariableExpression = require './variable-expression'
 
@@ -39,7 +38,7 @@ registry.createExpression 'stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\
       buffer += char
       inCommaSensitiveContext = !commaSensitiveEnd.test(char)
     else if /[,\n]/.test(char)
-      buffer = strip(buffer)
+      buffer = buffer.replace(/\s+/g, '')
       if buffer.length
         [key, value] = buffer.split(/\s*:\s*/)
 

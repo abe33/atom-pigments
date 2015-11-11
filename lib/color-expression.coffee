@@ -1,7 +1,32 @@
 Color = require './color'
+{createVariableRegExpString} = require './regexes'
 
 module.exports =
 class ColorExpression
+  @colorExpressionForContext: (context) ->
+    @colorExpressionForColorVariables(context.getColorVariables())
+
+  @colorExpressionRegexpForColorVariables: (colorVariables) ->
+    createVariableRegExpString(colorVariables)
+
+  @colorExpressionForColorVariables: (colorVariables) ->
+    paletteRegexpString = @colorExpressionRegexpForColorVariables(colorVariables)
+
+    new ColorExpression
+      name: 'variables'
+      regexpString: paletteRegexpString
+      handle: (match, expression, context) ->
+        [_,name] = match
+        return @invalid = true if context.readColorExpression(name) is name
+
+        baseColor = context.readColor(name)
+        @colorExpression = name
+        @variables = baseColor?.variables
+
+        return @invalid = true if context.isInvalid(baseColor)
+
+        @rgba = baseColor.rgba
+
   constructor: ({@name, @regexpString, @handle}) ->
     @regexp = new RegExp("^#{@regexpString}$")
 

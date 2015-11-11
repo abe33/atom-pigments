@@ -1,18 +1,14 @@
 {countLines} = require './utils'
 VariableParser = require './variable-parser'
-[registry, regexpString, regexp] = []
 
 module.exports =
 class VariableScanner
   constructor: (params={}) ->
-    {@parser} = params
-    @parser ?= new VariableParser
+    {@parser, @registry} = params
+    @parser ?= new VariableParser(@registry)
 
   getRegExp: ->
-    registry ?= require './variable-expressions'
-    regexpString ?= registry.getRegExp()
-
-    regexp ?= new RegExp(regexpString, 'gm')
+    @regexp ?= new RegExp(@registry.getRegExp(), 'gm')
 
   search: (text, start=0) ->
     regexp = @getRegExp()

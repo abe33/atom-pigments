@@ -1,4 +1,5 @@
 VariableParser = require '../lib/variable-parser'
+registry = require '../lib/variable-expressions'
 
 describe 'VariableParser', ->
   [parser] = []
@@ -22,7 +23,7 @@ describe 'VariableParser', ->
       this
 
   beforeEach ->
-    parser = new VariableParser
+    parser = new VariableParser(registry)
 
   itParses('color = white').as('color': 'white')
   itParses('non-color = 10px').as('non-color': '10px')

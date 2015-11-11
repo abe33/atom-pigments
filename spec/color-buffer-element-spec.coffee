@@ -1,4 +1,6 @@
 path = require 'path'
+require './helpers/spec-helper'
+
 ColorBufferElement = require '../lib/color-buffer-element'
 ColorMarkerElement = require '../lib/color-marker-element'
 

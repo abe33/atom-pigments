@@ -1,6 +1,6 @@
 {Emitter} = require 'atom'
 {Minimatch} = require 'minimatch'
-{getRegistry} = require './color-expressions'
+registry = require './color-expressions'
 ColorParser = require './color-parser'
 ColorContext = require './color-context'
 
@@ -9,11 +9,10 @@ class ColorSearch
   constructor: (options={}) ->
     {@sourceNames, ignoredNames, @context} = options
     @emitter = new Emitter
-    @parser = new ColorParser
-    @context ?= new ColorContext([])
+    @context ?= new ColorContext({registry})
+    @parser = @context.parser
     @variables = @context.getVariables()
     @sourceNames ?= []
-    @context.parser = @parser
     ignoredNames ?= []
 
     @ignoredNames = []
@@ -30,8 +29,6 @@ class ColorSearch
     @emitter.on 'did-complete-search', callback
 
   search: ->
-    registry = getRegistry(@context)
-
     re = new RegExp registry.getRegExp()
     results = []
 

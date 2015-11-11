@@ -2,32 +2,44 @@ require './spec-helper'
 
 ColorParser = require '../lib/color-parser'
 ColorContext = require '../lib/color-context'
+ColorExpression = require '../lib/color-expression'
+registry = require '../lib/color-expressions'
 
 describe 'ColorParser', ->
   [parser] = []
 
   asColor = (value) -> "color:#{value}"
 
+  getParser = (context) ->
+    context = new ColorContext(context ? {registry})
+    context.parser
+
   itParses = (expression) ->
     description: ''
     asColor: (r,g,b,a=1) ->
       context = @context
       describe @description, ->
+        beforeEach -> parser = getParser(context)
+
         it "parses '#{expression}' as a color", ->
           if context?
-            expect(parser.parse(expression, context)).toBeColor(r,g,b,a, context.getVariablesNames().sort())
+            expect(parser.parse(expression, context)).toBeColor(r,g,b,a, Object.keys(context).sort())
           else
             expect(parser.parse(expression)).toBeColor(r,g,b,a)
 
     asUndefined: ->
       context = @context
       describe @description, ->
+        beforeEach -> parser = getParser(context)
+
         it "does not parse '#{expression}' and return undefined", ->
           expect(parser.parse(expression, context)).toBeUndefined()
 
     asInvalid: ->
       context = @context
       describe @description, ->
+        beforeEach -> parser = getParser(context)
+
         it "parses '#{expression}' as an invalid color", ->
           expect(parser.parse(expression, context)).not.toBeValid()
 
@@ -43,13 +55,10 @@ describe 'ColorParser', ->
 
         else
           vars.push {name, value, path}
-      @context = new ColorContext({variables: vars, colorVariables: colorVars})
+      @context = {variables: vars, colorVariables: colorVars, registry}
       @description = "with variables context #{jasmine.pp variables} "
 
       return this
-
-  beforeEach ->
-    parser = new ColorParser
 
   itParses('@list-item-height').withContext({
       '@text-height': '@scale-b-xxl * 1rem'

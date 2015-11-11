@@ -1,12 +1,15 @@
 VariableScanner = require '../variable-scanner'
 ColorContext = require '../color-context'
+VariableExpression = require '../variable-expression'
+ExpressionsRegistry = require '../expressions-registry'
 
 VariablesChunkSize = 100
 
 class BufferVariablesScanner
   constructor: (config) ->
-    {@buffer} = config
-    @scanner = new VariableScanner()
+    {@buffer, registry} = config
+    registry = ExpressionsRegistry.deserialize(registry, VariableExpression)
+    @scanner = new VariableScanner({registry})
     @results = []
 
   scan: ->

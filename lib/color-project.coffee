@@ -111,6 +111,9 @@ class ColorProject
     @subscriptions = new CompositeDisposable
     @colorBuffersByEditorId = {}
 
+    @variableExpressionsRegistry = require './variable-expressions'
+    @colorExpressionsRegistry = require './color-expressions'
+
     if variables?
       @variables = atom.deserializers.deserialize(variables)
     else
@@ -138,6 +141,15 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.ignoreVcsIgnoredPaths', =>
       @loadPathsAndVariables()
 
+    @subscriptions.add @colorExpressionsRegistry.onDidUpdateExpressions ({name}) =>
+      return if not @paths? or name is 'variables'
+      @variables.evaluateVariables(@variables.getVariables())
+      colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
+
+    @subscriptions.add @variableExpressionsRegistry.onDidUpdateExpressions =>
+      return unless @paths?
+      @reloadVariablesForPaths(@getPaths())
+
     @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
@@ -162,6 +174,9 @@ class ColorProject
 
   onDidChangeIgnoredScopes: (callback) ->
     @emitter.on 'did-change-ignored-scopes', callback
+
+  onDidChangePaths: (callback) ->
+    @emitter.on 'did-change-paths', callback
 
   observeColorBuffers: (callback) ->
     callback(colorBuffer) for id,colorBuffer of @colorBuffersByEditorId
@@ -331,6 +346,7 @@ class ColorProject
       @paths = @paths.filter (p) -> p not in removed
       @paths.push(p) for p in dirtied when p not in @paths
 
+      @emitter.emit 'did-change-paths', @getPaths()
       @reloadVariablesForPaths(dirtied)
 
   isVariablesSourcePath: (path) ->
@@ -361,11 +377,15 @@ class ColorProject
 
   getVariables: -> @variables.getVariables()
 
+  getVariableExpressionsRegistry: -> @variableExpressionsRegistry
+
   getVariableById: (id) -> @variables.getVariableById(id)
 
   getVariableByName: (name) -> @variables.getVariableByName(name)
 
   getColorVariables: -> @variables.getColorVariables()
+
+  getColorExpressionsRegistry: -> @colorExpressionsRegistry
 
   showVariableInFile: (variable) ->
     atom.workspace.open(variable.path).then (editor) ->
@@ -415,7 +435,7 @@ class ColorProject
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
-      PathsScanner.startTask paths, (results) -> callback(results)
+      PathsScanner.startTask paths, @variableExpressionsRegistry, (results) -> callback(results)
 
   loadThemesVariables: ->
     iterator = 0

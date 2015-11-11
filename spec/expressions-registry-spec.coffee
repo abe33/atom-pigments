@@ -5,7 +5,7 @@ describe 'ExpressionsRegistry', ->
 
   beforeEach ->
     class Dummy
-      constructor: ({@name}) ->
+      constructor: ({@name, @regexpString, @handle}) ->
 
     registry = new ExpressionsRegistry(Dummy)
 
@@ -45,3 +45,40 @@ describe 'ExpressionsRegistry', ->
       registry.removeExpression('dummy')
 
       expect(registry.getExpressions()).toEqual([])
+
+  describe '::serialize', ->
+    it 'serializes the registry with the function content', ->
+      registry.createExpression 'dummy', 'foo'
+      registry.createExpression 'dummy2', 'bar', (a,b,c) -> a + b - c
+
+      serialized = registry.serialize()
+
+      expect(serialized.regexpString).toEqual('(foo)|(bar)')
+      expect(serialized.expressions.dummy).toEqual({
+        name: 'dummy'
+        regexpString: 'foo'
+        handle: undefined
+      })
+
+      expect(serialized.expressions.dummy2).toEqual({
+        name: 'dummy2'
+        regexpString: 'bar'
+        handle: registry.getExpression('dummy2').handle.toString()
+      })
+
+  describe '.deserialize', ->
+    it 'deserializes the provided expressions using the specified model', ->
+      serialized =
+        regexpString: 'foo|bar'
+        expressions:
+          dummy:
+            name: 'dummy'
+            regexpString: 'foo'
+            handle: 'function (a,b,c) { return a + b - c; }'
+
+      deserialized = ExpressionsRegistry.deserialize(serialized, Dummy)
+
+      expect(deserialized.getRegExp()).toEqual('foo|bar')
+      expect(deserialized.getExpression('dummy').name).toEqual('dummy')
+      expect(deserialized.getExpression('dummy').regexpString).toEqual('foo')
+      expect(deserialized.getExpression('dummy').handle(1,2,3)).toEqual(0)
