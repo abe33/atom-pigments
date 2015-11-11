@@ -118,7 +118,7 @@ describe "Pigments", ->
           expect(spy.calls.length).toEqual(2)
 
   describe 'color expression consumer', ->
-    [colorProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement] = []
+    [colorProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement, otherConsumerDisposable] = []
     beforeEach ->
       colorProvider =
         name: 'todo'
@@ -126,11 +126,15 @@ describe "Pigments", ->
         handle: (match, expression, context) ->
           @red = 255
 
+    afterEach ->
+      consumerDisposable?.dispose()
+      otherConsumerDisposable?.dispose()
+
     describe 'when consumed before opening a text editor', ->
       beforeEach ->
         consumerDisposable = pigments.consumeColorExpressions(colorProvider)
 
-        waitsForPromise -> atom.workspace.open('consumer-sample.txt').then (e) ->
+        waitsForPromise -> atom.workspace.open('color-consumer-sample.txt').then (e) ->
           editor = e
           editorElement = atom.views.getView(e)
           colorBuffer = project.colorBufferForEditor(editor)
@@ -163,7 +167,7 @@ describe "Pigments", ->
 
     describe 'when consumed after opening a text editor', ->
       beforeEach ->
-        waitsForPromise -> atom.workspace.open('consumer-sample.txt').then (e) ->
+        waitsForPromise -> atom.workspace.open('color-consumer-sample.txt').then (e) ->
           editor = e
           editorElement = atom.views.getView(e)
           colorBuffer = project.colorBufferForEditor(editor)
@@ -226,7 +230,7 @@ describe "Pigments", ->
           waitsFor 'variables updated', -> variableSpy.callCount > 1
 
           runs ->
-            pigments.consumeColorExpressions
+            otherConsumerDisposable = pigments.consumeColorExpressions
               name: 'bar'
               regexpString: 'baz\\s+(\\w+)'
               handle: (match, expression, context) ->
@@ -255,3 +259,46 @@ describe "Pigments", ->
               expect(project.getVariables().length).toEqual(4)
               expect(project.getColorVariables().length).toEqual(3)
               expect(project.getVariableByName('bar').color.invalid).toBeTruthy()
+
+  describe 'variable expression consumer', ->
+    [variableProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement] = []
+
+    beforeEach ->
+      variableProvider =
+        name: 'todo'
+        regexpString: '(TODO):\\s*([^;\\n]+)'
+
+      waitsForPromise -> project.initialize()
+
+    afterEach -> consumerDisposable?.dispose()
+
+    it 'updates the project variables when consumed', ->
+      variableSpy = jasmine.createSpy('did-update-variables')
+
+      project.onDidUpdateVariables(variableSpy)
+
+      atom.config.set 'pigments.sourceNames', ['**/*.txt']
+
+      waitsFor 'variables updated', -> variableSpy.callCount > 1
+
+      runs ->
+        expect(project.getVariables().length).toEqual(4)
+        expect(project.getColorVariables().length).toEqual(2)
+
+        consumerDisposable = pigments.consumeVariableExpressions(variableProvider)
+
+      waitsFor 'variables updated after service consumed', ->
+        variableSpy.callCount > 2
+
+      runs ->
+        expect(project.getVariables().length).toEqual(5)
+        expect(project.getColorVariables().length).toEqual(2)
+
+        consumerDisposable.dispose()
+
+      waitsFor 'variables updated after service disposed', ->
+        variableSpy.callCount > 3
+
+      runs ->
+        expect(project.getVariables().length).toEqual(4)
+        expect(project.getColorVariables().length).toEqual(2)

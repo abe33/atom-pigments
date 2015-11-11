@@ -69,10 +69,12 @@ class VariablesCollection
 
   updateCollection: (collection, paths) ->
     pathsCollection = {}
+    remainingPaths = []
 
     for v in collection
       pathsCollection[v.path] ?= []
       pathsCollection[v.path].push(v)
+      remainingPaths.push(v.path) unless v.path in remainingPaths
 
     results = {
       created: []
@@ -87,8 +89,13 @@ class VariablesCollection
       results.updated = results.updated.concat(updated) if updated?
       results.destroyed = results.destroyed.concat(destroyed) if destroyed?
 
-    if collection.length is 0 and paths
-      for path in paths
+    if paths?
+      pathsToDestroy = if collection.length is 0
+        paths
+      else
+        paths.filter (p) -> p not in remainingPaths
+
+      for path in pathsToDestroy
         {created, updated, destroyed} = @updatePathCollection(path, collection, true) or {}
 
         results.created = results.created.concat(created) if created?

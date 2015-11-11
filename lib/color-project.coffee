@@ -146,6 +146,10 @@ class ColorProject
       @variables.evaluateVariables(@variables.getVariables())
       colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
 
+    @subscriptions.add @variableExpressionsRegistry.onDidUpdateExpressions =>
+      return unless @paths?
+      @reloadVariablesForPaths(@getPaths())
+
     @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?

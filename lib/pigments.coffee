@@ -161,6 +161,12 @@ module.exports =
 
     new Disposable -> registry.removeExpression(name)
 
+  consumeVariableExpressions: ({name, regexpString, handle, priority}={}) ->
+    registry = @getProject().getVariableExpressionsRegistry()
+    registry.createExpression(name, regexpString, priority, handle)
+
+    new Disposable -> registry.removeExpression(name)
+
   shouldDisplayContextMenu: (event) ->
     @lastEvent = event
     setTimeout (=> @lastEvent = null), 10
