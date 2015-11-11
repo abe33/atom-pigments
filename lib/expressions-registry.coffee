@@ -46,12 +46,28 @@ class ExpressionsRegistry
     newExpression.priority = priority
     @addExpression newExpression
 
-  addExpression: (expression) ->
+  addExpression: (expression, batch=false) ->
     delete @regexpString
     @colorExpressions[expression.name] = expression
-    @emitter.emit 'did-add-expression', {name: expression.name, registry: this}
-    @emitter.emit 'did-update-expressions', {name: expression.name, registry: this}
+
+    unless batch
+      @emitter.emit 'did-add-expression', {name: expression.name, registry: this}
+      @emitter.emit 'did-update-expressions', {name: expression.name, registry: this}
     expression
+
+  createExpressions: (expressions) ->
+    @addExpressions expressions.map (e) =>
+      {name, regexpString, handle, priority} = e
+      priority ?= 0
+      expression = new @expressionsType({name, regexpString, handle})
+      expression.priority = priority
+      expression
+
+  addExpressions: (expressions) ->
+    for expression in expressions
+      @addExpression(expression, true)
+      @emitter.emit 'did-add-expression', {name: expression.name, registry: this}
+    @emitter.emit 'did-update-expressions', {registry: this}
 
   removeExpression: (name) ->
     delete @regexpString

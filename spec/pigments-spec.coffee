@@ -194,6 +194,28 @@ describe "Pigments", ->
 
         runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
 
+      describe 'when an array of expressions is passed', ->
+        it 'triggers an update in the opened editors', ->
+          updateSpy = jasmine.createSpy('did-update-color-markers')
+
+          colorBuffer.onDidUpdateColorMarkers(updateSpy)
+          consumerDisposable = pigments.consumeColorExpressions({
+            expressions: [colorProvider]
+          })
+
+          waitsFor 'did-update-color-markers event dispatched', ->
+            updateSpy.callCount > 0
+
+          runs ->
+            expect(colorBuffer.getColorMarkers().length).toEqual(1)
+
+            consumerDisposable.dispose()
+
+          waitsFor 'did-update-color-markers event dispatched', ->
+            updateSpy.callCount > 1
+
+          runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
+
     describe 'when the expression matches a variable value', ->
       beforeEach ->
         waitsForPromise -> project.initialize()
@@ -302,3 +324,37 @@ describe "Pigments", ->
       runs ->
         expect(project.getVariables().length).toEqual(4)
         expect(project.getColorVariables().length).toEqual(2)
+
+    describe 'when an array of expressions is passed', ->
+      it 'updates the project variables when consumed', ->
+        variableSpy = jasmine.createSpy('did-update-variables')
+
+        project.onDidUpdateVariables(variableSpy)
+
+        atom.config.set 'pigments.sourceNames', ['**/*.txt']
+
+        waitsFor 'variables updated', -> variableSpy.callCount > 1
+
+        runs ->
+          expect(project.getVariables().length).toEqual(4)
+          expect(project.getColorVariables().length).toEqual(2)
+
+          consumerDisposable = pigments.consumeVariableExpressions({
+            expressions: [variableProvider]
+          })
+
+        waitsFor 'variables updated after service consumed', ->
+          variableSpy.callCount > 2
+
+        runs ->
+          expect(project.getVariables().length).toEqual(5)
+          expect(project.getColorVariables().length).toEqual(2)
+
+          consumerDisposable.dispose()
+
+        waitsFor 'variables updated after service disposed', ->
+          variableSpy.callCount > 3
+
+        runs ->
+          expect(project.getVariables().length).toEqual(4)
+          expect(project.getColorVariables().length).toEqual(2)

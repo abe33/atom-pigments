@@ -155,17 +155,33 @@ module.exports =
     PigmentsAPI ?= require './pigments-api'
     new PigmentsAPI(@getProject())
 
-  consumeColorExpressions: ({name, regexpString, handle, priority}={}) ->
+  consumeColorExpressions: (options={}) ->
     registry = @getProject().getColorExpressionsRegistry()
-    registry.createExpression(name, regexpString, priority, handle)
 
-    new Disposable -> registry.removeExpression(name)
+    if options.expressions?
+      names = options.expressions.map (e) -> e.name
+      registry.createExpressions(options.expressions)
 
-  consumeVariableExpressions: ({name, regexpString, handle, priority}={}) ->
+      new Disposable -> registry.removeExpression(name) for name in names
+    else
+      {name, regexpString, handle, priority} = options
+      registry.createExpression(name, regexpString, priority, handle)
+
+      new Disposable -> registry.removeExpression(name)
+
+  consumeVariableExpressions: (options={}) ->
     registry = @getProject().getVariableExpressionsRegistry()
-    registry.createExpression(name, regexpString, priority, handle)
 
-    new Disposable -> registry.removeExpression(name)
+    if options.expressions?
+      names = options.expressions.map (e) -> e.name
+      registry.createExpressions(options.expressions)
+
+      new Disposable -> registry.removeExpression(name) for name in names
+    else
+      {name, regexpString, handle, priority} = options
+      registry.createExpression(name, regexpString, priority, handle)
+
+      new Disposable -> registry.removeExpression(name)
 
   shouldDisplayContextMenu: (event) ->
     @lastEvent = event
