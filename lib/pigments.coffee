@@ -86,8 +86,6 @@ module.exports =
       title: 'Ignore VCS Ignored Paths'
 
   activate: (state) ->
-    require './register-elements'
-
     @project = if state.project?
       atom.deserializers.deserialize(state.project)
     else
@@ -227,3 +225,24 @@ module.exports =
       @project.loadPathsAndVariables()
     .catch (reason) ->
       console.error reason
+
+  loadDeserializersAndRegisterViews: ->
+    ColorBuffer = require './color-buffer'
+    ColorSearch = require './color-search'
+    Palette = require './palette'
+    ColorBufferElement = require './color-buffer-element'
+    ColorMarkerElement = require './color-marker-element'
+    ColorResultsElement = require './color-results-element'
+    ColorProjectElement = require './color-project-element'
+    PaletteElement = require './palette-element'
+    VariablesCollection = require './variables-collection'
+
+    ColorBufferElement.registerViewProvider(ColorBuffer)
+    ColorResultsElement.registerViewProvider(ColorSearch)
+    ColorProjectElement.registerViewProvider(ColorProject)
+    PaletteElement.registerViewProvider(Palette)
+
+    atom.deserializers.add(ColorProject)
+    atom.deserializers.add(VariablesCollection)
+
+module.exports.loadDeserializersAndRegisterViews()

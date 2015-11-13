@@ -1,7 +1,7 @@
 path = require 'path'
 ColorBuffer = require '../lib/color-buffer'
 registry = require '../lib/color-expressions'
-jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
+jsonFixture = require('./helpers/fixtures').jsonFixture(__dirname, 'fixtures')
 
 
 describe 'ColorBuffer', ->

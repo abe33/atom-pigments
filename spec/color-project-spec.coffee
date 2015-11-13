@@ -5,8 +5,7 @@ temp = require 'temp'
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require '../lib/versions'
 ColorProject = require '../lib/color-project'
 ColorBuffer = require '../lib/color-buffer'
-jsonFixture = require('./spec-helper').jsonFixture(__dirname, 'fixtures')
-require '../lib/register-elements'
+jsonFixture = require('./helpers/fixtures').jsonFixture(__dirname, 'fixtures')
 {click} = require './helpers/events'
 
 TOTAL_VARIABLES_IN_PROJECT = 12
@@ -30,6 +29,9 @@ describe 'ColorProject', ->
       sourceNames: ['*.less']
       ignoredScopes: ['\\.comment']
     })
+
+  afterEach ->
+    project.destroy()
 
   describe '.deserialize', ->
     it 'restores the project in its previous state', ->

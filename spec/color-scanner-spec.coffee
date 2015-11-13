@@ -1,6 +1,5 @@
 ColorScanner = require '../lib/color-scanner'
 ColorContext = require '../lib/color-context'
-{TextEditor} = require 'atom'
 registry = require '../lib/color-expressions'
 
 describe 'ColorScanner', ->

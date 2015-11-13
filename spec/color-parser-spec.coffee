@@ -1,4 +1,4 @@
-require './spec-helper'
+require './helpers/matchers'
 
 ColorParser = require '../lib/color-parser'
 ColorContext = require '../lib/color-context'

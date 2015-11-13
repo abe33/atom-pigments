@@ -8,8 +8,6 @@ nextId = 0
 
 module.exports =
 class VariablesCollection
-  atom.deserializers.add(this)
-
   @deserialize: (state) ->
     new VariablesCollection(state)
 

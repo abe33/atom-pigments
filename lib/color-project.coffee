@@ -85,8 +85,6 @@ compareArray = (a,b) ->
 
 module.exports =
 class ColorProject
-  atom.deserializers.add(this)
-
   @deserialize: (state) ->
     markersVersion = SERIALIZE_MARKERS_VERSION
     if state?.version isnt SERIALIZE_VERSION

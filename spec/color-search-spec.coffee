@@ -1,4 +1,4 @@
-require './spec-helper'
+require './helpers/matchers'
 ColorSearch = require '../lib/color-search'
 
 describe 'ColorSearch', ->

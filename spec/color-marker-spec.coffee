@@ -1,4 +1,3 @@
-{TextEditor} = require 'atom'
 Color = require '../lib/color'
 ColorMarker = require '../lib/color-marker'
 
@@ -6,7 +5,7 @@ describe 'ColorMarker', ->
   [editor, marker, colorMarker, colorMarkerElement, jasmineContent] = []
 
   beforeEach ->
-    editor = new TextEditor({})
+    editor = atom.workspace.buildTextEditor({})
     editor.setText("""
     body {
       color: hsva(0, 100%, 100%, 0.5);
