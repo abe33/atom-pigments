@@ -399,7 +399,11 @@ class VariablesCollection
       @emitter.emit 'did-change', {created, destroyed, updated}
 
   updateColorVariablesExpression: ->
-    registry.addExpression(ColorExpression.colorExpressionForColorVariables(@getColorVariables()))
+    colorVariables = @getColorVariables()
+    if colorVariables.length > 0
+      registry.addExpression(ColorExpression.colorExpressionForColorVariables(colorVariables))
+    else
+      registry.removeExpression('pigments:variables')
 
   diffArrays: (a,b) ->
     removed = []
