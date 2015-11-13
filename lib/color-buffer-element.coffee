@@ -1,4 +1,5 @@
 {Emitter, CompositeDisposable} = require 'atom'
+{registerOrUpdateElement} = require 'atom-utils'
 ColorMarkerElement = require './color-marker-element'
 
 class ColorBufferElement extends HTMLElement
@@ -232,10 +233,9 @@ class ColorBufferElement extends HTMLElement
     left = clientX - left + scrollTarget.getScrollLeft()
     {top, left}
 
-module.exports = ColorBufferElement =
-document.registerElement 'pigments-markers', {
-  prototype: ColorBufferElement.prototype
-}
+module.exports =
+ColorBufferElement =
+registerOrUpdateElement 'pigments-markers', ColorBufferElement.prototype
 
 ColorBufferElement.registerViewProvider = (modelClass) ->
   atom.views.addViewProvider modelClass, (model) ->

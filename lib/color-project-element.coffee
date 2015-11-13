@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-{SpacePenDSL, EventsDelegation} = require 'atom-utils'
+{SpacePenDSL, EventsDelegation, registerOrUpdateElement} = require 'atom-utils'
 
 capitalize = (s) -> s.replace /^./, (m) -> m.toUpperCase()
 
@@ -108,10 +108,9 @@ class ColorProjectElement extends HTMLElement
 
   getIconName: -> "pigments"
 
-module.exports = ColorProjectElement =
-document.registerElement 'pigments-color-project', {
-  prototype: ColorProjectElement.prototype
-}
+module.exports =
+ColorProjectElement =
+registerOrUpdateElement 'pigments-color-project', ColorProjectElement.prototype
 
 ColorProjectElement.registerViewProvider = (modelClass) ->
   atom.views.addViewProvider modelClass, (model) ->

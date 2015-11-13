@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-{SpacePenDSL, EventsDelegation} = require 'atom-utils'
+{SpacePenDSL, EventsDelegation, registerOrUpdateElement} = require 'atom-utils'
 {THEME_VARIABLES} = require './uris'
 pigments = require './pigments'
 Palette = require './palette'
@@ -203,10 +203,9 @@ class PaletteElement extends HTMLElement
       return ([v] for v in paletteColors)
 
 
-module.exports = PaletteElement =
-document.registerElement 'pigments-palette', {
-  prototype: PaletteElement.prototype
-}
+module.exports =
+PaletteElement =
+registerOrUpdateElement 'pigments-palette', PaletteElement.prototype
 
 PaletteElement.registerViewProvider = (modelClass) ->
   atom.views.addViewProvider modelClass, (model) ->

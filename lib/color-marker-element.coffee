@@ -1,4 +1,5 @@
 {CompositeDisposable, Emitter} = require 'atom'
+{registerOrUpdateElement} = require 'atom-utils'
 
 RENDERERS =
   'background': require './renderers/background'
@@ -82,10 +83,9 @@ class ColorMarkerElement extends HTMLElement
     @className = ''
     @style.cssText = ''
 
-module.exports = ColorMarkerElement =
-document.registerElement 'pigments-color-marker', {
-  prototype: ColorMarkerElement.prototype
-}
+module.exports =
+ColorMarkerElement =
+registerOrUpdateElement 'pigments-color-marker', ColorMarkerElement.prototype
 
 ColorMarkerElement.setMarkerType = (markerType) ->
   @prototype.renderer = new RENDERERS[markerType]
