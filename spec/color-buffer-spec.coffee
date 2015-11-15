@@ -413,7 +413,7 @@ describe 'ColorBuffer', ->
         colorsUpdateSpy = jasmine.createSpy('did-update-color-markers')
         colorBuffer.onDidUpdateColorMarkers(colorsUpdateSpy)
         editor.moveToBottom()
-        editBuffer '\n\n@new-color = @base0;\n'
+        editBuffer '\n\n@new-color: @base0;\n'
         waitsFor -> colorsUpdateSpy.callCount > 0
 
       it 'finds the newly added color', ->
