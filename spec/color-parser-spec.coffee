@@ -23,9 +23,9 @@ describe 'ColorParser', ->
 
         it "parses '#{expression}' as a color", ->
           if context?
-            expect(parser.parse(expression, context)).toBeColor(r,g,b,a, Object.keys(context).sort())
+            expect(parser.parse(expression, @scope ? 'less')).toBeColor(r,g,b,a, Object.keys(context).sort())
           else
-            expect(parser.parse(expression)).toBeColor(r,g,b,a)
+            expect(parser.parse(expression, @scope ? 'less')).toBeColor(r,g,b,a)
 
     asUndefined: ->
       context = @context
@@ -33,7 +33,7 @@ describe 'ColorParser', ->
         beforeEach -> parser = getParser(context)
 
         it "does not parse '#{expression}' and return undefined", ->
-          expect(parser.parse(expression, context)).toBeUndefined()
+          expect(parser.parse(expression, @scope ? 'less')).toBeUndefined()
 
     asInvalid: ->
       context = @context
@@ -41,7 +41,7 @@ describe 'ColorParser', ->
         beforeEach -> parser = getParser(context)
 
         it "parses '#{expression}' as an invalid color", ->
-          expect(parser.parse(expression, context)).not.toBeValid()
+          expect(parser.parse(expression, @scope ? 'less')).not.toBeValid()
 
     withContext: (variables) ->
       vars = []
@@ -393,6 +393,8 @@ describe 'ColorParser', ->
 
   itParses('mix(rgb(255,0,0), blue)').asColor(127, 0, 127)
   itParses('mix(red, rgb(0,0,255), 25%)').asColor(63, 0, 191)
+  itParses('mix(#ff0000, 0x0000ff)').asColor('#7f007f')
+  itParses('mix(#ff0000, 0x0000ff, 25%)').asColor('#3f00bf')
   itParses('mix(red, rgb(0,0,255), 25)').asColor(63, 0, 191)
   itParses('mix($a, $b, $r)').asInvalid()
   itParses('mix($a, $b, $r)').withContext({
@@ -418,39 +420,80 @@ describe 'ColorParser', ->
     '$r': '25%'
   }).asColor(63, 0, 191)
 
-  itParses('tint(#fd0cc7,66%)').asColor(254, 172, 235)
-  itParses('tint(#fd0cc7,66)').asColor(254, 172, 235)
-  itParses('tint($c,$r)').asInvalid()
-  itParses('tint($c, $r)').withContext({
-    '$c': asColor 'hsv($h, $s, $v)'
-    '$r': '1'
-  }).asInvalid()
-  itParses('tint($c,$r)').withContext({
-    '$c': asColor '#fd0cc7'
-    '$r': '66%'
-  }).asColor(254, 172, 235)
-  itParses('tint($c,$r)').withContext({
-    '$a': asColor '#fd0cc7'
-    '$c': asColor 'rgba($a, 0.9)'
-    '$r': '66%'
-  }).asColor(254, 172, 235, 0.966)
+  describe 'stylus and less', ->
+    beforeEach -> @scope = 'styl'
 
-  itParses('shade(#fd0cc7,66%)').asColor(86, 4, 67)
-  itParses('shade(#fd0cc7,66)').asColor(86, 4, 67)
-  itParses('shade($c,$r)').asInvalid()
-  itParses('shade($c, $r)').withContext({
-    '$c': asColor 'hsv($h, $s, $v)'
-    '$r': '1'
-  }).asInvalid()
-  itParses('shade($c,$r)').withContext({
-    '$c': asColor '#fd0cc7'
-    '$r': '66%'
-  }).asColor(86, 4, 67)
-  itParses('shade($c,$r)').withContext({
-    '$a': asColor '#fd0cc7'
-    '$c': asColor 'rgba($a, 0.9)'
-    '$r': '66%'
-  }).asColor(86, 4, 67, 0.966)
+    itParses('tint(#fd0cc7,66%)').asColor(254, 172, 235)
+    itParses('tint(#fd0cc7,66)').asColor(254, 172, 235)
+    itParses('tint($c,$r)').asInvalid()
+    itParses('tint($c, $r)').withContext({
+      '$c': asColor 'hsv($h, $s, $v)'
+      '$r': '1'
+    }).asInvalid()
+    itParses('tint($c,$r)').withContext({
+      '$c': asColor '#fd0cc7'
+      '$r': '66%'
+    }).asColor(254, 172, 235)
+    itParses('tint($c,$r)').withContext({
+      '$a': asColor '#fd0cc7'
+      '$c': asColor 'rgba($a, 0.9)'
+      '$r': '66%'
+    }).asColor(254, 172, 235, 0.966)
+
+    itParses('shade(#fd0cc7,66%)').asColor(86, 4, 67)
+    itParses('shade(#fd0cc7,66)').asColor(86, 4, 67)
+    itParses('shade($c,$r)').asInvalid()
+    itParses('shade($c, $r)').withContext({
+      '$c': asColor 'hsv($h, $s, $v)'
+      '$r': '1'
+    }).asInvalid()
+    itParses('shade($c,$r)').withContext({
+      '$c': asColor '#fd0cc7'
+      '$r': '66%'
+    }).asColor(86, 4, 67)
+    itParses('shade($c,$r)').withContext({
+      '$a': asColor '#fd0cc7'
+      '$c': asColor 'rgba($a, 0.9)'
+      '$r': '66%'
+    }).asColor(86, 4, 67, 0.966)
+
+  describe 'scss and sass', ->
+    beforeEach -> @scope = 'sass'
+
+    itParses('tint(#BADA55, 42%)').asColor('#e2efb7')
+    itParses('tint(#BADA55, 42)').asColor('#e2efb7')
+    itParses('tint($c,$r)').asInvalid()
+    itParses('tint($c, $r)').withContext({
+      '$c': asColor 'hsv($h, $s, $v)'
+      '$r': '1'
+    }).asInvalid()
+    itParses('tint($c,$r)').withContext({
+      '$c': asColor '#BADA55'
+      '$r': '42%'
+    }).asColor('#e2efb7')
+    itParses('tint($c,$r)').withContext({
+      '$a': asColor '#BADA55'
+      '$c': asColor 'rgba($a, 0.9)'
+      '$r': '42%'
+    }).asColor(226,239,183,0.942)
+
+    itParses('shade(#663399, 42%)').asColor('#2a1540')
+    itParses('shade(#663399, 42)').asColor('#2a1540')
+    itParses('shade($c,$r)').asInvalid()
+    itParses('shade($c, $r)').withContext({
+      '$c': asColor 'hsv($h, $s, $v)'
+      '$r': '1'
+    }).asInvalid()
+    itParses('shade($c,$r)').withContext({
+      '$c': asColor '#663399'
+      '$r': '42%'
+    }).asColor('#2a1540')
+    itParses('shade($c,$r)').withContext({
+      '$a': asColor '#663399'
+      '$c': asColor 'rgba($a, 0.9)'
+      '$r': '42%'
+    }).asColor(0x2a,0x15,0x40,0.942)
+
 
   itParses('color(#fd0cc7 tint(66%))').asColor(254, 172, 236)
 
