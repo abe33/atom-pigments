@@ -88,6 +88,7 @@ A color expression can have the following properties:
   - `context` - A `ColorContext` instance you can use to parse the color (see the [ColorContext API documentation](./color-context-api.md)).
 
   **It's important to note that the handle function must not rely on the scope in which it is declared.** This is because the expression handler will be serialized using the `toString` method and passed to a child process to be then evaluated in a sandboxed environment. It allows to perform all the searches on second thread without locking the UI.
+- `scopes`- An array of string of the file extensions supported by this expression. You can use the wildcard `*` to apply this expression to any file.
 - `priority` - A number that indicates the priority of the expression in comparison to the other expressions in the registry. The higher the value the sooner the expression will appear in the global search regular expression.
 
 
