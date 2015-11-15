@@ -82,6 +82,11 @@ describe 'ColorParser', ->
   itParses('0xff7f00').asColor(255, 127, 0)
   itParses('0x00ff7f00').asColor(255, 127, 0, 0)
 
+  describe 'in context other than css and pre-processors', ->
+    beforeEach -> @scope = 'xaml'
+
+    itParses('#ccff7f00').asColor(255, 127, 0, 0.8)
+
   itParses('rgb(255,127,0)').asColor(255, 127, 0)
   itParses('rgb(255,127,0)').asColor(255, 127, 0)
   itParses('rgb($r,$g,$b)').asInvalid()
