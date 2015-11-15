@@ -869,7 +869,7 @@ registry.createExpression 'pigments:lua_rgba', strip("
     #{comma}
     (#{int}|#{variables})
   #{pe}
-"), ['*'], (match, expression, context) ->
+"), ['lua'], (match, expression, context) ->
   [_,r,g,b,a] = match
 
   @red = context.readInt(r)
@@ -1096,7 +1096,7 @@ registry.createExpression 'pigments:elm_rgba', strip("
     (#{int}|#{variables})
     \\s+
     (#{float}|#{variables})
-"), ['*'], (match, expression, context) ->
+"), ['elm'], (match, expression, context) ->
   [_,r,g,b,a] = match
 
   @red = context.readInt(r)
@@ -1112,7 +1112,7 @@ registry.createExpression 'pigments:elm_rgb', strip("
     (#{int}|#{variables})
     \\s+
     (#{int}|#{variables})
-"), ['*'], (match, expression, context) ->
+"), ['elm'], (match, expression, context) ->
   [_,r,g,b] = match
 
   @red = context.readInt(r)
@@ -1129,7 +1129,7 @@ registry.createExpression 'pigments:elm_hsl', strip("
     (#{float}|#{variables})
     \\s+
     (#{float}|#{variables})
-"), ['*'], (match, expression, context) ->
+"), ['elm'], (match, expression, context) ->
   elmDegreesRegexp = new RegExp("\\(degrees\\s+(#{context.int}|#{context.variablesRE})\\)")
 
   [_,h,s,l] = match
@@ -1160,7 +1160,7 @@ registry.createExpression 'pigments:elm_hsla', strip("
     (#{float}|#{variables})
     \\s+
     (#{float}|#{variables})
-"), ['*'], (match, expression, context) ->
+"), ['elm'], (match, expression, context) ->
   elmDegreesRegexp = new RegExp("\\(degrees\\s+(#{context.int}|#{context.variablesRE})\\)")
 
   [_,h,s,l,a] = match
@@ -1182,14 +1182,14 @@ registry.createExpression 'pigments:elm_hsla', strip("
   @alpha = context.readFloat(a)
 
 # grayscale 1
-registry.createExpression 'pigments:elm_grayscale', "gr(?:a|e)yscale\\s+(#{float}|#{variables})", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:elm_grayscale', "gr(?:a|e)yscale\\s+(#{float}|#{variables})", ['elm'], (match, expression, context) ->
   [_,amount] = match
   amount = Math.floor(255 - context.readFloat(amount) * 255)
   @rgb = [amount, amount, amount]
 
 registry.createExpression 'pigments:elm_complement', strip("
   complement\\s+(#{notQuote})
-"), ['*'], (match, expression, context) ->
+"), ['elm'], (match, expression, context) ->
   [_, subexpr] = match
 
   baseColor = context.readColor(subexpr)
