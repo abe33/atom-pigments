@@ -5,7 +5,7 @@ describe 'ExpressionsRegistry', ->
 
   beforeEach ->
     class Dummy
-      constructor: ({@name, @regexpString, @handle}) ->
+      constructor: ({@name, @regexpString, @priority, @scopes, @handle}) ->
 
     registry = new ExpressionsRegistry(Dummy)
 
@@ -58,12 +58,16 @@ describe 'ExpressionsRegistry', ->
         name: 'dummy'
         regexpString: 'foo'
         handle: undefined
+        priority: 0
+        scopes: ['*']
       })
 
       expect(serialized.expressions.dummy2).toEqual({
         name: 'dummy2'
         regexpString: 'bar'
         handle: registry.getExpression('dummy2').handle.toString()
+        priority: 0
+        scopes: ['*']
       })
 
   describe '.deserialize', ->
@@ -75,6 +79,8 @@ describe 'ExpressionsRegistry', ->
             name: 'dummy'
             regexpString: 'foo'
             handle: 'function (a,b,c) { return a + b - c; }'
+            priority: 0
+            scopes: ['*']
 
       deserialized = ExpressionsRegistry.deserialize(serialized, Dummy)
 

@@ -30,21 +30,21 @@ describe 'ColorScanner', ->
   describe '::search', ->
     withScannerForTextEditor 'html-entities.html', ->
       beforeEach ->
-        result = scanner.search(text)
+        result = scanner.search(text, 'html')
 
       it 'returns nothing', ->
         expect(result).toBeUndefined()
 
     withScannerForTextEditor 'css-color-with-prefix.less', ->
       beforeEach ->
-        result = scanner.search(text)
+        result = scanner.search(text, 'less')
 
       it 'returns nothing', ->
         expect(result).toBeUndefined()
 
     withScannerForTextEditor 'four-variables.styl', ->
       beforeEach ->
-        result = scanner.search(text)
+        result = scanner.search(text, 'styl')
 
       it 'returns the first buffer color match', ->
         expect(result).toBeDefined()
@@ -67,7 +67,7 @@ describe 'ColorScanner', ->
 
       describe 'successive searches', ->
         it 'returns a buffer color for each match and then undefined', ->
-          doSearch = -> result = scanner.search(text, result.lastIndex)
+          doSearch = -> result = scanner.search(text, 'styl', result.lastIndex)
 
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeDefined()
@@ -75,7 +75,7 @@ describe 'ColorScanner', ->
           expect(doSearch()).toBeUndefined()
 
         it 'stores the line of successive matches', ->
-          doSearch = -> result = scanner.search(text, result.lastIndex)
+          doSearch = -> result = scanner.search(text, 'styl', result.lastIndex)
 
           expect(doSearch().line).toEqual(2)
           expect(doSearch().line).toEqual(4)

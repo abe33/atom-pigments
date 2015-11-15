@@ -162,8 +162,8 @@ module.exports =
 
       new Disposable -> registry.removeExpression(name) for name in names
     else
-      {name, regexpString, handle, priority} = options
-      registry.createExpression(name, regexpString, priority, handle)
+      {name, regexpString, handle, scopes, priority} = options
+      registry.createExpression(name, regexpString, priority, scopes, handle)
 
       new Disposable -> registry.removeExpression(name)
 
@@ -176,8 +176,8 @@ module.exports =
 
       new Disposable -> registry.removeExpression(name) for name in names
     else
-      {name, regexpString, handle, priority} = options
-      registry.createExpression(name, regexpString, priority, handle)
+      {name, regexpString, handle, scopes, priority} = options
+      registry.createExpression(name, regexpString, priority, scopes, handle)
 
       new Disposable -> registry.removeExpression(name)
 

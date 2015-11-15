@@ -11,15 +11,18 @@ class ColorScanner
   getRegExp: ->
     @regexp = new RegExp(@registry.getRegExp(), 'g')
 
-  search: (text, start=0) ->
-    @regexp = @getRegExp()
+  getRegExpForScope: (scope) ->
+    @regexp = new RegExp(@registry.getRegExpForScope(scope), 'g')
+
+  search: (text, scope, start=0) ->
+    @regexp = @getRegExpForScope(scope)
     @regexp.lastIndex = start
 
     if match = @regexp.exec(text)
       [matchText] = match
       {lastIndex} = @regexp
 
-      color = @parser.parse(matchText)
+      color = @parser.parse(matchText, scope)
 
       if (index = matchText.indexOf(color.colorExpression)) > 0
         lastIndex += -matchText.length + index + color.colorExpression.length

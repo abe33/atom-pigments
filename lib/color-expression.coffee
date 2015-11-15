@@ -15,6 +15,8 @@ class ColorExpression
     new ColorExpression
       name: 'pigments:variables'
       regexpString: paletteRegexpString
+      scopes: ['*']
+      priority: 1
       handle: (match, expression, context) ->
         [_,name] = match
         return @invalid = true if context.readColorExpression(name) is name
@@ -27,7 +29,7 @@ class ColorExpression
 
         @rgba = baseColor.rgba
 
-  constructor: ({@name, @regexpString, @handle}) ->
+  constructor: ({@name, @regexpString, @scopes, @priority, @handle}) ->
     @regexp = new RegExp("^#{@regexpString}$")
 
   match: (expression) -> @regexp.test expression

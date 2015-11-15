@@ -3,18 +3,18 @@ VariableExpression = require './variable-expression'
 
 module.exports = registry = new ExpressionsRegistry(VariableExpression)
 
-registry.createExpression 'pigments:less', '^[ \\t]*(@[a-zA-Z0-9\\-_]+)\\s*:\\s*([^;\\n]+);?'
+registry.createExpression 'pigments:less', '^[ \\t]*(@[a-zA-Z0-9\\-_]+)\\s*:\\s*([^;\\n]+);?', ['*']
 
 # It catches sequences like `@mixin foo($foo: 10)` and ignores them.
-registry.createExpression 'pigments:scss_params', '^[ \\t]*@(mixin|include|function)\\s+[a-zA-Z0-9\\-_]+\\s*\\([^\\)]+\\)', (match, solver) ->
+registry.createExpression 'pigments:scss_params', '^[ \\t]*@(mixin|include|function)\\s+[a-zA-Z0-9\\-_]+\\s*\\([^\\)]+\\)', ['*'], (match, solver) ->
   [match] = match
   solver.endParsing(match.length - 1)
 
-registry.createExpression 'pigments:scss', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\s*(.*?)(\\s*!default)?;'
+registry.createExpression 'pigments:scss', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\s*(.*?)(\\s*!default)?;', ['*']
 
-registry.createExpression 'pigments:sass', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+):\\s*([^\\{]*?)(\\s*!default)?$'
+registry.createExpression 'pigments:sass', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+):\\s*([^\\{]*?)(\\s*!default)?$', ['*']
 
-registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\\{([^=]*)\\}', (match, solver) ->
+registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\\{([^=]*)\\}', ['*'], (match, solver) ->
   buffer = ''
   [match, name, content] = match
   current = match.indexOf(content)
@@ -61,4 +61,4 @@ registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9
   else
     solver.abortParsing()
 
-registry.createExpression 'pigments:stylus', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n;]*);?$'
+registry.createExpression 'pigments:stylus', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n;]*);?$', ['*']

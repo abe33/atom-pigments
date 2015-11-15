@@ -9,7 +9,7 @@ class ExpressionsRegistry
 
     for name, data of serializedData.expressions
       handle = vm.runInNewContext(data.handle.replace('function', "handle = function"))
-      registry.createExpression(name, data.regexpString, handle)
+      registry.createExpression(name, data.regexpString, data.priority, data.scopes, handle)
 
     registry.regexpString = serializedData.regexpString
 
@@ -35,15 +35,34 @@ class ExpressionsRegistry
   getExpressions: ->
     (e for k,e of @colorExpressions).sort((a,b) -> b.priority - a.priority)
 
+  getExpressionsForScope: (scope) ->
+    expressions = @getExpressions()
+
+    return expressions if scope is '*'
+
+    expressions.filter (e) -> '*' in e.scopes or scope in e.scopes
+
   getExpression: (name) -> @colorExpressions[name]
 
   getRegExp: ->
-    @regexpString ?= @getExpressions().map((e) -> "(#{e.regexpString})").join('|')
+    @regexpString ?= @getExpressions().map((e) ->
+      "(#{e.regexpString})").join('|')
 
-  createExpression: (name, regexpString, priority=0, handle) ->
-    [priority, handle] = [0, priority] if typeof priority is 'function'
-    newExpression = new @expressionsType({name, regexpString, handle})
-    newExpression.priority = priority
+  getRegExpForScope: (scope) ->
+    @regexpString ?= @getExpressionsForScope(scope).map((e) ->
+      "(#{e.regexpString})").join('|')
+
+  createExpression: (name, regexpString, priority=0, scopes=['*'], handle) ->
+    if typeof priority is 'function'
+      handle = priority
+      scopes = ['*']
+      priority = 0
+    else if typeof priority is 'object'
+      handle = scopes if typeof scopes is 'function'
+      scopes = priority
+      priority = 0
+
+    newExpression = new @expressionsType({name, regexpString, scopes, priority, handle})
     @addExpression newExpression
 
   addExpression: (expression, batch=false) ->
@@ -57,9 +76,9 @@ class ExpressionsRegistry
 
   createExpressions: (expressions) ->
     @addExpressions expressions.map (e) =>
-      {name, regexpString, handle, priority} = e
+      {name, regexpString, handle, priority, scopes} = e
       priority ?= 0
-      expression = new @expressionsType({name, regexpString, handle})
+      expression = new @expressionsType({name, regexpString, scopes, handle})
       expression.priority = priority
       expression
 
@@ -84,6 +103,8 @@ class ExpressionsRegistry
       out.expressions[key] =
         name: expression.name
         regexpString: expression.regexpString
+        priority: expression.priority
+        scopes: expression.scopes
         handle: expression.handle?.toString()
 
     out

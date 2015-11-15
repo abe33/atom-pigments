@@ -1,3 +1,4 @@
+path = require 'path'
 Color = require './color'
 ColorParser = null
 ColorExpression = require './color-expression'
@@ -158,7 +159,12 @@ class ColorContext
     realValue = @readColorExpression(value)
     return unless realValue?
 
-    result = @parser.parse(realValue, false)
+    scope = if @colorVars[value]?
+      path.extname @colorVars[value].path
+    else
+      '*'
+
+    result = @parser.parse(realValue, scope, false)
 
     if result?
       if result.invalid and @defaultColorVars[realValue]?
@@ -292,14 +298,14 @@ class ColorContext
     else
       light
 
-  mixColors: (color1, color2, amount=0.5) ->
+  mixColors: (color1, color2, amount=0.5, round=Math.floor) ->
     inverse = 1 - amount
     color = new Color
 
     color.rgba = [
-      Math.floor(color1.red * amount) + Math.floor(color2.red * inverse)
-      Math.floor(color1.green * amount) + Math.floor(color2.green * inverse)
-      Math.floor(color1.blue * amount) + Math.floor(color2.blue * inverse)
+      round(color1.red * amount + color2.red * inverse)
+      round(color1.green * amount + color2.green * inverse)
+      round(color1.blue * amount + color2.blue * inverse)
       color1.alpha * amount + color2.alpha * inverse
     ]
 

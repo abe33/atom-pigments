@@ -123,6 +123,8 @@ describe "Pigments", ->
       colorProvider =
         name: 'todo'
         regexpString: 'TODO'
+        scopes: ['*']
+        priority: 0
         handle: (match, expression, context) ->
           @red = 255
 

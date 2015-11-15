@@ -7,7 +7,7 @@ class VariableExpression
     solver.appendResult([name, value, start, end])
     solver.endParsing(end)
 
-  constructor: ({@name, @regexpString, @handle}) ->
+  constructor: ({@name, @regexpString, @scopes, @priority, @handle}) ->
     @regexp = new RegExp("#{@regexpString}", 'm')
     @handle ?= @constructor.DEFAULT_HANDLE
 

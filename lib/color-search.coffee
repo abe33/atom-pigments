@@ -1,3 +1,4 @@
+path = require 'path'
 {Emitter} = require 'atom'
 {Minimatch} = require 'minimatch'
 registry = require './color-expressions'
@@ -34,11 +35,12 @@ class ColorSearch
 
     promise = atom.workspace.scan re, paths: @sourceNames, (m) =>
       relativePath = atom.project.relativize(m.filePath)
+      scope = path.extname(relativePath)
       return if @isIgnored(relativePath)
 
       newMatches = []
       for result in m.matches
-        result.color = @parser.parse(result.matchText, @context)
+        result.color = @parser.parse(result.matchText, scope)
         # FIXME it should be handled way before, but it'll need a change
         # in how we test if a variable is a color.
         continue unless result.color?.isValid()
