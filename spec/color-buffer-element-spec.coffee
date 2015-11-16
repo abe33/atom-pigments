@@ -215,6 +215,66 @@ describe 'ColorBufferElement', ->
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
 
+      describe 'when the marker type is set to gutter', ->
+        [gutter] = []
+
+        beforeEach ->
+          waitsForPromise -> colorBuffer.initialize()
+          runs ->
+            atom.config.set 'pigments.markerType', 'gutter'
+            gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')
+
+        it 'removes the markers', ->
+          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(0)
+
+        it 'adds a custom gutter to the text editor', ->
+          expect(gutter).toExist()
+
+        it 'sets the size of the gutter based on the number of markers in the same row', ->
+          expect(gutter.style.minWidth).toEqual('14px')
+
+        it 'adds a gutter decoration for each color marker', ->
+          decorations = editor.getDecorations().filter (d) ->
+            d.properties.type is 'gutter'
+          expect(decorations.length).toEqual(3)
+
+        describe 'when the variables become available', ->
+          beforeEach ->
+            waitsForPromise -> colorBuffer.variablesAvailable()
+
+          it 'creates decorations for the new valid colors', ->
+            decorations = editor.getDecorations().filter (d) ->
+              d.properties.type is 'gutter'
+            expect(decorations.length).toEqual(4)
+
+          describe 'when many markers are added on the same line', ->
+            beforeEach ->
+              updateSpy = jasmine.createSpy('did-update')
+              colorBufferElement.onDidUpdate(updateSpy)
+
+              editor.moveToBottom()
+              editBuffer '\nlist = #123456, #987654, #abcdef\n'
+              waitsFor -> updateSpy.callCount > 0
+
+            it 'adds the new decorations to the gutter', ->
+              decorations = editor.getDecorations().filter (d) ->
+                d.properties.type is 'gutter'
+
+              expect(decorations.length).toEqual(7)
+
+            it 'sets the size of the gutter based on the number of markers in the same row', ->
+              expect(gutter.style.minWidth).toEqual('42px')
+
+        describe 'when the marker is changed again', ->
+          beforeEach ->
+            atom.config.set 'pigments.markerType', 'background'
+
+          it 'removes the gutter', ->
+            expect(editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')).not.toExist()
+
+          it 'recreates the markers', ->
+            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+
     describe 'when the editor is moved to another pane', ->
       [pane, newPane] = []
       beforeEach ->
