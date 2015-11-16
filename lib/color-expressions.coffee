@@ -138,7 +138,7 @@ registry.createExpression 'pigments:stylus_rgba', strip("
 # hsl(210,50%,50%)
 registry.createExpression 'pigments:css_hsl', strip("
   hsl#{ps}\\s*
-    (#{int}|#{variables})
+    (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
     #{comma}
@@ -161,7 +161,7 @@ registry.createExpression 'pigments:css_hsl', strip("
 # hsla(210,50%,50%,0.7)
 registry.createExpression 'pigments:css_hsla', strip("
   hsla#{ps}\\s*
-    (#{int}|#{variables})
+    (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
     #{comma}
@@ -186,7 +186,7 @@ registry.createExpression 'pigments:css_hsla', strip("
 # hsv(210,70%,90%)
 registry.createExpression 'pigments:hsv', strip("
   (?:hsv|hsb)#{ps}\\s*
-    (#{int}|#{variables})
+    (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
     #{comma}
@@ -209,7 +209,7 @@ registry.createExpression 'pigments:hsv', strip("
 # hsva(210,70%,90%,0.7)
 registry.createExpression 'pigments:hsva', strip("
   (?:hsva|hsba)#{ps}\\s*
-    (#{int}|#{variables})
+    (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
     #{comma}
@@ -255,7 +255,7 @@ registry.createExpression 'pigments:vec4', strip("
 # hwb(210,40%,40%)
 registry.createExpression 'pigments:hwb', strip("
   hwb#{ps}\\s*
-    (#{int}|#{variables})
+    (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
     #{comma}
