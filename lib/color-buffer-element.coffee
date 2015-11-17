@@ -118,7 +118,7 @@ class ColorBufferElement extends HTMLElement
       @updateMarkers()
 
   updateScroll: ->
-    if @editorElement.hasTiledRendering and @useGutter()
+    if @editorElement.hasTiledRendering and not @useGutter()
       @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
 
   getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
