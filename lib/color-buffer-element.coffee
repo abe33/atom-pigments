@@ -82,10 +82,10 @@ class ColorBufferElement extends HTMLElement
           @initializeGutter()
         when 'background'
           @classList.add('above-editor-content')
-          @destroyGutter()if @previousType is 'gutter'
+          @destroyGutter() if @previousType is 'gutter'
         else
           @classList.remove('above-editor-content')
-          @destroyGutter()if @previousType is 'gutter'
+          @destroyGutter() if @previousType is 'gutter'
 
       @previousType = type
 

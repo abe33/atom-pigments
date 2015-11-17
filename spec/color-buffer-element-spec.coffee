@@ -275,6 +275,27 @@ describe 'ColorBufferElement', ->
           it 'recreates the markers', ->
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
 
+        describe 'when a new buffer is opened', ->
+          beforeEach ->
+            waitsForPromise ->
+              atom.workspace.open('project/styles/variables.styl').then (e) ->
+                editor = e
+                editorElement = atom.views.getView(editor)
+                colorBuffer = project.colorBufferForEditor(editor)
+                colorBufferElement = atom.views.getView(colorBuffer)
+
+            waitsForPromise -> colorBuffer.initialize()
+            waitsForPromise -> colorBuffer.variablesAvailable()
+
+            runs ->
+              gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')
+
+          it 'creates the decorations in the new buffer gutter', ->
+            decorations = editor.getDecorations().filter (d) ->
+              d.properties.type is 'gutter'
+
+            expect(decorations.length).toEqual(10)
+
     describe 'when the editor is moved to another pane', ->
       [pane, newPane] = []
       beforeEach ->

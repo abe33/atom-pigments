@@ -231,7 +231,8 @@ class ColorBuffer
 
   getColorMarkers: -> @colorMarkers
 
-  getValidColorMarkers: -> @getColorMarkers().filter (m) -> m.color.isValid()
+  getValidColorMarkers: ->
+    @getColorMarkers()?.filter((m) -> m.color.isValid()) ? []
 
   getColorMarkerAtBufferPosition: (bufferPosition) ->
     markers = @editor.findMarkers({
