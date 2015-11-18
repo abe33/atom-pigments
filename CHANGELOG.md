@@ -1,3 +1,27 @@
+<a name="v0.19.0"></a>
+# v0.19.0 (2015-11-18)
+
+## Features
+
+- Implement first draft of colors in gutter ([659f6e9e](https://github.com/abe33/atom-pigments/commit/659f6e9ee9818ac1c53bb9f8c756fcb50ee55cfd), [#97](https://github.com/abe33/atom-pigments/issues/97))
+- Implement generic #AARRGGBB color support ([4dfb3fd1](https://github.com/abe33/atom-pigments/commit/4dfb3fd185a138ad053619e5c3dc376c37c580b0), [#103](https://github.com/abe33/atom-pigments/issues/103))
+  <br>#RRGGBBAA form is now only supported in css related files.
+- Implement different shade and tint operations for sass ([b51d6efb](https://github.com/abe33/atom-pigments/commit/b51d6efb35d1565d6e5565a6e1108dffa7491916))
+- Implement a scoping mechanism for color expressions ([b8918c7e](https://github.com/abe33/atom-pigments/commit/b8918c7ec066777bd5243c753779e638b7238887))  <br>It allows to filter expressions to use based on the extension of the
+  file we’re parsing.
+- Implement custom element update using atom-utils ([284606e3](https://github.com/abe33/atom-pigments/commit/284606e33a73f1b8b3afbaef05d3a268c5f98b14))
+- Implement variable expressions service consumer ([9d149920](https://github.com/abe33/atom-pigments/commit/9d149920e7af4595b9df533dfc612aa170752289))
+- Implement color expressions service consumer ([0e5bd672](https://github.com/abe33/atom-pigments/commit/0e5bd672a2ecf5bca149f65aa10cccf6945d5334))
+
+## Bug Fixes
+
+- Fix hsl/hsv and other expressions not supporting floats ([18d61ba5](https://github.com/abe33/atom-pigments/commit/18d61ba56cb2543c20b61d5888a4edd52c7d94b1), [#115](https://github.com/abe33/atom-pigments/issues/115))
+- Prevent creation of empty variables expression ([44e22d94](https://github.com/abe33/atom-pigments/commit/44e22d94e608cc3dec7647a06e3262f270fb789d))
+
+## Dependencies Update
+
+- Bump version of atom-utils ([38d09c33](https://github.com/abe33/atom-pigments/commit/38d09c33bf2499adf32b1e8b56c24d065998488b))
+
 <a name="v0.18.1"></a>
 # v0.18.1 (2015-10-27)
 
