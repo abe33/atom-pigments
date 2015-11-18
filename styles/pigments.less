@@ -80,6 +80,23 @@ pigments-markers {
     z-index: 1;
   }
 }
+
+atom-text-editor::shadow .gutter .pigments-gutter-marker div {
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 2px;
+  position: absolute;
+
+  span {
+    width: 12px;
+    height: 12px;
+    display: block;
+    // border-radius: 50%;
+    position: relative;
+    .background-color;
+  }
+}
+
 atom-text-editor::shadow pigments-markers::shadow pigments-color-marker,
 pigments-markers::shadow pigments-color-marker,
 pigments-color-marker {

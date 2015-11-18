@@ -34,9 +34,7 @@ class ColorMarkerElement extends HTMLElement
       if isValid then @render() else @release()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
-      @render()
-
-    @render()
+      @render() unless type is 'gutter'
 
   destroy: ->
     @parentNode?.removeChild(this)
@@ -88,4 +86,5 @@ ColorMarkerElement =
 registerOrUpdateElement 'pigments-color-marker', ColorMarkerElement.prototype
 
 ColorMarkerElement.setMarkerType = (markerType) ->
+  return if markerType is 'gutter'
   @prototype.renderer = new RENDERERS[markerType]

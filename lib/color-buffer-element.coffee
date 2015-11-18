@@ -14,15 +14,9 @@ class ColorBufferElement extends HTMLElement
     @unusedMarkers = []
     @viewsByMarkers = new WeakMap
 
-    @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
-      if type is 'background'
-        @classList.add('above-editor-content')
-      else
-        @classList.remove('above-editor-content')
-
   attachedCallback: ->
     @attached = true
-    @updateMarkers()
+    @update()
 
   detachedCallback: ->
     @attached = false
@@ -37,13 +31,14 @@ class ColorBufferElement extends HTMLElement
     return if @editor.isDestroyed()
     @editorElement = atom.views.getView(@editor)
 
-    @colorBuffer.initialize().then => @updateMarkers()
+    @colorBuffer.initialize().then => @update()
 
-    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @updateMarkers()
+    @subscriptions.add @colorBuffer.onDidUpdateColorMarkers => @update()
     @subscriptions.add @colorBuffer.onDidDestroy => @destroy()
 
     scrollLeftListener = (@editorScrollLeft) => @updateScroll()
     scrollTopListener = (@editorScrollTop) =>
+      return if @useGutter()
       @updateScroll()
       requestAnimationFrame => @updateMarkers()
 
@@ -80,6 +75,20 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add atom.config.observe 'editor.lineHeight', =>
       @editorConfigChanged()
 
+    @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
+      switch type
+        when 'gutter'
+          @releaseAllMarkerViews()
+          @initializeGutter()
+        when 'background'
+          @classList.add('above-editor-content')
+          @destroyGutter() if @previousType is 'gutter'
+        else
+          @classList.remove('above-editor-content')
+          @destroyGutter() if @previousType is 'gutter'
+
+      @previousType = type
+
     @subscriptions.add atom.styles.onDidAddStyleElement =>
       @editorConfigChanged()
 
@@ -96,20 +105,26 @@ class ColorBufferElement extends HTMLElement
 
     @parentNode.removeChild(this)
 
-  updateScroll: ->
-    if @editorElement.hasTiledRendering
-      @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
-
   destroy: ->
     @detach()
     @subscriptions.dispose()
     @releaseAllMarkerViews()
     @colorModel = null
 
+  update: ->
+    if @useGutter()
+      @updateGutterDecorations()
+    else
+      @updateMarkers()
+
+  updateScroll: ->
+    if @editorElement.hasTiledRendering and not @useGutter()
+      @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
+
   getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
 
   editorConfigChanged: ->
-    return unless @parentNode?
+    return if not @parentNode? or @useGutter()
     @usedMarkers.forEach (marker) =>
       if marker.colorMarker?
         marker.render()
@@ -119,25 +134,77 @@ class ColorBufferElement extends HTMLElement
 
     @updateMarkers()
 
-  requestSelectionUpdate: ->
-    return if @updateRequested
+  ##     ######   ##     ## ######## ######## ######## ########
+  ##    ##    ##  ##     ##    ##       ##    ##       ##     ##
+  ##    ##        ##     ##    ##       ##    ##       ##     ##
+  ##    ##   #### ##     ##    ##       ##    ######   ########
+  ##    ##    ##  ##     ##    ##       ##    ##       ##   ##
+  ##    ##    ##  ##     ##    ##       ##    ##       ##    ##
+  ##     ######    #######     ##       ##    ######## ##     ##
 
-    @updateRequested = true
-    requestAnimationFrame =>
-      @updateRequested = false
-      return if @editor.getBuffer().isDestroyed()
-      @updateSelections()
+  useGutter: -> @previousType is 'gutter'
 
-  updateSelections: ->
+  initializeGutter: ->
+    @gutter = @editor.addGutter name: 'pigments'
+    @displayedMarkers = []
+    @decorationByMarkerId = {}
+    @updateGutterDecorations()
+
+  destroyGutter: ->
+    @gutter.destroy()
+    @displayedMarkers = []
+    decoration.destroy() for id, decoration of @decorationByMarkerId
+    @decorationByMarkerId = null
+    @updateMarkers()
+
+  updateGutterDecorations: ->
     return if @editor.isDestroyed()
-    for marker in @displayedMarkers
-      view = @viewsByMarkers.get(marker)
-      if view?
-        view.classList.remove('hidden')
-        view.classList.remove('in-fold')
-        @hideMarkerIfInSelectionOrFold(marker, view)
-      else
-        console.warn "A color marker was found in the displayed markers array without an associated view", marker
+
+    markers = @colorBuffer.getValidColorMarkers()
+
+    for m in @displayedMarkers when m not in markers
+      @decorationByMarkerId[m.id]?.destroy()
+      delete @decorationByMarkerId[m.id]
+
+    markersByRows = {}
+    maxRowLength = 0
+
+    for m in markers
+      if m.color?.isValid() and m not in @displayedMarkers
+        @decorationByMarkerId[m.id] = @gutter.decorateMarker(m.marker, {
+          type: 'gutter'
+          class: 'pigments-gutter-marker'
+          item: @getGutterDecorationItem(m)
+        })
+
+      deco = @decorationByMarkerId[m.id]
+      row = m.marker.getStartScreenPosition().row
+      markersByRows[row] ?= 0
+
+      deco.properties.item.style.left = "#{markersByRows[row] * 14}px"
+
+      markersByRows[row]++
+      maxRowLength = Math.max(maxRowLength, markersByRows[row])
+
+    atom.views.getView(@gutter).style.minWidth = "#{maxRowLength * 14}px"
+
+    @displayedMarkers = markers
+    @emitter.emit 'did-update'
+
+  getGutterDecorationItem: (marker) ->
+    div = document.createElement('div')
+    div.innerHTML = """
+    <span style='background-color: #{marker.color.toCSS()};'></span>
+    """
+    div
+
+  ##    ##     ##    ###    ########  ##    ## ######## ########   ######
+  ##    ###   ###   ## ##   ##     ## ##   ##  ##       ##     ## ##    ##
+  ##    #### ####  ##   ##  ##     ## ##  ##   ##       ##     ## ##
+  ##    ## ### ## ##     ## ########  #####    ######   ########   ######
+  ##    ##     ## ######### ##   ##   ##  ##   ##       ##   ##         ##
+  ##    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
+  ##    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
 
   updateMarkers: ->
     return if @editor.isDestroyed()
@@ -193,6 +260,36 @@ class ColorBufferElement extends HTMLElement
     @usedMarkers = []
     @unusedMarkers = []
 
+    Array::forEach.call @shadowRoot.querySelectorAll('pigments-color-marker'), (el) -> el.parentNode.removeChild(el)
+
+  ##     ######  ######## ##       ########  ######  ########
+  ##    ##    ## ##       ##       ##       ##    ##    ##
+  ##    ##       ##       ##       ##       ##          ##
+  ##     ######  ######   ##       ######   ##          ##
+  ##          ## ##       ##       ##       ##          ##
+  ##    ##    ## ##       ##       ##       ##    ##    ##
+  ##     ######  ######## ######## ########  ######     ##
+
+  requestSelectionUpdate: ->
+    return if @updateRequested or @useGutter()
+
+    @updateRequested = true
+    requestAnimationFrame =>
+      @updateRequested = false
+      return if @editor.getBuffer().isDestroyed()
+      @updateSelections()
+
+  updateSelections: ->
+    return if @editor.isDestroyed() or @useGutter()
+    for marker in @displayedMarkers
+      view = @viewsByMarkers.get(marker)
+      if view?
+        view.classList.remove('hidden')
+        view.classList.remove('in-fold')
+        @hideMarkerIfInSelectionOrFold(marker, view)
+      else
+        console.warn "A color marker was found in the displayed markers array without an associated view", marker
+
   hideMarkerIfInSelectionOrFold: (marker, view) ->
     selections = @editor.getSelections()
 
@@ -204,6 +301,22 @@ class ColorBufferElement extends HTMLElement
 
       view.classList.add('hidden') if markerRange.intersectsWith(range)
       view.classList.add('in-fold') if  @editor.isFoldedAtBufferRow(marker.getBufferRange().start.row)
+
+  ##     ######   #######  ##    ## ######## ######## ##     ## ########
+  ##    ##    ## ##     ## ###   ##    ##    ##        ##   ##     ##
+  ##    ##       ##     ## ####  ##    ##    ##         ## ##      ##
+  ##    ##       ##     ## ## ## ##    ##    ######      ###       ##
+  ##    ##       ##     ## ##  ####    ##    ##         ## ##      ##
+  ##    ##    ## ##     ## ##   ###    ##    ##        ##   ##     ##
+  ##     ######   #######  ##    ##    ##    ######## ##     ##    ##
+  ##
+  ##    ##     ## ######## ##    ## ##     ##
+  ##    ###   ### ##       ###   ## ##     ##
+  ##    #### #### ##       ####  ## ##     ##
+  ##    ## ### ## ######   ## ## ## ##     ##
+  ##    ##     ## ##       ##  #### ##     ##
+  ##    ##     ## ##       ##   ### ##     ##
+  ##    ##     ## ######## ##    ##  #######
 
   colorMarkerForMouseEvent: (event) ->
     position = @screenPositionForMouseEvent(event)

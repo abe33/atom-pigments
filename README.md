@@ -248,6 +248,7 @@ Defines the render mode of color markers. The possible values are:
   <tr>
     <th>dot</th>
     <th>square-dot</th>
+    <th>gutter</th>
   </tr>
   <tr>
     <td>
@@ -255,6 +256,9 @@ Defines the render mode of color markers. The possible values are:
     </td>
     <td>
       <img src='https://github.com/abe33/atom-pigments/blob/master/resources/square-dot-renderer.png?raw=true'/>
+    </td>
+    <td>
+      <img src='https://github.com/abe33/atom-pigments/blob/master/resources/gutter-color.png?raw=true'/>
     </td>
   </tr>
 </table>
