@@ -1,3 +1,12 @@
+<a name="v0.19.1"></a>
+# v0.19.1 (2015-11-26)
+
+## Bug Fixes
+
+- Prevent error when autocomplete access a disposed provider ([14d2d26e](https://github.com/abe33/atom-pigments/commit/14d2d26e2807638e84d89a5e4d46e1e049356d61), [#118](https://github.com/abe33/atom-pigments/issues/118))
+- Fix SVG colors not detected when followed by a class ([72941ec8](https://github.com/abe33/atom-pigments/commit/72941ec84bea42ed8d88e55b64c710bd248d3218))
+
+
 <a name="v0.19.0"></a>
 # v0.19.0 (2015-11-18)
 
