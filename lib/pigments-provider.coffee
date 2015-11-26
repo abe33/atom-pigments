@@ -13,12 +13,16 @@ class PigmentsProvider
     @subscriptions.add atom.config.observe 'pigments.extendAutocompleteToVariables', (@extendAutocompleteToVariables) =>
 
   dispose: ->
+    @disposed = true
     @subscriptions.dispose()
     @pigments = null
 
-  getProject: -> @pigments.getProject()
+  getProject: ->
+    return if @disposed
+    @pigments.getProject()
 
   getSuggestions: ({editor, bufferPosition}) ->
+    return if @disposed
     prefix = @getPrefix(editor, bufferPosition)
     project = @getProject()
     return unless prefix?.length
