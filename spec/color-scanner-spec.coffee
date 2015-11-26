@@ -80,3 +80,31 @@ describe 'ColorScanner', ->
           expect(doSearch().line).toEqual(2)
           expect(doSearch().line).toEqual(4)
           expect(doSearch().line).toEqual(6)
+
+      withScannerForTextEditor 'class-after-color.sass', ->
+        beforeEach ->
+          result = scanner.search(text, 'sass')
+
+        it 'returns the first buffer color match', ->
+          expect(result).toBeDefined()
+
+        describe 'the resulting buffer color', ->
+          it 'has a text range', ->
+            expect(result.range).toEqual([15,20])
+
+          it 'has a color', ->
+            expect(result.color).toBeColor('#ffffff')
+
+      withScannerForTextEditor 'project/styles/variables.styl', ->
+        beforeEach ->
+          result = scanner.search(text, 'styl')
+
+        it 'returns the first buffer color match', ->
+          expect(result).toBeDefined()
+
+        describe 'the resulting buffer color', ->
+          it 'has a text range', ->
+            expect(result.range).toEqual([18,25])
+
+          it 'has a color', ->
+            expect(result.color).toBeColor('#BF616A')
