@@ -1,3 +1,10 @@
+<a name="v0.19.2"></a>
+# v0.19.2 (2015-12-09)
+
+## Bug Fixes
+
+- Fix infinite loop in strip method in some case ([661244f6](https://github.com/abe33/atom-pigments/commit/661244f65b0bde5ecd435a01e1407606ad4efc08))
+
 <a name="v0.19.1"></a>
 # v0.19.1 (2015-11-26)
 
