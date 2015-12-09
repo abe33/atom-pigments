@@ -73,6 +73,7 @@ utils =
     l = s.length
     i = 0
     start = 0
+    previousStart = start
     `whileLoop: //`
     while i < l
       c = s.substr(i, 1)
@@ -92,6 +93,8 @@ utils =
         when sep
           a.push utils.strip s.substr start, i - start
           start = i + 1
+          `break whileLoop` if previousStart is start
+          previousStart = start
 
       i++
 
