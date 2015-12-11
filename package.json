@@ -24,7 +24,7 @@
     "css-color-function": "0.1.x",
     "minimatch": "0.3.x",
     "delegato": "^1.0.0",
-    "atom-utils": ">=0.7.0"
+    "atom-utils": ">=0.9.2"
   },
   "devDependencies": {
     "temp": "~0.8.1"
