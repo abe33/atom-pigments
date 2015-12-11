@@ -1,3 +1,10 @@
+<a name="v0.19.3"></a>
+# v0.19.3 (2015-12-11)
+
+## Dependencies Update
+
+- Bump atom-utils version ([407fecbc](https://github.com/abe33/atom-pigments/commit/407fecbcf51586f916dee719f4b167f3a450d57b))
+
 <a name="v0.19.2"></a>
 # v0.19.2 (2015-12-09)
 
