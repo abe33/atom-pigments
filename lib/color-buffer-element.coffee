@@ -215,6 +215,7 @@ class ColorBufferElement extends HTMLElement
       @frameRequested = true
 
     requestAnimationFrame =>
+      return unless @colorModel?
       dirtyMarkers = []
       dirtyMarkers.push(m) for m in @dirtyMarkers when m not in dirtyMarkers
       dirtyMarkers.forEach (marker) -> marker.render()
