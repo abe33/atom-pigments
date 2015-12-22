@@ -46,6 +46,9 @@ describe 'ColorMarkerElement', ->
 
   it 'releases itself when the marker is destroyed', ->
     colorMarkerElement = new ColorMarkerElement
+    colorMarkerElement.setContainer
+      requestMarkerUpdate: ([marker]) -> marker.render()
+
     colorMarkerElement.setModel(colorMarker)
 
     eventSpy = jasmine.createSpy('did-release')
@@ -71,6 +74,9 @@ describe 'ColorMarkerElement', ->
       ColorMarkerElement.setMarkerType('background')
 
       colorMarkerElement = new ColorMarkerElement
+      colorMarkerElement.setContainer
+        requestMarkerUpdate: ([marker]) -> marker.render()
+
       colorMarkerElement.setModel(colorMarker)
 
       regions = colorMarkerElement.querySelectorAll('.region.background')
@@ -117,6 +123,9 @@ describe 'ColorMarkerElement', ->
       ColorMarkerElement.setMarkerType('outline')
 
       colorMarkerElement = new ColorMarkerElement
+      colorMarkerElement.setContainer
+        requestMarkerUpdate: ([marker]) -> marker.render()
+
       colorMarkerElement.setModel(colorMarker)
 
       regions = colorMarkerElement.querySelectorAll('.region.outline')
@@ -163,6 +172,9 @@ describe 'ColorMarkerElement', ->
       ColorMarkerElement.setMarkerType('underline')
 
       colorMarkerElement = new ColorMarkerElement
+      colorMarkerElement.setContainer
+        requestMarkerUpdate: ([marker]) -> marker.render()
+
       colorMarkerElement.setModel(colorMarker)
 
       regions = colorMarkerElement.querySelectorAll('.region.underline')
@@ -245,6 +257,9 @@ describe 'ColorMarkerElement', ->
 
       markersElements = markers.map (colorMarker) ->
         colorMarkerElement = new ColorMarkerElement
+        colorMarkerElement.setContainer
+          requestMarkerUpdate: ([marker]) -> marker.render()
+
         colorMarkerElement.setModel(colorMarker)
 
         jasmineContent.appendChild(colorMarkerElement)
@@ -304,6 +319,9 @@ describe 'ColorMarkerElement', ->
 
       markersElements = markers.map (colorMarker) ->
         colorMarkerElement = new ColorMarkerElement
+        colorMarkerElement.setContainer
+          requestMarkerUpdate: ([marker]) -> marker.render()
+
         colorMarkerElement.setModel(colorMarker)
 
         jasmineContent.appendChild(colorMarkerElement)
