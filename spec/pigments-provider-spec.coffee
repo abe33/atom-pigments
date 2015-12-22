@@ -22,30 +22,26 @@ describe 'autocomplete provider', ->
 
       jasmineContent.appendChild(workspaceElement)
 
-      autocompleteMain = atom.packages.loadPackage('autocomplete-plus').mainModule
+    waitsForPromise 'autocomplete-plus activation', ->
+      atom.packages.activatePackage('autocomplete-plus').then (pkg) ->
+        autocompleteMain = pkg.mainModule
+
+    waitsForPromise 'pigments activation', ->
+      atom.packages.activatePackage('pigments').then (pkg) ->
+        pigments = pkg.mainModule
+
+    runs ->
       spyOn(autocompleteMain, 'consumeProvider').andCallThrough()
-      pigments = atom.packages.loadPackage('pigments').mainModule
       spyOn(pigments, 'provideAutocomplete').andCallThrough()
 
-    waitsForPromise ->
+    waitsForPromise 'open sample file', ->
       atom.workspace.open('sample.styl').then (e) ->
         editor = e
         editorView = atom.views.getView(editor)
 
-    waitsForPromise ->
-      Promise.all [
-        atom.packages.activatePackage('autocomplete-plus')
-        atom.packages.activatePackage('pigments')
-      ]
-
-    waitsForPromise ->
+    waitsForPromise 'pigments project initialized', ->
       project = pigments.getProject()
       project.initialize()
-
-    waitsFor ->
-      autocompleteMain.autocompleteManager?.ready and
-        pigments.provideAutocomplete.calls.length is 1 and
-        autocompleteMain.consumeProvider.calls.length is 1
 
     runs ->
       autocompleteManager = autocompleteMain.autocompleteManager
