@@ -206,6 +206,22 @@ class ColorBufferElement extends HTMLElement
   ##    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
   ##    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
 
+  requestMarkerUpdate: (markers) ->
+    if @frameRequested
+      @dirtyMarkers = @dirtyMarkers.concat(markers)
+      return
+    else
+      @dirtyMarkers = markers.slice()
+      @frameRequested = true
+
+    requestAnimationFrame =>
+      dirtyMarkers = []
+      dirtyMarkers.push(m) for m in @dirtyMarkers when m not in dirtyMarkers
+      dirtyMarkers.forEach (marker) -> marker.render()
+
+      delete @frameRequested
+      delete @dirtyMarkers
+
   updateMarkers: ->
     return if @editor.isDestroyed()
 
@@ -228,6 +244,7 @@ class ColorBufferElement extends HTMLElement
       view = @unusedMarkers.shift()
     else
       view = new ColorMarkerElement
+      view.setContainer(this)
       view.onDidRelease ({marker}) =>
         @displayedMarkers.splice(@displayedMarkers.indexOf(marker), 1)
         @releaseMarkerView(marker)

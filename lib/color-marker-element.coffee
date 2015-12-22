@@ -22,6 +22,8 @@ class ColorMarkerElement extends HTMLElement
   onDidRelease: (callback) ->
     @emitter.on 'did-release', callback
 
+  setContainer: (@bufferElement) ->
+
   getModel: -> @colorMarker
 
   setModel: (@colorMarker) ->
@@ -31,10 +33,12 @@ class ColorMarkerElement extends HTMLElement
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()
     @subscriptions.add @colorMarker.marker.onDidChange (data) =>
       {isValid} = data
-      if isValid then @render() else @release()
+      if isValid then @bufferElement.requestMarkerUpdate([this]) else @release()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
-      @render() unless type is 'gutter'
+      @bufferElement.requestMarkerUpdate([this]) unless type is 'gutter'
+
+    @render()
 
   destroy: ->
     @parentNode?.removeChild(this)
@@ -42,6 +46,7 @@ class ColorMarkerElement extends HTMLElement
     @clear()
 
   render: ->
+    return unless @colorMarker?
     return if @colorMarker.marker.displayBuffer.isDestroyed()
     @innerHTML = ''
     {style, regions, class: cls} = @renderer.render(@colorMarker)
