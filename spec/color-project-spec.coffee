@@ -1,3 +1,4 @@
+os = require 'os'
 fs = require 'fs-plus'
 path = require 'path'
 temp = require 'temp'
@@ -567,7 +568,7 @@ describe 'ColorProject', ->
 
         # FIXME repo.getWorkingDirectory returns the project path prefixed with
         # /private
-        atom.project.setPaths([path.join('/private', projectPath)])
+        atom.project.setPaths([projectPath])
 
       describe 'when the ignoreVcsIgnoredPaths setting is enabled', ->
         beforeEach ->

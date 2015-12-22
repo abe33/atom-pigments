@@ -18,8 +18,7 @@ class PathLoader
     @repo = null
     if ignoreVcsIgnores
       repo = GitRepository.open(@rootPath, refreshOnWindowFocus: false)
-      if repo?.getWorkingDirectory() is @rootPath
-        @repo = repo
+      @repo = repo if repo?.relativize(path.join(@rootPath, 'test')) is 'test'
 
   load: (done) ->
     @loadPath @rootPath, =>
