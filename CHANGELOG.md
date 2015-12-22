@@ -1,3 +1,10 @@
+<a name="v0.19.4"></a>
+# v0.19.4 (2015-12-22)
+
+## Bug Fixes
+
+- Fix inconsistencies when rendering markers synchronously ([6af4270c](https://github.com/abe33/atom-pigments/commit/6af4270cf093f80b254e8c6a209c62cd546e160e), [#124](https://github.com/abe33/atom-pigments/issues/124))
+
 <a name="v0.19.3"></a>
 # v0.19.3 (2015-12-11)
 
