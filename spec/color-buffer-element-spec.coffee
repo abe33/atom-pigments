@@ -4,6 +4,10 @@ require './helpers/spec-helper'
 ColorBufferElement = require '../lib/color-buffer-element'
 ColorMarkerElement = require '../lib/color-marker-element'
 
+sleep = (duration) ->
+  t = new Date()
+  waitsFor -> new Date() - t > duration
+
 describe 'ColorBufferElement', ->
   [editor, editorElement, colorBuffer, pigments, project, colorBufferElement, jasmineContent] = []
 
@@ -141,6 +145,7 @@ describe 'ColorBufferElement', ->
           describe 'and the markers are updated', ->
             beforeEach ->
               waitsForPromise -> colorBuffer.variablesAvailable()
+              sleep(100)
 
             it 'hides the created markers', ->
               markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
