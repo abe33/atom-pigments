@@ -1,6 +1,7 @@
 {CompositeDisposable, Emitter} = require 'atom'
 {registerOrUpdateElement} = require 'atom-utils'
 
+SPEC_MODE = atom.inSpecMode()
 RENDERERS =
   'background': require './renderers/background'
   'outline': require './renderers/outline'
@@ -51,6 +52,9 @@ class ColorMarkerElement extends HTMLElement
     @innerHTML = ''
     {style, regions, class: cls} = @renderer.render(@colorMarker)
 
+    if regions?.some((r) -> r.invalid) and !SPEC_MODE
+      return @bufferElement.requestMarkerUpdate([this])
+
     @appendChild(region) for region in regions if regions?
     if cls?
       @className = cls
@@ -65,7 +69,7 @@ class ColorMarkerElement extends HTMLElement
     @lastMarkerScreenRange = @colorMarker.getScreenRange()
 
   checkScreenRange: ->
-    return unless @colorMarker?
+    return unless @colorMarker? and @lastMarkerScreenRange?
     unless @lastMarkerScreenRange.isEqual(@colorMarker.getScreenRange())
       @render()
 

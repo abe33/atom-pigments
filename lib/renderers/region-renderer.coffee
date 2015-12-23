@@ -82,11 +82,8 @@ class RegionRenderer
 
     region = document.createElement('div')
     region.className = 'region'
-
-    if @includeTextInRegion
-      region.textContent = text
-
-    for name, value of css
-      region.style[name] = value + 'px'
+    region.textContent = text if @includeTextInRegion
+    region.invalid = true if startPosition.left is endPosition.left
+    region.style[name] = value + 'px' for name, value of css
 
     region
