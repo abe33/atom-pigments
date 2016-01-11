@@ -1,3 +1,11 @@
+<a name="v0.19.6"></a>
+# v0.19.6 (2016-01-11)
+
+## Bug Fixes
+
+- Fix gutter colors displayed even when ignored ([a858edb4](https://github.com/abe33/atom-pigments/commit/a858edb4b506ae3a1b4fd0ccb5bed3e16516bfcb), [#127](https://github.com/abe33/atom-pigments/issues/127))
+- Fix infinite loops in split utility ([4f52ba92](https://github.com/abe33/atom-pigments/commit/4f52ba925ec5ef67d1cbf999cdecbec5a5ee76aa))
+
 <a name="v0.19.5"></a>
 # v0.19.5 (2015-12-23)
 
