@@ -1,9 +1,21 @@
 {findClosingIndex, split} = require '../lib/utils'
 
 describe 'split', ->
-  it 'does not fail when there is parenthesis after', ->
-    string = "a,)("
+  tests = [
+    ['a,b,c', ['a', 'b', 'c']]
+    ['a,b(),c', ['a', 'b()', 'c']]
+    ['a,b(c)', ['a', 'b(c)']]
+    ['a,(b, c)', ['a', '(b,c)']]
+    ['a,(b, c())', ['a', '(b,c())']]
+    ['a(b, c())', ['a(b,c())']]
+    ['a,)(', ['a']]
+    ['a(,', []]
+    ['(,', []]
+    ['a,(,', ['a']]
+    ['a,((),', ['a']]
+    ['a,()),', ['a', '()']]
+  ]
 
-    res = split(string)
-
-    expect(res).toEqual(['a',''])
+  tests.forEach ([source, expected]) ->
+    it "splits #{jasmine.pp source} as #{jasmine.pp(expected)}", ->
+      expect(split(source)).toEqual(expected)
