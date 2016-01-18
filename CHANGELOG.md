@@ -1,3 +1,11 @@
+<a name="v0.19.7"></a>
+# v0.19.7 (2016-01-18)
+
+## Bug Fixes
+
+- Prevent rendering of marker without color ([6e7947a1](https://github.com/abe33/atom-pigments/commit/6e7947a1c833dbc7b11f7c1027a52f3d4b3c0cb8), [#108](https://github.com/abe33/atom-pigments/issues/108))
+- Fix filtering on marker with no colors ([14d15534](https://github.com/abe33/atom-pigments/commit/14d1553446d47a30116ba725ac990ccfec38431f), [#129](https://github.com/abe33/atom-pigments/issues/129))
+
 <a name="v0.19.6"></a>
 # v0.19.6 (2016-01-11)
 
