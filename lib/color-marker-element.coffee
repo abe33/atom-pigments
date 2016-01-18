@@ -47,7 +47,7 @@ class ColorMarkerElement extends HTMLElement
     @clear()
 
   render: ->
-    return unless @colorMarker?
+    return unless @colorMarker? and @colorMarker.color?
     return if @colorMarker.marker.displayBuffer.isDestroyed()
     @innerHTML = ''
     {style, regions, class: cls} = @renderer.render(@colorMarker)
