@@ -47,8 +47,11 @@ class ColorBuffer
 
     @subscriptions.add atom.config.observe 'pigments.delayBeforeScan', (@delayBeforeScan=0) =>
 
-    # Needed to clean the serialized markers from previous versions
-    @editor.findMarkers(type: 'pigments-variable').forEach (m) -> m.destroy()
+    if @editor.addMarkerLayer?
+      @markerLayer = @editor.addMarkerLayer()
+      @editor.findMarkers(type: 'pigments-color').forEach (m) -> m.destroy()
+    else
+      @markerLayer = @editor
 
     if colorMarkers?
       @restoreMarkersState(colorMarkers)
@@ -85,7 +88,7 @@ class ColorBuffer
     @colorMarkers = colorMarkers
     .filter (state) -> state?
     .map (state) =>
-      marker = @editor.getMarker(state.markerId) ? @editor.markBufferRange(state.bufferRange, {
+      marker = @editor.getMarker(state.markerId) ? @markerLayer.markBufferRange(state.bufferRange, {
         type: 'pigments-color'
         invalidate: 'touch'
       })
@@ -100,7 +103,7 @@ class ColorBuffer
       }
 
   cleanUnusedTextEditorMarkers: ->
-    @editor.findMarkers(type: 'pigments-color').forEach (m) =>
+    @markerLayer.findMarkers(type: 'pigments-color').forEach (m) =>
       m.destroy() unless @colorMarkersByMarkerId[m.id]?
 
   variablesAvailable: ->
@@ -229,13 +232,15 @@ class ColorBuffer
   ##    ##     ## ##     ## ##    ##  ##   ##  ##       ##    ##  ##    ##
   ##    ##     ## ##     ## ##     ## ##    ## ######## ##     ##  ######
 
+  getMarkerLayer: -> @markerLayer
+
   getColorMarkers: -> @colorMarkers
 
   getValidColorMarkers: ->
     @getColorMarkers()?.filter((m) -> m.color?.isValid() and not m.isIgnored()) ? []
 
   getColorMarkerAtBufferPosition: (bufferPosition) ->
-    markers = @editor.findMarkers({
+    markers = @markerLayer.findMarkers({
       type: 'pigments-color'
       containsBufferPosition: bufferPosition
     })
@@ -258,7 +263,7 @@ class ColorBuffer
         while results.length
           result = results.shift()
 
-          marker = @editor.markBufferRange(result.bufferRange, {
+          marker = @markerLayer.markBufferRange(result.bufferRange, {
             type: 'pigments-color'
             invalidate: 'touch'
           })
@@ -333,7 +338,7 @@ class ColorBuffer
 
   findColorMarkers: (properties={}) ->
     properties.type = 'pigments-color'
-    markers = @editor.findMarkers(properties)
+    markers = @markerLayer.findMarkers(properties)
     markers.map (marker) =>
       @colorMarkersByMarkerId[marker.id]
     .filter (marker) -> marker?

@@ -41,6 +41,9 @@ describe 'ColorMarkerElement', ->
       colorBuffer: {
         editor
         ignoredScopes: []
+        getMarkerLayer: -> editor
+        getMarkerLayer: -> editor
+        getMarkerLayer: -> editor
       }
     })
 
@@ -233,6 +236,8 @@ describe 'ColorMarkerElement', ->
         colorBuffer: {
           editor
           ignoredScopes: []
+          getMarkerLayer: -> editor
+          getMarkerLayer: -> editor
         }
       })
 
@@ -295,6 +300,7 @@ describe 'ColorMarkerElement', ->
         colorBuffer: {
           editor
           ignoredScopes: []
+          getMarkerLayer: -> editor
         }
       })
 

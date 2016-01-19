@@ -129,7 +129,7 @@ describe 'ColorBuffer', ->
       expect(colorBuffer.getValidColorMarkers().length).toEqual(3)
 
     it 'creates the corresponding markers in the text editor', ->
-      expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+      expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(4)
 
     it 'knows that it is legible as a variables source file', ->
       expect(colorBuffer.isVariablesSource()).toBeTruthy()
@@ -171,7 +171,7 @@ describe 'ColorBuffer', ->
         expect(updateSpy.argsForCall[0][0].destroyed.length).toEqual(1)
 
       it 'destroys the text editor markers', ->
-        expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+        expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(4)
 
       describe 'when a variable is edited', ->
         [colorsUpdateSpy] = []
@@ -274,7 +274,7 @@ describe 'ColorBuffer', ->
           expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(1)
 
         it 'removes the previous editor markers', ->
-          expect(editor.findMarkers(type: 'pigments-color').length).toEqual(3)
+          expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(3)
 
       describe 'when new lines changes the markers range', ->
         [colorsUpdateSpy] = []
@@ -310,7 +310,7 @@ describe 'ColorBuffer', ->
           marker = markers[markers.length-1]
           expect(markers.length).toEqual(4)
           expect(marker.color).toBeColor('#336699')
-          expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+          expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(4)
 
         it 'dispatches the new marker in a did-update-color-markers event', ->
           expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
@@ -336,7 +336,7 @@ describe 'ColorBuffer', ->
           expect(colorsUpdateSpy.argsForCall[0][0].created.length).toEqual(0)
 
         it 'removes the previous editor markers', ->
-          expect(editor.findMarkers(type: 'pigments-color').length).toEqual(2)
+          expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(2)
 
     describe 'with a buffer whose scope is not one of source files', ->
       beforeEach ->
@@ -505,7 +505,7 @@ describe 'ColorBuffer', ->
         expect(colorMarker.color.variables).toEqual(['base-color'])
 
       it 'restores the editor markers', ->
-        expect(editor.findMarkers(type: 'pigments-color').length).toEqual(4)
+        expect(colorBuffer.getMarkerLayer().findMarkers(type: 'pigments-color').length).toEqual(4)
 
       it 'restores the ability to fetch markers', ->
         expect(colorBuffer.findColorMarkers().length).toEqual(4)

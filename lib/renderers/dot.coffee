@@ -9,7 +9,7 @@ class DotRenderer
     displayBuffer = colorMarker.marker.displayBuffer
     charWidth = displayBuffer.getDefaultCharWidth()
 
-    markers = displayBuffer.findMarkers {
+    markers = colorMarker.colorBuffer.getMarkerLayer().findMarkers {
       type: 'pigments-color'
       intersectsScreenRowRange: [range.end.row, range.end.row]
     }
