@@ -113,8 +113,6 @@ describe 'ColorBuffer', ->
 
       runs ->
         editor.insertText(' ')
-        editor.emitter.emit('did-change')
-        editor.getBuffer().emitter.emit('did-stop-changing')
 
     it 'terminates the currently running task', ->
       expect(colorBuffer.terminateRunningTask).toHaveBeenCalled()
