@@ -96,6 +96,7 @@ module.exports =
       'pigments:show-palette': => @showPalette()
       'pigments:project-settings': => @showSettings()
       'pigments:reload': => @reloadProjectVariables()
+      'pigments:report': => @createPigmentsReport()
 
     convertMethod = (action) => (event) =>
       marker = if @lastEvent?
@@ -225,6 +226,32 @@ module.exports =
       @project.loadPathsAndVariables()
     .catch (reason) ->
       console.error reason
+
+  createPigmentsReport: ->
+    atom.workspace.open('pigments-report.json').then (editor) =>
+      editor.setText(@createReport())
+
+  createReport: ->
+    o =
+      config: atom.config.get('pigments')
+      project:
+        config:
+          sourceNames: @project.sourceNames
+          searchNames: @project.searchNames
+          ignoredNames: @project.ignoredNames
+          ignoredScopes: @project.ignoredScopes
+          includeThemes: @project.includeThemes
+          ignoreGlobalSourceNames: @project.ignoreGlobalSourceNames
+          ignoreGlobalSearchNames: @project.ignoreGlobalSearchNames
+          ignoreGlobalIgnoredNames: @project.ignoreGlobalIgnoredNames
+          ignoreGlobalIgnoredScopes: @project.ignoreGlobalIgnoredScopes
+        paths: @project.getPaths()
+        variables:
+          colors: @project.getColorVariables().length
+          total: @project.getVariables().length
+
+    JSON.stringify(o, null, 2)
+    .replace(///#{atom.project.getPaths().join('|')}///g, '<root>')
 
   loadDeserializersAndRegisterViews: ->
     ColorBuffer = require './color-buffer'
