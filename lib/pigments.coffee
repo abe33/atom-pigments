@@ -233,6 +233,9 @@ module.exports =
 
   createReport: ->
     o =
+      atom: atom.getVersion()
+      pigments: atom.packages.getLoadedPackage('pigments').metadata.version
+      platform: require('os').platform()
       config: atom.config.get('pigments')
       project:
         config:
