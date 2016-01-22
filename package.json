@@ -43,10 +43,14 @@
   },
   "consumedServices": {
     "pigments.expressions.colors": {
-      "1.0.0": "consumeColorExpressions"
+      "versions": {
+        "1.0.0": "consumeColorExpressions"
+      }
     },
     "pigments.expressions.variables": {
-      "1.0.0": "consumeVariableExpressions"
+      "versions": {
+        "1.0.0": "consumeVariableExpressions"
+      }
     }
   }
 }
