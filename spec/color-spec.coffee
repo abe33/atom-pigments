@@ -39,6 +39,16 @@ describe 'Color', ->
       color.invalid = true
       expect(color).not.toBeValid()
 
+  describe '::isLiteral', ->
+    it 'returns true when the color does not rely on variables', ->
+      expect(new Color('orange').isLiteral()).toBeTruthy()
+
+    it 'returns false when the color does rely on variables', ->
+      color = new Color(0,0,0,1)
+      color.variables = ['foo']
+
+      expect(color.isLiteral()).toBeFalsy()
+
   describe '::rgb', ->
     it 'returns an array with the color components', ->
       expect(color.rgb).toBeComponentArrayCloseTo([

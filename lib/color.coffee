@@ -188,6 +188,8 @@ class Color
       0.2126 * r + 0.7152 * g + 0.0722 * b
   }
 
+  isLiteral: -> not @variables? or @variables.length is 0
+
   isValid: ->
     !@invalid and
     @red? and @green? and @blue? and @alpha? and
