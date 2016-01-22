@@ -154,6 +154,11 @@ module.exports =
     PigmentsAPI ?= require './pigments-api'
     new PigmentsAPI(@getProject())
 
+  consumeColorPicker: (api) ->
+    console.log api
+
+    new Disposable ->
+
   consumeColorExpressions: (options={}) ->
     registry = @getProject().getColorExpressionsRegistry()
 

@@ -42,6 +42,11 @@
     }
   },
   "consumedServices": {
+    "color-picker": {
+      "versions": {
+        "1.0.0": "consumeColorPicker"
+      }
+    },
     "pigments.expressions.colors": {
       "versions": {
         "1.0.0": "consumeColorExpressions"
