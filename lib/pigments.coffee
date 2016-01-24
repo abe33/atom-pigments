@@ -155,9 +155,10 @@ module.exports =
     new PigmentsAPI(@getProject())
 
   consumeColorPicker: (api) ->
-    console.log api
+    @getProject().setColorPickerAPI(api)
 
-    new Disposable ->
+    new Disposable =>
+      @getProject().setColorPickerAPI(null)
 
   consumeColorExpressions: (options={}) ->
     registry = @getProject().getColorExpressionsRegistry()

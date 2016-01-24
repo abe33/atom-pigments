@@ -255,6 +255,8 @@ class ColorProject
       ignoredNames: @getIgnoredNames()
       context: @getContext()
 
+  setColorPickerAPI: (@colorPickerAPI) ->
+
   ##    ########  ##     ## ######## ######## ######## ########   ######
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##    ##
   ##    ##     ## ##     ## ##       ##       ##       ##     ## ##
