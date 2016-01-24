@@ -183,7 +183,7 @@ For instance, if you want to ignore colors in comments and strings in your sourc
 
 As you can notice, the `.` character in scopes are escaped. This is due to the fact that this setting uses javascript `RegExp` to test the token's scope and the `.` is used to match against any character.
 
-For instance, to ignores colors in html attributes you can use the following expression:
+For instance, to ignore colors in html attributes you can use the following expression:
 
 ```
 \.text\.html(.*)\.string
