@@ -144,7 +144,11 @@ describe 'ColorBufferElement', ->
 
           describe 'and the markers are updated', ->
             beforeEach ->
-              waitsForPromise -> colorBuffer.variablesAvailable()
+              waitsForPromise 'colors available', ->
+                colorBuffer.variablesAvailable()
+              waitsFor 'last marker visible', ->
+                markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+                isVisible(markers[3])
 
             it 'hides the created markers', ->
               markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
