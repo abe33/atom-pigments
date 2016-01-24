@@ -1,3 +1,18 @@
+<a name="v0.21.0"></a>
+# v0.21.0 (2016-01-25)
+
+## Features
+
+- Add a new setting to completely ignore some editor when rendering colors ([c6b4f867](https://github.com/abe33/atom-pigments/commit/c6b4f867a2f2f954c8c453ced90cd9611d6aa59c), [#132](https://github.com/abe33/atom-pigments/issues/132))
+- Implement support for color-picker API ([0aed4216](https://github.com/abe33/atom-pigments/commit/0aed42164b37bbd19ad9d11319d37e5fa3af2a88), [#16](https://github.com/abe33/atom-pigments/issues/16))
+- Add a Color::isLiteral method to know when a color relies on variables or not ([273f9b29](https://github.com/abe33/atom-pigments/commit/273f9b298726174852d88be8cf0180a0b1d4222e))
+
+## Bug Fixes
+
+- Prevent highlighting colors when there's a space between the color and a punctuation ([5aed636e](https://github.com/abe33/atom-pigments/commit/5aed636edfe11ec4afa1ab27dca8936b576fa65e))
+- Fix name prefixes not matching words with a tab before ([114b772b](https://github.com/abe33/atom-pigments/commit/114b772bf26b5217ff66cca1b42978fbca3a0fba))
+- Fix invalid consumedServices definition ([018c3172](https://github.com/abe33/atom-pigments/commit/018c3172379c3cc0d6bc3fb1345718ba0f36124f))
+
 <a name="v0.20.0"></a>
 # v0.20.0 (2016-01-20)
 
