@@ -108,6 +108,7 @@ class ColorProject
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @colorBuffersByEditorId = {}
+    @bufferStates = buffers ? {}
 
     @variableExpressionsRegistry = require './variable-expressions'
     @colorExpressionsRegistry = require './color-expressions'
@@ -125,6 +126,9 @@ class ColorProject
 
     @subscriptions.add atom.config.observe 'pigments.ignoredNames', =>
       @updatePaths()
+
+    @subscriptions.add atom.config.observe 'pigments.ignoredBufferNames', (@ignoredBufferNames) =>
+      @updateColorBuffers()
 
     @subscriptions.add atom.config.observe 'pigments.ignoredScopes', =>
       @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
@@ -147,8 +151,6 @@ class ColorProject
     @subscriptions.add @variableExpressionsRegistry.onDidUpdateExpressions =>
       return unless @paths?
       @reloadVariablesForPaths(@getPaths())
-
-    @bufferStates = buffers ? {}
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
@@ -265,12 +267,18 @@ class ColorProject
   ##    ##     ## ##     ## ##       ##       ##       ##    ##  ##    ##
   ##    ########   #######  ##       ##       ######## ##     ##  ######
 
-  initializeBuffers: (buffers) ->
+  initializeBuffers: ->
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+      return if @isBufferIgnored(editor.getPath())
+
       buffer = @colorBufferForEditor(editor)
       if buffer?
         bufferElement = atom.views.getView(buffer)
         bufferElement.attach()
+
+  hasColorBufferForEditor: (editor) ->
+    return false if @destroyed or not editor?
+    @colorBuffersByEditorId[editor.id]?
 
   colorBufferForEditor: (editor) ->
     return if @destroyed
@@ -300,6 +308,31 @@ class ColorProject
   colorBufferForPath: (path) ->
     for id,colorBuffer of @colorBuffersByEditorId
       return colorBuffer if colorBuffer.editor.getPath() is path
+
+  updateColorBuffers: ->
+    for id, buffer of @colorBuffersByEditorId
+      if @isBufferIgnored(buffer.editor.getPath())
+        buffer.destroy()
+        delete @colorBuffersByEditorId[id]
+
+    try
+      if @colorBuffersByEditorId?
+        for editor in atom.workspace.getTextEditors()
+          continue if @hasColorBufferForEditor(editor) or @isBufferIgnored(editor.getPath())
+
+          buffer = @colorBufferForEditor(editor)
+          if buffer?
+            bufferElement = atom.views.getView(buffer)
+            bufferElement.attach()
+
+    catch e
+      console.log e
+
+  isBufferIgnored: (path) ->
+    path = atom.project.relativize(path)
+    sources = @ignoredBufferNames ? []
+    return true for source in sources when minimatch(path, source, matchBase: true, dot: true)
+    false
 
   ##    ########     ###    ######## ##     ##  ######
   ##    ##     ##   ## ##      ##    ##     ## ##    ##

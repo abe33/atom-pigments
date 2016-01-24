@@ -25,6 +25,7 @@ describe 'ColorBuffer', ->
 
   beforeEach ->
     atom.config.set 'pigments.delayBeforeScan', 0
+    atom.config.set 'pigments.ignoredBufferNames', []
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
       '*.less'
@@ -35,15 +36,40 @@ describe 'ColorBuffer', ->
     waitsForPromise ->
       atom.workspace.open('four-variables.styl').then (o) -> editor = o
 
-    waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
-      pigments = pkg.mainModule
-      project = pigments.getProject()
+    waitsForPromise ->
+      atom.packages.activatePackage('pigments').then (pkg) ->
+        pigments = pkg.mainModule
+        project = pigments.getProject()
+      .catch (err) -> console.error err
 
   afterEach ->
     colorBuffer?.destroy()
 
   it 'creates a color buffer for each editor in the workspace', ->
     expect(project.colorBuffersByEditorId[editor.id]).toBeDefined()
+
+  describe 'when the file path matches an entry in ignoredBufferNames', ->
+    beforeEach ->
+      expect(project.hasColorBufferForEditor(editor)).toBeTruthy()
+
+      atom.config.set 'pigments.ignoredBufferNames', ['**/*.styl']
+
+    it 'destroys the color buffer for this file', ->
+      expect(project.hasColorBufferForEditor(editor)).toBeFalsy()
+
+    it 'recreates the color buffer when the settings no longer ignore the file', ->
+      expect(project.hasColorBufferForEditor(editor)).toBeFalsy()
+
+      atom.config.set 'pigments.ignoredBufferNames', []
+
+      expect(project.hasColorBufferForEditor(editor)).toBeTruthy()
+
+    it 'prevents the creation of a new color buffer', ->
+      waitsForPromise ->
+        atom.workspace.open('variables.styl').then (o) -> editor = o
+
+      runs ->
+        expect(project.hasColorBufferForEditor(editor)).toBeFalsy()
 
   describe 'when an editor without path is opened', ->
     beforeEach ->

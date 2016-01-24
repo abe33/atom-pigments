@@ -31,6 +31,14 @@ module.exports =
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
         type: 'string'
+
+    ignoredBufferNames:
+      type: 'array'
+      default: []
+      description: "Glob patterns of files that won't get any colors highlighted"
+      items:
+        type: 'string'
+
     extendedSearchNames:
       type: 'array'
       default: ['**/*.css']
