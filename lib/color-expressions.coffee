@@ -288,7 +288,7 @@ registry.createExpression 'pigments:gray', strip("
 
 # dodgerblue
 colors = Object.keys(SVGColors.allCases)
-colorRegexp = "(?:#{namePrefixes})(#{colors.join('|')})\\b(?![-\\.:=\\(])"
+colorRegexp = "(?:#{namePrefixes})(#{colors.join('|')})\\b(?![ \\t]*[-\\.:=\\(])"
 
 registry.createExpression 'pigments:named_colors', colorRegexp, ['*'], (match, expression, context) ->
   [_,name] = match
