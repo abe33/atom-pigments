@@ -1,5 +1,6 @@
 path = require 'path'
 require './helpers/spec-helper'
+{mousedown} = require './helpers/events'
 
 ColorBufferElement = require '../lib/color-buffer-element'
 ColorMarkerElement = require '../lib/color-marker-element'
@@ -272,6 +273,20 @@ describe 'ColorBufferElement', ->
 
             it 'sets the size of the gutter based on the number of markers in the same row', ->
               expect(gutter.style.minWidth).toEqual('42px')
+
+            describe 'clicking on a gutter decoration', ->
+              beforeEach ->
+                project.colorPickerAPI =
+                  open: jasmine.createSpy('color-picker.open')
+
+                decoration = editorElement.shadowRoot.querySelector('.pigments-gutter-marker span')
+                mousedown(decoration)
+
+              it 'selects the text in the editor', ->
+                expect(editor.getSelectedScreenRange()).toEqual([[0,13],[0,17]])
+
+              it 'opens the color picker', ->
+                expect(project.colorPickerAPI.open).toHaveBeenCalled()
 
         describe 'when the marker is changed again', ->
           beforeEach ->

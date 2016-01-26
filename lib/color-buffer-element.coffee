@@ -1,8 +1,9 @@
 {Emitter, CompositeDisposable} = require 'atom'
-{registerOrUpdateElement} = require 'atom-utils'
+{registerOrUpdateElement, EventsDelegation} = require 'atom-utils'
 ColorMarkerElement = require './color-marker-element'
 
 class ColorBufferElement extends HTMLElement
+  EventsDelegation.includeInto(this)
 
   createdCallback: ->
     [@editorScrollLeft, @editorScrollTop] = [0, 0]
@@ -148,13 +149,37 @@ class ColorBufferElement extends HTMLElement
     @gutter = @editor.addGutter name: 'pigments'
     @displayedMarkers = []
     @decorationByMarkerId = {}
+    gutterContainer = @editorElement.shadowRoot.querySelector('.gutter-container')
+    @gutterSubscription = @subscribeTo gutterContainer,
+      mousedown: (e) =>
+        targetDecoration = e.path[0]
+
+        unless targetDecoration.matches('span')
+          targetDecoration = targetDecoration.querySelector('span')
+
+        markerId = targetDecoration.dataset.markerId
+        colorMarker = @displayedMarkers.filter((m) -> m.id is Number(markerId))[0]
+
+        return unless colorMarker? and @colorBuffer? and @editor?
+
+        @editor.setSelectedBufferRange(colorMarker.marker.getBufferRange())
+
+        # For the moment it seems only colors in #RRGGBB format are detected
+        # by the color picker, so we'll exclude anything else
+        return unless @editor.getSelectedText()?.match(/#[0-9a-fA-F]{3,8}/)
+
+        if @colorBuffer.project.colorPickerAPI?
+          @colorBuffer.project.colorPickerAPI.open(@editor, @editor.getLastCursor())
+
     @updateGutterDecorations()
 
   destroyGutter: ->
     @gutter.destroy()
+    @gutterSubscription.dispose()
     @displayedMarkers = []
     decoration.destroy() for id, decoration of @decorationByMarkerId
     @decorationByMarkerId = null
+    @gutterSubscription = null
     @updateMarkers()
 
   updateGutterDecorations: ->
@@ -194,7 +219,7 @@ class ColorBufferElement extends HTMLElement
   getGutterDecorationItem: (marker) ->
     div = document.createElement('div')
     div.innerHTML = """
-    <span style='background-color: #{marker.color.toCSS()};'></span>
+    <span style='background-color: #{marker.color.toCSS()};' data-marker-id='#{marker.id}'></span>
     """
     div
 
