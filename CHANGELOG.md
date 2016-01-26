@@ -1,3 +1,14 @@
+<a name="v0.22.0"></a>
+# v0.22.0 (2016-01-26)
+
+## Features
+
+- Implement opening color-picker from gutter decorations ([b7086435](https://github.com/abe33/atom-pigments/commit/b7086435b30050a618d5a55d286c86ef375d91c2))
+
+## Bug Fixes
+
+- Prevent opening a color-picker when the color isn't in #RRGGBB format ([c83bef09](https://github.com/abe33/atom-pigments/commit/c83bef096b207d4ccdf29f478b673e472c214441))
+
 <a name="v0.21.0"></a>
 # v0.21.0 (2016-01-25)
 
