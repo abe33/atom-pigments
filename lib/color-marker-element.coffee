@@ -50,6 +50,10 @@ class ColorMarkerElement extends HTMLElement
 
         editor.setSelectedBufferRange(@colorMarker.marker.getBufferRange())
 
+        # For the moment it seems only colors in #RRGGBB format are detected
+        # by the color picker, so we'll exclude anything else
+        return unless editor.getSelectedText()?.match(/#[0-9a-fA-F]{3,8}/)
+
         if colorBuffer.project.colorPickerAPI?
           colorBuffer.project.colorPickerAPI.open(editor, editor.getLastCursor())
 
