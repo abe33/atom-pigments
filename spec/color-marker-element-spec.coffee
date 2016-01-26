@@ -23,7 +23,7 @@ describe 'ColorMarkerElement', ->
     editor = atom.workspace.buildTextEditor({})
     editor.setText("""
     body {
-      color: red;
+      color: #f00;
       bar: foo;
       foo: bar;
     }
@@ -33,7 +33,7 @@ describe 'ColorMarkerElement', ->
       invalidate: 'touch'
     })
     color = new Color('#ff0000')
-    text = 'red'
+    text = '#f00'
 
     colorMarker = new ColorMarker({
       marker
@@ -106,7 +106,7 @@ describe 'ColorMarkerElement', ->
       expect(regions.length).toEqual(4)
 
     it 'fills the region with the covered text', ->
-      expect(regions[0].textContent).toEqual('red;')
+      expect(regions[0].textContent).toEqual('#f00;')
       expect(regions[1].textContent).toEqual('  bar: foo;')
       expect(regions[2].textContent).toEqual('  foo: bar;')
       expect(regions[3].textContent).toEqual('}')
