@@ -162,16 +162,9 @@ class ColorBufferElement extends HTMLElement
         markerId = targetDecoration.dataset.markerId
         colorMarker = @displayedMarkers.filter((m) -> m.id is Number(markerId))[0]
 
-        return unless colorMarker? and @colorBuffer? and @editor?
+        return unless colorMarker? and @colorBuffer?
 
-        @editor.setSelectedBufferRange(colorMarker.marker.getBufferRange())
-
-        # For the moment it seems only colors in #RRGGBB format are detected
-        # by the color picker, so we'll exclude anything else
-        return unless @editor.getSelectedText()?.match(/#[0-9a-fA-F]{3,8}/)
-
-        if @colorBuffer.project.colorPickerAPI?
-          @colorBuffer.project.colorPickerAPI.open(@editor, @editor.getLastCursor())
+        @colorBuffer.selectColorMarkerAndOpenPicker(colorMarker)
 
     @updateGutterDecorations()
 

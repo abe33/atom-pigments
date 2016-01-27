@@ -41,9 +41,7 @@ describe 'ColorMarkerElement', ->
       text
       colorBuffer: {
         editor
-        project:
-          colorPickerAPI:
-            open: jasmine.createSpy('color-picker.open')
+        selectColorMarkerAndOpenPicker: jasmine.createSpy('select-color')
         ignoredScopes: []
         getMarkerLayer: -> editor
       }
@@ -75,11 +73,8 @@ describe 'ColorMarkerElement', ->
 
       click(colorMarkerElement)
 
-    it 'selects the text in the editor', ->
-      expect(editor.getSelectedScreenRange()).toEqual([[1,9],[4,1]])
-
-    it 'opens the color picker', ->
-      expect(colorMarker.colorBuffer.project.colorPickerAPI.open).toHaveBeenCalled()
+    it 'calls selectColorMarkerAndOpenPicker on the buffer', ->
+      expect(colorMarker.colorBuffer.selectColorMarkerAndOpenPicker).toHaveBeenCalled()
 
   ##    ########     ###     ######  ##    ##
   ##    ##     ##   ## ##   ##    ## ##   ##
