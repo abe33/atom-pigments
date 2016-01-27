@@ -157,6 +157,8 @@ class ColorBufferElement extends HTMLElement
         unless targetDecoration.matches('span')
           targetDecoration = targetDecoration.querySelector('span')
 
+        return unless targetDecoration?
+
         markerId = targetDecoration.dataset.markerId
         colorMarker = @displayedMarkers.filter((m) -> m.id is Number(markerId))[0]
 
