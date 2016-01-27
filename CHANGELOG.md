@@ -1,3 +1,11 @@
+<a name="v0.22.1"></a>
+# v0.22.1 (2016-01-27)
+
+## Bug Fixes
+
+- Fix hexa colors matched in transformed color expression ([596af880](https://github.com/abe33/atom-pigments/commit/596af880baa2aa3ec054eb0fe958b0dd83a0dc71))
+- Fix mousedown listener when the target isn't a decoration ([410a0363](https://github.com/abe33/atom-pigments/commit/410a0363f03bac3fa1acc5ce588ec004bb45be66), [#136](https://github.com/abe33/atom-pigments/issues/136))
+
 <a name="v0.22.0"></a>
 # v0.22.0 (2016-01-26)
 
