@@ -11,7 +11,6 @@ module.exports =
     sourceNames:
       type: 'array'
       default: [
-        '**/*.css'
         '**/*.styl'
         '**/*.stylus'
         '**/*.less'
