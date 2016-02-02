@@ -1,3 +1,16 @@
+<a name="v0.23.0"></a>
+# v0.23.0 (2016-02-02)
+
+## Features
+
+- Add basic support for css variables ([9bd132c2](https://github.com/abe33/atom-pigments/commit/9bd132c22b3e6d56675a9a6ab9ff77b3f818dca1))
+
+## Bug Fixes
+
+- Fix sass variables with spaces before colon not matched ([1e873a64](https://github.com/abe33/atom-pigments/commit/1e873a6482a8c539ef51537df76b632ad6b1f936), [#106](https://github.com/abe33/atom-pigments/issues/106))
+- Fix files created not caught by pigments as sources ([8345f984](https://github.com/abe33/atom-pigments/commit/8345f98409a24bded06413a6eeced0f99cbd33e2))
+- Fix invalid expression being caught as CSS vars ([2cc123e1](https://github.com/abe33/atom-pigments/commit/2cc123e18d62df044106c3a64dcaab2caa56606d))
+
 <a name="v0.22.1"></a>
 # v0.22.1 (2016-01-27)
 
