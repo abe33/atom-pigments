@@ -14,6 +14,15 @@ registry.createExpression 'pigments:scss', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\
 
 registry.createExpression 'pigments:sass', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+):\\s*([^\\{]*?)(\\s*!default)?$', ['*']
 
+registry.createExpression 'pigments:css_vars', '(--[^:]+):\\s*([^;]+);', ['css'], (match, solver) ->
+  solver.appendResult([
+    "val(#{match[1]})"
+    match[2]
+    0
+    match[0].length
+  ])
+  solver.endParsing(match[0].length)
+
 registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\\{([^=]*)\\}', ['*'], (match, solver) ->
   buffer = ''
   [match, name, content] = match
