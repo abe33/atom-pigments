@@ -1,3 +1,4 @@
+fs = require 'fs'
 {Emitter, CompositeDisposable, Task, Range} = require 'atom'
 Color = require './color'
 ColorMarker = require './color-marker'
@@ -37,6 +38,18 @@ class ColorBuffer
     @subscriptions.add @editor.onDidChangePath (path) =>
       @project.appendPath(path) if @isVariablesSource()
       @update()
+
+    if @project.getPaths()? and @isVariablesSource() and !@project.hasPath(@editor.getPath())
+      if fs.existsSync(@editor.getPath())
+        @project.appendPath(@editor.getPath())
+      else
+        saveSubscription = @editor.onDidSave ({path}) =>
+          @project.appendPath(path)
+          @update()
+          saveSubscription.dispose()
+          @subscriptions.remove(saveSubscription)
+
+        @subscriptions.add(saveSubscription)
 
     @subscriptions.add @project.onDidUpdateVariables =>
       return unless @variableInitialized

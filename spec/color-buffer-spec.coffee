@@ -71,6 +71,50 @@ describe 'ColorBuffer', ->
       runs ->
         expect(project.hasColorBufferForEditor(editor)).toBeFalsy()
 
+  describe 'when an editor with a path is not in the project paths is opened', ->
+    beforeEach ->
+      waitsFor -> project.getPaths()?
+
+    describe 'when the file is already saved on disk', ->
+      pathToOpen = null
+
+      beforeEach ->
+        pathToOpen = project.paths.shift()
+
+      it 'adds the path to the project immediately', ->
+        spyOn(project, 'appendPath')
+
+        waitsForPromise ->
+          atom.workspace.open(pathToOpen).then (o) ->
+            editor = o
+            colorBuffer = project.colorBufferForEditor(editor)
+
+        runs ->
+          expect(project.appendPath).toHaveBeenCalledWith(pathToOpen)
+
+
+    describe 'when the file is not yet saved on disk', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('foo-de-fafa.styl').then (o) ->
+            editor = o
+            colorBuffer = project.colorBufferForEditor(editor)
+
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+      it 'does not fails when updating the colorBuffer', ->
+        expect(-> colorBuffer.update()).not.toThrow()
+
+      it 'adds the path to the project paths on save', ->
+        spyOn(colorBuffer, 'update').andCallThrough()
+        spyOn(project, 'appendPath')
+        editor.getBuffer().emitter.emit 'did-save', path: editor.getPath()
+
+        waitsFor -> colorBuffer.update.callCount > 0
+
+        runs ->
+          expect(project.appendPath).toHaveBeenCalledWith(editor.getPath())
+
   describe 'when an editor without path is opened', ->
     beforeEach ->
       waitsForPromise ->

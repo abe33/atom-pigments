@@ -1,5 +1,5 @@
-{Emitter, CompositeDisposable, Range} = require 'atom'
 minimatch = require 'minimatch'
+{Emitter, CompositeDisposable, Range} = require 'atom'
 
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require './versions'
 {THEME_VARIABLES} = require './uris'
@@ -345,6 +345,8 @@ class ColorProject
   getPaths: -> @paths?.slice()
 
   appendPath: (path) -> @paths.push(path) if path?
+
+  hasPath: (path) -> path in (@paths ? [])
 
   loadPaths: (noKnownPaths=false) ->
     new Promise (resolve, reject) =>
