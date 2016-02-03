@@ -763,6 +763,11 @@ registry.createExpression 'pigments:contrast_1_argument', strip("
 registry.createExpression 'pigments:css_color_function', "(?:#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", ['*'], (match, expression, context) ->
   try
     [_,expr] = match
+    for k,v of context.vars
+      expr = expr.replace(///
+        #{k.replace(/\(/g, '\\(').replace(/\)/g, '\\)')}
+      ///g, v.value)
+
     cssColor = require 'css-color-function'
     rgba = cssColor.convert(expr)
     @rgba = context.readColor(rgba).rgba

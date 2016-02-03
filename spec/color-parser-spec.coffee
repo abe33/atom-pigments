@@ -505,8 +505,10 @@ describe 'ColorParser', ->
       '$r': '42%'
     }).asColor(0x2a,0x15,0x40,0.942)
 
-
   itParses('color(#fd0cc7 tint(66%))').asColor(254, 172, 236)
+  itParses('color(var(--foo) tint(66%))').withContext({
+    'var(--foo)': asColor '#fd0cc7'
+  }).asColor(254, 172, 236)
 
   itParses('adjust-color(#102030, $red: -5, $blue: 5)', 11, 32, 53)
   itParses('adjust-color(hsl(25, 100%, 80%), $lightness: -30%, $alpha: -0.4)', 255, 106, 0, 0.6)
