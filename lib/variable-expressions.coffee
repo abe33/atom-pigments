@@ -16,7 +16,7 @@ registry.createExpression 'pigments:sass', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\
 
 registry.createExpression 'pigments:css_vars', '(--[^\\s:]+):\\s*([^;]+);', ['css'], (match, solver) ->
   solver.appendResult([
-    "val(#{match[1]})"
+    "var(#{match[1]})"
     match[2]
     0
     match[0].length
