@@ -1,3 +1,12 @@
+a name="v0.23.1"></a>
+# v0.23.1 (2016-02-03)
+
+## Bug Fixes
+
+- Fix variables not recognised by the css color function ([01c4ecc0](https://github.com/abe33/atom-pigments/commit/01c4ecc00ed9dd3da2a80104716341eef3a94d54))
+- Fix css variable value using val instead of var ([4ef2c02a](https://github.com/abe33/atom-pigments/commit/4ef2c02a5e34ad4c76b9f4a7b4948e5e951ac4b8))
+- Fix require and console not available in registry vm context ([ebbeab77](https://github.com/abe33/atom-pigments/commit/ebbeab77969e9b8f4903c64349acceaf1b351f56))
+
 <a name="v0.23.0"></a>
 # v0.23.0 (2016-02-02)
 
