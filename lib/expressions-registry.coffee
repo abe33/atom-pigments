@@ -8,7 +8,7 @@ class ExpressionsRegistry
     registry = new ExpressionsRegistry(expressionsType)
 
     for name, data of serializedData.expressions
-      handle = vm.runInNewContext(data.handle.replace('function', "handle = function"))
+      handle = vm.runInNewContext(data.handle.replace('function', "handle = function"), {console, require})
       registry.createExpression(name, data.regexpString, data.priority, data.scopes, handle)
 
     registry.regexpString = serializedData.regexpString
