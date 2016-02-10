@@ -210,6 +210,13 @@ When enabled, the autocomplete provider will also provides completion for non-co
 * Key: `pigments.extendAutocompleteToVariables`
 * Default: `false`
 
+### Extend Autocomplete To Color Value
+
+When enabled, the autocomplete provider will also provides color value.
+
+* Key: `pigments.extendAutocompleteToColorValue`
+* Default: `false`
+
 ### Traverse Into Symlink Directories
 
 Whether to traverse symlinked directories to find source files or not.
