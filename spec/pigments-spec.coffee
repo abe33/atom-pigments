@@ -329,33 +329,41 @@ describe "Pigments", ->
 
     describe 'when an array of expressions is passed', ->
       it 'updates the project variables when consumed', ->
-        variableSpy = jasmine.createSpy('did-update-variables')
-
-        project.onDidUpdateVariables(variableSpy)
-
+        previousVariablesCount = null
         atom.config.set 'pigments.sourceNames', ['**/*.txt']
 
-        waitsFor 'variables updated', -> variableSpy.callCount > 1
+        waitsFor 'variables initialized', ->
+          project.getVariables().length is 33
+
+        runs ->
+          previousVariablesCount = project.getVariables().length
+
+        waitsFor 'variables updated', ->
+          project.getVariables().length is 4
 
         runs ->
           expect(project.getVariables().length).toEqual(4)
           expect(project.getColorVariables().length).toEqual(2)
+
+          previousVariablesCount = project.getVariables().length
 
           consumerDisposable = pigments.consumeVariableExpressions({
             expressions: [variableProvider]
           })
 
         waitsFor 'variables updated after service consumed', ->
-          variableSpy.callCount > 2
+          project.getVariables().length isnt previousVariablesCount
 
         runs ->
           expect(project.getVariables().length).toEqual(5)
           expect(project.getColorVariables().length).toEqual(2)
 
+          previousVariablesCount = project.getVariables().length
+
           consumerDisposable.dispose()
 
         waitsFor 'variables updated after service disposed', ->
-          variableSpy.callCount > 3
+          project.getVariables().length isnt previousVariablesCount
 
         runs ->
           expect(project.getVariables().length).toEqual(4)
