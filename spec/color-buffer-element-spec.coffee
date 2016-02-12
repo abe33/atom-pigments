@@ -207,10 +207,13 @@ describe 'ColorBufferElement', ->
 
       describe 'when the current pane is splitted to the right', ->
         beforeEach ->
-          atom.commands.dispatch(editorElement, 'pane:split-right')
+          if parseFloat(atom.getVersion()) > 1.5
+            atom.commands.dispatch(editorElement, 'pane:split-right-and-copy-active-item')
+          else
+            atom.commands.dispatch(editorElement, 'pane:split-right')
           editor = atom.workspace.getTextEditors()[1]
           colorBufferElement = atom.views.getView(project.colorBufferForEditor(editor))
-          waitsFor ->
+          waitsFor 'color buffer element markers', ->
             colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length
 
         it 'should keep all the buffer elements attached', ->
