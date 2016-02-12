@@ -4,7 +4,8 @@ module.exports =
 class OutlineRenderer extends RegionRenderer
   render: (colorMarker) ->
     range = colorMarker.getScreenRange()
-    return [] if range.isEmpty()
+    return {} if range.isEmpty()
+    return {} unless colorMarker.color?
 
     color = colorMarker.color.toCSS()
 

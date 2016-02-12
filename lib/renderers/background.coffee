@@ -4,7 +4,7 @@ module.exports =
 class BackgroundRenderer extends RegionRenderer
   includeTextInRegion: true
   render: (colorMarker) ->
-
+    return {} unless colorMarker?.color?
     color = colorMarker.color.toCSS()
 
     regions = @renderRegions(colorMarker)

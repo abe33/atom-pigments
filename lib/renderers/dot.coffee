@@ -23,6 +23,8 @@ class DotRenderer
     column = (screenLine.getMaxScreenColumn() + 1) * charWidth
     pixelPosition = textEditorElement.pixelPositionForScreenPosition(range.end)
 
+    return {} unless colorMarker.color?
+
     class: 'dot'
     style:
       backgroundColor: colorMarker.color.toCSS()
