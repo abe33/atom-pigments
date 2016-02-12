@@ -524,13 +524,10 @@ describe 'ColorProject', ->
 
           spy = jasmine.createSpy 'did-update-variables'
           project.onDidUpdateVariables(spy)
-          project.setIgnoredNames(['vendor/*', '**/*.styl'])
+          waitsForPromise -> project.setIgnoredNames(['vendor/*', '**/*.styl'])
 
-          waitsFor -> project.getVariables().length < 12
-
-        it 'clears all the variables as there is no legible paths', ->
+        it 'clears all the paths as there is no legible paths', ->
           expect(project.getPaths().length).toEqual(0)
-          expect(project.getVariables().length).toEqual(0)
 
     describe 'when the project has multiple root directory', ->
       beforeEach ->

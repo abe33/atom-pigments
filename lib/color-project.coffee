@@ -551,7 +551,8 @@ class ColorProject
       if /\/\*$/.test(p) then p + '*' else p
 
   setIgnoredNames: (@ignoredNames=[]) ->
-    return if not @initialized? and not @initializePromise?
+    if not @initialized? and not @initializePromise?
+      return Promise.reject('Project is not initialized yet') 
 
     @initialize().then =>
       dirtied = @paths.filter (p) => @isIgnoredPath(p)
