@@ -552,7 +552,7 @@ class ColorProject
 
   setIgnoredNames: (@ignoredNames=[]) ->
     if not @initialized? and not @initializePromise?
-      return Promise.reject('Project is not initialized yet') 
+      return Promise.reject('Project is not initialized yet')
 
     @initialize().then =>
       dirtied = @paths.filter (p) => @isIgnoredPath(p)

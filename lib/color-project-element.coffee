@@ -108,9 +108,16 @@ class ColorProjectElement extends HTMLElement
 
   getIconName: -> "pigments"
 
+  serialize: -> {deserializer: @constructor.name}
+
 module.exports =
 ColorProjectElement =
 registerOrUpdateElement 'pigments-color-project', ColorProjectElement.prototype
+
+ColorProjectElement.deserialize = (state) ->
+  element = new ColorProjectElement
+  element.setModel(atom.packages.getActivePackage('pigments').mainModule.getProject())
+  element
 
 ColorProjectElement.registerViewProvider = (modelClass) ->
   atom.views.addViewProvider modelClass, (model) ->

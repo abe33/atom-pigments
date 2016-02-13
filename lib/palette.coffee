@@ -1,7 +1,15 @@
 
 module.exports =
 class Palette
+  @deserialize: (state) -> new Palette(state.variables)
+
   constructor: (@variables=[]) ->
+
+  getTitle: -> 'Palette'
+
+  getURI: -> 'pigments://palette'
+
+  getIconName: -> "pigments"
 
   sortedByColor: ->
     @variables.slice().sort ({color:a}, {color:b}) => @compareColors(a,b)
@@ -33,3 +41,9 @@ class Palette
       1
     else
       0
+
+  serialize: ->
+    {
+      deserializer: 'Palette'
+      @variables
+    }

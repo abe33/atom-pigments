@@ -7,8 +7,10 @@ ColorContext = require './color-context'
 
 module.exports =
 class ColorSearch
-  constructor: (options={}) ->
-    {@sourceNames, ignoredNames, @context} = options
+  @deserialize: (state) -> new ColorSearch(state.options)
+
+  constructor: (@options={}) ->
+    {@sourceNames, ignoredNames, @context} = @options
     @emitter = new Emitter
     @context ?= new ColorContext({registry})
     @parser = @context.parser
@@ -22,6 +24,12 @@ class ColorSearch
         @ignoredNames.push(new Minimatch(ignore, matchBase: true, dot: true))
       catch error
         console.warn "Error parsing ignore pattern (#{ignore}): #{error.message}"
+
+  getTitle: -> 'Pigments Find Results'
+
+  getURI: -> 'pigments://search'
+
+  getIconName: -> "pigments"
 
   onDidFindMatches: (callback) ->
     @emitter.on 'did-find-matches', callback
@@ -66,3 +74,9 @@ class ColorSearch
   isIgnored: (relativePath) ->
     for ignoredName in @ignoredNames
       return true if ignoredName.match(relativePath)
+
+  serialize: ->
+    {
+      deserializer: 'ColorSearch'
+      @options
+    }

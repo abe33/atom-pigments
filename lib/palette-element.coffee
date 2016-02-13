@@ -72,12 +72,6 @@ class PaletteElement extends HTMLElement
     @renderList() if @palette?
     @attached = true
 
-  getTitle: -> 'Palette'
-
-  getURI: -> 'pigments://palette'
-
-  getIconName: -> "pigments"
-
   getModel: -> @palette
 
   setModel: (@palette) -> @renderList() if @attached

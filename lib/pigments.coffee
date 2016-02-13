@@ -136,8 +136,8 @@ module.exports =
       return unless protocol is 'pigments:'
 
       switch host
-        when 'search' then atom.views.getView(@project.findAllColors())
-        when 'palette' then atom.views.getView(@project.getPalette())
+        when 'search' then @project.findAllColors()
+        when 'palette' then @project.getPalette()
         when 'settings' then atom.views.getView(@project)
 
     atom.contextMenu.add
@@ -286,7 +286,10 @@ module.exports =
     ColorProjectElement.registerViewProvider(ColorProject)
     PaletteElement.registerViewProvider(Palette)
 
+    atom.deserializers.add(Palette)
+    atom.deserializers.add(ColorSearch)
     atom.deserializers.add(ColorProject)
+    atom.deserializers.add(ColorProjectElement)
     atom.deserializers.add(VariablesCollection)
 
 module.exports.loadDeserializersAndRegisterViews()

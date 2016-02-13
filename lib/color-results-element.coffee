@@ -63,12 +63,6 @@ class ColorResultsElement extends HTMLElement
 
     @colorSearch.search()
 
-  getTitle: -> 'Pigments Find Results'
-
-  getURI: -> 'pigments://search'
-
-  getIconName: -> "pigments"
-
   addFileResult: (result) ->
     @files += 1
     @colors += result.matches.length
