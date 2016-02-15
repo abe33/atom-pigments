@@ -114,6 +114,60 @@ describe 'autocomplete provider', ->
         expect(editor.getText()).toContain '$other-color'
         expect(editor.getText()).not.toContain '$$'
 
+    describe 'when the extendAutocompleteToColorValue setting is enabled', ->
+      beforeEach ->
+        atom.config.set('pigments.extendAutocompleteToColorValue', true)
+
+      describe 'with an opaque color', ->
+        it 'displays the color hexadecimal code in the completion item', ->
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+            editor.moveToBottom()
+            editor.insertText('b')
+            editor.insertText('a')
+            editor.insertText('s')
+
+            advanceClock(completionDelay)
+
+          waitsFor ->
+            autocompleteManager.displaySuggestions.calls.length is 1
+
+          waitsFor ->
+            editorView.querySelector('.autocomplete-plus li')?
+
+          runs ->
+            popup = editorView.querySelector('.autocomplete-plus')
+            expect(popup).toExist()
+            expect(popup.querySelector('span.word').textContent).toEqual('base-color')
+
+            expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
+
+      describe 'with a transparent color', ->
+        it 'displays the color hexadecimal code in the completion item', ->
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+            editor.moveToBottom()
+            editor.insertText('$')
+            editor.insertText('o')
+            editor.insertText('t')
+
+            advanceClock(completionDelay)
+
+          waitsFor ->
+            autocompleteManager.displaySuggestions.calls.length is 1
+
+          waitsFor ->
+            editorView.querySelector('.autocomplete-plus li')?
+
+          runs ->
+            popup = editorView.querySelector('.autocomplete-plus')
+            expect(popup).toExist()
+            expect(popup.querySelector('span.word').textContent).toEqual('$other-color')
+
+            expect(popup.querySelector('span.right-label').textContent).toContain('rgba(255,0,0,0.5)')
+
   describe 'writing the name of a non-color variable', ->
     it 'returns suggestions for the matching variable', ->
       atom.config.set('pigments.extendAutocompleteToVariables', false)

@@ -190,3 +190,33 @@ describe 'PaletteElement', ->
       it 'checks the merge checkbox', ->
         mergeCheckBox = paletteElement.querySelector('#merge-duplicates')
         expect(mergeCheckBox.checked).toBeTruthy()
+
+  describe 'when the project variables are modified', ->
+    [spy, initialColorCount] = []
+    beforeEach ->
+      atom.commands.dispatch(workspaceElement, 'pigments:show-palette')
+
+      waitsFor ->
+        paletteElement = workspaceElement.querySelector('pigments-palette')
+
+      runs ->
+        palette = paletteElement.getModel()
+        initialColorCount = palette.getColorsCount()
+        spy = jasmine.createSpy('onDidUpdateVariables')
+
+        project.onDidUpdateVariables(spy)
+
+        atom.config.set 'pigments.sourceNames', [
+          '*.styl'
+          '*.less'
+          '*.sass'
+        ]
+
+      waitsFor -> spy.callCount > 0
+
+    it 'updates the palette', ->
+      expect(palette.getColorsCount()).not.toEqual(initialColorCount)
+
+      lis = paletteElement.querySelectorAll('li')
+
+      expect(lis.length).not.toEqual(initialColorCount)

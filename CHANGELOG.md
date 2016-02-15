@@ -1,3 +1,15 @@
+<a name="v0.24.0"></a>
+# v0.24.0 (2016-02-15)
+
+## Features
+
+- Add a min-height on search results panel heading ([9959c281](https://github.com/abe33/atom-pigments/commit/9959c28139de48daf5c6c7e2857aa86282ac4aa9))
+- Add a new setting to show color variable value in autocomplete ([3a86e258](https://github.com/abe33/atom-pigments/commit/3a86e258043194b8c4f58b7636ca5dfe0b1418cb))
+
+## Bug Fixes
+
+- Ensure that all custom pane items are serialized on pane split ([0d39d82c](https://github.com/abe33/atom-pigments/commit/0d39d82c192a24bbc3558fc10b9e3f04f79122c5), [#139](https://github.com/abe33/atom-pigments/issues/139))
+
 a name="v0.23.1"></a>
 # v0.23.1 (2016-02-03)
 
