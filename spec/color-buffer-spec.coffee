@@ -419,6 +419,21 @@ describe 'ColorBuffer', ->
       it 'does not renders colors from variables', ->
         expect(colorBuffer.getColorMarkers().length).toEqual(4)
 
+
+    describe 'with a buffer in crlf mode', ->
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('crlf.styl').then (o) ->
+            editor = o
+
+        runs ->
+          colorBuffer = project.colorBufferForEditor(editor)
+
+        waitsForPromise -> colorBuffer.variablesAvailable()
+
+      it 'creates a marker for each colors', ->
+        expect(colorBuffer.getValidColorMarkers().length).toEqual(2)
+
   ##    ####  ######   ##    ##  #######  ########  ######## ########
   ##     ##  ##    ##  ###   ## ##     ## ##     ## ##       ##     ##
   ##     ##  ##        ####  ## ##     ## ##     ## ##       ##     ##

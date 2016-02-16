@@ -333,7 +333,7 @@ describe "Pigments", ->
         atom.config.set 'pigments.sourceNames', ['**/*.txt']
 
         waitsFor 'variables initialized', ->
-          project.getVariables().length is 33
+          project.getVariables().length is 35
 
         runs ->
           previousVariablesCount = project.getVariables().length

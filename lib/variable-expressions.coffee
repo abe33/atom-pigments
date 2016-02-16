@@ -3,7 +3,7 @@ VariableExpression = require './variable-expression'
 
 module.exports = registry = new ExpressionsRegistry(VariableExpression)
 
-registry.createExpression 'pigments:less', '^[ \\t]*(@[a-zA-Z0-9\\-_]+)\\s*:\\s*([^;\\n]+);?', ['*']
+registry.createExpression 'pigments:less', '^[ \\t]*(@[a-zA-Z0-9\\-_]+)\\s*:\\s*([^;\\n\\r]+);?', ['*']
 
 # It catches sequences like `@mixin foo($foo: 10)` and ignores them.
 registry.createExpression 'pigments:scss_params', '^[ \\t]*@(mixin|include|function)\\s+[a-zA-Z0-9\\-_]+\\s*\\([^\\)]+\\)', ['*'], (match, solver) ->
@@ -70,4 +70,4 @@ registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9
   else
     solver.abortParsing()
 
-registry.createExpression 'pigments:stylus', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n;]*);?$', ['*']
+registry.createExpression 'pigments:stylus', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n\\r;]*);?$', ['*']

@@ -130,3 +130,14 @@ describe 'VariableScanner', ->
 
       it 'finds the variable with an interpolation tag', ->
         expect(result).toBeDefined()
+
+    withScannerForTextEditor 'crlf.styl', ->
+      beforeEach ->
+        result = null
+        doSearch = -> result = scanner.search(text, result?.lastIndex)
+
+        doSearch()
+        doSearch()
+
+      it 'finds all the variables even with crlf mode', ->
+        expect(result).toBeDefined()
