@@ -1,3 +1,10 @@
+<a name="v0.24.1"></a>
+# v0.24.1 (2016-02-16)
+
+## Bug Fixes
+
+- Fix parsing issue in CRLF files ([07117e1f](https://github.com/abe33/atom-pigments/commit/07117e1fe1c5215bc921085dd516ce72d6af6604), [#144](https://github.com/abe33/atom-pigments/issues/144))
+
 <a name="v0.24.0"></a>
 # v0.24.0 (2016-02-15)
 
