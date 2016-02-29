@@ -44,6 +44,8 @@ class PaletteElement extends HTMLElement
     @project = pigments.getProject()
     @subscriptions = new CompositeDisposable
 
+    return if @project.isDestroyed()
+
     @subscriptions.add @project.onDidUpdateVariables =>
       if @palette?
         @palette.variables = @project.getColorVariables()
@@ -77,6 +79,10 @@ class PaletteElement extends HTMLElement
   attachedCallback: ->
     @renderList() if @palette?
     @attached = true
+
+  detachedCallback: ->
+    @subscriptions.dispose()
+    @attached = false
 
   getModel: -> @palette
 
