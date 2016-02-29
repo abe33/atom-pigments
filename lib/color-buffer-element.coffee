@@ -149,7 +149,7 @@ class ColorBufferElement extends HTMLElement
     @gutter = @editor.addGutter name: 'pigments'
     @displayedMarkers = []
     @decorationByMarkerId = {}
-    gutterContainer = @editorElement.shadowRoot.querySelector('.gutter-container')
+    gutterContainer = @getEditorRoot().querySelector('.gutter-container')
     @gutterSubscription = @subscribeTo gutterContainer,
       mousedown: (e) =>
         targetDecoration = e.path[0]
@@ -380,7 +380,7 @@ class ColorBufferElement extends HTMLElement
     else
       @editor
 
-    rootElement = @editorElement.shadowRoot ? @editorElement
+    rootElement = @getEditorRoot()
     {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
     top = clientY - top + scrollTarget.getScrollTop()
     left = clientX - left + scrollTarget.getScrollLeft()
