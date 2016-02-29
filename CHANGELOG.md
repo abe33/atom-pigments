@@ -25,7 +25,7 @@
 
 - Ensure that all custom pane items are serialized on pane split ([0d39d82c](https://github.com/abe33/atom-pigments/commit/0d39d82c192a24bbc3558fc10b9e3f04f79122c5), [#139](https://github.com/abe33/atom-pigments/issues/139))
 
-a name="v0.23.1"></a>
+<a name="v0.23.1"></a>
 # v0.23.1 (2016-02-03)
 
 ## Bug Fixes
