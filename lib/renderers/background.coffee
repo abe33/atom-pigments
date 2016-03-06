@@ -13,7 +13,7 @@ class BackgroundRenderer extends RegionRenderer
     l = color.luma
 
     colorText = if l > 0.43 then 'black' else 'white'
-    @styleRegion(region, color.toCSS(), colorText) for region in regions
+    @styleRegion(region, color.toCSS(), colorText) for region in regions when region?
     {regions}
 
   styleRegion: (region, color, textColor) ->
