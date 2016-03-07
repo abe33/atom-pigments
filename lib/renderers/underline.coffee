@@ -8,7 +8,7 @@ class UnderlineRenderer extends RegionRenderer
 
     regions = @renderRegions(colorMarker)
 
-    @styleRegion(region, color.toCSS()) for region in regions
+    @styleRegion(region, color.toCSS()) for region in regions when region?
     {regions}
 
   styleRegion: (region, color) ->

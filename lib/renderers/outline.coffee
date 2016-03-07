@@ -10,7 +10,7 @@ class OutlineRenderer extends RegionRenderer
     rowSpan = range.end.row - range.start.row
     regions = @renderRegions(colorMarker)
 
-    @styleRegion(region, color.toCSS()) for region in regions
+    @styleRegion(region, color.toCSS()) for region in regions when region?
     {regions}
 
   styleRegion: (region, color) ->
