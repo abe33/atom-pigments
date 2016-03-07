@@ -14,7 +14,7 @@ class BufferColorsScanner
     @results = []
 
   scan: ->
-    scope = path.extname @bufferPath
+    scope = path.extname(@bufferPath)[1..-1]
     lastIndex = 0
     while result = @scanner.search(@buffer, scope, lastIndex)
       @results.push(result)

@@ -32,7 +32,7 @@ registry = new ExpressionsRegistry(ColorExpression)
 ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
 # #6f3489ef
-registry.createExpression 'pigments:css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", ['css', 'less', 'styl', 'stylus', 'sass', 'scss'], (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", 1, ['css', 'less', 'styl', 'stylus', 'sass', 'scss'], (match, expression, context) ->
   [_, hexa] = match
 
   @hexRGBA = hexa

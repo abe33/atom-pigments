@@ -1,3 +1,11 @@
+<a name="v0.24.3"></a>
+# v0.24.3 (2016-03-07)
+
+## Bug Fixes
+
+- Fix issues with less mixing looking like CSS variables ([37cbaed0](https://github.com/abe33/atom-pigments/commit/37cbaed02a9e6e2b1916ae0be49538fa9dd16061), [#157](https://github.com/abe33/atom-pigments/issues/157))
+- Fix invalid scope name computed in scan buffer handler ([edeaf44c](https://github.com/abe33/atom-pigments/commit/edeaf44cab21b555e3424d9710400432bdd42804), [#156](https://github.com/abe33/atom-pigments/issues/156))
+
 <a name="v0.24.2"></a>
 # v0.24.2 (2016-02-29)
 

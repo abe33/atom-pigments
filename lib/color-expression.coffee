@@ -39,6 +39,7 @@ class ColorExpression
 
     color = new Color()
     color.colorExpression = expression
+    color.expressionHandler = @name
     @handle.call(color, @regexp.exec(expression), expression, context)
     color
 
