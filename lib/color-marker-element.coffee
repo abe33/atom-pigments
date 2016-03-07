@@ -62,10 +62,12 @@ class ColorMarkerElement extends HTMLElement
     @innerHTML = ''
     {style, regions, class: cls} = @renderer.render(@colorMarker)
 
-    if regions?.some((r) -> not r? or r.invalid) and !SPEC_MODE
+    regions = (regions or []).filter (r) -> r?
+
+    if regions?.some((r) -> r?.invalid) and !SPEC_MODE
       return @bufferElement.requestMarkerUpdate([this])
 
-    @appendChild(region) for region in regions if regions?
+    @appendChild(region) for region in regions
     if cls?
       @className = cls
     else
