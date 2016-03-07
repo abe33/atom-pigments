@@ -1,3 +1,11 @@
+<a name="v0.24.4"></a>
+# v0.24.4 (2016-03-07)
+
+## Bug Fixes
+
+- Fix error when styling undefined regions ([d6118d95](https://github.com/abe33/atom-pigments/commit/d6118d9596f4973ce0fae7a02e9e44ef02c92650))
+- Fix error raised when regions array holds null region ([d3512b9a](https://github.com/abe33/atom-pigments/commit/d3512b9a5cbcd575a99cebf8f0ed0f8cc7fececa))
+
 <a name="v0.24.3"></a>
 # v0.24.3 (2016-03-07)
 
