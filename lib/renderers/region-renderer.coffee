@@ -47,7 +47,7 @@ class RegionRenderer
     textEditorElement = atom.views.getView(textEditor)
     displayBuffer = colorMarker.marker.displayBuffer
 
-    return unless textEditorElement.parentNode?
+    return unless textEditorElement.component?
 
     lineHeight = textEditor.getLineHeightInPixels()
     charWidth = textEditor.getDefaultCharWidth()
