@@ -1,3 +1,10 @@
+<a name="v0.24.5"></a>
+# v0.24.5 (2016-03-09)
+
+## Bug Fixes
+
+- Fix variables followed by !default not matched as color ([7a735c05](https://github.com/abe33/atom-pigments/commit/7a735c05386dd147bcd190b93744397602e9b9c0))
+
 <a name="v0.24.4"></a>
 # v0.24.4 (2016-03-07)
 
