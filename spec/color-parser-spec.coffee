@@ -66,6 +66,10 @@ describe 'ColorParser', ->
       '@list-item-height': '@component-line-height'
     }).asUndefined()
 
+  itParses('$text-color !default').withContext({
+    '$text-color': asColor 'cyan'
+  }).asColor(0,255,255)
+
   itParses('c').withContext({'c': 'c'}).asUndefined()
   itParses('c').withContext({
     'c': 'd'

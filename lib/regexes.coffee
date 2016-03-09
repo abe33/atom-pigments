@@ -25,4 +25,4 @@ module.exports =
       variableNames.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
     variableNames = variableNames.join('|')
 
-    "(?:#{namePrefixes})(#{variableNames})(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"
+    "(?:#{namePrefixes})(#{variableNames})(\\s+!default)?(?!_|-|\\w|\\d|[ \\t]*[\\.:=])"
