@@ -132,21 +132,14 @@ class ColorContext
 
   getValue: (value) ->
     [realValue, lastRealValue] = []
+    lookedUpValues = [value]
 
-    while realValue = @vars[value]?.value
+    while (realValue = @vars[value]?.value) and realValue not in lookedUpValues
       @usedVariables.push(value)
       value = lastRealValue = realValue
+      lookedUpValues.push(realValue)
 
-    lastRealValue
-
-  getColorValue: (value) ->
-    [realValue, lastRealValue] = []
-
-    while realValue = @colorVars[value]?.value
-      @usedVariables.push(value)
-      value = lastRealValue = realValue
-
-    lastRealValue
+    if realValue in lookedUpValues then undefined else lastRealValue
 
   readColorExpression: (value) ->
     if @colorVars[value]?
