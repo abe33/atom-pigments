@@ -131,6 +131,18 @@ describe 'ColorContext', ->
       itParses('@foo').asUndefined()
       itParses('@taz').asUndefined()
 
+    describe 'that contains circular references nested in operations', ->
+      beforeEach ->
+        variables =[
+          createColorVar '@foo', 'complement(@bar)'
+          createColorVar '@bar', 'transparentize(@baz, 0.5)'
+          createColorVar '@baz', 'darken(@foo, 10%)'
+        ]
+
+        context = new ColorContext({variables, registry})
+
+      itParses('@foo').asUndefinedColor()
+
   describe 'with variables from a default file', ->
     [projectPath, referenceVariable] = []
     createVar = (name, value, path) ->
