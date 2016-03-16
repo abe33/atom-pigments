@@ -1,7 +1,7 @@
 VariableParser = require '../lib/variable-parser'
 registry = require '../lib/variable-expressions'
 
-describe 'VariableParser', ->
+fdescribe 'VariableParser', ->
   [parser] = []
 
   itParses = (expression) ->
@@ -33,11 +33,24 @@ describe 'VariableParser', ->
   itParses('color = white').as('color': 'white')
   itParses('non-color = 10px').as('non-color': '10px')
 
-  itParses('$color: white;').as('$color': 'white')
   itParses('$color: white').as('$color': 'white')
   itParses('$color  : white').as('$color': 'white')
-  itParses('$non-color: 10px;').as('$non-color': '10px')
-  itParses('$non-color: 10px').as('$non-color': '10px')
+  itParses('$some-color: white;').as({
+    '$some-color': 'white'
+    '$some_color': 'white'
+  })
+  itParses('$some_color  : white').as({
+    '$some-color': 'white'
+    '$some_color': 'white'
+  })
+  itParses('$non-color: 10px;').as({
+    '$non-color': '10px'
+    '$non_color': '10px'
+  })
+  itParses('$non_color: 10px').as({
+    '$non-color': '10px'
+    '$non_color': '10px'
+  })
 
   itParses('@color: white;').as('@color': 'white')
   itParses('@non-color: 10px;').as('@non-color': '10px')
