@@ -1,7 +1,7 @@
 VariableParser = require '../lib/variable-parser'
 registry = require '../lib/variable-expressions'
 
-fdescribe 'VariableParser', ->
+describe 'VariableParser', ->
   [parser] = []
 
   itParses = (expression) ->
