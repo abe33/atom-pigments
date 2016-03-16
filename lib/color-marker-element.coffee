@@ -57,15 +57,18 @@ class ColorMarkerElement extends HTMLElement
     @clear()
 
   render: ->
-    return unless @colorMarker? and @colorMarker.color?
-    return if @colorMarker.marker.displayBuffer.isDestroyed()
+    return unless @colorMarker? and @colorMarker.color? and @renderer?
+
+    {colorMarker, renderer, bufferElement} = this
+
+    return if colorMarker.marker.displayBuffer.isDestroyed()
     @innerHTML = ''
-    {style, regions, class: cls} = @renderer.render(@colorMarker)
+    {style, regions, class: cls} = renderer.render(colorMarker)
 
     regions = (regions or []).filter (r) -> r?
 
     if regions?.some((r) -> r?.invalid) and !SPEC_MODE
-      return @bufferElement.requestMarkerUpdate([this])
+      return bufferElement.requestMarkerUpdate([this])
 
     @appendChild(region) for region in regions
     if cls?
@@ -78,7 +81,7 @@ class ColorMarkerElement extends HTMLElement
     else
       @style.cssText = ''
 
-    @lastMarkerScreenRange = @colorMarker.getScreenRange()
+    @lastMarkerScreenRange = colorMarker.getScreenRange()
 
   checkScreenRange: ->
     return unless @colorMarker? and @lastMarkerScreenRange?
