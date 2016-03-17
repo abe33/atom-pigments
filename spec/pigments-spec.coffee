@@ -232,16 +232,16 @@ describe "Pigments", ->
         waitsFor 'variables updated', -> variableSpy.callCount > 1
 
         runs ->
-          expect(project.getVariables().length).toEqual(4)
-          expect(project.getColorVariables().length).toEqual(2)
+          expect(project.getVariables().length).toEqual(6)
+          expect(project.getColorVariables().length).toEqual(4)
 
           consumerDisposable = pigments.consumeColorExpressions(colorProvider)
 
         waitsFor 'variables updated', -> variableSpy.callCount > 2
 
         runs ->
-          expect(project.getVariables().length).toEqual(4)
-          expect(project.getColorVariables().length).toEqual(3)
+          expect(project.getVariables().length).toEqual(6)
+          expect(project.getColorVariables().length).toEqual(5)
 
       describe 'and there was an expression that could not be resolved before', ->
         it 'updates the invalid color as a now valid color', ->
@@ -271,8 +271,8 @@ describe "Pigments", ->
             waitsFor 'variables updated', -> variableSpy.callCount > 2
 
             runs ->
-              expect(project.getVariables().length).toEqual(4)
-              expect(project.getColorVariables().length).toEqual(4)
+              expect(project.getVariables().length).toEqual(6)
+              expect(project.getColorVariables().length).toEqual(6)
               expect(project.getVariableByName('bar').color.invalid).toBeFalsy()
 
               consumerDisposable.dispose()
@@ -280,8 +280,8 @@ describe "Pigments", ->
             waitsFor 'variables updated', -> variableSpy.callCount > 3
 
             runs ->
-              expect(project.getVariables().length).toEqual(4)
-              expect(project.getColorVariables().length).toEqual(3)
+              expect(project.getVariables().length).toEqual(6)
+              expect(project.getColorVariables().length).toEqual(5)
               expect(project.getVariableByName('bar').color.invalid).toBeTruthy()
 
   describe 'variable expression consumer', ->
@@ -306,8 +306,8 @@ describe "Pigments", ->
       waitsFor 'variables updated', -> variableSpy.callCount > 1
 
       runs ->
-        expect(project.getVariables().length).toEqual(4)
-        expect(project.getColorVariables().length).toEqual(2)
+        expect(project.getVariables().length).toEqual(6)
+        expect(project.getColorVariables().length).toEqual(4)
 
         consumerDisposable = pigments.consumeVariableExpressions(variableProvider)
 
@@ -315,8 +315,8 @@ describe "Pigments", ->
         variableSpy.callCount > 2
 
       runs ->
-        expect(project.getVariables().length).toEqual(5)
-        expect(project.getColorVariables().length).toEqual(2)
+        expect(project.getVariables().length).toEqual(7)
+        expect(project.getColorVariables().length).toEqual(4)
 
         consumerDisposable.dispose()
 
@@ -324,8 +324,8 @@ describe "Pigments", ->
         variableSpy.callCount > 3
 
       runs ->
-        expect(project.getVariables().length).toEqual(4)
-        expect(project.getColorVariables().length).toEqual(2)
+        expect(project.getVariables().length).toEqual(6)
+        expect(project.getColorVariables().length).toEqual(4)
 
     describe 'when an array of expressions is passed', ->
       it 'updates the project variables when consumed', ->
