@@ -333,17 +333,17 @@ describe "Pigments", ->
         atom.config.set 'pigments.sourceNames', ['**/*.txt']
 
         waitsFor 'variables initialized', ->
-          project.getVariables().length is 35
+          project.getVariables().length is 45
 
         runs ->
           previousVariablesCount = project.getVariables().length
 
         waitsFor 'variables updated', ->
-          project.getVariables().length is 4
+          project.getVariables().length is 6
 
         runs ->
-          expect(project.getVariables().length).toEqual(4)
-          expect(project.getColorVariables().length).toEqual(2)
+          expect(project.getVariables().length).toEqual(6)
+          expect(project.getColorVariables().length).toEqual(4)
 
           previousVariablesCount = project.getVariables().length
 
@@ -355,8 +355,8 @@ describe "Pigments", ->
           project.getVariables().length isnt previousVariablesCount
 
         runs ->
-          expect(project.getVariables().length).toEqual(5)
-          expect(project.getColorVariables().length).toEqual(2)
+          expect(project.getVariables().length).toEqual(7)
+          expect(project.getColorVariables().length).toEqual(4)
 
           previousVariablesCount = project.getVariables().length
 
@@ -366,5 +366,5 @@ describe "Pigments", ->
           project.getVariables().length isnt previousVariablesCount
 
         runs ->
-          expect(project.getVariables().length).toEqual(4)
-          expect(project.getColorVariables().length).toEqual(2)
+          expect(project.getVariables().length).toEqual(6)
+          expect(project.getColorVariables().length).toEqual(4)
