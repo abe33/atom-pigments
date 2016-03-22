@@ -238,6 +238,7 @@ describe 'ColorParser', ->
   itParses('YellowGreen').asColor('#9acd32')
   itParses('yellow_green').asColor('#9acd32')
   itParses('YELLOW_GREEN').asColor('#9acd32')
+  itParses('>YELLOW_GREEN').asColor('#9acd32')
 
   itParses('darken(cyan, 20%)').asColor(0, 153, 153)
   itParses('darken(cyan, 20)').asColor(0, 153, 153)

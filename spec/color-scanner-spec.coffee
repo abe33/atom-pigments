@@ -129,3 +129,12 @@ describe 'ColorScanner', ->
           doSearch()
 
           expect(result.color).toBeDefined()
+
+      withScannerForTextEditor 'color-in-tag-content.html', ->
+        it 'finds both colors', ->
+          result = lastIndex: 0
+          doSearch = -> result = scanner.search(text, 'html', result.lastIndex)
+
+          expect(doSearch()).toBeDefined()
+          expect(doSearch()).toBeDefined()
+          expect(doSearch()).toBeUndefined()
