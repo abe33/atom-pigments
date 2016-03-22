@@ -133,6 +133,12 @@ module.exports =
       'pigments:convert-to-rgba': convertMethod (marker) ->
         marker.convertContentToRGBA() if marker?
 
+      'pigments:convert-to-hsl': convertMethod (marker) ->
+        marker.convertContentToHSL() if marker?
+
+      'pigments:convert-to-hsla': convertMethod (marker) ->
+        marker.convertContentToHSLA() if marker?
+
     atom.workspace.addOpener (uriToOpen) =>
       url ||= require 'url'
 
@@ -151,6 +157,8 @@ module.exports =
           {label: 'Convert to hexadecimal', command: 'pigments:convert-to-hex'}
           {label: 'Convert to RGB', command: 'pigments:convert-to-rgb'}
           {label: 'Convert to RGBA', command: 'pigments:convert-to-rgba'}
+          {label: 'Convert to HSL', command: 'pigments:convert-to-hsl'}
+          {label: 'Convert to HSLA', command: 'pigments:convert-to-hsla'}
         ]
         shouldDisplay: (event) => @shouldDisplayContextMenu(event)
       }]

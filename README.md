@@ -96,9 +96,9 @@ This command can be triggered using the keyboard by defining a keybinding like t
   'alt-shift-f': 'pigments:find-colors'
 ```
 
-### Pigments: Convert To Hexadecimal/Pigments: Convert to RGB(A)
+### Pigments: Convert To *
 
-It evaluates and replace a color by either its hexadecimal notation or rgb/rgba notation.
+It evaluates and replace a color by the corresponding notation.
 Accessible from the command palette or by right clicking on a color.
 
 ![pigments-conversion](https://github.com/abe33/atom-pigments/blob/master/resources/context-menu-conversion.gif?raw=true)
@@ -110,6 +110,8 @@ These commands can be triggered using the keyboard by defining a keybinding like
   'alt-shift-h': 'pigments:convert-to-hex'
   'alt-shift-g': 'pigments:convert-to-rgb'
   'alt-shift-j': 'pigments:convert-to-rgba'
+  'alt-shift-k': 'pigments:convert-to-hsl'
+  'alt-shift-l': 'pigments:convert-to-hsla'
 ```
 
 When triggered from the command palette or from the keyboard, the conversion will operate on every cursor positioned on color markers.
