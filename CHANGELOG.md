@@ -1,3 +1,19 @@
+<a name="v0.25.0"></a>
+# v0.25.0 (2016-03-22)
+
+## Features
+
+- Add HSL conversion commands ([3c512131](https://github.com/abe33/atom-pigments/commit/3c512131d5aae91c038824263c5d943942951f5b), [#161](https://github.com/abe33/atom-pigments/issues/161))
+- Add support for sass variable variations ([b9e9dbe6](https://github.com/abe33/atom-pigments/commit/b9e9dbe6a3bcadba51e4515b3e7ee23e7816c1f1))
+  <br>Variables such as `$some-color` are now also available as `$some_color`
+- Change scopes for SVG names color expression  ([30f2ffee](https://github.com/abe33/atom-pigments/commit/30f2ffeea9be8d7396aa9eae8f6cd72654945cc4), [#153](https://github.com/abe33/atom-pigments/issues/153))
+  <br>Its now limited to CSS and CSS pre-processor files. The supported scopes can be extended through the `extendedFiletypesForColorWords` setting.
+
+## Bug Fixes
+
+- Fix svg color not detected if preceded with > ([941fc7a3](https://github.com/abe33/atom-pigments/commit/941fc7a34f1fb3a5072defb3a5f7b04b0a3dcf97), [#162](https://github.com/abe33/atom-pigments/issues/162))
+- Fix infinite loop when looking for a variable having a circular reference ([80889983](https://github.com/abe33/atom-pigments/commit/80889983d2619137fc892d5487109067f3f87c1b))
+
 <a name="v0.24.5"></a>
 # v0.24.5 (2016-03-09)
 
