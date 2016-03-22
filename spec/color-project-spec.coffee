@@ -20,6 +20,7 @@ describe 'ColorProject', ->
       '*.styl'
     ]
     atom.config.set 'pigments.ignoredNames', []
+    atom.config.set 'pigments.extendedFiletypesForColorWords', ['*']
 
     [fixturesPath] = atom.project.getPaths()
     rootPath = "#{fixturesPath}/project"

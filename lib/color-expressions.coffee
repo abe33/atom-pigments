@@ -290,7 +290,7 @@ registry.createExpression 'pigments:gray', strip("
 colors = Object.keys(SVGColors.allCases)
 colorRegexp = "(?:#{namePrefixes})(#{colors.join('|')})\\b(?![ \\t]*[-\\.:=\\(])"
 
-registry.createExpression 'pigments:named_colors', colorRegexp, ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:named_colors', colorRegexp, ['css', 'less', 'styl', 'stylus', 'sass', 'scss'], (match, expression, context) ->
   [_,name] = match
 
   @colorExpression = @name = name

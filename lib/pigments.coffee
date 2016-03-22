@@ -31,14 +31,12 @@ module.exports =
       description: "Glob patterns of files to ignore when scanning the project for variables."
       items:
         type: 'string'
-
     ignoredBufferNames:
       type: 'array'
       default: []
       description: "Glob patterns of files that won't get any colors highlighted"
       items:
         type: 'string'
-
     extendedSearchNames:
       type: 'array'
       default: ['**/*.css']
@@ -47,12 +45,17 @@ module.exports =
       type: 'array'
       default: ['*']
       description: "An array of file extensions where colors will be highlighted. If the wildcard `*` is present in this array then colors in every file will be highlighted."
+    extendedFiletypesForColorWords:
+      type: 'array'
+      default: []
+      description: "An array of file extensions where color values such as `red`, `azure` or `whitesmoke` will be highlighted. By default CSS and CSS pre-processors files are supported."
     ignoredScopes:
       type: 'array'
       default: []
       description: "Regular expressions of scopes in which colors are ignored. For example, to ignore all colors in comments you can use `\\.comment`."
       items:
         type: 'string'
+
     autocompleteScopes:
       type: 'array'
       default: [
