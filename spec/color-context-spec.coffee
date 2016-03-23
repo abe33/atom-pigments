@@ -91,7 +91,7 @@ describe 'ColorContext', ->
       itParses('c').asColorExpression('rgb(255,127,0)')
       itParses('c').asColor(255, 127, 0)
 
-    fdescribe 'that contains alias for named colors', ->
+    describe 'that contains alias for named colors', ->
       beforeEach ->
         variables =[
           createColorVar '$text-color', 'white', '/path/to/file.css.sass'
