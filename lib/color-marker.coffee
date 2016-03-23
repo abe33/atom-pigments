@@ -92,11 +92,11 @@ class ColorMarker
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)
 
   convertContentToHSL: ->
-    hsl = "hsl(#{@color.hue}, #{@color.saturation}%, #{@color.lightness}%)"
+    hsl = "hsl(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%)"
 
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hsl)
 
   convertContentToHSLA: ->
-    hsla = "hsla(#{@color.hue}, #{@color.saturation}%, #{@color.lightness}%, #{@color.alpha})"
+    hsla = "hsla(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%, #{@color.alpha})"
 
     @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hsla)
