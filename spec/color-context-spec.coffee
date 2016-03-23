@@ -39,6 +39,10 @@ describe 'ColorContext', ->
       it "parses '#{expression}' as a color with value of #{jasmine.pp expected}", ->
         expect(context.readColor(expression)).toBeColor(expected...)
 
+    asInvalidColor: (expected...) ->
+      it "parses '#{expression}' as an invalid color", ->
+        expect(context.readColor(expression)).not.toBeValid()
+
   describe 'created without any variables', ->
     beforeEach ->
       context = new ColorContext({registry})
@@ -144,7 +148,7 @@ describe 'ColorContext', ->
 
         context = new ColorContext({variables, colorVariables, registry})
 
-      itParses('@foo').asUndefinedColor()
+      itParses('@foo').asInvalidColor()
       itParses('@foo').asUndefined()
       itParses('@taz').asUndefined()
 
@@ -160,7 +164,7 @@ describe 'ColorContext', ->
 
         context = new ColorContext({variables, colorVariables, registry})
 
-      itParses('@foo').asUndefinedColor()
+      itParses('@foo').asInvalidColor()
 
   describe 'with variables from a default file', ->
     [projectPath, referenceVariable] = []

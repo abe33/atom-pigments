@@ -19,9 +19,11 @@ class ColorExpression
       priority: 1
       handle: (match, expression, context) ->
         [_,name] = match
-        return @invalid = true if context.readColorExpression(name) is name
 
-        baseColor = context.readColor(name)
+        evaluated = context.readColorExpression(name)
+        return @invalid = true if evaluated is name
+
+        baseColor = context.readColor(evaluated)
         @colorExpression = name
         @variables = baseColor?.variables
 

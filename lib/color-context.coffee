@@ -149,19 +149,22 @@ class ColorContext
       value
 
   readColor: (value, keepAllVariables=false) ->
+    return if value in @usedVariables
+
     realValue = @readColorExpression(value)
-    return unless realValue?
+
+    return if not realValue? or realValue in @usedVariables
 
     scope = if @colorVars[value]?
       path.extname(@colorVars[value].path)[1..-1]
     else
       '*'
 
+    @usedVariables = @usedVariables.filter (v) -> v isnt realValue
     result = @parser.parse(realValue, scope, false)
 
     if result?
       if result.invalid and @defaultColorVars[realValue]?
-        @usedVariables.push(realValue)
         result = @readColor(@defaultColorVars[realValue].value)
         value = realValue
 
