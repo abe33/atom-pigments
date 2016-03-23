@@ -153,7 +153,7 @@ class ColorContext
     return unless realValue?
 
     scope = if @colorVars[value]?
-      path.extname @colorVars[value].path
+      path.extname(@colorVars[value].path)[1..-1]
     else
       '*'
 

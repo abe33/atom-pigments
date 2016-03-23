@@ -62,33 +62,48 @@ describe 'ColorContext', ->
     itParses('rgb(255,127,0)').asColor(255, 127, 0)
 
   describe 'with a variables array', ->
-    createVar = (name, value) -> {value, name, path: '/path/to/file.coffee'}
+    createVar = (name, value, path) ->
+      {value, name, path: path ? '/path/to/file.coffee'}
 
-    createColorVar = (name, value) ->
-      v = createVar(name, value)
+    createColorVar = (name, value, path) ->
+      v = createVar(name, value, path)
       v.isColor = true
       v
 
-    beforeEach ->
+    describe 'that contains valid variables', ->
+      beforeEach ->
+        variables = [
+          createVar 'x', '10'
+          createVar 'y', '0.1'
+          createVar 'z', '10%'
+          createColorVar 'c', 'rgb(255,127,0)'
+        ]
 
-      variables = [
-        createVar 'x', '10'
-        createVar 'y', '0.1'
-        createVar 'z', '10%'
-        createColorVar 'c', 'rgb(255,127,0)'
-      ]
+        colorVariables = variables.filter (v) -> v.isColor
 
-      colorVariables = variables.filter (v) -> v.isColor
+        context = new ColorContext({variables, colorVariables, registry})
 
-      context = new ColorContext({variables, colorVariables, registry})
+      itParses('x').asInt(10)
+      itParses('y').asFloat(0.1)
+      itParses('z').asIntOrPercent(26)
+      itParses('z').asFloatOrPercent(0.1)
 
-    itParses('x').asInt(10)
-    itParses('y').asFloat(0.1)
-    itParses('z').asIntOrPercent(26)
-    itParses('z').asFloatOrPercent(0.1)
+      itParses('c').asColorExpression('rgb(255,127,0)')
+      itParses('c').asColor(255, 127, 0)
 
-    itParses('c').asColorExpression('rgb(255,127,0)')
-    itParses('c').asColor(255, 127, 0)
+    fdescribe 'that contains alias for named colors', ->
+      beforeEach ->
+        variables =[
+          createColorVar '$text-color', 'white', '/path/to/file.css.sass'
+          createColorVar '$background-color', 'black', '/path/to/file.css.sass'
+        ]
+
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({variables, colorVariables, registry})
+
+      itParses('$text-color').asColor(255,255,255)
+      itParses('$background-color').asColor(0,0,0)
 
     describe 'that contains invalid colors', ->
       beforeEach ->
@@ -125,7 +140,9 @@ describe 'ColorContext', ->
           createColorVar '@taz', '@taz'
         ]
 
-        context = new ColorContext({variables, registry})
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({variables, colorVariables, registry})
 
       itParses('@foo').asUndefinedColor()
       itParses('@foo').asUndefined()
@@ -139,7 +156,9 @@ describe 'ColorContext', ->
           createColorVar '@baz', 'darken(@foo, 10%)'
         ]
 
-        context = new ColorContext({variables, registry})
+        colorVariables = variables.filter (v) -> v.isColor
+
+        context = new ColorContext({variables, colorVariables, registry})
 
       itParses('@foo').asUndefinedColor()
 
