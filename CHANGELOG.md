@@ -1,3 +1,12 @@
+<a name="v0.25.1"></a>
+# v0.25.1 (2016-03-24)
+
+## Bug Fixes
+
+- Fix infinite loop when parsing expressions ([83204246](https://github.com/abe33/atom-pigments/commit/8320424639a43af871dedb4d857ab4aaaa4bc418))
+- Fix rounding issues when converting to hsl ([128fffc2](https://github.com/abe33/atom-pigments/commit/128fffc29a88683d46fd4f817acd1b4b8b890a86), [#163](https://github.com/abe33/atom-pigments/issues/163))
+- Fix bad scope computed in color context ([6089090d](https://github.com/abe33/atom-pigments/commit/6089090db02a7bf3aa4eaa16b01d57ec47b5b34a))
+
 <a name="v0.25.0"></a>
 # v0.25.0 (2016-03-22)
 
