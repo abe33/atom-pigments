@@ -11,7 +11,7 @@ class ExpressionsRegistry
       handle = vm.runInNewContext(data.handle.replace('function', "handle = function"), {console, require})
       registry.createExpression(name, data.regexpString, data.priority, data.scopes, handle)
 
-    registry.regexpString = serializedData.regexpString
+    registry.regexpStrings['none'] = serializedData.regexpString
 
     registry
 
@@ -19,6 +19,7 @@ class ExpressionsRegistry
   constructor: (@expressionsType) ->
     @colorExpressions = {}
     @emitter = new Emitter
+    @regexpStrings = {}
 
   dispose: ->
     @emitter.dispose()
@@ -45,11 +46,11 @@ class ExpressionsRegistry
   getExpression: (name) -> @colorExpressions[name]
 
   getRegExp: ->
-    @regexpString ?= @getExpressions().map((e) ->
+    @regexpStrings['none'] ?= @getExpressions().map((e) ->
       "(#{e.regexpString})").join('|')
 
   getRegExpForScope: (scope) ->
-    @regexpString ?= @getExpressionsForScope(scope).map((e) ->
+    @regexpStrings[scope] ?= @getExpressionsForScope(scope).map((e) ->
       "(#{e.regexpString})").join('|')
 
   createExpression: (name, regexpString, priority=0, scopes=['*'], handle) ->
@@ -62,11 +63,13 @@ class ExpressionsRegistry
       scopes = priority
       priority = 0
 
+    scopes.push('pigments') unless scopes.length is 1 and scopes[0] is '*'
+
     newExpression = new @expressionsType({name, regexpString, scopes, priority, handle})
     @addExpression newExpression
 
   addExpression: (expression, batch=false) ->
-    delete @regexpString
+    @regexpStrings = {}
     @colorExpressions[expression.name] = expression
 
     unless batch
@@ -89,8 +92,8 @@ class ExpressionsRegistry
     @emitter.emit 'did-update-expressions', {registry: this}
 
   removeExpression: (name) ->
-    delete @regexpString
     delete @colorExpressions[name]
+    @regexpStrings = {}
     @emitter.emit 'did-remove-expression', {name, registry: this}
     @emitter.emit 'did-update-expressions', {name, registry: this}
 

@@ -1,6 +1,7 @@
 {Disposable} = require 'atom'
 Pigments = require '../lib/pigments'
 PigmentsAPI = require '../lib/pigments-api'
+registry = require '../lib/variable-expressions'
 
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require '../lib/versions'
 
@@ -16,9 +17,14 @@ describe "Pigments", ->
     atom.config.set('pigments.ignoredScopes', [])
     atom.config.set('pigments.autocompleteScopes', [])
 
+    registry.createExpression 'pigments:txt_vars', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n\\r;]*);?$', ['txt']
+
     waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
       pigments = pkg.mainModule
       project = pigments.getProject()
+
+  afterEach ->
+    registry.removeExpression 'pigments:txt_vars'
 
   it 'instanciates a ColorProject instance', ->
     expect(pigments.getProject()).toBeDefined()
@@ -76,6 +82,14 @@ describe "Pigments", ->
     it 'opens a settings view in the active pane', ->
       item.matches('pigments-color-project')
 
+  ##       ###    ########  ####
+  ##      ## ##   ##     ##  ##
+  ##     ##   ##  ##     ##  ##
+  ##    ##     ## ########   ##
+  ##    ######### ##         ##
+  ##    ##     ## ##         ##
+  ##    ##     ## ##        ####
+
   describe 'API provider', ->
     [service, editor, editorElement, buffer] = []
     beforeEach ->
@@ -116,6 +130,14 @@ describe "Pigments", ->
 
         runs ->
           expect(spy.calls.length).toEqual(2)
+
+  ##     ######   #######  ##        #######  ########   ######
+  ##    ##    ## ##     ## ##       ##     ## ##     ## ##    ##
+  ##    ##       ##     ## ##       ##     ## ##     ## ##
+  ##    ##       ##     ## ##       ##     ## ########   ######
+  ##    ##       ##     ## ##       ##     ## ##   ##         ##
+  ##    ##    ## ##     ## ##       ##     ## ##    ##  ##    ##
+  ##     ######   #######  ########  #######  ##     ##  ######
 
   describe 'color expression consumer', ->
     [colorProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement, otherConsumerDisposable] = []
@@ -283,6 +305,14 @@ describe "Pigments", ->
               expect(project.getVariables().length).toEqual(6)
               expect(project.getColorVariables().length).toEqual(5)
               expect(project.getVariableByName('bar').color.invalid).toBeTruthy()
+
+  ##    ##     ##    ###    ########   ######
+  ##    ##     ##   ## ##   ##     ## ##    ##
+  ##    ##     ##  ##   ##  ##     ## ##
+  ##    ##     ## ##     ## ########   ######
+  ##     ##   ##  ######### ##   ##         ##
+  ##      ## ##   ##     ## ##    ##  ##    ##
+  ##       ###    ##     ## ##     ##  ######
 
   describe 'variable expression consumer', ->
     [variableProvider, consumerDisposable, editor, editorElement, colorBuffer, colorBufferElement] = []

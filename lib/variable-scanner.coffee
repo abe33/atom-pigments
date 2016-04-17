@@ -4,13 +4,14 @@ VariableParser = require './variable-parser'
 module.exports =
 class VariableScanner
   constructor: (params={}) ->
-    {@parser, @registry} = params
+    {@parser, @registry, @scope} = params
     @parser ?= new VariableParser(@registry)
 
   getRegExp: ->
-    @regexp ?= new RegExp(@registry.getRegExp(), 'gm')
+    new RegExp(@registry.getRegExpForScope(@scope), 'gm')
 
   search: (text, start=0) ->
+    return if @registry.getExpressionsForScope(@scope).length is 0
     regexp = @getRegExp()
     regexp.lastIndex = start
 

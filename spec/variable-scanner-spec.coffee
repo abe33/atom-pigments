@@ -1,8 +1,10 @@
+path = require 'path'
 VariableScanner = require '../lib/variable-scanner'
 registry = require '../lib/variable-expressions'
+scopeFromFileName = require '../lib/scope-from-file-name'
 
 describe 'VariableScanner', ->
-  [scanner, editor, text] = []
+  [scanner, editor, text, scope] = []
 
   withTextEditor = (fixture, block) ->
     describe "with #{fixture} buffer", ->
@@ -11,14 +13,17 @@ describe 'VariableScanner', ->
         runs ->
           editor = atom.workspace.getActiveTextEditor()
           text = editor.getText()
+          scope = scopeFromFileName(editor.getPath())
 
-      afterEach -> editor = null
+      afterEach ->
+        editor = null
+        scope = null
 
       do block
 
   withScannerForTextEditor = (fixture, block) ->
     withTextEditor fixture, ->
-      beforeEach -> scanner = new VariableScanner({registry})
+      beforeEach -> scanner = new VariableScanner({registry, scope})
 
       afterEach -> scanner = null
 

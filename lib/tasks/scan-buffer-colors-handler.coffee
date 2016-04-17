@@ -1,8 +1,8 @@
-path = require 'path'
 ColorScanner = require '../color-scanner'
 ColorContext = require '../color-context'
 ColorExpression = require '../color-expression'
 ExpressionsRegistry = require '../expressions-registry'
+scopeFromFileName = require '../scope-from-file-name'
 ColorsChunkSize = 100
 
 class BufferColorsScanner
@@ -14,7 +14,8 @@ class BufferColorsScanner
     @results = []
 
   scan: ->
-    scope = path.extname(@bufferPath)[1..-1]
+    return unless @bufferPath?
+    scope = scopeFromFileName(@bufferPath)
     lastIndex = 0
     while result = @scanner.search(@buffer, scope, lastIndex)
       @results.push(result)

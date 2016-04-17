@@ -1,9 +1,10 @@
-path = require 'path'
+
 Color = require './color'
 ColorParser = null
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
 BlendModes = require './blend-modes'
+scopeFromFileName = require './scope-from-file-name'
 {split, clamp, clampInt} = require './utils'
 {
   int
@@ -156,7 +157,7 @@ class ColorContext
     return if not realValue? or realValue in @usedVariables
 
     scope = if @colorVars[value]?
-      path.extname(@colorVars[value].path)[1..-1]
+      scopeFromFileName(@colorVars[value].path)
     else
       '*'
 

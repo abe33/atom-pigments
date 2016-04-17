@@ -7,9 +7,9 @@ VariablesChunkSize = 100
 
 class BufferVariablesScanner
   constructor: (config) ->
-    {@buffer, registry} = config
+    {@buffer, registry, scope} = config
     registry = ExpressionsRegistry.deserialize(registry, VariableExpression)
-    @scanner = new VariableScanner({registry})
+    @scanner = new VariableScanner({registry, scope})
     @results = []
 
   scan: ->

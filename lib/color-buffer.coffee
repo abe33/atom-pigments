@@ -4,6 +4,7 @@ Color = require './color'
 ColorMarker = require './color-marker'
 ColorExpression = require './color-expression'
 VariablesCollection = require './variables-collection'
+scopeFromFileName = require './scope-from-file-name'
 
 module.exports =
 class ColorBuffer
@@ -203,6 +204,8 @@ class ColorBuffer
 
   scanBufferForVariables: ->
     return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
+    return Promise.resolve([]) unless @editor.getPath()
+
     results = []
     taskPath = require.resolve('./tasks/scan-buffer-variables-handler')
     editor = @editor
@@ -210,6 +213,7 @@ class ColorBuffer
     config =
       buffer: @editor.getText()
       registry: @project.getVariableExpressionsRegistry().serialize()
+      scope: scopeFromFileName(@editor.getPath())
 
     new Promise (resolve, reject) =>
       @task = Task.once(

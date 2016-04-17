@@ -1,9 +1,9 @@
-path = require 'path'
 {Emitter} = require 'atom'
 {Minimatch} = require 'minimatch'
 registry = require './color-expressions'
 ColorParser = require './color-parser'
 ColorContext = require './color-context'
+scopeFromFileName = require './scope-from-file-name'
 
 module.exports =
 class ColorSearch
@@ -43,7 +43,7 @@ class ColorSearch
 
     promise = atom.workspace.scan re, paths: @sourceNames, (m) =>
       relativePath = atom.project.relativize(m.filePath)
-      scope = path.extname(relativePath)
+      scope = scopeFromFileName(relativePath)
       return if @isIgnored(relativePath)
 
       newMatches = []
