@@ -25,6 +25,7 @@ describe "Pigments", ->
 
   afterEach ->
     registry.removeExpression 'pigments:txt_vars'
+    project?.destroy()
 
   it 'instanciates a ColorProject instance', ->
     expect(pigments.getProject()).toBeDefined()

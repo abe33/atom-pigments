@@ -59,8 +59,7 @@ describe 'ColorBufferElement', ->
       project = pigments.getProject()
 
   afterEach ->
-    if colorBuffer?
-      waitsForPromise -> colorBuffer.variablesAvailable()
+    colorBuffer?.destroy()
 
   describe 'when an editor is opened', ->
     beforeEach ->

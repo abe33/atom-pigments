@@ -22,6 +22,9 @@ describe 'PaletteElement', ->
 
     waitsForPromise -> project.initialize()
 
+  afterEach ->
+    project.destroy()
+
   describe 'as a view provider', ->
     beforeEach ->
       palette = new Palette([
