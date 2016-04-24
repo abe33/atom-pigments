@@ -133,7 +133,7 @@ describe 'ColorScanner', ->
       withScannerForTextEditor 'color-in-tag-content.html', ->
         it 'finds both colors', ->
           result = lastIndex: 0
-          doSearch = -> result = scanner.search(text, 'html', result.lastIndex)
+          doSearch = -> result = scanner.search(text, 'css', result.lastIndex)
 
           expect(doSearch()).toBeDefined()
           expect(doSearch()).toBeDefined()
