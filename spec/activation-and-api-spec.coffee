@@ -19,9 +19,10 @@ describe "Pigments", ->
 
     registry.createExpression 'pigments:txt_vars', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=(?!=)\\s*([^\\n\\r;]*);?$', ['txt']
 
-    waitsForPromise -> atom.packages.activatePackage('pigments').then (pkg) ->
-      pigments = pkg.mainModule
-      project = pigments.getProject()
+    waitsForPromise label: 'pigments activation', ->
+      atom.packages.activatePackage('pigments').then (pkg) ->
+        pigments = pkg.mainModule
+        project = pigments.getProject()
 
   afterEach ->
     registry.removeExpression 'pigments:txt_vars'
@@ -47,12 +48,14 @@ describe "Pigments", ->
   describe 'when deactivated', ->
     [editor, editorElement, colorBuffer] = []
     beforeEach ->
-      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
-        editor = e
-        editorElement = atom.views.getView(e)
-        colorBuffer = project.colorBufferForEditor(editor)
+      waitsForPromise label: 'text-editor opened', ->
+        atom.workspace.open('four-variables.styl').then (e) ->
+          editor = e
+          editorElement = atom.views.getView(e)
+          colorBuffer = project.colorBufferForEditor(editor)
 
-      waitsFor -> editorElement.shadowRoot.querySelector('pigments-markers')
+      waitsFor 'pigments markers appended to the DOM', ->
+        editorElement.shadowRoot.querySelector('pigments-markers')
 
       runs ->
         spyOn(project, 'destroy').andCallThrough()
@@ -76,7 +79,7 @@ describe "Pigments", ->
     beforeEach ->
       atom.commands.dispatch(workspaceElement, 'pigments:project-settings')
 
-      waitsFor ->
+      waitsFor 'active pane item', ->
         item = atom.workspace.getActivePaneItem()
         item?
 
@@ -94,14 +97,15 @@ describe "Pigments", ->
   describe 'API provider', ->
     [service, editor, editorElement, buffer] = []
     beforeEach ->
-      waitsForPromise -> atom.workspace.open('four-variables.styl').then (e) ->
-        editor = e
-        editorElement = atom.views.getView(e)
-        buffer = project.colorBufferForEditor(editor)
+      waitsForPromise label: 'text-editor opened', ->
+        atom.workspace.open('four-variables.styl').then (e) ->
+          editor = e
+          editorElement = atom.views.getView(e)
+          buffer = project.colorBufferForEditor(editor)
 
       runs -> service = pigments.provideAPI()
 
-      waitsForPromise -> project.initialize()
+      waitsForPromise label: 'project initialized', -> project.initialize()
 
     it 'returns an object conforming to the API', ->
       expect(service instanceof PigmentsAPI).toBeTruthy()
@@ -126,7 +130,7 @@ describe "Pigments", ->
         expect(spy.calls.length).toEqual(1)
 
       it 'calls the callback on every new buffer creation', ->
-        waitsForPromise ->
+        waitsForPromise  label: 'text-editor opened', ->
           atom.workspace.open('buttons.styl')
 
         runs ->
@@ -159,13 +163,16 @@ describe "Pigments", ->
       beforeEach ->
         consumerDisposable = pigments.consumeColorExpressions(colorProvider)
 
-        waitsForPromise -> atom.workspace.open('color-consumer-sample.txt').then (e) ->
-          editor = e
-          editorElement = atom.views.getView(e)
-          colorBuffer = project.colorBufferForEditor(editor)
+        waitsForPromise label: 'text-editor opened', ->
+          atom.workspace.open('color-consumer-sample.txt').then (e) ->
+            editor = e
+            editorElement = atom.views.getView(e)
+            colorBuffer = project.colorBufferForEditor(editor)
 
-        waitsForPromise -> colorBuffer.initialize()
-        waitsForPromise -> colorBuffer.variablesAvailable()
+        waitsForPromise label: 'color buffer initialized', ->
+          colorBuffer.initialize()
+        waitsForPromise label: 'color buffer variables available', ->
+          colorBuffer.variablesAvailable()
 
       it 'parses the new expression and renders a color', ->
         expect(colorBuffer.getColorMarkers().length).toEqual(1)
@@ -192,13 +199,16 @@ describe "Pigments", ->
 
     describe 'when consumed after opening a text editor', ->
       beforeEach ->
-        waitsForPromise -> atom.workspace.open('color-consumer-sample.txt').then (e) ->
-          editor = e
-          editorElement = atom.views.getView(e)
-          colorBuffer = project.colorBufferForEditor(editor)
+        waitsForPromise label: 'text-editor opened', ->
+          atom.workspace.open('color-consumer-sample.txt').then (e) ->
+            editor = e
+            editorElement = atom.views.getView(e)
+            colorBuffer = project.colorBufferForEditor(editor)
 
-        waitsForPromise -> colorBuffer.initialize()
-        waitsForPromise -> colorBuffer.variablesAvailable()
+        waitsForPromise label: 'color buffer initialized', ->
+          colorBuffer.initialize()
+        waitsForPromise label: 'color buffer variables available', ->
+          colorBuffer.variablesAvailable()
 
       it 'triggers an update in the opened editors', ->
         updateSpy = jasmine.createSpy('did-update-color-markers')
@@ -243,7 +253,8 @@ describe "Pigments", ->
 
     describe 'when the expression matches a variable value', ->
       beforeEach ->
-        waitsForPromise -> project.initialize()
+        waitsForPromise label: 'project initialized', ->
+          project.initialize()
 
       it 'detects the new variable as a color variable', ->
         variableSpy = jasmine.createSpy('did-update-variables')
@@ -323,7 +334,8 @@ describe "Pigments", ->
         name: 'todo'
         regexpString: '(TODO):\\s*([^;\\n]+)'
 
-      waitsForPromise -> project.initialize()
+      waitsForPromise label: 'project initialized', ->
+        project.initialize()
 
     afterEach -> consumerDisposable?.dispose()
 
