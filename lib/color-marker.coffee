@@ -79,24 +79,24 @@ class ColorMarker
   convertContentToHex: ->
     hex = '#' + fill(@color.hex, 6)
 
-    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hex)
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hex)
 
   convertContentToRGB: ->
     rgba = "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
 
-    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), rgba)
 
   convertContentToRGBA: ->
     rgba = "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
 
-    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), rgba)
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), rgba)
 
   convertContentToHSL: ->
     hsl = "hsl(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%)"
 
-    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hsl)
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hsl)
 
   convertContentToHSLA: ->
     hsla = "hsla(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%, #{@color.alpha})"
 
-    @marker.displayBuffer.buffer.setTextInRange(@marker.getBufferRange(), hsla)
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hsla)

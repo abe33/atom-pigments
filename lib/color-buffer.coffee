@@ -10,7 +10,7 @@ module.exports =
 class ColorBuffer
   constructor: (params={}) ->
     {@editor, @project, colorMarkers} = params
-    {@id, @displayBuffer} = @editor
+    {@id} = @editor
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @ignoredScopes=[]
@@ -18,7 +18,7 @@ class ColorBuffer
     @colorMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
-    @subscriptions.add @editor.displayBuffer.onDidTokenize =>
+    @subscriptions.add @editor.onDidTokenize =>
       @getColorMarkers()?.forEach (marker) ->
         marker.checkMarkerScope(true)
 
