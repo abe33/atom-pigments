@@ -33,10 +33,10 @@ class DotRenderer
       left: (column + index * 18) + 'px'
 
   getLineLastColumn: (line) ->
-    if screenLine.lineText?
-      screenLine.lineText.length + 1
+    if line.lineText?
+      line.lineText.length + 1
     else
-      screenLine.getMaxScreenColumn() + 1
+      line.getMaxScreenColumn() + 1
 
   screenLineForScreenRow: (textEditor, row) ->
     if textEditor.screenLineForScreenRow?

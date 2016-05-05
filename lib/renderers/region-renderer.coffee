@@ -71,7 +71,7 @@ class RegionRenderer
       end: clippedEnd
     })
 
-    needAdjustment = screenLine?.isSoftWrapped() and end.column >= screenLine?.text.length - screenLine?.softWrapIndentationDelta
+    needAdjustment = screenLine?.isSoftWrapped?() and end.column >= screenLine?.text.length - screenLine?.softWrapIndentationDelta
 
     bufferRange.end.column++ if needAdjustment
 
@@ -100,4 +100,4 @@ class RegionRenderer
       if line.clipScreenColumn?
         line.clipScreenColumn(column)
       else
-        Math.min(line.lineText.length - 1, column)
+        Math.min(line.lineText.length, column)

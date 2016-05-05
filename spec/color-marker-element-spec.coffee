@@ -50,6 +50,7 @@ describe 'ColorMarkerElement', ->
   it 'releases itself when the marker is destroyed', ->
     colorMarkerElement = new ColorMarkerElement
     colorMarkerElement.setContainer
+      editor: editor
       requestMarkerUpdate: ([marker]) -> marker.render()
 
     colorMarkerElement.setModel(colorMarker)
@@ -67,6 +68,7 @@ describe 'ColorMarkerElement', ->
     beforeEach ->
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
+        editor: editor
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -91,6 +93,7 @@ describe 'ColorMarkerElement', ->
 
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
+        editor: editor
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -140,6 +143,7 @@ describe 'ColorMarkerElement', ->
 
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
+        editor: editor
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -189,6 +193,7 @@ describe 'ColorMarkerElement', ->
 
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
+        editor: editor
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -278,6 +283,7 @@ describe 'ColorMarkerElement', ->
       markersElements = markers.map (colorMarker) ->
         colorMarkerElement = new ColorMarkerElement
         colorMarkerElement.setContainer
+          editor: editor
           requestMarkerUpdate: ([marker]) -> marker.render()
 
         colorMarkerElement.setModel(colorMarker)
@@ -344,6 +350,7 @@ describe 'ColorMarkerElement', ->
       markersElements = markers.map (colorMarker) ->
         colorMarkerElement = new ColorMarkerElement
         colorMarkerElement.setContainer
+          editor: editor
           requestMarkerUpdate: ([marker]) -> marker.render()
 
         colorMarkerElement.setModel(colorMarker)
