@@ -1,3 +1,11 @@
+<a name="0.26.1"></a>
+# 0.26.1 (2016-05-05)
+
+## Bug Fixes
+
+- Fix deprecations ([b4f51775](https://github.com/abe33/atom-pigments/commit/b4f51775b10723cddcad78b51cf82be487c4f532))
+- Fix access to marker displayBuffer reference ([3e17f2f2](https://github.com/abe33/atom-pigments/commit/3e17f2f2ab750059815db80e3112fa785335a515), [#176](https://github.com/abe33/atom-pigments/issues/176))
+
 <a name="v0.26.0"></a>
 # v0.26.0 (2016-03-24)
 
