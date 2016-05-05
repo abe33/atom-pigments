@@ -10,8 +10,7 @@ class DotRenderer
 
     textEditor = colorMarker.colorBuffer.editor
     textEditorElement = atom.views.getView(textEditor)
-    displayBuffer = colorMarker.marker.displayBuffer
-    charWidth = displayBuffer.getDefaultCharWidth()
+    charWidth = textEditor.getDefaultCharWidth()
 
     markers = colorMarker.colorBuffer.getMarkerLayer().findMarkers {
       type: 'pigments-color'
@@ -19,12 +18,12 @@ class DotRenderer
     }
 
     index = markers.indexOf(colorMarker.marker)
-    screenLine = displayBuffer.screenLines[range.end.row]
+    screenLine = textEditor.screenLineForScreenRow(range.end.row)
 
     return {} unless screenLine?
 
     lineHeight = textEditor.getLineHeightInPixels()
-    column = (screenLine.getMaxScreenColumn() + 1) * charWidth
+    column = (screenLine.lineText.length + 1) * charWidth
     pixelPosition = textEditorElement.pixelPositionForScreenPosition(range.end)
 
     class: 'dot'

@@ -61,7 +61,7 @@ class ColorMarkerElement extends HTMLElement
 
     {colorMarker, renderer, bufferElement} = this
 
-    return if colorMarker.marker.displayBuffer.isDestroyed()
+    return if bufferElement.editor.isDestroyed()
     @innerHTML = ''
     {style, regions, class: cls} = renderer.render(colorMarker)
 

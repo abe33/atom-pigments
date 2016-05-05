@@ -10,7 +10,7 @@ class RegionRenderer
     rowSpan = range.end.row - range.start.row
     regions = []
 
-    displayBuffer = colorMarker.marker.displayBuffer
+    textEditor = colorMarker.colorBuffer.editor
 
     if rowSpan is 0
       regions.push @createRegion(range.start, range.end, colorMarker)
@@ -22,7 +22,7 @@ class RegionRenderer
           column: Infinity
         },
         colorMarker,
-        displayBuffer.screenLines[range.start.row]
+        textEditor.screenLineForScreenRow(range.start.row)
       )
       if rowSpan > 1
         for row in [range.start.row + 1...range.end.row]
@@ -30,14 +30,14 @@ class RegionRenderer
             {row, column: 0},
             {row, column: Infinity},
             colorMarker,
-            displayBuffer.screenLines[row]
+            textEditor.screenLineForScreenRow(row)
           )
 
       regions.push @createRegion(
         {row: range.end.row, column: 0},
         range.end,
         colorMarker,
-        displayBuffer.screenLines[range.end.row]
+        textEditor.screenLineForScreenRow(range.end.row)
       )
 
     regions
@@ -45,7 +45,6 @@ class RegionRenderer
   createRegion: (start, end, colorMarker, screenLine) ->
     textEditor = colorMarker.colorBuffer.editor
     textEditorElement = atom.views.getView(textEditor)
-    displayBuffer = colorMarker.marker.displayBuffer
 
     return unless textEditorElement.component?
 
@@ -61,7 +60,7 @@ class RegionRenderer
       column: screenLine?.clipScreenColumn(end.column) ? end.column
     }
 
-    bufferRange = displayBuffer.bufferRangeForScreenRange({
+    bufferRange = textEditor.bufferRangeForScreenRange({
       start: clippedStart
       end: clippedEnd
     })
@@ -73,7 +72,7 @@ class RegionRenderer
     startPosition = textEditorElement.pixelPositionForScreenPosition(clippedStart)
     endPosition = textEditorElement.pixelPositionForScreenPosition(clippedEnd)
 
-    text = displayBuffer.buffer.getTextInRange(bufferRange)
+    text = textEditor.getBuffer().getTextInRange(bufferRange)
 
     css = {}
     css.left = startPosition.left
