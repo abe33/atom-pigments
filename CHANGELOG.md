@@ -1,5 +1,12 @@
-<a name="0.26.1"></a>
-# 0.26.1 (2016-05-05)
+<a name="v0.26.2"></a>
+# v0.26.2 (2016-05-05)
+
+## Bug Fixes
+
+- Fix issue with API not available yet on stable ([e88d4feb](https://github.com/abe33/atom-pigments/commit/e88d4feb306b640d9d94288c8b7e68bdfe3429bb))
+
+<a name="v0.26.1"></a>
+# v0.26.1 (2016-05-05)
 
 ## Bug Fixes
 
