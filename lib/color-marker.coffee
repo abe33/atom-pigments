@@ -56,7 +56,10 @@ class ColorMarker
     range = @marker.getBufferRange()
 
     try
-      scope = @colorBuffer.editor.scopeDescriptorForBufferPosition(range.start)
+      scope = if @colorBuffer.editor.scopeDescriptorForBufferPosition?
+        @colorBuffer.editor.scopeDescriptorForBufferPosition(range.start)
+      else
+        @colorBuffer.editor.displayBuffer.scopeDescriptorForBufferPosition(range.start)
       scopeChain = scope.getScopeChain()
 
       return if not scopeChain or (!forceEvaluation and scopeChain is @lastScopeChain)

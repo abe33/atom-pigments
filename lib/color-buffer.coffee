@@ -18,9 +18,15 @@ class ColorBuffer
     @colorMarkersByMarkerId = {}
 
     @subscriptions.add @editor.onDidDestroy => @destroy()
-    @subscriptions.add @editor.onDidTokenize =>
+
+    tokenized = =>
       @getColorMarkers()?.forEach (marker) ->
         marker.checkMarkerScope(true)
+
+    if @editor.onDidTokenize?
+      @subscriptions.add @editor.onDidTokenize(tokenized)
+    else
+      @subscriptions.add @editor.displayBuffer.onDidTokenize(tokenized)
 
     @subscriptions.add @editor.onDidChange =>
       @terminateRunningTask() if @initialized and @variableInitialized

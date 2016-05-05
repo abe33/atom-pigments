@@ -67,8 +67,12 @@ class ColorBufferElement extends HTMLElement
       @requestSelectionUpdate()
     @subscriptions.add @editor.onDidChangeSelectionRange =>
       @requestSelectionUpdate()
-    @subscriptions.add @editor.onDidTokenize =>
-      @editorConfigChanged()
+
+    if @editor.onDidTokenize?
+      @subscriptions.add @editor.onDidTokenize => @editorConfigChanged()
+    else
+      @subscriptions.add @editor.displayBuffer.onDidTokenize =>
+        @editorConfigChanged()
 
     @subscriptions.add atom.config.observe 'editor.fontSize', =>
       @editorConfigChanged()

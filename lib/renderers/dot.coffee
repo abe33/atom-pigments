@@ -18,12 +18,12 @@ class DotRenderer
     }
 
     index = markers.indexOf(colorMarker.marker)
-    screenLine = textEditor.screenLineForScreenRow(range.end.row)
+    screenLine = @screenLineForScreenRow(textEditor, range.end.row)
 
     return {} unless screenLine?
 
     lineHeight = textEditor.getLineHeightInPixels()
-    column = (screenLine.lineText.length + 1) * charWidth
+    column = @getLineLastColumn(screenLine) * charWidth
     pixelPosition = textEditorElement.pixelPositionForScreenPosition(range.end)
 
     class: 'dot'
@@ -31,3 +31,15 @@ class DotRenderer
       backgroundColor: color.toCSS()
       top: (pixelPosition.top + lineHeight / 2) + 'px'
       left: (column + index * 18) + 'px'
+
+  getLineLastColumn: (line) ->
+    if screenLine.lineText?
+      screenLine.lineText.length + 1
+    else
+      screenLine.getMaxScreenColumn() + 1
+
+  screenLineForScreenRow: (textEditor, row) ->
+    if textEditor.screenLineForScreenRow?
+      textEditor.screenLineForScreenRow(row)
+    else
+      textEditor.displayBuffer.screenLines[row]
