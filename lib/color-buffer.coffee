@@ -69,7 +69,6 @@ class ColorBuffer
 
     if @editor.addMarkerLayer?
       @markerLayer = @editor.addMarkerLayer()
-      @editor.findMarkers(type: 'pigments-color').forEach (m) -> m.destroy()
     else
       @markerLayer = @editor
 
@@ -108,10 +107,7 @@ class ColorBuffer
     @colorMarkers = colorMarkers
     .filter (state) -> state?
     .map (state) =>
-      marker = @editor.getMarker(state.markerId) ? @markerLayer.markBufferRange(state.bufferRange, {
-        type: 'pigments-color'
-        invalidate: 'touch'
-      })
+      marker = @editor.getMarker(state.markerId) ? @markerLayer.markBufferRange(state.bufferRange, { invalidate: 'touch' })
       color = new Color(state.color)
       color.variables = state.variables
       color.invalid = state.invalid
@@ -123,7 +119,7 @@ class ColorBuffer
       }
 
   cleanUnusedTextEditorMarkers: ->
-    @markerLayer.findMarkers(type: 'pigments-color').forEach (m) =>
+    @markerLayer.findMarkers().forEach (m) =>
       m.destroy() unless @colorMarkersByMarkerId[m.id]?
 
   variablesAvailable: ->
@@ -264,7 +260,6 @@ class ColorBuffer
 
   getColorMarkerAtBufferPosition: (bufferPosition) ->
     markers = @markerLayer.findMarkers({
-      type: 'pigments-color'
       containsBufferPosition: bufferPosition
     })
 
@@ -286,10 +281,7 @@ class ColorBuffer
         while results.length
           result = results.shift()
 
-          marker = @markerLayer.markBufferRange(result.bufferRange, {
-            type: 'pigments-color'
-            invalidate: 'touch'
-          })
+          marker = @markerLayer.markBufferRange(result.bufferRange, {invalidate: 'touch'})
           newResults.push @colorMarkersByMarkerId[marker.id] = new ColorMarker {
             marker
             color: result.color
@@ -360,8 +352,7 @@ class ColorBuffer
       return marker if marker?.match(properties)
 
   findColorMarkers: (properties={}) ->
-    properties.type = 'pigments-color'
-    markers = @markerLayer.findMarkers(properties)
+    markers = @markerLayer.findMarkers()
     markers.map (marker) =>
       @colorMarkersByMarkerId[marker.id]
     .filter (marker) -> marker?
