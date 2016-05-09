@@ -373,7 +373,7 @@ describe 'ColorBuffer', ->
           marker = markers[markers.length-1]
           expect(markers.length).toEqual(4)
           expect(marker.color).toBeColor('#336699')
-          expect(colorBuffer.getMarkerLayer().findMarkers().toEqual(4)
+          expect(colorBuffer.getMarkerLayer().findMarkers().length).toEqual(4)
 
         it 'dispatches the new marker in a did-update-color-markers event', ->
           expect(colorsUpdateSpy.argsForCall[0][0].destroyed.length).toEqual(0)
