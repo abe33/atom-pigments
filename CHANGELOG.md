@@ -1,3 +1,10 @@
+<a name="v0.26.3"></a>
+# v0.26.3 (2016-05-12)
+
+## Bug Fixes
+
+- Fix remaining deprecations with custom markers properties ([ad9bc229](https://github.com/abe33/atom-pigments/commit/ad9bc229960bc02abd1cc01fc18f9eaa5d07d688))
+
 <a name="v0.26.2"></a>
 # v0.26.2 (2016-05-05)
 
