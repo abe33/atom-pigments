@@ -39,7 +39,7 @@ class ColorMarkerElement extends HTMLElement
       if isValid then @bufferElement.requestMarkerUpdate([this]) else @release()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
-      @bufferElement.requestMarkerUpdate([this]) unless type is 'gutter'
+      @bufferElement.requestMarkerUpdate([this]) unless @bufferElement.useNativeDecorations()
 
     @subscriptions.add @subscribeTo this,
       click: (e) =>
@@ -110,5 +110,5 @@ ColorMarkerElement =
 registerOrUpdateElement 'pigments-color-marker', ColorMarkerElement.prototype
 
 ColorMarkerElement.setMarkerType = (markerType) ->
-  return if markerType is 'gutter'
+  return if markerType is 'gutter' or markerType is 'highlight'
   @prototype.renderer = new RENDERERS[markerType]

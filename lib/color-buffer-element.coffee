@@ -2,6 +2,8 @@
 {registerOrUpdateElement, EventsDelegation} = require 'atom-utils'
 ColorMarkerElement = require './color-marker-element'
 
+nextHighlightId = 0
+
 class ColorBufferElement extends HTMLElement
   EventsDelegation.includeInto(this)
 
@@ -39,7 +41,7 @@ class ColorBufferElement extends HTMLElement
 
     scrollLeftListener = (@editorScrollLeft) => @updateScroll()
     scrollTopListener = (@editorScrollTop) =>
-      return if @useGutter()
+      return if @useNativeDecorations()
       @updateScroll()
       requestAnimationFrame => @updateMarkers()
 
@@ -85,12 +87,17 @@ class ColorBufferElement extends HTMLElement
         when 'gutter'
           @releaseAllMarkerViews()
           @initializeGutter()
+        when 'highlight'
+          @releaseAllMarkerViews()
+          @updateHighlightDecorations()
         when 'background'
           @classList.add('above-editor-content')
           @destroyGutter() if @previousType is 'gutter'
+          @destroyHighlightDecorations() if @previousType is 'highlight'
         else
           @classList.remove('above-editor-content')
           @destroyGutter() if @previousType is 'gutter'
+          @destroyHighlightDecorations() if @previousType is 'highlight'
 
       @previousType = type
 
@@ -117,19 +124,22 @@ class ColorBufferElement extends HTMLElement
     @colorBuffer = null
 
   update: ->
-    if @useGutter()
-      @updateGutterDecorations()
+    if @useNativeDecorations()
+      if @previousType is 'gutter'
+        @updateGutterDecorations()
+      else if @previousType is 'highlight'
+        @updateHighlightDecorations()
     else
       @updateMarkers()
 
   updateScroll: ->
-    if @editorElement.hasTiledRendering and not @useGutter()
+    if @editorElement.hasTiledRendering and not @useNativeDecorations()
       @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
 
   getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
 
   editorConfigChanged: ->
-    return if not @parentNode? or @useGutter()
+    return if not @parentNode? or @useNativeDecorations()
     @usedMarkers.forEach (marker) =>
       if marker.colorMarker?
         marker.render()
@@ -139,6 +149,63 @@ class ColorBufferElement extends HTMLElement
 
     @updateMarkers()
 
+  useNativeDecorations: ->
+    @previousType is 'gutter' or @previousType is 'highlight'
+
+  ##   ##     ## ##  ######   ##     ## ##       ##  ######   ##     ## ########
+  ##   ##     ## ## ##    ##  ##     ## ##       ## ##    ##  ##     ##    ##
+  ##   ##     ## ## ##        ##     ## ##       ## ##        ##     ##    ##
+  ##   ######### ## ##   #### ######### ##       ## ##   #### #########    ##
+  ##   ##     ## ## ##    ##  ##     ## ##       ## ##    ##  ##     ##    ##
+  ##   ##     ## ## ##    ##  ##     ## ##       ## ##    ##  ##     ##    ##
+  ##   ##     ## ##  ######   ##     ## ######## ##  ######   ##     ##    ##
+
+  updateHighlightDecorations: ->
+    return if @editor.isDestroyed()
+    @styleByMarkerId = {}
+    @decorationByMarkerId = {}
+
+    markers = @colorBuffer.getValidColorMarkers()
+
+    for m in @displayedMarkers when m not in markers
+      @decorationByMarkerId[m.id]?.destroy()
+      @styleByMarkerId[m.id]?.destroy()
+      delete @decorationByMarkerId[m.id]
+
+    markersByRows = {}
+    maxRowLength = 0
+
+    for m in markers
+      if m.color?.isValid() and m not in @displayedMarkers
+        {className, style} = @getHighlighDecorationCSS(m)
+        @appendChild(style)
+        @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
+          type: 'highlight'
+          class: "pigments-highlight #{className}"
+        })
+
+    @displayedMarkers = markers
+    @emitter.emit 'did-update'
+
+  destroyHighlightDecorations: ->
+    for id,m of @decorationByMarkerId
+      m.destroy()
+      @styleByMarkerId[id].parentNode.removeChild(@styleByMarkerId[id])
+
+    delete @decorationByMarkerId
+    delete @styleByMarkerId
+
+  getHighlighDecorationCSS: (marker) ->
+    className = "pigments-highlight-#{nextHighlightId++}"
+    style = document.createElement('style')
+    style.innerHTML = """
+    .#{className} .region {
+      border-color: #{marker.color.toCSS()};
+    }
+    """
+
+    {className, style}
+
   ##     ######   ##     ## ######## ######## ######## ########
   ##    ##    ##  ##     ##    ##       ##    ##       ##     ##
   ##    ##        ##     ##    ##       ##    ##       ##     ##
@@ -146,8 +213,6 @@ class ColorBufferElement extends HTMLElement
   ##    ##    ##  ##     ##    ##       ##    ##       ##   ##
   ##    ##    ##  ##     ##    ##       ##    ##       ##    ##
   ##     ######    #######     ##       ##    ######## ##     ##
-
-  useGutter: -> @previousType is 'gutter'
 
   initializeGutter: ->
     @gutter = @editor.addGutter name: 'pigments'
@@ -177,8 +242,8 @@ class ColorBufferElement extends HTMLElement
     @gutterSubscription.dispose()
     @displayedMarkers = []
     decoration.destroy() for id, decoration of @decorationByMarkerId
-    @decorationByMarkerId = null
-    @gutterSubscription = null
+    delete @decorationByMarkerId
+    delete @gutterSubscription
     @updateMarkers()
 
   updateGutterDecorations: ->
@@ -315,7 +380,7 @@ class ColorBufferElement extends HTMLElement
   ##     ######  ######## ######## ########  ######     ##
 
   requestSelectionUpdate: ->
-    return if @updateRequested or @useGutter()
+    return if @updateRequested or @useNativeDecorations()
 
     @updateRequested = true
     requestAnimationFrame =>
@@ -324,7 +389,7 @@ class ColorBufferElement extends HTMLElement
       @updateSelections()
 
   updateSelections: ->
-    return if @editor.isDestroyed() or @useGutter()
+    return if @editor.isDestroyed() or @useNativeDecorations()
     for marker in @displayedMarkers
       view = @viewsByMarkers.get(marker)
       if view?
