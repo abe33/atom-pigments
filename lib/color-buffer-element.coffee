@@ -182,7 +182,7 @@ class ColorBufferElement extends HTMLElement
         @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
           type: 'highlight'
           class: "pigments-highlight #{className}"
-          includeText: true
+          includeMarkerText: true
         })
 
     @displayedMarkers = markers
