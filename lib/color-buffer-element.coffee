@@ -182,6 +182,7 @@ class ColorBufferElement extends HTMLElement
         @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
           type: 'highlight'
           class: "pigments-highlight #{className}"
+          includeText: true
         })
 
     @displayedMarkers = markers
@@ -198,9 +199,11 @@ class ColorBufferElement extends HTMLElement
   getHighlighDecorationCSS: (marker) ->
     className = "pigments-highlight-#{nextHighlightId++}"
     style = document.createElement('style')
+    l = marker.color.luma
     style.innerHTML = """
     .#{className} .region {
-      border-color: #{marker.color.toCSS()};
+      background-color: #{marker.color.toCSS()};
+      color: #{if l > 0.43 then 'black' else 'white'};
     }
     """
 
