@@ -86,18 +86,22 @@ class ColorBufferElement extends HTMLElement
       switch type
         when 'gutter'
           @releaseAllMarkerViews()
+          @destroyHighlightDecorations() if @previousType is 'highlight'
           @initializeGutter()
         when 'highlight'
           @releaseAllMarkerViews()
+          @destroyGutter() if @previousType is 'gutter'
           @updateHighlightDecorations()
         when 'background'
           @classList.add('above-editor-content')
           @destroyGutter() if @previousType is 'gutter'
           @destroyHighlightDecorations() if @previousType is 'highlight'
+          @updateMarkers()
         else
           @classList.remove('above-editor-content')
           @destroyGutter() if @previousType is 'gutter'
           @destroyHighlightDecorations() if @previousType is 'highlight'
+          @updateMarkers()
 
       @previousType = type
 
@@ -163,13 +167,14 @@ class ColorBufferElement extends HTMLElement
   updateHighlightDecorations: ->
     return if @editor.isDestroyed()
     @styleByMarkerId = {}
-    @decorationByMarkerId = {}
+    @decorationByMarkerId ?= {}
 
     markers = @colorBuffer.getValidColorMarkers()
 
     for m in @displayedMarkers when m not in markers
       @decorationByMarkerId[m.id]?.destroy()
-      @styleByMarkerId[m.id]?.destroy()
+      @removeChild(@styleByMarkerId[m.id])
+      delete @styleByMarkerId[m.id]
       delete @decorationByMarkerId[m.id]
 
     markersByRows = {}
@@ -179,6 +184,7 @@ class ColorBufferElement extends HTMLElement
       if m.color?.isValid() and m not in @displayedMarkers
         {className, style} = @getHighlighDecorationCSS(m)
         @appendChild(style)
+        @styleByMarkerId[m.id] = style
         @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
           type: 'highlight'
           class: "pigments-highlight #{className}"
@@ -189,12 +195,13 @@ class ColorBufferElement extends HTMLElement
     @emitter.emit 'did-update'
 
   destroyHighlightDecorations: ->
-    for id,m of @decorationByMarkerId
-      m.destroy()
-      @styleByMarkerId[id].parentNode.removeChild(@styleByMarkerId[id])
+    for id, deco of @decorationByMarkerId
+      @removeChild(@styleByMarkerId[id]) if @styleByMarkerId[id]?
+      deco.destroy()
 
     delete @decorationByMarkerId
     delete @styleByMarkerId
+    @displayedMarkers = []
 
   getHighlighDecorationCSS: (marker) ->
     className = "pigments-highlight-#{nextHighlightId++}"
@@ -220,7 +227,7 @@ class ColorBufferElement extends HTMLElement
   initializeGutter: ->
     @gutter = @editor.addGutter name: 'pigments'
     @displayedMarkers = []
-    @decorationByMarkerId = {}
+    @decorationByMarkerId ?= {}
     gutterContainer = @getEditorRoot().querySelector('.gutter-container')
     @gutterSubscription = @subscribeTo gutterContainer,
       mousedown: (e) =>
@@ -247,7 +254,6 @@ class ColorBufferElement extends HTMLElement
     decoration.destroy() for id, decoration of @decorationByMarkerId
     delete @decorationByMarkerId
     delete @gutterSubscription
-    @updateMarkers()
 
   updateGutterDecorations: ->
     return if @editor.isDestroyed()
