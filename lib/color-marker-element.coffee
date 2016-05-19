@@ -109,6 +109,9 @@ module.exports =
 ColorMarkerElement =
 registerOrUpdateElement 'pigments-color-marker', ColorMarkerElement.prototype
 
+ColorMarkerElement.isNativeDecorationType = (type) ->
+  type in ['gutter', 'highlight', 'highlight-outline', 'highlight-underline']
+
 ColorMarkerElement.setMarkerType = (markerType) ->
-  return if markerType is 'gutter' or markerType is 'highlight'
+  return ColorMarkerElement.isNativeDecorationType(markerType)
   @prototype.renderer = new RENDERERS[markerType]

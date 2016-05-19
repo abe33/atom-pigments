@@ -83,25 +83,16 @@ class ColorBufferElement extends HTMLElement
       @editorConfigChanged()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
-      switch type
-        when 'gutter'
-          @releaseAllMarkerViews()
-          @destroyHighlightDecorations() if @previousType is 'highlight'
-          @initializeGutter()
-        when 'highlight'
-          @releaseAllMarkerViews()
-          @destroyGutter() if @previousType is 'gutter'
-          @updateHighlightDecorations()
-        when 'background'
+      if @isNativeDecorationType(type)
+        @initializeNativeDecorations(type)
+      else
+        if type is 'background'
           @classList.add('above-editor-content')
-          @destroyGutter() if @previousType is 'gutter'
-          @destroyHighlightDecorations() if @previousType is 'highlight'
-          @updateMarkers()
         else
           @classList.remove('above-editor-content')
-          @destroyGutter() if @previousType is 'gutter'
-          @destroyHighlightDecorations() if @previousType is 'highlight'
-          @updateMarkers()
+
+        @destroyNativeDecorations()
+        @updateMarkers()
 
       @previousType = type
 
@@ -131,8 +122,8 @@ class ColorBufferElement extends HTMLElement
     if @useNativeDecorations()
       if @previousType is 'gutter'
         @updateGutterDecorations()
-      else if @previousType is 'highlight'
-        @updateHighlightDecorations()
+      else
+        @updateHighlightDecorations(@previousType)
     else
       @updateMarkers()
 
@@ -154,7 +145,26 @@ class ColorBufferElement extends HTMLElement
     @updateMarkers()
 
   useNativeDecorations: ->
-    @previousType is 'gutter' or @previousType is 'highlight'
+    @isNativeDecorationType(@previousType)
+
+  isNativeDecorationType: (type) ->
+    ColorMarkerElement.isNativeDecorationType(type)
+
+  initializeNativeDecorations: (type) ->
+      @releaseAllMarkerViews()
+      @destroyNativeDecorations()
+
+      switch type
+        when 'gutter'
+          @initializeGutter()
+        else
+          @updateHighlightDecorations(type)
+
+  destroyNativeDecorations: ->
+    if @previousType is 'gutter'
+      @destroyGutter()
+    else
+      @destroyHighlightDecorations()
 
   ##   ##     ## ##  ######   ##     ## ##       ##  ######   ##     ## ########
   ##   ##     ## ## ##    ##  ##     ## ##       ## ##    ##  ##     ##    ##
@@ -164,9 +174,10 @@ class ColorBufferElement extends HTMLElement
   ##   ##     ## ## ##    ##  ##     ## ##       ## ##    ##  ##     ##    ##
   ##   ##     ## ##  ######   ##     ## ######## ##  ######   ##     ##    ##
 
-  updateHighlightDecorations: ->
+  updateHighlightDecorations: (type) ->
     return if @editor.isDestroyed()
-    @styleByMarkerId = {}
+
+    @styleByMarkerId ?= {}
     @decorationByMarkerId ?= {}
 
     markers = @colorBuffer.getValidColorMarkers()
@@ -182,13 +193,13 @@ class ColorBufferElement extends HTMLElement
 
     for m in markers
       if m.color?.isValid() and m not in @displayedMarkers
-        {className, style} = @getHighlighDecorationCSS(m)
+        {className, style} = @getHighlighDecorationCSS(m, type)
         @appendChild(style)
         @styleByMarkerId[m.id] = style
         @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
           type: 'highlight'
-          class: "pigments-highlight #{className}"
-          includeMarkerText: true
+          class: "pigments-#{type} #{className}"
+          includeMarkerText: type is 'highlight'
         })
 
     @displayedMarkers = markers
@@ -203,16 +214,30 @@ class ColorBufferElement extends HTMLElement
     delete @styleByMarkerId
     @displayedMarkers = []
 
-  getHighlighDecorationCSS: (marker) ->
+  getHighlighDecorationCSS: (marker, type) ->
     className = "pigments-highlight-#{nextHighlightId++}"
     style = document.createElement('style')
     l = marker.color.luma
-    style.innerHTML = """
-    .#{className} .region {
-      background-color: #{marker.color.toCSS()};
-      color: #{if l > 0.43 then 'black' else 'white'};
-    }
-    """
+
+    if type is 'highlight'
+      style.innerHTML = """
+      .#{className} .region {
+        background-color: #{marker.color.toCSS()};
+        color: #{if l > 0.43 then 'black' else 'white'};
+      }
+      """
+    else if type is 'highlight-underline'
+      style.innerHTML = """
+      .#{className} .region {
+        background-color: #{marker.color.toCSS()};
+      }
+      """
+    else if type is 'highlight-outline'
+      style.innerHTML = """
+      .#{className} .region {
+        border-color: #{marker.color.toCSS()};
+      }
+      """
 
     {className, style}
 

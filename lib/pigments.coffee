@@ -81,6 +81,8 @@ module.exports =
       default: 'background'
       enum: [
         'highlight'
+        'highlight-underline'
+        'highlight-outline'
         'background'
         'outline'
         'underline'

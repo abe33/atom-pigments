@@ -77,6 +77,47 @@ atom-text-editor::shadow .pigments-highlight .region {
   z-index: 1;
 }
 
+atom-text-editor::shadow .pigments-highlight-underline .region {
+  position: absolute;
+  white-space: nowrap;
+  .background-color;
+  z-index: 1;
+  height: 2px !important;
+  margin-top: 1.3em; // adjust to your liking
+}
+
+atom-text-editor::shadow .pigments-highlight-outline .region {
+  position: absolute;
+  white-space: nowrap;
+  margin-left: -1px;
+  margin-top: -1px;
+  padding: 1px 2px;
+  box-sizing: content-box !important;
+
+  border-radius: 0;
+
+  &::before {
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    border-image: -webkit-repeating-linear-gradient(45deg, #808080 4px, #6A6A6A 4px, #6A6A6A 8px, #808080 8px, #808080 12px) 1 1 1 1 round;
+    content: '';
+    border-radius: inherit;
+    background-color: inherit;
+    border-radius: inherit;
+    .absolute-box;
+  }
+
+  &::after {
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    border: 2px solid transparent;
+    border-color: inherit;
+    border-radius: inherit;
+    .absolute-box;
+  }
+}
+
 atom-text-editor::shadow pigments-markers,
 pigments-markers {
   position: relative;
