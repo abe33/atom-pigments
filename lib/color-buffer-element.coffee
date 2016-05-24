@@ -309,7 +309,6 @@ class ColorBufferElement extends HTMLElement
       row = m.marker.getStartScreenPosition().row
       markersByRows[row] ?= 0
 
-
       rowLength = 0
 
       if type isnt 'gutter'
@@ -430,7 +429,7 @@ class ColorBufferElement extends HTMLElement
   ##     ######  ######## ######## ########  ######     ##
 
   requestSelectionUpdate: ->
-    return if @updateRequested or @useNativeDecorations()
+    return if @updateRequested
 
     @updateRequested = true
     requestAnimationFrame =>
@@ -439,15 +438,42 @@ class ColorBufferElement extends HTMLElement
       @updateSelections()
 
   updateSelections: ->
-    return if @editor.isDestroyed() or @useNativeDecorations()
-    for marker in @displayedMarkers
-      view = @viewsByMarkers.get(marker)
-      if view?
-        view.classList.remove('hidden')
-        view.classList.remove('in-fold')
-        @hideMarkerIfInSelectionOrFold(marker, view)
-      else
-        console.warn "A color marker was found in the displayed markers array without an associated view", marker
+    return if @editor.isDestroyed()
+    if @useNativeDecorations()
+      for marker in @displayedMarkers
+        decoration = @decorationByMarkerId[marker.id]
+
+        @hideDecorationIfInSelection(marker, decoration) if decoration?
+    else
+      for marker in @displayedMarkers
+        view = @viewsByMarkers.get(marker)
+        if view?
+          view.classList.remove('hidden')
+          view.classList.remove('in-fold')
+          @hideMarkerIfInSelectionOrFold(marker, view)
+        else
+          console.warn "A color marker was found in the displayed markers array without an associated view", marker
+
+  hideDecorationIfInSelection: (marker, decoration) ->
+    selections = @editor.getSelections()
+
+    props = decoration.getProperties()
+    classes = props.class.split(/\s+/g)
+
+    for selection in selections
+      range = selection.getScreenRange()
+      markerRange = marker.getScreenRange()
+
+      continue unless markerRange? and range?
+      if markerRange.intersectsWith(range)
+        classes.push('in-selection') unless 'in-selection' in classes
+        props.class = classes.join(' ')
+        decoration.setProperties(props)
+        return
+
+    classes = classes.filter (cls) -> cls isnt 'in-selection'
+    props.class = classes.join(' ')
+    decoration.setProperties(props)
 
   hideMarkerIfInSelectionOrFold: (marker, view) ->
     selections = @editor.getSelections()
