@@ -80,9 +80,11 @@ module.exports =
       type: 'string'
       default: 'background'
       enum: [
-        'highlight'
-        'highlight-underline'
-        'highlight-outline'
+        'native-background'
+        'native-underline'
+        'native-outline'
+        'native-dot'
+        'native-square-dot'
         'background'
         'outline'
         'underline'
@@ -336,7 +338,7 @@ module.exports =
       HighlightComponent::updateHighlightRegions = (id, newHighlightState) ->
         _updateHighlightRegions.call(this, id; newHighlightState)
 
-        if newHighlightState.class?.match /^pigments-highlight\s/
+        if newHighlightState.class?.match /^pigments-native-background\s/
           for newRegionState, i in newHighlightState.regions
             regionNode = @regionNodesByHighlightId[id][i]
 

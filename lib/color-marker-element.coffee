@@ -110,7 +110,14 @@ ColorMarkerElement =
 registerOrUpdateElement 'pigments-color-marker', ColorMarkerElement.prototype
 
 ColorMarkerElement.isNativeDecorationType = (type) ->
-  type in ['gutter', 'highlight', 'highlight-outline', 'highlight-underline']
+  type in [
+    'gutter'
+    'native-background'
+    'native-outline'
+    'native-underline'
+    'native-dot'
+    'native-square-dot'
+  ]
 
 ColorMarkerElement.setMarkerType = (markerType) ->
   return ColorMarkerElement.isNativeDecorationType(markerType)

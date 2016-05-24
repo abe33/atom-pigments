@@ -120,7 +120,7 @@ class ColorBufferElement extends HTMLElement
 
   update: ->
     if @useNativeDecorations()
-      if @previousType is 'gutter'
+      if @isGutterType()
         @updateGutterDecorations()
       else
         @updateHighlightDecorations(@previousType)
@@ -144,6 +144,9 @@ class ColorBufferElement extends HTMLElement
 
     @updateMarkers()
 
+  isGutterType: (type=@previousType) ->
+    type in ['gutter', 'native-dot', 'native-square-dot']
+
   useNativeDecorations: ->
     @isNativeDecorationType(@previousType)
 
@@ -154,14 +157,13 @@ class ColorBufferElement extends HTMLElement
       @releaseAllMarkerViews()
       @destroyNativeDecorations()
 
-      switch type
-        when 'gutter'
-          @initializeGutter()
-        else
-          @updateHighlightDecorations(type)
+      if @isGutterType(type)
+        @initializeGutter(type)
+      else
+        @updateHighlightDecorations(type)
 
   destroyNativeDecorations: ->
-    if @previousType is 'gutter'
+    if @isGutterType()
       @destroyGutter()
     else
       @destroyHighlightDecorations()
@@ -219,20 +221,20 @@ class ColorBufferElement extends HTMLElement
     style = document.createElement('style')
     l = marker.color.luma
 
-    if type is 'highlight'
+    if type is 'native-background'
       style.innerHTML = """
       .#{className} .region {
         background-color: #{marker.color.toCSS()};
         color: #{if l > 0.43 then 'black' else 'white'};
       }
       """
-    else if type is 'highlight-underline'
+    else if type is 'native-underline'
       style.innerHTML = """
       .#{className} .region {
         background-color: #{marker.color.toCSS()};
       }
       """
-    else if type is 'highlight-outline'
+    else if type is 'native-outline'
       style.innerHTML = """
       .#{className} .region {
         border-color: #{marker.color.toCSS()};
@@ -249,8 +251,11 @@ class ColorBufferElement extends HTMLElement
   ##    ##    ##  ##     ##    ##       ##    ##       ##    ##
   ##     ######    #######     ##       ##    ######## ##     ##
 
-  initializeGutter: ->
-    @gutter = @editor.addGutter name: 'pigments'
+  initializeGutter: (type) ->
+    options = name: "pigments-#{type}"
+    options.priority = 1000 if type isnt 'gutter'
+
+    @gutter = @editor.addGutter(options)
     @displayedMarkers = []
     @decorationByMarkerId ?= {}
     gutterContainer = @getEditorRoot().querySelector('.gutter-container')
@@ -270,7 +275,7 @@ class ColorBufferElement extends HTMLElement
 
         @colorBuffer.selectColorMarkerAndOpenPicker(colorMarker)
 
-    @updateGutterDecorations()
+    @updateGutterDecorations(type)
 
   destroyGutter: ->
     @gutter.destroy()
@@ -280,7 +285,7 @@ class ColorBufferElement extends HTMLElement
     delete @decorationByMarkerId
     delete @gutterSubscription
 
-  updateGutterDecorations: ->
+  updateGutterDecorations: (type=@previousType) ->
     return if @editor.isDestroyed()
 
     markers = @colorBuffer.getValidColorMarkers()
@@ -304,12 +309,23 @@ class ColorBufferElement extends HTMLElement
       row = m.marker.getStartScreenPosition().row
       markersByRows[row] ?= 0
 
-      deco.properties.item.style.left = "#{markersByRows[row] * 14}px"
+
+      rowLength = 0
+
+      if type isnt 'gutter'
+        rowLength = @editorElement.pixelPositionForScreenPosition([row, Infinity]).left
+
+      decoWidth = 14
+
+      deco.properties.item.style.left = "#{rowLength + markersByRows[row] * decoWidth}px"
 
       markersByRows[row]++
       maxRowLength = Math.max(maxRowLength, markersByRows[row])
 
-    atom.views.getView(@gutter).style.minWidth = "#{maxRowLength * 14}px"
+    if type is 'gutter'
+      atom.views.getView(@gutter).style.minWidth = "#{maxRowLength * decoWidth}px"
+    else
+      atom.views.getView(@gutter).style.width = "0px"
 
     @displayedMarkers = markers
     @emitter.emit 'did-update'
