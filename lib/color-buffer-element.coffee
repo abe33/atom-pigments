@@ -147,6 +147,9 @@ class ColorBufferElement extends HTMLElement
   isGutterType: (type=@previousType) ->
     type in ['gutter', 'native-dot', 'native-square-dot']
 
+  isDotType:  (type=@previousType) ->
+    type in ['native-dot', 'native-square-dot']
+
   useNativeDecorations: ->
     @isNativeDecorationType(@previousType)
 
@@ -259,7 +262,9 @@ class ColorBufferElement extends HTMLElement
     @displayedMarkers = []
     @decorationByMarkerId ?= {}
     gutterContainer = @getEditorRoot().querySelector('.gutter-container')
-    @gutterSubscription = @subscribeTo gutterContainer,
+    @gutterSubscription = new CompositeDisposable
+
+    @gutterSubscription.add @subscribeTo gutterContainer,
       mousedown: (e) =>
         targetDecoration = e.path[0]
 
@@ -274,6 +279,11 @@ class ColorBufferElement extends HTMLElement
         return unless colorMarker? and @colorBuffer?
 
         @colorBuffer.selectColorMarkerAndOpenPicker(colorMarker)
+
+    if @isDotType(type)
+      @gutterSubscription.add @editor.onDidChange (changes) =>
+        changes.forEach (change) =>
+          @updateDotDecorationsOffsets(change.start.row)
 
     @updateGutterDecorations(type)
 
@@ -328,6 +338,23 @@ class ColorBufferElement extends HTMLElement
 
     @displayedMarkers = markers
     @emitter.emit 'did-update'
+
+  updateDotDecorationsOffsets: (row) ->
+    markersByRows = {}
+
+    for m in @displayedMarkers
+      deco = @decorationByMarkerId[m.id]
+      markerRow = m.marker.getStartScreenPosition().row
+      continue unless row is markerRow
+
+      markersByRows[row] ?= 0
+
+      rowLength = @editorElement.pixelPositionForScreenPosition([row, Infinity]).left
+
+      decoWidth = 14
+
+      deco.properties.item.style.left = "#{rowLength + markersByRows[row] * decoWidth}px"
+      markersByRows[row]++
 
   getGutterDecorationItem: (marker) ->
     div = document.createElement('div')
