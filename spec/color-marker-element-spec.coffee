@@ -52,6 +52,7 @@ describe 'ColorMarkerElement', ->
     colorMarkerElement = new ColorMarkerElement
     colorMarkerElement.setContainer
       editor: editor
+      useNativeDecorations: -> false
       requestMarkerUpdate: ([marker]) -> marker.render()
 
     colorMarkerElement.setModel(colorMarker)
@@ -70,6 +71,7 @@ describe 'ColorMarkerElement', ->
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
         editor: editor
+        useNativeDecorations: -> false
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -95,6 +97,7 @@ describe 'ColorMarkerElement', ->
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
         editor: editor
+        useNativeDecorations: -> false
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -145,6 +148,7 @@ describe 'ColorMarkerElement', ->
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
         editor: editor
+        useNativeDecorations: -> false
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -195,6 +199,7 @@ describe 'ColorMarkerElement', ->
       colorMarkerElement = new ColorMarkerElement
       colorMarkerElement.setContainer
         editor: editor
+        useNativeDecorations: -> false
         requestMarkerUpdate: ([marker]) -> marker.render()
 
       colorMarkerElement.setModel(colorMarker)
@@ -286,6 +291,7 @@ describe 'ColorMarkerElement', ->
         colorMarkerElement = new ColorMarkerElement
         colorMarkerElement.setContainer
           editor: editor
+          useNativeDecorations: -> false
           requestMarkerUpdate: ([marker]) -> marker.render()
 
         colorMarkerElement.setModel(colorMarker)
@@ -354,6 +360,7 @@ describe 'ColorMarkerElement', ->
         colorMarkerElement = new ColorMarkerElement
         colorMarkerElement.setContainer
           editor: editor
+          useNativeDecorations: -> false
           requestMarkerUpdate: ([marker]) -> marker.render()
 
         colorMarkerElement.setModel(colorMarker)
