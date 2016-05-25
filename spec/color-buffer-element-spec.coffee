@@ -233,7 +233,7 @@ describe 'ColorBufferElement', ->
           waitsForPromise -> colorBuffer.initialize()
           runs ->
             atom.config.set 'pigments.markerType', 'gutter'
-            gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')
+            gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')
 
         it 'removes the markers', ->
           expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(0)
@@ -295,7 +295,7 @@ describe 'ColorBufferElement', ->
             atom.config.set 'pigments.markerType', 'background'
 
           it 'removes the gutter', ->
-            expect(editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')).not.toExist()
+            expect(editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')).not.toExist()
 
           it 'recreates the markers', ->
             expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
@@ -313,7 +313,7 @@ describe 'ColorBufferElement', ->
             waitsForPromise -> colorBuffer.variablesAvailable()
 
             runs ->
-              gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments"]')
+              gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')
 
           it 'creates the decorations in the new buffer gutter', ->
             decorations = editor.getDecorations().filter (d) ->
