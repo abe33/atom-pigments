@@ -120,5 +120,5 @@ ColorMarkerElement.isNativeDecorationType = (type) ->
   ]
 
 ColorMarkerElement.setMarkerType = (markerType) ->
-  return ColorMarkerElement.isNativeDecorationType(markerType)
+  return if ColorMarkerElement.isNativeDecorationType(markerType)
   @prototype.renderer = new RENDERERS[markerType]
