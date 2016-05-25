@@ -7,7 +7,7 @@ ColorMarkerElement = require '../lib/color-marker-element'
 stylesheetPath = path.resolve __dirname, '..', 'styles', 'pigments.less'
 stylesheet = atom.themes.loadStylesheet(stylesheetPath)
 
-describe 'ColorMarkerElement', ->
+xdescribe 'ColorMarkerElement', ->
   [editor, marker, colorMarker, colorMarkerElement, jasmineContent] = []
 
   beforeEach ->
