@@ -278,7 +278,8 @@ class ColorProject
 
   initializeBuffers: ->
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
-      return if @isBufferIgnored(editor.getPath())
+      editorPath = editor.getPath()
+      return if not editorPath? or @isBufferIgnored(editorPath)
 
       buffer = @colorBufferForEditor(editor)
       if buffer?
