@@ -1,3 +1,11 @@
+<a name="v0.27.1"></a>
+# v0.27.1 (2016-05-26)
+
+## Bug Fixes
+
+- Fix dot markers not spaced properly ([648c8d3a](https://github.com/abe33/atom-pigments/commit/648c8d3a08df5de8b0e29ede51f3a7ec213a7f61))
+- Fix looping over null changes ([21ca42b4](https://github.com/abe33/atom-pigments/commit/21ca42b496aaf0c76699268a129768d7f3c536eb))
+
 <a name="v0.27.0"></a>
 # v0.27.0 (2016-05-26)
 
