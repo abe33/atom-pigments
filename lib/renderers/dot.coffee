@@ -12,12 +12,11 @@ class DotRenderer
     textEditorElement = atom.views.getView(textEditor)
     charWidth = textEditor.getDefaultCharWidth()
 
-    markers = colorMarker.colorBuffer.getMarkerLayer().findMarkers {
-      type: 'pigments-color'
+    markers = colorMarker.colorBuffer.findValidColorMarkers({
       intersectsScreenRowRange: [range.end.row, range.end.row]
-    }
+    }).filter (m) -> m.getScreenRange().end.row is range.end.row
 
-    index = markers.indexOf(colorMarker.marker)
+    index = markers.indexOf(colorMarker)
     screenLine = @screenLineForScreenRow(textEditor, range.end.row)
 
     return {} unless screenLine?
