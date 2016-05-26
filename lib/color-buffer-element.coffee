@@ -83,6 +83,9 @@ class ColorBufferElement extends HTMLElement
       @editorConfigChanged()
 
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
+      if ColorMarkerElement::rendererType isnt type
+        ColorMarkerElement.setMarkerType(type)
+
       if @isNativeDecorationType(type)
         @initializeNativeDecorations(type)
       else
@@ -92,7 +95,7 @@ class ColorBufferElement extends HTMLElement
           @classList.remove('above-editor-content')
 
         @destroyNativeDecorations()
-        @updateMarkers()
+        @updateMarkers(type)
 
       @previousType = type
 
@@ -390,7 +393,7 @@ class ColorBufferElement extends HTMLElement
 
       dirtyMarkers.forEach (marker) -> marker.render()
 
-  updateMarkers: ->
+  updateMarkers: (type=@previousType) ->
     return if @editor.isDestroyed()
 
     markers = @colorBuffer.findValidColorMarkers({
