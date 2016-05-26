@@ -1,3 +1,22 @@
+<a name="v0.27.0"></a>
+# v0.27.0 (2016-05-26)
+
+## Features
+
+- Add change listener to update dots offset on changes ([13a8d0f2](https://github.com/abe33/atom-pigments/commit/13a8d0f297159f82efbb49d62136c5009636b2d8))
+- Add a z-index on status bar to avoid dot markers overlap ([28c45df2](https://github.com/abe33/atom-pigments/commit/28c45df29f0f20810039b23d20e6a0406a0fac8a))
+- Add new native decoration types for dot markers ([89c53543](https://github.com/abe33/atom-pigments/commit/89c5354386bbd46f9e2d6cff0d2b7a2c2c2f2f87))
+- Add monkey patch for highlight decorations with text content ([b7b91dac](https://github.com/abe33/atom-pigments/commit/b7b91dacad2ae5a974ec3cbc28ba2889f834fadf))
+- Implement other highlight decorations using native ones ([da9c36d3](https://github.com/abe33/atom-pigments/commit/da9c36d35f0202e4c0091fddc1d6550a21908558))
+
+## Bug Fixes
+
+- Fix legacy decorations not updated on type changes ([8a5b3c8e](https://github.com/abe33/atom-pigments/commit/8a5b3c8e3fb585badb8db5b5738f59c15428a7a6))
+- Fix markers search parameters not passed to findMarkers ([27fe72be](https://github.com/abe33/atom-pigments/commit/27fe72be60d38f66ff14751cb845f5ed6098c181))
+- Fix legacy marker type not honored ([8c71cef7](https://github.com/abe33/atom-pigments/commit/8c71cef7eabe8791480c6b41079250d70f1b7cbd))
+- Guard against null editor path ([535cae73](https://github.com/abe33/atom-pigments/commit/535cae7315e9ccb32a91c76842767857a0705619))
+- Fix for dot markers overlapping text – part of issue #178. ([7ba78c0c](https://github.com/abe33/atom-pigments/commit/7ba78c0cecd36de1bb38b6f02152fc72a38e9fd6))
+
 <a name="v0.26.3"></a>
 # v0.26.3 (2016-05-12)
 
