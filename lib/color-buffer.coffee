@@ -352,7 +352,7 @@ class ColorBuffer
       return marker if marker?.match(properties)
 
   findColorMarkers: (properties={}) ->
-    markers = @markerLayer.findMarkers()
+    markers = @markerLayer.findMarkers(properties)
     markers.map (marker) =>
       @colorMarkersByMarkerId[marker.id]
     .filter (marker) -> marker?
