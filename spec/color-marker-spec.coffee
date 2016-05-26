@@ -13,7 +13,7 @@ describe 'ColorMarker', ->
       foo: bar;
     }
     """)
-    marker = editor.markBufferRange [[1,9],[1,33]], type: 'pigments-color'
+    marker = editor.markBufferRange [[1,9],[1,33]]
     color = new Color(255, 0, 0, 0.5)
     text = 'hsva(0, 100%, 100%, 0.5)'
     colorBuffer = {editor}

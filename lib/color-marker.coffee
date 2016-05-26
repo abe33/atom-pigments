@@ -64,7 +64,7 @@ class ColorMarker
 
       return if not scopeChain or (!forceEvaluation and scopeChain is @lastScopeChain)
 
-      @ignored = @colorBuffer.ignoredScopes.some (scopeRegExp) ->
+      @ignored = (@colorBuffer.ignoredScopes ? []).some (scopeRegExp) ->
         scopeChain.match(scopeRegExp)
 
       @lastScopeChain = scopeChain
