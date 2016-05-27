@@ -285,8 +285,11 @@ class ColorBufferElement extends HTMLElement
 
     if @isDotType(type)
       @gutterSubscription.add @editor.onDidChange (changes) =>
-        changes?.forEach (change) =>
-          @updateDotDecorationsOffsets(change.start.row)
+        if Array.isArray changes
+          changes?.forEach (change) =>
+            @updateDotDecorationsOffsets(change.start.row)
+        else
+          @updateDotDecorationsOffsets(changes.start.row)
 
     @updateGutterDecorations(type)
 
