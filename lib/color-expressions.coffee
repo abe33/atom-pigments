@@ -1232,3 +1232,57 @@ registry.createExpression 'pigments:elm_complement', strip("
 
   @hsl = [(h + 180) % 360, s, l]
   @alpha = baseColor.alpha
+
+##    ##          ###    ######## ######## ##     ##
+##    ##         ## ##      ##    ##        ##   ##
+##    ##        ##   ##     ##    ##         ## ##
+##    ##       ##     ##    ##    ######      ###
+##    ##       #########    ##    ##         ## ##
+##    ##       ##     ##    ##    ##        ##   ##
+##    ######## ##     ##    ##    ######## ##     ##
+
+registry.createExpression 'pigments:latex_gray', strip("
+  \\[gray\\]\\{(#{float})\\}
+"), ['tex'], (match, expression, context) ->
+  [_, amount] = match
+
+  amount = context.readFloat(amount) * 255
+  @rgb = [amount, amount, amount]
+
+registry.createExpression 'pigments:latex_html', strip("
+  \\[HTML\\]\\{(#{hexadecimal}{6})\\}
+"), ['tex'], (match, expression, context) ->
+  [_, hexa] = match
+
+  @hex = hexa
+
+registry.createExpression 'pigments:latex_rgb', strip("
+  \\[rgb\\]\\{(#{float})#{comma}(#{float})#{comma}(#{float})\\}
+"), ['tex'], (match, expression, context) ->
+  [_, r,g,b] = match
+
+  r = Math.floor(context.readFloat(r) * 255)
+  g = Math.floor(context.readFloat(g) * 255)
+  b = Math.floor(context.readFloat(b) * 255)
+  @rgb = [r, g, b]
+
+registry.createExpression 'pigments:latex_RGB', strip("
+  \\[RGB\\]\\{(#{int})#{comma}(#{int})#{comma}(#{int})\\}
+"), ['tex'], (match, expression, context) ->
+  [_, r,g,b] = match
+
+  r = context.readInt(r)
+  g = context.readInt(g)
+  b = context.readInt(b)
+  @rgb = [r, g, b]
+
+registry.createExpression 'pigments:latex_cmyk', strip("
+  \\[cmyk\\]\\{(#{float})#{comma}(#{float})#{comma}(#{float})#{comma}(#{float})\\}
+"), ['tex'], (match, expression, context) ->
+  [_, c,m,y,k] = match
+
+  c = context.readFloat(c)
+  m = context.readFloat(m)
+  y = context.readFloat(y)
+  k = context.readFloat(k)
+  @cmyk = [c,m,y,k]

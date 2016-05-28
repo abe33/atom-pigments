@@ -780,6 +780,14 @@ describe 'ColorParser', ->
     }).asColor(255,0,0)
     itParses('Color(r, g, b, a)').asInvalid()
 
+  #    ######## ##       ##     ##
+  #    ##       ##       ###   ###
+  #    ##       ##       #### ####
+  #    ######   ##       ## ### ##
+  #    ##       ##       ##     ##
+  #    ##       ##       ##     ##
+  #    ######## ######## ##     ##
+
   describe 'elm-lang support', ->
     beforeEach -> @scope = 'elm'
 
@@ -847,3 +855,20 @@ describe 'ColorParser', ->
       'base': asColor 'red'
     }).asColor('#00ffff')
     itParses('complement base').asInvalid()
+
+  #    ##          ###    ######## ######## ##     ##
+  #    ##         ## ##      ##    ##        ##   ##
+  #    ##        ##   ##     ##    ##         ## ##
+  #    ##       ##     ##    ##    ######      ###
+  #    ##       #########    ##    ##         ## ##
+  #    ##       ##     ##    ##    ##        ##   ##
+  #    ######## ##     ##    ##    ######## ##     ##
+
+  describe 'latex support', ->
+    beforeEach -> @scope = 'tex'
+
+    itParses('[gray]{1}').asColor('#ffffff')
+    itParses('[rgb]{1,0.5,0}').asColor('#ff7f00')
+    itParses('[RGB]{255,127,0}').asColor('#ff7f00')
+    itParses('[cmyk]{0,0.5,1,0}').asColor('#ff7f00')
+    itParses('[HTML]{ff7f00}').asColor('#ff7f00')
