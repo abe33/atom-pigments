@@ -121,5 +121,7 @@ registry.createExpression 'pigments:latex', '\\\\definecolor(\\{[^\\}]+\\})\\{([
     value
     0
     match[0].length
+    false
+    true
   ])
   solver.endParsing(match[0].length)

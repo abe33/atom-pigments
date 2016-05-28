@@ -20,6 +20,8 @@ class ColorExpression
       handle: (match, expression, context) ->
         [_,name] = match
 
+        name = _ unless name?
+
         evaluated = context.readColorExpression(name)
         return @invalid = true if evaluated is name
 

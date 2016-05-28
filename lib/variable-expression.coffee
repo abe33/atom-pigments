@@ -32,11 +32,11 @@ class VariableExpression
           results.match = matchText[start...end]
         abortParsing: ->
           parsingAborted = true
-        appendResult: ([name, value, start, end, isAlternate]) ->
+        appendResult: ([name, value, start, end, isAlternate, noNamePrefix]) ->
           range = [start, end]
           reName = name.replace('$', '\\$')
           unless ///#{reName}(?![-_])///.test(value)
-            results.push {name, value, range, isAlternate}
+            results.push {name, value, range, isAlternate, noNamePrefix}
 
       @handle(match, solver)
 
