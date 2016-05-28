@@ -338,7 +338,39 @@ rgbToHWB = (r,g,b) -> hsvToHWB(rgbToHSV(r,g,b)...)
 # of the color
 hwbToRGB = (h,w,b) -> hsvToRGB(hwbToHSV(h,w,b)...)
 
+# Public: Converts a color from the CMYK color space to the RGB color space
+cmykToRGB = (c,m,y,k) ->
+  r = 1 - Math.min(1, c * (1 - k) + k)
+  g = 1 - Math.min(1, m * (1 - k) + k)
+  b = 1 - Math.min(1, y * (1 - k) + k)
+
+  r = Math.floor(r * 255)
+  g = Math.floor(g * 255)
+  b = Math.floor(b * 255)
+
+  [r,g,b]
+
+
+# Public: Converts a color from the RGB color space to the CMYK color space
+rgbToCMYK = (r,g,b) ->
+  # BLACK
+  return [0, 0, 0, 1] if r == 0 and g == 0 and b == 0
+
+  computedC = 1 - (r / 255)
+  computedM = 1 - (g / 255)
+  computedY = 1 - (b / 255)
+
+  minCMY = Math.min(computedC, Math.min(computedM, computedY))
+
+  computedC = (computedC - minCMY) / (1 - minCMY)
+  computedM = (computedM - minCMY) / (1 - minCMY)
+  computedY = (computedY - minCMY) / (1 - minCMY)
+  computedK = minCMY
+
+  [computedC, computedM, computedY, computedK]
+
 module.exports = {
+  cmykToRGB
   hexARGBToRGB
   hexRGBAToRGB
   hexToRGB
@@ -347,10 +379,11 @@ module.exports = {
   hsvToRGB
   hwbToHSV
   hwbToRGB
-  rgbToHSL
-  rgbToHSV
-  rgbToHWB
+  rgbToCMYK
   rgbToHex
   rgbToHexARGB
   rgbToHexRGBA
+  rgbToHSL
+  rgbToHSV
+  rgbToHWB
 }

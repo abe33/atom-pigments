@@ -272,6 +272,27 @@ registry.createExpression 'pigments:hwb', strip("
   ]
   @alpha = if a? then context.readFloat(a) else 1
 
+# cmyk(0,0.5,1,0)
+registry.createExpression 'pigments:cmyk', strip("
+  cmyk#{ps}\\s*
+    (#{float}|#{variables})
+    #{comma}
+    (#{float}|#{variables})
+    #{comma}
+    (#{float}|#{variables})
+    #{comma}
+    (#{float}|#{variables})
+  #{pe}
+"), ['*'], (match, expression, context) ->
+  [_,c,m,y,k] = match
+
+  @cmyk = [
+    context.readFloat(c)
+    context.readFloat(m)
+    context.readFloat(y)
+    context.readFloat(k)
+  ]
+
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
 registry.createExpression 'pigments:gray', strip("

@@ -189,6 +189,18 @@ describe 'Color', ->
 
       expect(color.hsl).toBeComponentArrayCloseTo([16, 100, 20])
 
+  describe '::cmyk', ->
+    it 'returns an array with the color in CMYK color space', ->
+      color = new Color('#FF7F00')
+
+      expect(color.cmyk).toBeComponentArrayCloseTo([0,0.5,1,0])
+
+    it 'sets the color components using cmyk values', ->
+      color.alpha = 1
+      color.cmyk = [0, 0.5, 1, 0]
+
+      expect(color).toBeColor('#FF7F00')
+
   describe '::clone', ->
     it 'returns a copy of the current color', ->
       expect(color.clone()).toBeColor(color)

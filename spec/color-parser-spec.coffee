@@ -220,6 +220,15 @@ describe 'ColorParser', ->
     '$a': '0.5'
   }).asColor(102, 128, 153, 0.5)
 
+  itParses('cmyk(0,0.5,1,0)').asColor('#ff7f00')
+  itParses('cmyk(c,m,y,k)').withContext({
+    'c': '0'
+    'm': '0.5'
+    'y': '1'
+    'k': '0'
+  }).asColor('#ff7f00')
+  itParses('cmyk(c,m,y,k)').asInvalid()
+
   itParses('gray(100%)').asColor(255, 255, 255)
   itParses('gray(100)').asColor(255, 255, 255)
   itParses('gray(100%, 0.5)').asColor(255, 255, 255, 0.5)

@@ -1,4 +1,5 @@
 {
+  cmykToRGB
   hexARGBToRGB
   hexRGBAToRGB
   hexToRGB
@@ -7,12 +8,13 @@
   hsvToRGB
   hwbToHSV
   hwbToRGB
-  rgbToHSL
-  rgbToHSV
-  rgbToHWB
+  rgbToCMYK
   rgbToHex
   rgbToHexARGB
   rgbToHexRGBA
+  rgbToHSL
+  rgbToHSV
+  rgbToHWB
 } = require './color-conversions'
 SVGColors = require './svg-colors'
 
@@ -132,6 +134,14 @@ class Color
     enumerable: true
     get: -> rgbToHexRGBA(@red, @green, @blue, @alpha)
     set: (hex) -> [@red, @green, @blue, @alpha] = hexRGBAToRGB(hex)
+  }
+
+  Object.defineProperty Color.prototype, 'cmyk', {
+    enumerable: true
+    get: -> rgbToCMYK(@red, @green, @blue, @alpha)
+    set: (cmyk) ->
+      [c,m,y,k] = cmyk
+      [@red, @green, @blue] = cmykToRGB(c,m,y,k)
   }
 
   Object.defineProperty Color.prototype, 'length', {
