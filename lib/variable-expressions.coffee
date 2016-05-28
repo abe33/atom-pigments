@@ -28,6 +28,7 @@ sass_handler = (match, solver) ->
         match[2]
         0
         match[0].length
+        true
       ])
     if match[1] isnt all_hyphen
       solver.appendResult([
@@ -35,6 +36,7 @@ sass_handler = (match, solver) ->
         match[2]
         0
         match[0].length
+        true
       ])
 
   solver.endParsing(match[0].length)

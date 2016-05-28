@@ -426,6 +426,8 @@ class VariablesCollection
           line: v.line
         }
 
+        res.isAlternate = true if v.isAlternate
+
         if v.isColor
           res.isColor = true
           res.color = v.color.serialize()

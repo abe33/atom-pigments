@@ -47,7 +47,8 @@ class PigmentsProvider
 
     suggestions = []
 
-    matchedVariables = variables.filter (v) -> ///^#{_.escapeRegExp prefix}///.test v.name
+    matchedVariables = variables.filter (v) ->
+      not v.isAlternate and ///^#{_.escapeRegExp prefix}///.test(v.name)
 
     matchedVariables.forEach (v) =>
       if v.isColor
