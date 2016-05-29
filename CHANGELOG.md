@@ -1,3 +1,10 @@
+<a name="v0.28.4"></a>
+# v0.28.4 (2016-05-29)
+
+## Bug Fixes
+
+- Fix missing noNamePrefix param in variable serialize output ([49b596b5](https://github.com/abe33/atom-pigments/commit/49b596b573ce21db1b5c2fa5d6b5baa649954e02))
+
 <a name="v0.28.3"></a>
 # v0.28.3 (2016-05-29)
 
