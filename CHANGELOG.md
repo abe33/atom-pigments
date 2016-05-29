@@ -1,3 +1,19 @@
+<a name="v0.28.0"></a>
+# v0.28.0 (2016-05-29)
+
+## Features
+
+- Implement latex color mixing form ([af6b47ed](https://github.com/abe33/atom-pigments/commit/af6b47ed205bddabae027568f11127557c015ff1), [#174](https://github.com/abe33/atom-pigments/issues/174))
+- Add support for inline latex color ([5b36740d](https://github.com/abe33/atom-pigments/commit/5b36740d9c815b0503c90a74831a5ec25483789d))
+  <br>For [#174](https://github.com/abe33/atom-pigments/issues/174))
+- Implement \definecolor expressions for LaTex ([a21c190f](https://github.com/abe33/atom-pigments/commit/a21c190fba1c79a2e385ef54647eabd36fb34ef3))  <br>Includes a new CMYK expression as well
+  For [#174](https://github.com/abe33/atom-pigments/issues/174))
+
+## Bug Fixes
+
+- Do not suggest alternative sass version ([09851f3f](https://github.com/abe33/atom-pigments/commit/09851f3fc20143e14997168ecf740abeb0137d6e), [#171](https://github.com/abe33/atom-pigments/issues/171))
+- Fix changes not an array on stable ([5e8f7a48](https://github.com/abe33/atom-pigments/commit/5e8f7a4836d62c0dfddf8b84196960c4e3dba5e2), [#194](https://github.com/abe33/atom-pigments/issues/194))
+
 <a name="v0.27.1"></a>
 # v0.27.1 (2016-05-26)
 
