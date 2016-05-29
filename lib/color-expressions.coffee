@@ -1286,3 +1286,34 @@ registry.createExpression 'pigments:latex_cmyk', strip("
   y = context.readFloat(y)
   k = context.readFloat(k)
   @cmyk = [c,m,y,k]
+
+registry.createExpression 'pigments:latex_predefined', strip('
+  \\{(black|blue|brown|cyan|darkgray|gray|green|lightgray|lime|magenta|olive|orange|pink|purple|red|teal|violet|white|yellow)\\}
+'), 1, ['tex'], (match, expression, context) ->
+  [_, name] = match
+  @hex = context.SVGColors.allCases[name].replace('#','')
+
+registry.createExpression 'pigments:latex_mix', strip('
+  \\{(.*[!].*)\\}
+'), ['tex'], (match, expression, context) ->
+  [_, expr] = match
+
+  op = expr.split('!')
+
+  mix = ([a,p,b]) ->
+    colorA = if a instanceof context.Color then a else context.readColor("{#{a}}")
+    colorB = if b instanceof context.Color then b else context.readColor("{#{b}}")
+    percent = context.readInt(p)
+
+    context.mixColors(colorA, colorB, percent / 100)
+
+  op.push(new context.Color(255, 255, 255)) if op.length is 2
+
+  nextColor = null
+
+  while op.length > 0
+    triplet = op.splice(0,3)
+    nextColor = mix(triplet)
+    op.unshift(nextColor) if op.length > 0
+
+  @rgb = nextColor.rgb

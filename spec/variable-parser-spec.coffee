@@ -80,6 +80,10 @@ describe 'VariableParser', ->
     '{orange}': '#FF7F00'
   })
 
+  itParses('\\definecolor{darkgreen}{blue!20!black!30!green}').as({
+    '{darkgreen}': '{blue!20!black!30!green}'
+  })
+
   itParses('\n.error--large(@color: red) {\n  background-color: @color;\n}').asUndefined()
 
   itParses("""

@@ -872,3 +872,8 @@ describe 'ColorParser', ->
     itParses('[RGB]{255,127,0}').asColor('#ff7f00')
     itParses('[cmyk]{0,0.5,1,0}').asColor('#ff7f00')
     itParses('[HTML]{ff7f00}').asColor('#ff7f00')
+    itParses('{blue}').asColor('#0000ff')
+
+    itParses('{blue!20}').asColor('#ccccff')
+    itParses('{blue!20!black}').asColor('#000033')
+    itParses('{blue!20!black!30!green}').asColor('#00590f')
