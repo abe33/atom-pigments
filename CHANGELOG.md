@@ -1,3 +1,10 @@
+<a name="v0.28.3"></a>
+# v0.28.3 (2016-05-29)
+
+## Bug Fixes
+
+- Prevent invalid matches on latex colors ([36662063](https://github.com/abe33/atom-pigments/commit/36662063a6a15704f5fb105c9f66dd9dc6cf5059))
+
 <a name="v0.28.2"></a>
 # v0.28.2 (2016-05-29)
 
