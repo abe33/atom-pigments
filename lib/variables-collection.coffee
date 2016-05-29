@@ -427,6 +427,7 @@ class VariablesCollection
         }
 
         res.isAlternate = true if v.isAlternate
+        res.noNamePrefix = true if v.noNamePrefix
 
         if v.isColor
           res.isColor = true
