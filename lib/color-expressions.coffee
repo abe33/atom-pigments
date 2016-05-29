@@ -1294,7 +1294,7 @@ registry.createExpression 'pigments:latex_predefined', strip('
   @hex = context.SVGColors.allCases[name].replace('#','')
 
 registry.createExpression 'pigments:latex_mix', strip('
-  \\{([^!\\n]+[!][^\\}\\n]+)\\}
+  \\{([^!\\n\\}]+[!][^\\}\\n]+)\\}
 '), ['tex'], (match, expression, context) ->
   [_, expr] = match
 
