@@ -25,10 +25,18 @@ module.exports =
     withPrefixes = variables.filter (v) -> not v.noNamePrefix
     withoutPrefixes = variables.filter (v) -> v.noNamePrefix
 
-    for v in withPrefixes
-      variableNamesWithPrefix.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    res = []
 
-    for v in withoutPrefixes
-      variableNamesWithoutPrefix.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    if withPrefixes.length > 0
+      for v in withPrefixes
+        variableNamesWithPrefix.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
 
-    "((?:#{namePrefixes})(#{variableNamesWithPrefix.join('|')})(\\s+!default)?(?!_|-|\\w|\\d|[ \\t]*[\\.:=]))|(#{variableNamesWithoutPrefix.join('|')})"
+      res.push "((?:#{namePrefixes})(#{variableNamesWithPrefix.join('|')})(\\s+!default)?(?!_|-|\\w|\\d|[ \\t]*[\\.:=]))"
+
+    if withoutPrefixes.length > 0
+      for v in withoutPrefixes
+        variableNamesWithoutPrefix.push v.name.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+
+      res.push "(#{variableNamesWithoutPrefix.join('|')})"
+
+    res.join('|')

@@ -126,7 +126,7 @@ registry.createExpression 'pigments:latex', '\\\\definecolor(\\{[^\\}]+\\})\\{([
   ])
   solver.endParsing(_.length)
 
-registry.createExpression 'pigments:latex_mix', '\\\\definecolor(\\{[^\\}]+\\})(\\{[^\\}!]+[!][^\\}]+\\})', ['tex'], (match, solver) ->
+registry.createExpression 'pigments:latex_mix', '\\\\definecolor(\\{[^\\}]+\\})(\\{[^\\}\\n!]+[!][^\\}\\n]+\\})', ['tex'], (match, solver) ->
   [_, name, value] = match
 
   solver.appendResult([

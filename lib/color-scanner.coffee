@@ -24,6 +24,8 @@ class ColorScanner
 
       color = @parser.parse(matchText, scope)
 
+      # return unless color?
+
       if (index = matchText.indexOf(color.colorExpression)) > 0
         lastIndex += -matchText.length + index + color.colorExpression.length
         matchText = color.colorExpression

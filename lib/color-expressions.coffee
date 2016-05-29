@@ -1289,12 +1289,12 @@ registry.createExpression 'pigments:latex_cmyk', strip("
 
 registry.createExpression 'pigments:latex_predefined', strip('
   \\{(black|blue|brown|cyan|darkgray|gray|green|lightgray|lime|magenta|olive|orange|pink|purple|red|teal|violet|white|yellow)\\}
-'), 1, ['tex'], (match, expression, context) ->
+'), ['tex'], (match, expression, context) ->
   [_, name] = match
   @hex = context.SVGColors.allCases[name].replace('#','')
 
 registry.createExpression 'pigments:latex_mix', strip('
-  \\{(.*[!].*)\\}
+  \\{([^!\\n]+[!][^\\}\\n]+)\\}
 '), ['tex'], (match, expression, context) ->
   [_, expr] = match
 

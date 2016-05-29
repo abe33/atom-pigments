@@ -296,6 +296,8 @@ class ColorContext
       light
 
   mixColors: (color1, color2, amount=0.5, round=Math.floor) ->
+    return new Color(NaN, NaN, NaN, NaN) unless color1? and color2? and not isNaN(amount)
+
     inverse = 1 - amount
     color = new Color
 
