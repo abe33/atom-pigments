@@ -87,7 +87,7 @@ module.exports =
 class ColorProject
   @deserialize: (state) ->
     markersVersion = SERIALIZE_MARKERS_VERSION
-    markersVersion += '-dev' if atom.inDevMode() && atom.project.getPaths().some(p) -> p.match(/\/pigments$/)
+    markersVersion += '-dev' if atom.inDevMode() and atom.project.getPaths().some (p) -> p.match(/\/pigments$/)
 
     if state?.version isnt SERIALIZE_VERSION
       state = {}
