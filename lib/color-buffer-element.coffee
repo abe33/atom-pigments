@@ -499,12 +499,12 @@ class ColorBufferElement extends HTMLElement
 
       continue unless markerRange? and range?
       if markerRange.intersectsWith(range)
-        classes.push('in-selection') unless 'in-selection' in classes
+        classes[0] += '-in-selection' unless classes[0].match(/-in-selection$/)?
         props.class = classes.join(' ')
         decoration.setProperties(props)
         return
 
-    classes = classes.filter (cls) -> cls isnt 'in-selection'
+    classes = classes.map (cls) -> cls.replace('-in-selection', '')
     props.class = classes.join(' ')
     decoration.setProperties(props)
 

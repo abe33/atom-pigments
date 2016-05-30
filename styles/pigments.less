@@ -75,17 +75,19 @@ atom-panel-container.footer {
 }
 
 atom-text-editor::shadow, atom-text-editor {
-  .pigments-native-background .region {
+  .pigments-native-background .region,
+  .pigments-native-background-in-selection .region {
     position: absolute;
     white-space: pre;
     .background-color;
     z-index: 1;
   }
-  .pigments-native-background.in-selection {
+  .pigments-native-background-in-selection {
     display: none;
   }
 
-  .pigments-native-underline .region {
+  .pigments-native-underline .region,
+  .pigments-native-underline-in-selection .region {
     position: absolute;
     white-space: nowrap;
     .background-color;
@@ -94,7 +96,8 @@ atom-text-editor::shadow, atom-text-editor {
     margin-top: 1.3em; // adjust to your liking
   }
 
-  .pigments-native-outline .region {
+  .pigments-native-outline .region,
+  .pigments-native-outline-in-selection .region {
     position: absolute;
     white-space: nowrap;
     margin-left: -1px;
@@ -126,7 +129,8 @@ atom-text-editor::shadow, atom-text-editor {
     }
   }
 
-  .gutter .pigments-gutter-marker div {
+  .gutter .pigments-gutter-marker div,
+  .gutter .pigments-gutter-marker-in-selection div {
     display: flex;
     align-items: center;
     padding: 0 0 0 2px;
@@ -148,14 +152,16 @@ atom-text-editor::shadow, atom-text-editor {
     z-index: 2;
     min-width: 0;
 
-    .pigments-gutter-marker div span {
+    .pigments-gutter-marker div span,
+    .pigments-gutter-marker-in-selection div span {
       width: 12px;
       height: 12px;
       transform: translate(100%, 0);
     }
   }
 
-  .gutter[gutter-name="pigments-native-dot"] .pigments-gutter-marker div {
+  .gutter[gutter-name="pigments-native-dot"] .pigments-gutter-marker div,
+  .gutter[gutter-name="pigments-native-dot"] .pigments-gutter-marker-in-selection div {
     span {
       border-radius: 50%
     }
