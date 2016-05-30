@@ -1,3 +1,14 @@
+<a name="v0.29.0"></a>
+# v0.29.0 (2016-05-30)
+
+## Features
+
+- Add a border around dot and gutter decorations in a selection ([594d5405](https://github.com/abe33/atom-pigments/commit/594d54055f0c87ab85cf5c4d2fe58c4792a18599))
+
+## Bug Fixes
+
+- Use a single class to deal with decoration in selections ([bca3916f](https://github.com/abe33/atom-pigments/commit/bca3916f1b6836d4b37bf44941314e693a2a545c), [#193](https://github.com/abe33/atom-pigments/issues/193))
+
 <a name="v0.28.4"></a>
 # v0.28.4 (2016-05-29)
 
