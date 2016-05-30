@@ -30,6 +30,7 @@
     background: url(atom://pigments/resources/transparent-background.png);
     z-index: -1;
     border-radius: inherit;
+    box-sizing: border-box;
     .absolute-box;
   }
 
@@ -38,6 +39,7 @@
     background: inherit;
     z-index: -1;
     border-radius: inherit;
+    box-sizing: border-box;
     .absolute-box;
   }
 }
@@ -140,10 +142,15 @@ atom-text-editor::shadow, atom-text-editor {
       width: 12px;
       height: 12px;
       display: block;
+      box-sizing: border-box;
       // border-radius: 50%;
       position: relative;
       .background-color;
     }
+  }
+
+  .gutter .pigments-gutter-marker-in-selection div span::after {
+    border: 1px solid @text-color-highlight;
   }
 
   .gutter[gutter-name="pigments-native-dot"],
