@@ -311,7 +311,7 @@ module.exports =
         if @displayLayer?
           @model.getTextInRange(@displayLayer.translateScreenRange(screenRange))
         else
-          @model.bufferRangeForScreenRange(screenRange)
+          @model.getTextInRange(@model.bufferRangeForScreenRange(screenRange))
 
       _buildHighlightRegions = TextEditorPresenter::buildHighlightRegions
       TextEditorPresenter::buildHighlightRegions = (screenRange) ->
