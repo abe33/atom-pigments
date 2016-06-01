@@ -1,3 +1,10 @@
+<a name="v0.29.1"></a>
+# v0.29.1 (2016-06-01)
+
+## Bug Fixes
+
+- Fix bad text retrieval on stable ([d7f26f3c](https://github.com/abe33/atom-pigments/commit/d7f26f3c5d9e72a51eef54faf15a2c83620fcede), [#196](https://github.com/abe33/atom-pigments/issues/196))
+
 <a name="v0.29.0"></a>
 # v0.29.0 (2016-05-30)
 
