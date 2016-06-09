@@ -350,6 +350,7 @@ class ColorBufferElement extends HTMLElement
 
     for m in @displayedMarkers
       deco = @decorationByMarkerId[m.id]
+      continue unless m.marker?
       markerRow = m.marker.getStartScreenPosition().row
       continue unless row is markerRow
 
