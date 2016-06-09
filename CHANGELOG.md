@@ -1,3 +1,10 @@
+<a name="v0.29.2"></a>
+# v0.29.2 (2016-06-09)
+
+## Bug Fixes
+
+- Guard against null marker in dot offset update ([8f05eac2](https://github.com/abe33/atom-pigments/commit/8f05eac2ea3f86479e68d45e63558d9fc9032692), [#197](https://github.com/abe33/atom-pigments/issues/197))
+
 <a name="v0.29.1"></a>
 # v0.29.1 (2016-06-01)
 
