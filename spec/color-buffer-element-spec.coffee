@@ -35,7 +35,7 @@ describe 'ColorBufferElement', ->
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
-    jasmineContent = document.body#.querySelector('#jasmine-content')
+    jasmineContent = document.body.querySelector('#jasmine-content')
 
     jasmineContent.appendChild(workspaceElement)
 
