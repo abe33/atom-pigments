@@ -144,13 +144,36 @@ registry.createExpression 'pigments:css_hsl', strip("
     #{comma}
     (#{optionalPercent}|#{variables})
   #{pe}
-"), ['*'], (match, expression, context) ->
+"), ['css', 'sass', 'scss', 'styl', 'stylus'], (match, expression, context) ->
   [_,h,s,l] = match
 
   hsl = [
     context.readInt(h)
     context.readFloat(s)
     context.readFloat(l)
+  ]
+
+  return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+  @hsl = hsl
+  @alpha = 1
+
+# hsl(210,50%,50%)
+registry.createExpression 'pigments:less_hsl', strip("
+  hsl#{ps}\\s*
+    (#{float}|#{variables})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), ['less'], (match, expression, context) ->
+  [_,h,s,l] = match
+
+  hsl = [
+    context.readInt(h)
+    context.readFloatOrPercent(s) * 100
+    context.readFloatOrPercent(l) * 100
   ]
 
   return @invalid = true if hsl.some (v) -> not v? or isNaN(v)

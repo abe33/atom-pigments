@@ -142,6 +142,12 @@ describe 'ColorParser', ->
     '$l': '50%'
   }).asColor(64, 149, 191)
 
+  describe 'less', ->
+    beforeEach -> @scope = 'less'
+
+    itParses('hsl(285, 0.7, 0.7)').asColor('#cd7de8')
+    itParses('hsl(200,50%,50%)').asColor(64, 149, 191)
+
   itParses('hsla(200,50%,50%,0.5)').asColor(64, 149, 191, 0.5)
   itParses('hsla(200,50%,50%,.5)').asColor(64, 149, 191, 0.5)
   itParses('hsla(200,50,50,.5)').asColor(64, 149, 191, 0.5)
