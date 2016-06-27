@@ -35,7 +35,7 @@ describe 'ColorBufferElement', ->
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
-    jasmineContent = document.body.querySelector('#jasmine-content')
+    jasmineContent = document.body#.querySelector('#jasmine-content')
 
     jasmineContent.appendChild(workspaceElement)
 
@@ -206,12 +206,17 @@ describe 'ColorBufferElement', ->
 
       describe 'when the current pane is splitted to the right', ->
         beforeEach ->
-          if parseFloat(atom.getVersion()) > 1.5
+          version = parseFloat(atom.getVersion().split('.').slice(1,2).join('.'))
+          if version > 5
             atom.commands.dispatch(editorElement, 'pane:split-right-and-copy-active-item')
           else
             atom.commands.dispatch(editorElement, 'pane:split-right')
-          editor = atom.workspace.getTextEditors()[1]
-          colorBufferElement = atom.views.getView(project.colorBufferForEditor(editor))
+
+          waitsFor 'text editor', ->
+            editor = atom.workspace.getTextEditors()[1]
+
+          waitsFor 'color buffer element', ->
+            colorBufferElement = atom.views.getView(project.colorBufferForEditor(editor))
           waitsFor 'color buffer element markers', ->
             colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length
 
