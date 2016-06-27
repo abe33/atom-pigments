@@ -28,6 +28,13 @@ class Color
     ['alpha', 3]
   ]
 
+  @isValid: (color) ->
+    color? and not color.invalid and
+    color.red? and color.green? and
+    color.blue? and color.alpha? and
+    not isNaN(color.red) and not isNaN(color.green) and
+    not isNaN(color.blue) and not isNaN(color.alpha)
+
   constructor: (r=0,g=0,b=0,a=1) ->
     if typeof r is 'object'
       if Array.isArray(r)
@@ -201,9 +208,7 @@ class Color
   isLiteral: -> not @variables? or @variables.length is 0
 
   isValid: ->
-    !@invalid and
-    @red? and @green? and @blue? and @alpha? and
-    !isNaN(@red) and !isNaN(@green) and !isNaN(@blue) and !isNaN(@alpha)
+    @constructor.isValid(this)
 
   clone: -> new Color(@red, @green, @blue, @alpha)
 

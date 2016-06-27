@@ -22,10 +22,7 @@ describe 'ColorParser', ->
         beforeEach -> parser = getParser(context)
 
         it "parses '#{expression}' as a color", ->
-          if context?
-            expect(parser.parse(expression, @scope ? 'less')).toBeColor(r,g,b,a, Object.keys(context).sort())
-          else
-            expect(parser.parse(expression, @scope ? 'less')).toBeColor(r,g,b,a)
+          expect(parser.parse(expression, @scope ? 'less')).toBeColor(r,g,b,a)
 
     asUndefined: ->
       context = @context
@@ -686,6 +683,11 @@ describe 'ColorParser', ->
     '@modifier': asColor '#666666'
   }).asColor('#b36633')
   itParses('average(@base, @modifier)').asInvalid()
+  itParses('average(@gradient-b, @gradient-mean)').withContext({
+    '@gradient-a': asColor '#00d38b'
+    '@gradient-b': asColor '#009285'
+    '@gradient-mean': asColor 'average(@gradient-a, @gradient-b)'
+  }).asColor('#00a287')
 
   itParses('negation(#ff6600, 0x666666)').asColor('#99cc66')
   itParses('negation(@base, @modifier)').withContext({

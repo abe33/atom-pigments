@@ -1085,7 +1085,8 @@ registry.createExpression 'pigments:average', strip("
   baseColor1 = context.readColor(color1)
   baseColor2 = context.readColor(color2)
 
-  return @invalid = true if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+  if context.isInvalid(baseColor1) or context.isInvalid(baseColor2)
+    return @invalid = true
 
   {@rgba} = baseColor1.blend(baseColor2, context.BlendModes.AVERAGE)
 

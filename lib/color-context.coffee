@@ -62,6 +62,7 @@ class ColorContext
       @parser = new ColorParser(@registry, this)
 
     @usedVariables = []
+    @resolvedVariables = []
 
   sortPaths: (a,b) =>
     if @referencePath?
@@ -121,6 +122,7 @@ class ColorContext
     usedVariables = []
     usedVariables.push v for v in @usedVariables when v not in usedVariables
     @usedVariables = []
+    @resolvedVariables = []
     usedVariables
 
   ##    ##     ##    ###    ##       ##     ## ########  ######
@@ -150,7 +152,7 @@ class ColorContext
       value
 
   readColor: (value, keepAllVariables=false) ->
-    return if value in @usedVariables
+    return if value in @usedVariables and not (value in @resolvedVariables)
 
     realValue = @readColorExpression(value)
 
@@ -176,8 +178,10 @@ class ColorContext
     else
       @usedVariables.push(value) if @vars[value]?
 
-    if result? and (keepAllVariables or value not in @usedVariables)
-      result.variables = (result.variables ? []).concat(@readUsedVariables())
+    if result?
+      @resolvedVariables.push(value)
+      if keepAllVariables or value not in @usedVariables
+        result.variables = (result.variables ? []).concat(@readUsedVariables())
 
     return result
 
@@ -278,7 +282,7 @@ class ColorContext
 
   clampInt: (value) -> clampInt(value)
 
-  isInvalid: (color) -> not color?.isValid()
+  isInvalid: (color) -> not Color.isValid(color)
 
   readParam: (param, block) ->
     re = ///\$(\w+):\s*((-?#{@float})|#{@variablesRE})///

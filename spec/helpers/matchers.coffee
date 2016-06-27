@@ -44,7 +44,6 @@ beforeEach ->
               blue = 0
               alpha = 1
 
-
           {red, green, blue, alpha}
         else
           {red: 0, green: 0, blue: 0, alpha: 1}
