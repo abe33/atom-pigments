@@ -118,7 +118,12 @@ class ColorBufferElement extends HTMLElement
   destroy: ->
     @detach()
     @subscriptions.dispose()
-    @releaseAllMarkerViews()
+
+    if @isNativeDecorationType()
+      @destroyNativeDecorations()
+    else
+      @releaseAllMarkerViews()
+
     @colorBuffer = null
 
   update: ->
