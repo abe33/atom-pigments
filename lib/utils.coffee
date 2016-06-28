@@ -10,6 +10,9 @@ utils =
 
   clampInt: (n, max=100) -> Math.min(max, Math.max(0, n))
 
+  insensitive: (s) ->
+    s.split(/(?:)/).map((c) -> "(?:#{c}|#{c.toUpperCase()})").join('')
+
   readFloat: (value, vars={}, color) ->
     res = parseFloat(value)
     if isNaN(res) and vars[value]?

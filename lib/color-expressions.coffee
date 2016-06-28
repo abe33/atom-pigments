@@ -14,7 +14,7 @@
   namePrefixes
 } = require './regexes'
 
-{strip} = require './utils'
+{strip, insensitive} = require './utils'
 
 ExpressionsRegistry = require './expressions-registry'
 ColorExpression = require './color-expression'
@@ -84,7 +84,7 @@ registry.createExpression 'pigments:int_hexa_6', "0x(#{hexadecimal}{6})(?!#{hexa
 
 # rgb(50,120,200)
 registry.createExpression 'pigments:css_rgb', strip("
-  rgb#{ps}\\s*
+  #{insensitive 'rgb'}#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
     (#{intOrPercent}|#{variables})
@@ -101,7 +101,7 @@ registry.createExpression 'pigments:css_rgb', strip("
 
 # rgba(50,120,200,0.7)
 registry.createExpression 'pigments:css_rgba', strip("
-  rgba#{ps}\\s*
+  #{insensitive 'rgba'}#{ps}\\s*
     (#{intOrPercent}|#{variables})
     #{comma}
     (#{intOrPercent}|#{variables})
@@ -137,7 +137,7 @@ registry.createExpression 'pigments:stylus_rgba', strip("
 
 # hsl(210,50%,50%)
 registry.createExpression 'pigments:css_hsl', strip("
-  hsl#{ps}\\s*
+  #{insensitive 'hsl'}#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
@@ -183,7 +183,7 @@ registry.createExpression 'pigments:less_hsl', strip("
 
 # hsla(210,50%,50%,0.7)
 registry.createExpression 'pigments:css_hsla', strip("
-  hsla#{ps}\\s*
+  #{insensitive 'hsla'}#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
@@ -208,7 +208,7 @@ registry.createExpression 'pigments:css_hsla', strip("
 
 # hsv(210,70%,90%)
 registry.createExpression 'pigments:hsv', strip("
-  (?:hsv|hsb)#{ps}\\s*
+  (?:#{insensitive 'hsv'}|#{insensitive 'hsb'})#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
@@ -231,7 +231,7 @@ registry.createExpression 'pigments:hsv', strip("
 
 # hsva(210,70%,90%,0.7)
 registry.createExpression 'pigments:hsva', strip("
-  (?:hsva|hsba)#{ps}\\s*
+  (?:#{insensitive 'hsva'}|#{insensitive 'hsba'})#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
@@ -277,7 +277,7 @@ registry.createExpression 'pigments:vec4', strip("
 
 # hwb(210,40%,40%)
 registry.createExpression 'pigments:hwb', strip("
-  hwb#{ps}\\s*
+  #{insensitive 'hwb'}#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{optionalPercent}|#{variables})
