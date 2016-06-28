@@ -79,27 +79,38 @@ class ColorMarker
 
   invalidateScreenRangeCache: -> @screenRangeCache = null
 
-  convertContentToHex: ->
-    hex = '#' + fill(@color.hex, 6)
+  convertContentToHex: -> @convertContentInPlace('hex')
 
-    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hex)
+  convertContentToRGB: -> @convertContentInPlace('rgb')
 
-  convertContentToRGB: ->
-    rgba = "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
+  convertContentToRGBA: -> @convertContentInPlace('rgba')
 
-    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), rgba)
+  convertContentToHSL: -> @convertContentInPlace('hsl')
 
-  convertContentToRGBA: ->
-    rgba = "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
+  convertContentToHSLA: -> @convertContentInPlace('hsla')
 
-    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), rgba)
+  copyContentAsHex: -> atom.clipboard.write(@convertContent('hex'))
 
-  convertContentToHSL: ->
-    hsl = "hsl(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%)"
+  copyContentAsRGB: -> atom.clipboard.write(@convertContent('rgb'))
 
-    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hsl)
+  copyContentAsRGBA: -> atom.clipboard.write(@convertContent('rgba'))
 
-  convertContentToHSLA: ->
-    hsla = "hsla(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%, #{@color.alpha})"
+  copyContentAsHSL: -> atom.clipboard.write(@convertContent('hsl'))
 
-    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), hsla)
+  copyContentAsHSLA: -> atom.clipboard.write(@convertContent('hsla'))
+
+  convertContentInPlace: (mode) ->
+    @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), @convertContent(mode))
+
+  convertContent: (mode) ->
+    switch mode
+      when 'hex'
+        '#' + fill(@color.hex, 6)
+      when 'rgb'
+        "rgb(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue})"
+      when 'rgba'
+        "rgba(#{Math.round @color.red}, #{Math.round @color.green}, #{Math.round @color.blue}, #{@color.alpha})"
+      when 'hsl'
+        "hsl(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%)"
+      when 'hsla'
+        "hsla(#{Math.round @color.hue}, #{Math.round @color.saturation}%, #{Math.round @color.lightness}%, #{@color.alpha})"

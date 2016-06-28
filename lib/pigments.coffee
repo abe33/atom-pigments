@@ -128,7 +128,7 @@ module.exports =
       'pigments:report': => @createPigmentsReport()
 
     convertMethod = (action) => (event) =>
-      marker = if @lastEvent?
+      if @lastEvent?
         action @colorMarkerForMouseEvent(@lastEvent)
       else
         editor = atom.workspace.getActiveTextEditor()
@@ -137,6 +137,18 @@ module.exports =
         editor.getCursors().forEach (cursor) =>
           marker = colorBuffer.getColorMarkerAtBufferPosition(cursor.getBufferPosition())
           action(marker)
+
+      @lastEvent = null
+
+    copyMethod = (action) => (event) =>
+      if @lastEvent?
+        action @colorMarkerForMouseEvent(@lastEvent)
+      else
+        editor = atom.workspace.getActiveTextEditor()
+        colorBuffer = @project.colorBufferForEditor(editor)
+        cursor = editor.getLastCursor()
+        marker = colorBuffer.getColorMarkerAtBufferPosition(cursor.getBufferPosition())
+        action(marker)
 
       @lastEvent = null
 
@@ -155,6 +167,21 @@ module.exports =
 
       'pigments:convert-to-hsla': convertMethod (marker) ->
         marker.convertContentToHSLA() if marker?
+
+      'pigments:copy-as-hex': copyMethod (marker) ->
+        marker.copyContentAsHex() if marker?
+
+      'pigments:copy-as-rgb': copyMethod (marker) ->
+        marker.copyContentAsRGB() if marker?
+
+      'pigments:copy-as-rgba': copyMethod (marker) ->
+        marker.copyContentAsRGBA() if marker?
+
+      'pigments:copy-as-hsl': copyMethod (marker) ->
+        marker.copyContentAsHSL() if marker?
+
+      'pigments:copy-as-hsla': copyMethod (marker) ->
+        marker.copyContentAsHSLA() if marker?
 
     atom.workspace.addOpener (uriToOpen) =>
       url ||= require 'url'
@@ -176,6 +203,12 @@ module.exports =
           {label: 'Convert to RGBA', command: 'pigments:convert-to-rgba'}
           {label: 'Convert to HSL', command: 'pigments:convert-to-hsl'}
           {label: 'Convert to HSLA', command: 'pigments:convert-to-hsla'}
+          {type: 'separator'}
+          {label: 'Copy as hexadecimal', command: 'pigments:copy-as-hex'}
+          {label: 'Copy as RGB', command: 'pigments:copy-as-rgb'}
+          {label: 'Copy as RGBA', command: 'pigments:copy-as-rgba'}
+          {label: 'Copy as HSL', command: 'pigments:copy-as-hsl'}
+          {label: 'Copy as HSLA', command: 'pigments:copy-as-hsla'}
         ]
         shouldDisplay: (event) => @shouldDisplayContextMenu(event)
       }]
