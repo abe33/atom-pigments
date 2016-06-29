@@ -242,6 +242,8 @@ describe 'ColorParser', ->
   }).asColor(102, 128, 153, 0.5)
 
   itParses('cmyk(0,0.5,1,0)').asColor('#ff7f00')
+  itParses('CMYK(0,0.5,1,0)').asColor('#ff7f00')
+  itParses('cMyK(0,0.5,1,0)').asColor('#ff7f00')
   itParses('cmyk(c,m,y,k)').withContext({
     'c': '0'
     'm': '0.5'
@@ -252,6 +254,8 @@ describe 'ColorParser', ->
 
   itParses('gray(100%)').asColor(255, 255, 255)
   itParses('gray(100)').asColor(255, 255, 255)
+  itParses('GRAY(100)').asColor(255, 255, 255)
+  itParses('gRaY(100)').asColor(255, 255, 255)
   itParses('gray(100%, 0.5)').asColor(255, 255, 255, 0.5)
   itParses('gray($c, $a,)').asUndefined()
   itParses('gray($c, $a)').asInvalid()
@@ -541,6 +545,8 @@ describe 'ColorParser', ->
     }).asColor(0x2a,0x15,0x40,0.942)
 
   itParses('color(#fd0cc7 tint(66%))').asColor(254, 172, 236)
+  itParses('COLOR(#fd0cc7 tint(66%))').asColor(254, 172, 236)
+  itParses('cOlOr(#fd0cc7 tint(66%))').asColor(254, 172, 236)
   itParses('color(var(--foo) tint(66%))').withContext({
     'var(--foo)': asColor '#fd0cc7'
   }).asColor(254, 172, 236)

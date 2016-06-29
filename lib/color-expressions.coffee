@@ -297,7 +297,7 @@ registry.createExpression 'pigments:hwb', strip("
 
 # cmyk(0,0.5,1,0)
 registry.createExpression 'pigments:cmyk', strip("
-  cmyk#{ps}\\s*
+  #{insensitive 'cmyk'}#{ps}\\s*
     (#{float}|#{variables})
     #{comma}
     (#{float}|#{variables})
@@ -319,7 +319,7 @@ registry.createExpression 'pigments:cmyk', strip("
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
 registry.createExpression 'pigments:gray', strip("
-  gray#{ps}\\s*
+  #{insensitive 'gray'}#{ps}\\s*
     (#{optionalPercent}|#{variables})
     (?:#{comma}(#{float}|#{variables}))?
   #{pe}"), 1, ['*'], (match, expression, context) ->
@@ -804,7 +804,7 @@ registry.createExpression 'pigments:contrast_1_argument', strip("
   {@rgb} = context.contrast(baseColor)
 
 # color(green tint(50%))
-registry.createExpression 'pigments:css_color_function', "(?:#{namePrefixes})(color#{ps}(#{notQuote})#{pe})", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:css_color_function', "(?:#{namePrefixes})(#{insensitive 'color'}#{ps}(#{notQuote})#{pe})", ['css', 'less', 'sass', 'scss', 'styl', 'stylus'], (match, expression, context) ->
   try
     [_,expr] = match
     for k,v of context.vars
@@ -813,7 +813,7 @@ registry.createExpression 'pigments:css_color_function', "(?:#{namePrefixes})(co
       ///g, v.value)
 
     cssColor = require 'css-color-function'
-    rgba = cssColor.convert(expr)
+    rgba = cssColor.convert(expr.toLowerCase())
     @rgba = context.readColor(rgba).rgba
     @colorExpression = expr
   catch e
