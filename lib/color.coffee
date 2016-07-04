@@ -4,6 +4,7 @@
   hexRGBAToRGB
   hexToRGB
   hslToRGB
+  hcgToRGB
   hsvToHWB
   hsvToRGB
   hwbToHSV
@@ -15,6 +16,7 @@
   rgbToHSL
   rgbToHSV
   rgbToHWB
+  rgbToHCG
 } = require './color-conversions'
 SVGColors = require './svg-colors'
 
@@ -93,6 +95,21 @@ class Color
     set: (hsva) ->
       [h,s,v,@alpha] = hsva
       [@red, @green, @blue] = hsvToRGB.apply(@constructor, [h,s,v])
+  }
+
+  Object.defineProperty Color.prototype, 'hcg', {
+    enumerable: true
+    get: -> rgbToHCG(@red, @green, @blue)
+    set: (hcg) ->
+      [@red, @green, @blue] = hcgToRGB.apply(@constructor, hcg)
+  }
+
+  Object.defineProperty Color.prototype, 'hcga', {
+    enumerable: true
+    get: -> @hcg.concat(@alpha)
+    set: (hcga) ->
+      [h,c,gr,@alpha] = hcga
+      [@red, @green, @blue] = hcgToRGB.apply(@constructor, [h,c,gr])
   }
 
   Object.defineProperty Color.prototype, 'hsl', {

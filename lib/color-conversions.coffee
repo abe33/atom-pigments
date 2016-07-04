@@ -286,6 +286,72 @@ hslToRGB = (h, s, l) ->
     hue(h - 1 / 3) * 255
   ]
 
+# Public: Converts a color in the `rgb` color space in an
+# {Array} with the color in the `hcg` color space.
+#
+# r - An integer in the range [O-255] for the red component
+# g - An integer in the range [O-255] for the green component
+# b - An integer in the range [O-255] for the blue component
+#
+# Returns an {Array} containing the hue, chroma and grayness of the color
+rgbToHCG = (r, g, b) ->
+  r = r / 255
+  g = g / 255
+  b = b / 255
+  max = Math.max(r, g, b)
+  min = Math.min(r, g, b)
+  c = (max - min)
+  gr = 0
+  h = 0
+
+  if (c < 1)
+    gr = min / (1 - c)
+
+  if (c > 0)
+    switch (max)
+      when r
+        h = (g - b) / c + (g < b ? 6 : 0)
+      when g
+        h = (b - r) / c + 2
+      when b
+        h = (r - g) / c + 4
+    h /= 6
+
+  [h * 360, c * 100, gr * 100]
+
+# Public: Converts a color defined in the `hcg` color space into
+# an {Array} containing the color in the `rgb` color space.
+#
+# h - An integer in the range [O-360] for the hue component
+# c - A float in the range [O-100] for the chroma component
+# gr - A float in the range [O-100] for the grayness component
+#
+# Returns an {Array} containing the red, green and blue components
+# of the color
+hcgToRGB = (h, c, gr) ->
+  h  = h / 360 * 6
+  c  = c / 100
+  gr = gr / 100
+
+  if (c <= 0)
+    return [gr * 255, gr * 255, gr * 255]
+
+  i = Math.floor(h)
+  f = h - i
+  q = c * (1 - f)
+  t = c * f
+  mod = i % 6
+  r = [c, q, 0, 0, t, c][mod]
+  g = [t, c, c, q, 0, 0][mod]
+  b = [0, 0, t, c, c, q][mod]
+  m = (1 - c) * gr
+
+  [
+    (r + m) * 255,
+    (g + m) * 255,
+    (b + m) * 255
+  ]
+
 # Public: Converts a color from the `hsv` color space to the `hwb` one.
 #
 # h - The {Number} for the hue component.
@@ -377,6 +443,7 @@ module.exports = {
   hslToRGB
   hsvToHWB
   hsvToRGB
+  hcgToRGB
   hwbToHSV
   hwbToRGB
   rgbToCMYK
@@ -386,4 +453,5 @@ module.exports = {
   rgbToHSL
   rgbToHSV
   rgbToHWB
+  rgbToHCG
 }
