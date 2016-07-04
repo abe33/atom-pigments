@@ -1,3 +1,14 @@
+<a name="v0.30.0"></a>
+# v0.30.0 (2016-07-04)
+
+## Features
+
+- Add contextual menu and commands to copy formatted color value ([1830f897](https://github.com/abe33/atom-pigments/commit/1830f8979134e51c09be211f7871effa9a37cd80), [#170](https://github.com/abe33/atom-pigments/issues/170))
+
+## Bug Fixes
+
+- Fix support for case-insensitive CSS expressions ([879a0603](https://github.com/abe33/atom-pigments/commit/879a0603f6205ca67cc7aea6377b8e1b94e93c4e), [#177](https://github.com/abe33/atom-pigments/issues/177))
+
 <a name="v0.29.3"></a>
 # v0.29.3 (2016-06-28)
 
