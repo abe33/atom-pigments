@@ -58,9 +58,9 @@ describe 'ColorParser', ->
       return this
 
   itParses('@list-item-height').withContext({
-      '@text-height': '@scale-b-xxl * 1rem'
-      '@component-line-height': '@text-height'
-      '@list-item-height': '@component-line-height'
+    '@text-height': '@scale-b-xxl * 1rem'
+    '@component-line-height': '@text-height'
+    '@list-item-height': '@component-line-height'
     }).asUndefined()
 
   itParses('$text-color !default').withContext({
@@ -212,6 +212,38 @@ describe 'ColorParser', ->
     '$v': '50%'
     '$a': '0.5'
   }).asColor(64, 106, 128, 0.5)
+
+  itParses('hcg(200,50%,50%)').asColor(64, 149, 191)
+  itParses('HCG(200,50%,50%)').asColor(64, 149, 191)
+  itParses('hcg(200,50,50)').asColor(64, 149, 191)
+  itParses('hcg(200.5,50.5,50.5)').asColor(64, 150, 193)
+  itParses('hcg($h,$c,$g,)').asUndefined()
+  itParses('hcg($h,$c,$g)').asInvalid()
+  itParses('hcg($h,0%,0%)').asInvalid()
+  itParses('hcg(0,$c,0%)').asInvalid()
+  itParses('hcg(0,0%,$g)').asInvalid()
+  itParses('hcg($h,$c,$g)').withContext({
+    '$h': '200'
+    '$c': '50%'
+    '$g': '50%'
+  }).asColor(64, 149, 191)
+
+  itParses('hcga(200,50%,50%,0.5)').asColor(64, 149, 191, 0.5)
+  itParses('hcga(200,50,50,0.5)').asColor(64, 149, 191, 0.5)
+  itParses('HCGA(200,50,50,0.5)').asColor(64, 149, 191, 0.5)
+  itParses('hcga(200,50%,50%,.5)').asColor(64, 149, 191, 0.5)
+  itParses('hcga(200.5,50.5,50.5,.5)').asColor(64, 150, 193, 0.5)
+  itParses('hcga(200,50%,50%,)').asUndefined()
+  itParses('hcga($h,$c,$g,$a)').asInvalid()
+  itParses('hcga($h,0%,0%,0)').asInvalid()
+  itParses('hcga(0,$c,0%,0)').asInvalid()
+  itParses('hcga(0,0%,$g,0)').asInvalid()
+  itParses('hcga($h,$c,$g,$a)').withContext({
+    '$h': '200'
+    '$c': '50%'
+    '$g': '50%'
+    '$a': '0.5'
+  }).asColor(64, 149, 191, 0.5)
 
   itParses('hwb(210,40%,40%)').asColor(102, 128, 153)
   itParses('hwb(210,40,40)').asColor(102, 128, 153)

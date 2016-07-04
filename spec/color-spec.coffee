@@ -108,6 +108,24 @@ describe 'Color', ->
 
       expect(color).toBeColor(64, 106, 128, 0.7)
 
+  describe '::hcg', ->
+    it 'returns an array with the hue, chroma and gray components', ->
+      expect(color.hcg).toBeComponentArrayCloseTo([16, 80, 100])
+
+    it 'sets the color components based on the passed-in values', ->
+      color.hcg = [200,50,50]
+
+      expect(color).toBeColor(64, 149, 191, 0.4)
+
+  describe '::hcga', ->
+    it 'returns an array with the hue, chroma, gray and alpha components', ->
+      expect(color.hcga).toBeComponentArrayCloseTo([16, 80, 100, 0.4])
+
+    it 'sets the color components based on the passed-in values', ->
+      color.hcga = [200,50,50,0.7]
+
+      expect(color).toBeColor(64, 149, 191, 0.7)
+
   describe '::hsl', ->
     it 'returns an array with the hue, saturation and luminosity components', ->
       expect(color.hsl).toBeComponentArrayCloseTo([16, 100, 60])
