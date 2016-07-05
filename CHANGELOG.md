@@ -1,3 +1,10 @@
+<a name="v0.31.0"></a>
+# v0.31.0 (2016-07-05)
+
+## Features
+
+- Add support for HCG color model ([6e722f0a](https://github.com/abe33/atom-pigments/commit/6e722f0a19c6f2aa9189959ce4522a9584cfd9f3), [#204](https://github.com/abe33/atom-pigments/issues/204))
+
 <a name="v0.30.0"></a>
 # v0.30.0 (2016-07-04)
 
