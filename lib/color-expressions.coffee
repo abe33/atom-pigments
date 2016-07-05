@@ -254,6 +254,54 @@ registry.createExpression 'pigments:hsva', strip("
   @hsv = hsv
   @alpha = context.readFloat(a)
 
+# hcg(210,60%,50%)
+registry.createExpression 'pigments:hcg', strip("
+  (?:#{insensitive 'hcg'})#{ps}\\s*
+    (#{float}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+  #{pe}
+"), ['*'], (match, expression, context) ->
+  [_,h,c,gr] = match
+
+  hcg = [
+    context.readInt(h)
+    context.readFloat(c)
+    context.readFloat(gr)
+  ]
+
+  return @invalid = true if hcg.some (v) -> not v? or isNaN(v)
+
+  @hcg = hcg
+  @alpha = 1
+
+# hcga(210,60%,50%,0.7)
+registry.createExpression 'pigments:hcga', strip("
+  (?:#{insensitive 'hcga'})#{ps}\\s*
+    (#{float}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+    #{comma}
+    (#{float}|#{variables})
+  #{pe}
+"), ['*'], (match, expression, context) ->
+  [_,h,c,gr,a] = match
+
+  hcg = [
+    context.readInt(h)
+    context.readFloat(c)
+    context.readFloat(gr)
+  ]
+
+  return @invalid = true if hcg.some (v) -> not v? or isNaN(v)
+
+  @hcg = hcg
+  @alpha = context.readFloat(a)
+
 # vec4(0.2, 0.5, 0.9, 0.7)
 registry.createExpression 'pigments:vec4', strip("
   vec4#{ps}\\s*
