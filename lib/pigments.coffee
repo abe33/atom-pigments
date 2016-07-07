@@ -78,7 +78,7 @@ module.exports =
       description: 'When enabled, the autocomplete provider will also provides color value.'
     markerType:
       type: 'string'
-      default: 'background'
+      default: 'native-background'
       enum: [
         'native-background'
         'native-underline'
