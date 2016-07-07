@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "underscore-plus": "1.x",
+    "event-kit": "2.x",
     "fs-plus": "2.x",
     "async": "0.2.6",
     "css-color-function": "0.1.x",

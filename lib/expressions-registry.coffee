@@ -1,4 +1,4 @@
-{Emitter} = require 'atom'
+{Emitter} = require 'event-kit'
 ColorExpression = require './color-expression'
 vm = require 'vm'
 
