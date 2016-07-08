@@ -1,3 +1,10 @@
+<a name="v0.31.1"></a>
+# v0.31.1 (2016-07-08)
+
+## Bug Fixes
+
+- Use event kit instead of requiring atom in expression registry ([cc29bc7d](https://github.com/abe33/atom-pigments/commit/cc29bc7d85146e5ecbf2b2cc8ea0ac8b7a84dbe8))
+
 <a name="v0.31.0"></a>
 # v0.31.0 (2016-07-05)
 
