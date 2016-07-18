@@ -32,25 +32,25 @@ registry = new ExpressionsRegistry(ColorExpression)
 ##    ######## ####    ##    ######## ##     ## ##     ## ########
 
 # #6f3489ef
-registry.createExpression 'pigments:css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", 1, ['css', 'less', 'styl', 'stylus', 'sass', 'scss'], (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w-])", 1, ['css', 'less', 'styl', 'stylus', 'sass', 'scss'], (match, expression, context) ->
   [_, hexa] = match
 
   @hexRGBA = hexa
 
 # #6f3489ef
-registry.createExpression 'pigments:argb_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w])", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:argb_hexa_8', "#(#{hexadecimal}{8})(?![\\d\\w-])", ['*'], (match, expression, context) ->
   [_, hexa] = match
 
   @hexARGB = hexa
 
 # #3489ef
-registry.createExpression 'pigments:css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w])", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_6', "#(#{hexadecimal}{6})(?![\\d\\w-])", ['*'], (match, expression, context) ->
   [_, hexa] = match
 
   @hex = hexa
 
 # #6f34
-registry.createExpression 'pigments:css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w])", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_4', "(?:#{namePrefixes})#(#{hexadecimal}{4})(?![\\d\\w-])", ['*'], (match, expression, context) ->
   [_, hexa] = match
   colorAsInt = context.readInt(hexa, 16)
 
@@ -61,7 +61,7 @@ registry.createExpression 'pigments:css_hexa_4', "(?:#{namePrefixes})#(#{hexadec
   @alpha = ((colorAsInt & 0xf) * 17) / 255
 
 # #38e
-registry.createExpression 'pigments:css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w])", ['*'], (match, expression, context) ->
+registry.createExpression 'pigments:css_hexa_3', "(?:#{namePrefixes})#(#{hexadecimal}{3})(?![\\d\\w-])", ['*'], (match, expression, context) ->
   [_, hexa] = match
   colorAsInt = context.readInt(hexa, 16)
 
