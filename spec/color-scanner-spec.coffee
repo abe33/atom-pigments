@@ -2,7 +2,7 @@ ColorScanner = require '../lib/color-scanner'
 ColorContext = require '../lib/color-context'
 registry = require '../lib/color-expressions'
 
-fdescribe 'ColorScanner', ->
+describe 'ColorScanner', ->
   [scanner, editor, text, result, lastIndex] = []
 
   withScannerForString = (string, block) ->
