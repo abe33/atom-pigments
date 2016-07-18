@@ -1,3 +1,10 @@
+<a name="v0.31.2"></a>
+# v0.31.2 (2016-07-18)
+
+## Bug Fixes
+
+- Fix invalid color matches in CSS ids ([bbb37271](https://github.com/abe33/atom-pigments/commit/bbb37271d4d78b0dc87ccf407b84d770d76c7103), [#167](https://github.com/abe33/atom-pigments/issues/167))
+
 <a name="v0.31.1"></a>
 # v0.31.1 (2016-07-08)
 
