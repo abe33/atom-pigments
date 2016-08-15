@@ -3,6 +3,7 @@ Color = require './color'
 ColorParser = null
 ColorExpression = require './color-expression'
 SVGColors = require './svg-colors'
+DVIPnames = require './dvipnames'
 BlendModes = require './blend-modes'
 scopeFromFileName = require './scope-from-file-name'
 {split, clamp, clampInt} = require './utils'
