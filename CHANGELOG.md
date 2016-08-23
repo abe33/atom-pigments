@@ -1,3 +1,21 @@
+<a name="v0.32.0"></a>
+# v0.32.0 (2016-08-23)
+
+## Features
+
+- Add DVIP names ([bd717d49](https://github.com/abe33/atom-pigments/commit/bd717d4942e1635ab36f357fc528e95157fde042))
+
+## Bug Fixes
+
+- Fix inconsistent dot marker update on pane change ([8c3d46c7](https://github.com/abe33/atom-pigments/commit/8c3d46c71c50a8e4bd023f68b3265c199a96726c), [#211](https://github.com/abe33/atom-pigments/issues/211))
+- Prevent CSS color from being available in preprocessors ([ba897301](https://github.com/abe33/atom-pigments/commit/ba89730185f2fdb9a471a7cf425d5a62d55685b6), [#207](https://github.com/abe33/atom-pigments/issues/207))
+- Change color words setting to allow no highlighting ([8c01d473](https://github.com/abe33/atom-pigments/commit/8c01d473deffdbba08504dedf93a9a565e19d5c0), [#217](https://github.com/abe33/atom-pigments/issues/217))
+
+## Breaking Changes
+
+- due to [8c01d473](https://github.com/abe33/atom-pigments/commit/8c01d473deffdbba08504dedf93a9a565e19d5c0), the `extendedFiletypesForColorWords` no longer exists, it is now replaced with `filetypesForColorWords` which is no longer
+concatenated to a default scope.
+
 <a name="v0.31.2"></a>
 # v0.31.2 (2016-07-18)
 
