@@ -1,3 +1,10 @@
+<a name="v0.32.1"></a>
+# v0.32.1 (2016-08-23)
+
+## Bug Fixes
+
+- Add missing resources ([9f703082](https://github.com/abe33/atom-pigments/commit/9f703082d3340f83b194067f69ef1afc2e264728))
+
 <a name="v0.32.0"></a>
 # v0.32.0 (2016-08-23)
 
