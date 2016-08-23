@@ -26,7 +26,7 @@ describe 'ColorBuffer', ->
   beforeEach ->
     atom.config.set 'pigments.delayBeforeScan', 0
     atom.config.set 'pigments.ignoredBufferNames', []
-    atom.config.set 'pigments.extendedFiletypesForColorWords', ['*']
+    atom.config.set 'pigments.filetypesForColorWords', ['*']
     atom.config.set 'pigments.sourceNames', [
       '*.styl'
       '*.less'

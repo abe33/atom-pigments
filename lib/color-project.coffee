@@ -146,9 +146,8 @@ class ColorProject
       @loadPathsAndVariables()
 
     svgColorExpression = @colorExpressionsRegistry.getExpression('pigments:named_colors')
-    defaultScopes = svgColorExpression.scopes.slice()
-    @subscriptions.add atom.config.observe 'pigments.extendedFiletypesForColorWords', (scopes) =>
-      svgColorExpression.scopes = defaultScopes.concat(scopes)
+    @subscriptions.add atom.config.observe 'pigments.filetypesForColorWords', (scopes) =>
+      svgColorExpression.scopes = scopes ? []
       @colorExpressionsRegistry.emitter.emit 'did-update-expressions', {
         name: svgColorExpression.name
         registry: @colorExpressionsRegistry

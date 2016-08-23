@@ -173,12 +173,12 @@ An array of file extensions where colors will be highlighted. If the wildcard `*
 * Key: `pigments.supportedFiletypes`
 * Default: `['*']`
 
-### Extended Filetypes For Color Words
+### Filetypes For Color Words
 
 An array of file extensions where color values such as `red`, `azure` or `whitesmoke` will be highlighted. By default CSS and CSS pre-processors files are supported.
 
-* Key: `pigments.extendedFiletypesForColorWords`
-* Default: `[]`
+* Key: `pigments.filetypesForColorWords`
+* Default: `['css', 'less', 'styl', 'stylus', 'sass', 'scss']`
 
 ### Ignored Scopes
 

@@ -45,10 +45,10 @@ module.exports =
       type: 'array'
       default: ['*']
       description: "An array of file extensions where colors will be highlighted. If the wildcard `*` is present in this array then colors in every file will be highlighted."
-    extendedFiletypesForColorWords:
+    filetypesForColorWords:
       type: 'array'
-      default: []
-      description: "An array of file extensions where color values such as `red`, `azure` or `whitesmoke` will be highlighted. By default CSS and CSS pre-processors files are supported."
+      default: ['css', 'less', 'styl', 'stylus', 'sass', 'scss']
+      description: "An array of file extensions where color values such as `red`, `azure` or `whitesmoke` will be highlighted. By default CSS and CSS pre-processors files are supported.\n\nYou can use `none` or whatever value that doesn't match a file extension to completely prevent color words from being highlighted."
     ignoredScopes:
       type: 'array'
       default: []
