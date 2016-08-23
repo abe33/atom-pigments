@@ -1,7 +1,0 @@
-@mixin radius($radius:$global-radius) {
-  @if $radius {
-    border-radius: $radius;
-  }
-}
-
-$white         : #FFFFFF !default;
