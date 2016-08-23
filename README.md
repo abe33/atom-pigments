@@ -177,6 +177,8 @@ An array of file extensions where colors will be highlighted. If the wildcard `*
 
 An array of file extensions where color values such as `red`, `azure` or `whitesmoke` will be highlighted. By default CSS and CSS pre-processors files are supported.
 
+You can use `none` or whatever value that doesn't match a file extension to completely prevent color words from being highlighted.
+
 * Key: `pigments.filetypesForColorWords`
 * Default: `['css', 'less', 'styl', 'stylus', 'sass', 'scss']`
 
