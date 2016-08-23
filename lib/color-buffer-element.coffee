@@ -544,12 +544,17 @@ class ColorBufferElement extends HTMLElement
 
   colorMarkerForMouseEvent: (event) ->
     position = @screenPositionForMouseEvent(event)
+
+    return unless position?
+
     bufferPosition = @colorBuffer.editor.bufferPositionForScreenPosition(position)
 
     @colorBuffer.getColorMarkerAtBufferPosition(bufferPosition)
 
   screenPositionForMouseEvent: (event) ->
     pixelPosition = @pixelPositionForMouseEvent(event)
+
+    return unless pixelPosition?
 
     if @editorElement.screenPositionForPixelPosition?
       @editorElement.screenPositionForPixelPosition(pixelPosition)
@@ -565,6 +570,9 @@ class ColorBufferElement extends HTMLElement
       @editor
 
     rootElement = @getEditorRoot()
+
+    return unless rootElement.querySelector('.lines')?
+
     {top, left} = rootElement.querySelector('.lines').getBoundingClientRect()
     top = clientY - top + scrollTarget.getScrollTop()
     left = clientX - left + scrollTarget.getScrollLeft()
