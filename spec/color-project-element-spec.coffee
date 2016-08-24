@@ -60,6 +60,15 @@ describe 'ColorProjectElement', ->
 
       expect(project.setIgnoredScopes).toHaveBeenCalledWith(['foo','bar'])
 
+  describe 'changing the sass implementation', ->
+    it 'update the setting in the project', ->
+      spyOn(project, 'setSassShadeAndTintImplementation')
+
+      projectElement.sassShadeAndTintImplementation.selectedIndex = 1
+      change(projectElement.sassShadeAndTintImplementation)
+
+      expect(project.setSassShadeAndTintImplementation).toHaveBeenCalledWith('compass')
+
   describe 'toggling on the includeThemes checkbox', ->
     it 'update the source names in the project', ->
       spyOn(project, 'setIncludeThemes')

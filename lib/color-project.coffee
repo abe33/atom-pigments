@@ -146,6 +146,11 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.ignoreVcsIgnoredPaths', =>
       @loadPathsAndVariables()
 
+    @subscriptions.add atom.config.observe 'pigments.sassShadeAndTintImplementation', =>
+      @colorExpressionsRegistry.emitter.emit 'did-update-expressions', {
+        registry: @colorExpressionsRegistry
+      }
+
     svgColorExpression = @colorExpressionsRegistry.getExpression('pigments:named_colors')
     @subscriptions.add atom.config.observe 'pigments.filetypesForColorWords', (scopes) =>
       svgColorExpression.scopes = scopes ? []
@@ -412,7 +417,11 @@ class ColorProject
   scopeFromFileName: (path) ->
     scope = scopeFromFileName(path)
 
+    if scope is 'sass' or scope is 'scss'
+      scope = [scope, @getSassScopeSuffix()].join(':')
+
     scope
+
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
@@ -527,6 +536,14 @@ class ColorProject
   ##     ######  ########    ##       ##    #### ##    ##  ######    ######
 
   getRootPaths: -> atom.project.getPaths()
+
+  getSassScopeSuffix: ->
+    @sassShadeAndTintImplementation ? atom.config.get('pigments.sassShadeAndTintImplementation') ? 'compass'
+
+  setSassShadeAndTintImplementation: (@sassShadeAndTintImplementation) ->
+    @colorExpressionsRegistry.emitter.emit 'did-update-expressions', {
+      registry: @colorExpressionsRegistry
+    }
 
   getSourceNames: ->
     names = ['.pigments']
