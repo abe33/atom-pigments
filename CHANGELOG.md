@@ -1,3 +1,10 @@
+<a name="v0.33.0"></a>
+# v0.33.0 (2016-08-24)
+
+## Features
+
+- Add setting to change the sass shade and tint implementation ([c0fb124b](https://github.com/abe33/atom-pigments/commit/c0fb124b977d4f970cd4f9fb106f830945d065e8), [#166](https://github.com/abe33/atom-pigments/issues/166))
+
 <a name="v0.32.1"></a>
 # v0.32.1 (2016-08-23)
 
