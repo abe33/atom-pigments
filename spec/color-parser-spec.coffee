@@ -544,41 +544,79 @@ describe 'ColorParser', ->
     }).asColor(86, 4, 67, 0.966)
 
   describe 'scss and sass', ->
-    beforeEach -> @scope = 'sass'
+    describe 'with compass implementation', ->
+      beforeEach -> @scope = 'sass:compass'
 
-    itParses('tint(#BADA55, 42%)').asColor('#e2efb7')
-    itParses('tint(#BADA55, 42)').asColor('#e2efb7')
-    itParses('tint($c,$r)').asInvalid()
-    itParses('tint($c, $r)').withContext({
-      '$c': asColor 'hsv($h, $s, $v)'
-      '$r': '1'
-    }).asInvalid()
-    itParses('tint($c,$r)').withContext({
-      '$c': asColor '#BADA55'
-      '$r': '42%'
-    }).asColor('#e2efb7')
-    itParses('tint($c,$r)').withContext({
-      '$a': asColor '#BADA55'
-      '$c': asColor 'rgba($a, 0.9)'
-      '$r': '42%'
-    }).asColor(226,239,183,0.942)
+      itParses('tint(#BADA55, 42%)').asColor('#e2efb7')
+      itParses('tint(#BADA55, 42)').asColor('#e2efb7')
+      itParses('tint($c,$r)').asInvalid()
+      itParses('tint($c, $r)').withContext({
+        '$c': asColor 'hsv($h, $s, $v)'
+        '$r': '1'
+      }).asInvalid()
+      itParses('tint($c,$r)').withContext({
+        '$c': asColor '#BADA55'
+        '$r': '42%'
+      }).asColor('#e2efb7')
+      itParses('tint($c,$r)').withContext({
+        '$a': asColor '#BADA55'
+        '$c': asColor 'rgba($a, 0.9)'
+        '$r': '42%'
+      }).asColor(226,239,183,0.942)
 
-    itParses('shade(#663399, 42%)').asColor('#2a1540')
-    itParses('shade(#663399, 42)').asColor('#2a1540')
-    itParses('shade($c,$r)').asInvalid()
-    itParses('shade($c, $r)').withContext({
-      '$c': asColor 'hsv($h, $s, $v)'
-      '$r': '1'
-    }).asInvalid()
-    itParses('shade($c,$r)').withContext({
-      '$c': asColor '#663399'
-      '$r': '42%'
-    }).asColor('#2a1540')
-    itParses('shade($c,$r)').withContext({
-      '$a': asColor '#663399'
-      '$c': asColor 'rgba($a, 0.9)'
-      '$r': '42%'
-    }).asColor(0x2a,0x15,0x40,0.942)
+      itParses('shade(#663399, 42%)').asColor('#2a1540')
+      itParses('shade(#663399, 42)').asColor('#2a1540')
+      itParses('shade($c,$r)').asInvalid()
+      itParses('shade($c, $r)').withContext({
+        '$c': asColor 'hsv($h, $s, $v)'
+        '$r': '1'
+      }).asInvalid()
+      itParses('shade($c,$r)').withContext({
+        '$c': asColor '#663399'
+        '$r': '42%'
+      }).asColor('#2a1540')
+      itParses('shade($c,$r)').withContext({
+        '$a': asColor '#663399'
+        '$c': asColor 'rgba($a, 0.9)'
+        '$r': '42%'
+      }).asColor(0x2a,0x15,0x40,0.942)
+
+    describe 'with bourbon implementation', ->
+      beforeEach -> @scope = 'sass:bourbon'
+
+      itParses('tint(#BADA55, 42%)').asColor(214, 233, 156)
+      itParses('tint(#BADA55, 42)').asColor(214, 233, 156)
+      itParses('tint($c,$r)').asInvalid()
+      itParses('tint($c, $r)').withContext({
+        '$c': asColor 'hsv($h, $s, $v)'
+        '$r': '1'
+      }).asInvalid()
+      itParses('tint($c,$r)').withContext({
+        '$c': asColor '#BADA55'
+        '$r': '42%'
+      }).asColor(214, 233, 156)
+      itParses('tint($c,$r)').withContext({
+        '$a': asColor '#BADA55'
+        '$c': asColor 'rgba($a, 0.9)'
+        '$r': '42%'
+      }).asColor(214, 233, 156, 0.942)
+
+      itParses('shade(#663399, 42%)').asColor(59, 29, 88)
+      itParses('shade(#663399, 42)').asColor(59, 29, 88)
+      itParses('shade($c,$r)').asInvalid()
+      itParses('shade($c, $r)').withContext({
+        '$c': asColor 'hsv($h, $s, $v)'
+        '$r': '1'
+      }).asInvalid()
+      itParses('shade($c,$r)').withContext({
+        '$c': asColor '#663399'
+        '$r': '42%'
+      }).asColor(59, 29, 88)
+      itParses('shade($c,$r)').withContext({
+        '$a': asColor '#663399'
+        '$c': asColor 'rgba($a, 0.9)'
+        '$r': '42%'
+      }).asColor(59, 29, 88, 0.942)
 
   itParses('adjust-color(#102030, $red: -5, $blue: 5)', 11, 32, 53)
   itParses('adjust-color(hsl(25, 100%, 80%), $lightness: -30%, $alpha: -0.4)', 255, 106, 0, 0.6)

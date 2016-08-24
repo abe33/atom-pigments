@@ -41,7 +41,14 @@ class ExpressionsRegistry
 
     return expressions if scope is '*'
 
-    expressions.filter (e) -> '*' in e.scopes or scope in e.scopes
+    matchScope = (a) -> (b) ->
+      [aa, ab] = a.split(':')
+      [ba, bb] = b.split(':')
+
+      aa is ba and (not ab? or not bb? or ab is bb)
+
+    expressions.filter (e) ->
+      '*' in e.scopes or e.scopes.some(matchScope(scope))
 
   getExpression: (name) -> @colorExpressions[name]
 

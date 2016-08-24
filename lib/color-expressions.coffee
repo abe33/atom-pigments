@@ -674,13 +674,13 @@ registry.createExpression 'pigments:stylus_shade', strip("
   @rgba = context.mixColors(black, baseColor, amount).rgba
 
 # tint(red, 50%)
-registry.createExpression 'pigments:sass_tint', strip("
+registry.createExpression 'pigments:compass_tint', strip("
   tint#{ps}
     (#{notQuote})
     #{comma}
     (#{floatOrPercent}|#{variables})
   #{pe}
-"), ['sass', 'scss'], (match, expression, context) ->
+"), ['sass:compass', 'scss:compass'], (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -693,13 +693,13 @@ registry.createExpression 'pigments:sass_tint', strip("
   @rgba = context.mixColors(baseColor, white, amount).rgba
 
 # shade(red, 50%)
-registry.createExpression 'pigments:sass_shade', strip("
+registry.createExpression 'pigments:compass_shade', strip("
   shade#{ps}
     (#{notQuote})
     #{comma}
     (#{floatOrPercent}|#{variables})
   #{pe}
-"), ['sass', 'scss'], (match, expression, context) ->
+"), ['sass:compass', 'scss:compass'], (match, expression, context) ->
   [_, subexpr, amount] = match
 
   amount = context.readFloatOrPercent(amount)
@@ -710,6 +710,44 @@ registry.createExpression 'pigments:sass_shade', strip("
   black = new context.Color(0,0,0)
 
   @rgba = context.mixColors(baseColor, black, amount).rgba
+
+# tint(red, 50%)
+registry.createExpression 'pigments:bourbon_tint', strip("
+  tint#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), ['sass:bourbon', 'scss:bourbon'], (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true if context.isInvalid(baseColor)
+
+  white = new context.Color(255, 255, 255)
+
+  @rgba = context.mixColors(white, baseColor, amount).rgba
+
+# shade(red, 50%)
+registry.createExpression 'pigments:bourbon_shade', strip("
+  shade#{ps}
+    (#{notQuote})
+    #{comma}
+    (#{floatOrPercent}|#{variables})
+  #{pe}
+"), ['sass:bourbon', 'scss:bourbon'], (match, expression, context) ->
+  [_, subexpr, amount] = match
+
+  amount = context.readFloatOrPercent(amount)
+  baseColor = context.readColor(subexpr)
+
+  return @invalid = true if context.isInvalid(baseColor)
+
+  black = new context.Color(0,0,0)
+
+  @rgba = context.mixColors(black, baseColor, amount).rgba
 
 # desaturate(#855, 20%)
 # desaturate(#855, 0.2)
