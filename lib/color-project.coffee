@@ -106,7 +106,7 @@ class ColorProject
 
   constructor: (state={}) ->
     {
-      includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, @ignoreGlobalSupportedFiletypes, @supportedFiletypes, variables, timestamp, buffers
+      @includeThemes, @ignoredNames, @sourceNames, @ignoredScopes, @paths, @searchNames, @ignoreGlobalSourceNames, @ignoreGlobalIgnoredNames, @ignoreGlobalIgnoredScopes, @ignoreGlobalSearchNames, @ignoreGlobalSupportedFiletypes, @supportedFiletypes, variables, timestamp, buffers
     } = state
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -161,8 +161,8 @@ class ColorProject
 
     @subscriptions.add @colorExpressionsRegistry.onDidUpdateExpressions ({name}) =>
       return if not @paths? or name is 'pigments:variables'
-      @variables.evaluateVariables(@variables.getVariables())
-      colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
+      @variables.evaluateVariables @variables.getVariables(), =>
+        colorBuffer.update() for id, colorBuffer of @colorBuffersByEditorId
 
     @subscriptions.add @variableExpressionsRegistry.onDidUpdateExpressions =>
       return unless @paths?
@@ -170,10 +170,9 @@ class ColorProject
 
     @timestamp = new Date(Date.parse(timestamp)) if timestamp?
 
-    @setIncludeThemes(includeThemes) if includeThemes
     @updateIgnoredFiletypes()
 
-    @initialize() if @paths? and @variables.length?
+    @initialize() if @paths?
     @initializeBuffers()
 
   onDidInitialize: (callback) ->
@@ -205,8 +204,14 @@ class ColorProject
   initialize: ->
     return Promise.resolve(@variables.getVariables()) if @isInitialized()
     return @initializePromise if @initializePromise?
-
-    @initializePromise = @loadPathsAndVariables().then =>
+    @initializePromise = new Promise((resolve) =>
+      @variables.onceInitialized(resolve)
+    )
+    .then =>
+      @loadPathsAndVariables()
+    .then =>
+      @includeThemesVariables() if @includeThemes
+    .then =>
       @initialized = true
 
       variables = @variables.getVariables()
@@ -646,18 +651,24 @@ class ColorProject
 
     @includeThemes = includeThemes
     if @includeThemes
-      @themesSubscription = atom.themes.onDidChangeActiveThemes =>
-        return unless @includeThemes
-
-        variables = @loadThemesVariables()
-        @variables.updatePathCollection(THEME_VARIABLES, variables)
-
-      @subscriptions.add @themesSubscription
-      @variables.addMany(@loadThemesVariables())
+      @includeThemesVariables()
     else
-      @subscriptions.remove @themesSubscription
-      @variables.deleteVariablesForPaths([THEME_VARIABLES])
-      @themesSubscription.dispose()
+      @disposeThemesVariables()
+
+  includeThemesVariables: ->
+    @themesSubscription = atom.themes.onDidChangeActiveThemes =>
+      return unless @includeThemes
+
+      variables = @loadThemesVariables()
+      @variables.updatePathCollection(THEME_VARIABLES, variables)
+
+    @subscriptions.add @themesSubscription
+    @variables.addMany(@loadThemesVariables())
+
+  disposeThemesVariables: ->
+    @subscriptions.remove @themesSubscription
+    @variables.deleteVariablesForPaths([THEME_VARIABLES])
+    @themesSubscription.dispose()
 
   getTimestamp: -> new Date()
 
