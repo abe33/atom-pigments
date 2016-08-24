@@ -38,7 +38,7 @@ class ColorProjectElement extends HTMLElement
             @select outlet: name, class: 'form-control', required: true, =>
               options.forEach (option) =>
                 if option is ''
-                  @option value: option, selected: true, 'Use global config'
+                  @option value: option, 'Use global config'
                 else
                   @option value: option, capitalize option
 
@@ -130,7 +130,8 @@ class ColorProjectElement extends HTMLElement
     select = @[name]
     optionValues = [].slice.call(select.querySelectorAll('option')).map (o) -> o.value
 
-    select.selectedIndex = optionValues.indexOf(@project[name])
+    if @project[name]
+      select.selectedIndex = optionValues.indexOf(@project[name])
 
     @subscriptions.add @subscribeTo select, change: =>
       value = select.selectedOptions[0]?.value
