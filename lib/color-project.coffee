@@ -3,6 +3,7 @@ minimatch = require 'minimatch'
 
 {SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION} = require './versions'
 {THEME_VARIABLES} = require './uris'
+scopeFromFileName = require './scope-from-file-name'
 ColorBuffer = require './color-buffer'
 ColorContext = require './color-context'
 ColorSearch = require './color-search'
@@ -264,6 +265,7 @@ class ColorProject
     patterns = @getSearchNames()
     new ColorSearch
       sourceNames: patterns
+      project: this
       ignoredNames: @getIgnoredNames()
       context: @getContext()
 
@@ -407,6 +409,10 @@ class ColorProject
     ignoredNames = @getIgnoredNames()
     return true for ignore in ignoredNames when minimatch(path, ignore, matchBase: true, dot: true)
 
+  scopeFromFileName: (path) ->
+    scope = scopeFromFileName(path)
+
+    scope
   ##    ##     ##    ###    ########   ######
   ##    ##     ##   ## ##   ##     ## ##    ##
   ##    ##     ##  ##   ##  ##     ## ##
@@ -481,7 +487,7 @@ class ColorProject
     if paths.length is 1 and colorBuffer = @colorBufferForPath(paths[0])
       colorBuffer.scanBufferForVariables().then (results) -> callback(results)
     else
-      PathsScanner.startTask paths, @variableExpressionsRegistry, (results) -> callback(results)
+      PathsScanner.startTask paths.map((p) => [p, @scopeFromFileName(p)]), @variableExpressionsRegistry, (results) -> callback(results)
 
   loadThemesVariables: ->
     iterator = 0

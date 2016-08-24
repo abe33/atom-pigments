@@ -3,14 +3,13 @@
 registry = require './color-expressions'
 ColorParser = require './color-parser'
 ColorContext = require './color-context'
-scopeFromFileName = require './scope-from-file-name'
 
 module.exports =
 class ColorSearch
   @deserialize: (state) -> new ColorSearch(state.options)
 
   constructor: (@options={}) ->
-    {@sourceNames, ignoredNames, @context} = @options
+    {@sourceNames, ignoredNames, @context, @project} = @options
     @emitter = new Emitter
     @context ?= new ColorContext({registry})
     @parser = @context.parser
@@ -43,7 +42,7 @@ class ColorSearch
 
     promise = atom.workspace.scan re, paths: @sourceNames, (m) =>
       relativePath = atom.project.relativize(m.filePath)
-      scope = scopeFromFileName(relativePath)
+      scope = @project.scopeFromFileName(relativePath)
       return if @isIgnored(relativePath)
 
       newMatches = []

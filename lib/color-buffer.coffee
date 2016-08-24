@@ -4,7 +4,6 @@ Color = require './color'
 ColorMarker = require './color-marker'
 ColorExpression = require './color-expression'
 VariablesCollection = require './variables-collection'
-scopeFromFileName = require './scope-from-file-name'
 
 module.exports =
 class ColorBuffer
@@ -179,6 +178,8 @@ class ColorBuffer
 
   getPath: -> @editor.getPath()
 
+  getScope: -> @project.scopeFromFileName(@getPath())
+
   updateIgnoredScopes: ->
     @ignoredScopes = @project.getIgnoredScopes().map (scope) ->
       try new RegExp(scope)
@@ -215,7 +216,7 @@ class ColorBuffer
     config =
       buffer: @editor.getText()
       registry: @project.getVariableExpressionsRegistry().serialize()
-      scope: scopeFromFileName(@editor.getPath())
+      scope: @getScope()
 
     new Promise (resolve, reject) =>
       @task = Task.once(
@@ -373,7 +374,6 @@ class ColorBuffer
     if @project.colorPickerAPI?
       @project.colorPickerAPI.open(@editor, @editor.getLastCursor())
 
-
   scanBufferForColors: (options={}) ->
     return Promise.reject("This ColorBuffer is already destroyed") if @destroyed
     results = []
@@ -402,6 +402,7 @@ class ColorBuffer
     config =
       buffer: @editor.getText()
       bufferPath: @getPath()
+      scope: @getScope()
       variables: variables
       colorVariables: variables.filter (v) -> v.isColor
       registry: registry

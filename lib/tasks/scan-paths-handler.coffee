@@ -3,11 +3,9 @@ fs = require 'fs'
 VariableScanner = require '../variable-scanner'
 VariableExpression = require '../variable-expression'
 ExpressionsRegistry = require '../expressions-registry'
-scopeFromFileName = require '../scope-from-file-name'
 
 class PathScanner
-  constructor: (@filePath, registry) ->
-    scope = scopeFromFileName(@filePath)
+  constructor: (@filePath, scope, registry) ->
     @scanner = new VariableScanner({registry, scope})
 
   load: (done) ->
@@ -53,7 +51,7 @@ module.exports = ([paths, registry]) ->
   registry = ExpressionsRegistry.deserialize(registry, VariableExpression)
   async.each(
     paths,
-    (p, next) ->
-      new PathScanner(p, registry).load(next)
+    ([p, s], next) ->
+      new PathScanner(p, s, registry).load(next)
     @async()
   )
