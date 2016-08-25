@@ -214,6 +214,13 @@ The autocomplete provider will only complete color names in editors whose scope 
 * Key: `pigments.autocompleteScopes`
 * Default: `['.source.css', '.source.css.less', '.source.sass', '.source.css.scss', '.source.stylus']`
 
+### Sass Shade And Tint Implementation
+
+Sass doesn't provide any implementation for shade and tint function, and Compass and Bourbon have different implementation for these two methods. This setting allow you to chose which implementation to use.
+
+* Key: `pigments.sassShadeAndTintImplementation`
+* Default: `'compass'`
+
 ### Extend Autocomplete To Variables
 
 When enabled, the autocomplete provider will also provides completion for non-color variables.

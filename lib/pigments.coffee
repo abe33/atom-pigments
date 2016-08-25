@@ -96,7 +96,7 @@ module.exports =
       type: 'string'
       default: 'compass'
       enum: ['compass', 'bourbon']
-      description: "Sass doesn't provide any implementation for shade and tint function, and Compass and Bourbon have different implementation for these two methods. This setting allow you to chose which implementation use."
+      description: "Sass doesn't provide any implementation for shade and tint function, and Compass and Bourbon have different implementation for these two methods. This setting allow you to chose which implementation to use."
     sortPaletteColors:
       type: 'string'
       default: 'none'
