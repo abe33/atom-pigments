@@ -1,3 +1,11 @@
+<a name="v0.33.1"></a>
+# v0.33.1 (2016-08-25)
+
+## Bug Fixes
+
+- Fix use of screenLineForScreenRow as fallback in dot marker offset computation ([3cc8a64e](https://github.com/abe33/atom-pigments/commit/3cc8a64e9657843f1c90d069b7291ecececa473e), [#219](https://github.com/abe33/atom-pigments/issues/219))
+- Bump markers version ([ea1ac655](https://github.com/abe33/atom-pigments/commit/ea1ac655c686a64af8017d8ee18206665d014075))
+
 <a name="v0.33.0"></a>
 # v0.33.0 (2016-08-24)
 
