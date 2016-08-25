@@ -364,9 +364,6 @@ class ColorBufferElement extends HTMLElement
 
         rowLength = @editorElement.pixelPositionForScreenPosition([row, Infinity]).left
 
-        if rowLength is 0
-          rowLength = @editor.e.screenLineForScreenRow(row).lineText.length * @editorElement.getDefaultCharacterWidth()
-
         decoWidth = 14
 
         deco.properties.item.style.left = "#{rowLength + markersByRows[row] * decoWidth}px"
