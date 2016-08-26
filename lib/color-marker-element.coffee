@@ -118,3 +118,10 @@ ColorMarkerElement.isNativeDecorationType = (type) ->
     'native-dot'
     'native-square-dot'
   ]
+
+ColorMarkerElement.setMarkerType = (markerType) ->
+  return if ColorMarkerElement.isNativeDecorationType(markerType)
+  return unless RENDERERS[markerType]?
+
+  @prototype.rendererType = markerType
+  @prototype.renderer = new RENDERERS[markerType]
