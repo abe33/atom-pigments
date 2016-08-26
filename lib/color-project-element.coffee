@@ -156,14 +156,3 @@ class ColorProjectElement extends HTMLElement
 module.exports =
 ColorProjectElement =
 registerOrUpdateElement 'pigments-color-project', ColorProjectElement.prototype
-
-ColorProjectElement.deserialize = (state) ->
-  element = new ColorProjectElement
-  element.setModel(atom.packages.getActivePackage('pigments').mainModule.getProject())
-  element
-
-ColorProjectElement.registerViewProvider = (modelClass) ->
-  atom.views.addViewProvider modelClass, (model) ->
-    element = new ColorProjectElement
-    element.setModel(model)
-    element

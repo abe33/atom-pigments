@@ -46,6 +46,16 @@
       }
     }
   },
+  "deserializers": {
+    "Palette": "deserializePalette",
+    "ColorSearch": "deserializeColorSearch",
+    "ColorProject": "deserializeColorProject",
+    "ColorProjectElement": "deserializeColorProjectElement",
+    "VariablesCollection": "deserializeVariablesCollection"
+  },
+  "viewProviders": [
+    "pigmentsViewProvider"
+  ],
   "configSchema": {
     "traverseIntoSymlinkDirectories": {
       "type": "boolean",

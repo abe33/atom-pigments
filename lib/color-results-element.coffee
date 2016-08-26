@@ -152,9 +152,3 @@ module.exports = ColorResultsElement =
 document.registerElement 'pigments-color-results', {
   prototype: ColorResultsElement.prototype
 }
-
-ColorResultsElement.registerViewProvider = (modelClass) ->
-  atom.views.addViewProvider modelClass, (model) ->
-    element = new ColorResultsElement
-    element.setModel(model)
-    element

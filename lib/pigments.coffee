@@ -1,14 +1,22 @@
-{CompositeDisposable, Disposable} = require 'atom'
-uris = require './uris'
-ColorProject = require './color-project'
-[PigmentsProvider, PigmentsAPI, url] = []
+[
+  Palette, PaletteElement,
+  ColorSearch, ColorResultsElement,
+  ColorProject, ColorProjectElement,
+  ColorBuffer, ColorBufferElement,
+  ColorMarker, ColorMarkerElement,
+  VariablesCollection, PigmentsProvider, PigmentsAPI,
+  Disposable,
+  url, uris
+] = []
 
 module.exports =
   activate: (state) ->
+    ColorProject ?= require './color-project'
+
     @patchAtom()
 
     @project = if state.project?
-      atom.deserializers.deserialize(state.project)
+      ColorProject.deserialize(state.project)
     else
       new ColorProject()
 
@@ -117,12 +125,16 @@ module.exports =
     new PigmentsAPI(@getProject())
 
   consumeColorPicker: (api) ->
+    Disposable ?= require('atom').Disposable
+
     @getProject().setColorPickerAPI(api)
 
     new Disposable =>
       @getProject().setColorPickerAPI(null)
 
   consumeColorExpressions: (options={}) ->
+    Disposable ?= require('atom').Disposable
+
     registry = @getProject().getColorExpressionsRegistry()
 
     if options.expressions?
@@ -137,6 +149,8 @@ module.exports =
       new Disposable -> registry.removeExpression(name)
 
   consumeVariableExpressions: (options={}) ->
+    Disposable ?= require('atom').Disposable
+
     registry = @getProject().getVariableExpressionsRegistry()
 
     if options.expressions?
@@ -149,6 +163,48 @@ module.exports =
       registry.createExpression(name, regexpString, priority, scopes, handle)
 
       new Disposable -> registry.removeExpression(name)
+
+  deserializePalette: (state) ->
+    Palette ?= require './palette'
+    Palette.deserialize(state)
+
+  deserializeColorSearch: (state) ->
+    ColorSearch ?= require './color-search'
+    ColorSearch.deserialize(state)
+
+  deserializeColorProject: (state) ->
+    ColorProject ?= require './color-project'
+    ColorProject.deserialize(state)
+
+  deserializeColorProjectElement: (state) ->
+    ColorProjectElement ?= require './color-project-element'
+    element = new ColorProjectElement
+    element.setModel(@getProject())
+    element
+
+  deserializeVariablesCollection: (state) ->
+    VariablesCollection ?= require './variables-collection'
+    VariablesCollection.deserialize(state)
+
+  pigmentsViewProvider: (model) ->
+    element = if model instanceof (ColorBuffer ?= require './color-buffer')
+      ColorBufferElement ?= require './color-buffer-element'
+      element = new ColorBufferElement
+    else if model instanceof (ColorMarker ?= require './color-marker')
+      ColorMarkerElement ?= require './color-marker-element'
+      element = new ColorMarkerElement
+    else if model instanceof (ColorSearch ?= require './color-search')
+      ColorResultsElement ?= require './color-results-element'
+      element = new ColorResultsElement
+    else if model instanceof (ColorProject ?= require './color-project')
+      ColorProjectElement ?= require './color-project-element'
+      element = new ColorProjectElement
+    else if model instanceof (Palette ?= require './palette')
+      PaletteElement ?= require './palette-element'
+      element = new PaletteElement
+
+    element.setModel(model) if element?
+    element
 
   shouldDisplayContextMenu: (event) ->
     @lastEvent = event
@@ -166,12 +222,16 @@ module.exports =
   getProject: -> @project
 
   findColors: ->
+    uris ?= require './uris'
+
     pane = atom.workspace.paneForURI(uris.SEARCH)
     pane ||= atom.workspace.getActivePane()
 
     atom.workspace.openURIInPane(uris.SEARCH, pane, {})
 
   showPalette: ->
+    uris ?= require './uris'
+
     @project.initialize().then ->
       pane = atom.workspace.paneForURI(uris.PALETTE)
       pane ||= atom.workspace.getActivePane()
@@ -181,6 +241,8 @@ module.exports =
       console.error reason
 
   showSettings: ->
+    uris ?= require './uris'
+
     @project.initialize().then ->
       pane = atom.workspace.paneForURI(uris.SETTINGS)
       pane ||= atom.workspace.getActivePane()
@@ -271,27 +333,3 @@ module.exports =
             regionNode = @regionNodesByHighlightId[id][i]
 
             regionNode.textContent = newRegionState.text if newRegionState.text?
-
-  loadDeserializersAndRegisterViews: ->
-    ColorBuffer = require './color-buffer'
-    ColorSearch = require './color-search'
-    Palette = require './palette'
-    ColorBufferElement = require './color-buffer-element'
-    ColorMarkerElement = require './color-marker-element'
-    ColorResultsElement = require './color-results-element'
-    ColorProjectElement = require './color-project-element'
-    PaletteElement = require './palette-element'
-    VariablesCollection = require './variables-collection'
-
-    ColorBufferElement.registerViewProvider(ColorBuffer)
-    ColorResultsElement.registerViewProvider(ColorSearch)
-    ColorProjectElement.registerViewProvider(ColorProject)
-    PaletteElement.registerViewProvider(Palette)
-
-    atom.deserializers.add(Palette)
-    atom.deserializers.add(ColorSearch)
-    atom.deserializers.add(ColorProject)
-    atom.deserializers.add(ColorProjectElement)
-    atom.deserializers.add(VariablesCollection)
-
-module.exports.loadDeserializersAndRegisterViews()

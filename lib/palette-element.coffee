@@ -212,9 +212,3 @@ class PaletteElement extends HTMLElement
 module.exports =
 PaletteElement =
 registerOrUpdateElement 'pigments-palette', PaletteElement.prototype
-
-PaletteElement.registerViewProvider = (modelClass) ->
-  atom.views.addViewProvider modelClass, (model) ->
-    element = new PaletteElement
-    element.setModel(model)
-    element

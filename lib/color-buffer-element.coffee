@@ -582,9 +582,3 @@ class ColorBufferElement extends HTMLElement
 module.exports =
 ColorBufferElement =
 registerOrUpdateElement 'pigments-markers', ColorBufferElement.prototype
-
-ColorBufferElement.registerViewProvider = (modelClass) ->
-  atom.views.addViewProvider modelClass, (model) ->
-    element = new ColorBufferElement
-    element.setModel(model)
-    element
