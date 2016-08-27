@@ -38,14 +38,24 @@ class PaletteElement extends HTMLElement
         @ol outlet: 'list'
 
   createdCallback: ->
-    CompositeDisposable ?= require('atom').CompositeDisposable
     pigments ?= require './pigments'
 
     @project = pigments.getProject()
-    @subscriptions = new CompositeDisposable
 
+    if @project?
+      @init()
+    else
+      atom.packages.onDidActivatePackage (pkg) =>
+        if pkg.name is 'pigments'
+          @project = pigments.getProject()
+          @init()
+
+  init: ->
     return if @project.isDestroyed()
 
+    CompositeDisposable ?= require('atom').CompositeDisposable
+
+    @subscriptions = new CompositeDisposable
     @subscriptions.add @project.onDidUpdateVariables =>
       if @palette?
         @palette.variables = @project.getColorVariables()
@@ -156,6 +166,9 @@ class PaletteElement extends HTMLElement
       li = document.createElement('li')
       li.className = 'pigments-color-item'
       {color} = variables[0]
+
+      continue unless color.toCSS?
+
       html = """
       <div class="pigments-color">
         <span class="pigments-color-preview"
@@ -201,7 +214,7 @@ class PaletteElement extends HTMLElement
       colors = []
 
       findColor = (color) ->
-        return col for col in colors when col.isEqual(color)
+        return col for col in colors when col.isEqual?(color)
 
       for v in paletteColors
         if key = findColor(v.color)
