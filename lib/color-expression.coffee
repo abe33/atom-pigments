@@ -1,5 +1,4 @@
-Color = require './color'
-{createVariableRegExpString} = require './regexes'
+[createVariableRegExpString, Color] = []
 
 module.exports =
 class ColorExpression
@@ -7,6 +6,9 @@ class ColorExpression
     @colorExpressionForColorVariables(context.getColorVariables())
 
   @colorExpressionRegexpForColorVariables: (colorVariables) ->
+    unless createVariableRegExpString?
+      {createVariableRegExpString} = require './regexes'
+
     createVariableRegExpString(colorVariables)
 
   @colorExpressionForColorVariables: (colorVariables) ->
@@ -40,6 +42,8 @@ class ColorExpression
 
   parse: (expression, context) ->
     return null unless @match(expression)
+
+    Color ?= require './color'
 
     color = new Color()
     color.colorExpression = expression

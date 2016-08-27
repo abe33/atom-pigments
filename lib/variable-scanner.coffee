@@ -1,9 +1,10 @@
-{countLines} = require './utils'
-VariableParser = require './variable-parser'
+[VariableParser, countLines] = []
 
 module.exports =
 class VariableScanner
   constructor: (params={}) ->
+    VariableParser ?= require './variable-parser'
+
     {@parser, @registry, @scope} = params
     @parser ?= new VariableParser(@registry)
 
@@ -12,6 +13,9 @@ class VariableScanner
 
   search: (text, start=0) ->
     return if @registry.getExpressionsForScope(@scope).length is 0
+
+    countLines ?= require('./utils').countLines
+
     regexp = @getRegExp()
     regexp.lastIndex = start
 

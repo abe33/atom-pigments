@@ -1,4 +1,5 @@
-{CompositeDisposable, Emitter} = require 'atom'
+[CompositeDisposable, Emitter] = []
+
 {registerOrUpdateElement, EventsDelegation} = require 'atom-utils'
 
 SPEC_MODE = atom.inSpecMode()
@@ -15,6 +16,8 @@ class ColorMarkerElement extends HTMLElement
   renderer: new RENDERERS.background
 
   createdCallback: ->
+    {CompositeDisposable, Emitter} = require 'atom' unless Emitter?
+
     @emitter = new Emitter
     @released = true
 
@@ -31,6 +34,8 @@ class ColorMarkerElement extends HTMLElement
 
   setModel: (@colorMarker) ->
     return unless @released
+    {CompositeDisposable, Emitter} = require 'atom' unless CompositeDisposable?
+
     @released = false
     @subscriptions = new CompositeDisposable
     @subscriptions.add @colorMarker.marker.onDidDestroy => @release()

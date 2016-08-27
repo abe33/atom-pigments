@@ -1,7 +1,9 @@
-{Task} = require 'atom'
+Task = null
 
 module.exports =
   startTask: (paths, registry, callback) ->
+    Task ?= require('atom').Task
+
     results = []
     taskPath = require.resolve('./tasks/scan-paths-handler')
 

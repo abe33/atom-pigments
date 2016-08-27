@@ -1,24 +1,17 @@
-{
-  cmykToRGB
-  hexARGBToRGB
-  hexRGBAToRGB
-  hexToRGB
-  hslToRGB
-  hcgToRGB
-  hsvToHWB
-  hsvToRGB
-  hwbToHSV
-  hwbToRGB
-  rgbToCMYK
-  rgbToHex
-  rgbToHexARGB
-  rgbToHexRGBA
-  rgbToHSL
-  rgbToHSV
-  rgbToHWB
-  rgbToHCG
-} = require './color-conversions'
-SVGColors = require './svg-colors'
+[
+  SVGColors,
+  cmykToRGB, hexARGBToRGB, hexRGBAToRGB, hexToRGB, hslToRGB, hcgToRGB,
+  hsvToHWB, hsvToRGB, hwbToHSV, hwbToRGB, rgbToCMYK, rgbToHex, rgbToHexARGB,
+  rgbToHexRGBA, rgbToHSL, rgbToHSV, rgbToHWB, rgbToHCG
+] = []
+
+loadConverters = ->
+  unless cmykToRGB?
+    {
+      cmykToRGB, hexARGBToRGB, hexRGBAToRGB, hexToRGB, hslToRGB, hcgToRGB,
+      hsvToHWB, hsvToRGB, hwbToHSV, hwbToRGB, rgbToCMYK, rgbToHex,
+      rgbToHexARGB, rgbToHexRGBA, rgbToHSL, rgbToHSV, rgbToHWB, rgbToHCG
+    } = require './color-conversions'
 
 module.exports =
 class Color
@@ -44,6 +37,8 @@ class Color
       else
         @[k] = v for k,v of r
     else if typeof r is 'string'
+      SVGColors ?= require './svg-colors'
+
       if r of SVGColors.allCases
         @name = r
         r = SVGColors.allCases[r]
@@ -84,8 +79,11 @@ class Color
 
   Object.defineProperty Color.prototype, 'hsv', {
     enumerable: true
-    get: -> rgbToHSV(@red, @green, @blue)
+    get: ->
+      loadConverters()
+      rgbToHSV(@red, @green, @blue)
     set: (hsv) ->
+      loadConverters()
       [@red, @green, @blue] = hsvToRGB.apply(@constructor, hsv)
   }
 
@@ -93,14 +91,18 @@ class Color
     enumerable: true
     get: -> @hsv.concat(@alpha)
     set: (hsva) ->
+      loadConverters()
       [h,s,v,@alpha] = hsva
       [@red, @green, @blue] = hsvToRGB.apply(@constructor, [h,s,v])
   }
 
   Object.defineProperty Color.prototype, 'hcg', {
     enumerable: true
-    get: -> rgbToHCG(@red, @green, @blue)
+    get: ->
+      loadConverters()
+      rgbToHCG(@red, @green, @blue)
     set: (hcg) ->
+      loadConverters()
       [@red, @green, @blue] = hcgToRGB.apply(@constructor, hcg)
   }
 
@@ -108,14 +110,18 @@ class Color
     enumerable: true
     get: -> @hcg.concat(@alpha)
     set: (hcga) ->
+      loadConverters()
       [h,c,gr,@alpha] = hcga
       [@red, @green, @blue] = hcgToRGB.apply(@constructor, [h,c,gr])
   }
 
   Object.defineProperty Color.prototype, 'hsl', {
     enumerable: true
-    get: -> rgbToHSL(@red, @green, @blue)
+    get: ->
+      loadConverters()
+      rgbToHSL(@red, @green, @blue)
     set: (hsl) ->
+      loadConverters()
       [@red, @green, @blue] = hslToRGB.apply(@constructor, hsl)
   }
 
@@ -123,14 +129,18 @@ class Color
     enumerable: true
     get: -> @hsl.concat(@alpha)
     set: (hsl) ->
+      loadConverters()
       [h,s,l,@alpha] = hsl
       [@red, @green, @blue] = hslToRGB.apply(@constructor, [h,s,l])
   }
 
   Object.defineProperty Color.prototype, 'hwb', {
     enumerable: true
-    get: -> rgbToHWB(@red, @green, @blue)
+    get: ->
+      loadConverters()
+      rgbToHWB(@red, @green, @blue)
     set: (hwb) ->
+      loadConverters()
       [@red, @green, @blue] = hwbToRGB.apply(@constructor, hwb)
   }
 
@@ -138,32 +148,48 @@ class Color
     enumerable: true
     get: -> @hwb.concat(@alpha)
     set: (hwb) ->
+      loadConverters()
       [h,w,b,@alpha] = hwb
       [@red, @green, @blue] = hwbToRGB.apply(@constructor, [h,w,b])
   }
 
   Object.defineProperty Color.prototype, 'hex', {
     enumerable: true
-    get: -> rgbToHex(@red, @green, @blue)
-    set: (hex) -> [@red, @green, @blue] = hexToRGB(hex)
+    get: ->
+      loadConverters()
+      rgbToHex(@red, @green, @blue)
+    set: (hex) ->
+      loadConverters()
+      [@red, @green, @blue] = hexToRGB(hex)
   }
 
   Object.defineProperty Color.prototype, 'hexARGB', {
     enumerable: true
-    get: -> rgbToHexARGB(@red, @green, @blue, @alpha)
-    set: (hex) -> [@red, @green, @blue, @alpha] = hexARGBToRGB(hex)
+    get: ->
+      loadConverters()
+      rgbToHexARGB(@red, @green, @blue, @alpha)
+    set: (hex) ->
+      loadConverters()
+      [@red, @green, @blue, @alpha] = hexARGBToRGB(hex)
   }
 
   Object.defineProperty Color.prototype, 'hexRGBA', {
     enumerable: true
-    get: -> rgbToHexRGBA(@red, @green, @blue, @alpha)
-    set: (hex) -> [@red, @green, @blue, @alpha] = hexRGBAToRGB(hex)
+    get: ->
+      loadConverters()
+      rgbToHexRGBA(@red, @green, @blue, @alpha)
+    set: (hex) ->
+      loadConverters()
+      [@red, @green, @blue, @alpha] = hexRGBAToRGB(hex)
   }
 
   Object.defineProperty Color.prototype, 'cmyk', {
     enumerable: true
-    get: -> rgbToCMYK(@red, @green, @blue, @alpha)
+    get: ->
+      loadConverters()
+      rgbToCMYK(@red, @green, @blue, @alpha)
     set: (cmyk) ->
+      loadConverters()
       [c,m,y,k] = cmyk
       [@red, @green, @blue] = cmykToRGB(c,m,y,k)
   }

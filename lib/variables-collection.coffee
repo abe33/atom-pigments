@@ -1,8 +1,4 @@
-{Emitter} = require 'atom'
-ColorContext = require './color-context'
-ColorExpression = require './color-expression'
-Color = require './color'
-registry = require './color-expressions'
+[Emitter, ColorExpression, ColorContext, Color, registry] = []
 
 nextId = 0
 
@@ -17,6 +13,8 @@ class VariablesCollection
   }
 
   constructor: (state) ->
+    Emitter ?= require('atom').Emitter
+
     @emitter = new Emitter
     @variables = []
     @variableNames = []
@@ -230,7 +228,11 @@ class VariablesCollection
 
     delete @dependencyGraph[variable.name]
 
-  getContext: -> new ColorContext({@variables, @colorVariables, registry})
+  getContext: ->
+    ColorContext ?= require './color-context'
+    registry ?= require './color-expressions'
+
+    new ColorContext({@variables, @colorVariables, registry})
 
   evaluateVariables: (variables, callback) ->
     updated = []
@@ -280,6 +282,8 @@ class VariablesCollection
       @emitChangeEvent(@updateDependencies(updated: [previousVariable]))
 
   restoreVariable: (variable) ->
+    Color ?= require './color'
+
     @variableNames.push(variable.name)
     @variables.push variable
     variable.id = nextId++
@@ -437,8 +441,12 @@ class VariablesCollection
       @emitter.emit 'did-change', {created, destroyed, updated}
 
   updateColorVariablesExpression: ->
+    registry ?= require './color-expressions'
+
     colorVariables = @getColorVariables()
     if colorVariables.length > 0
+      ColorExpression ?= require './color-expression'
+
       registry.addExpression(ColorExpression.colorExpressionForColorVariables(colorVariables))
     else
       registry.removeExpression('pigments:variables')

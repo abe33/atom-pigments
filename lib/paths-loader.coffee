@@ -1,7 +1,9 @@
-{Task} = require 'atom'
+Task = null
 
 module.exports =
   startTask: (config, callback) ->
+    Task ?= require('atom').Task
+
     dirtied = []
     removed = []
     taskPath = require.resolve('./tasks/load-paths-handler')

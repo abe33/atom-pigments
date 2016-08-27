@@ -1,5 +1,5 @@
-{CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation, registerOrUpdateElement} = require 'atom-utils'
+CompositeDisposable = null
 
 capitalize = (s) -> s.replace /^./, (m) -> m.toUpperCase()
 
@@ -93,6 +93,8 @@ class ColorProjectElement extends HTMLElement
           """)
 
   createdCallback: ->
+    {CompositeDisposable} = require 'atom' unless CompositeDisposable?
+
     @subscriptions = new CompositeDisposable
 
   setModel: (@project) ->

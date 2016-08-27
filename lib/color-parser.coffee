@@ -1,8 +1,4 @@
 
-Color = require './color'
-ColorExpression = require './color-expression'
-ColorContext = require './color-context'
-
 module.exports =
 class ColorParser
   constructor: (@registry, @context) ->

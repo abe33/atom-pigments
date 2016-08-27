@@ -1,10 +1,10 @@
-{Emitter} = require 'event-kit'
-ColorExpression = require './color-expression'
-vm = require 'vm'
+[Emitter, vm] = []
 
 module.exports =
 class ExpressionsRegistry
   @deserialize: (serializedData, expressionsType) ->
+    vm ?= require 'vm'
+
     registry = new ExpressionsRegistry(expressionsType)
 
     for name, data of serializedData.expressions
@@ -17,6 +17,8 @@ class ExpressionsRegistry
 
   # The {Object} where color expression handlers are stored
   constructor: (@expressionsType) ->
+    Emitter ?= require('event-kit').Emitter
+
     @colorExpressions = {}
     @emitter = new Emitter
     @regexpStrings = {}

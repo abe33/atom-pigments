@@ -1,12 +1,13 @@
-{CompositeDisposable} = require 'atom'
 {EventsDelegation} = require 'atom-utils'
+CompositeDisposable = null
 
 module.exports =
-
 class StickyTitle
   EventsDelegation.includeInto(this)
 
   constructor: (@stickies, @scrollContainer) ->
+    CompositeDisposable ?= require('atom').CompositeDisposable
+
     @subscriptions = new CompositeDisposable
     Array::forEach.call @stickies, (sticky) ->
       sticky.parentNode.style.height = sticky.offsetHeight + 'px'

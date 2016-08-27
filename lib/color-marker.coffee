@@ -1,9 +1,10 @@
-{CompositeDisposable} = require 'atom'
-{fill} = require './utils'
+[CompositeDisposable, fill] = []
 
 module.exports =
 class ColorMarker
   constructor: ({@marker, @color, @text, @invalid, @colorBuffer}) ->
+    {CompositeDisposable} = require 'atom' unless CompositeDisposable?
+
     @id = @marker.id
     @subscriptions = new CompositeDisposable
     @subscriptions.add @marker.onDidDestroy => @markerWasDestroyed()
@@ -103,6 +104,8 @@ class ColorMarker
     @colorBuffer.editor.getBuffer().setTextInRange(@marker.getBufferRange(), @convertContent(mode))
 
   convertContent: (mode) ->
+    {fill} = require './utils' unless fill?
+
     switch mode
       when 'hex'
         '#' + fill(@color.hex, 6)

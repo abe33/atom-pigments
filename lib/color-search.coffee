@@ -1,14 +1,15 @@
-{Emitter} = require 'atom'
-{Minimatch} = require 'minimatch'
-registry = require './color-expressions'
-ColorParser = require './color-parser'
-ColorContext = require './color-context'
+[Emitter, Minimatch, ColorContext, registry] = []
 
 module.exports =
 class ColorSearch
   @deserialize: (state) -> new ColorSearch(state.options)
 
   constructor: (@options={}) ->
+    {Emitter} = require 'atom' unless Emitter?
+    {Minimatch} = require 'minimatch' unless Minimatch?
+    ColorContext ?= require './color-context'
+    registry ?= require './color-expressions'
+
     {@sourceNames, ignoredNames, @context, @project} = @options
     @emitter = new Emitter
     @context ?= new ColorContext({registry})
@@ -37,6 +38,8 @@ class ColorSearch
     @emitter.on 'did-complete-search', callback
 
   search: ->
+    registry ?= require './color-expressions'
+
     re = new RegExp registry.getRegExp()
     results = []
 

@@ -1,9 +1,6 @@
-{CompositeDisposable} = require 'atom'
 {SpacePenDSL, EventsDelegation, registerOrUpdateElement} = require 'atom-utils'
-{THEME_VARIABLES} = require './uris'
-pigments = require './pigments'
-Palette = require './palette'
-StickyTitle = require './sticky-title'
+
+[CompositeDisposable, THEME_VARIABLES, pigments, Palette, StickyTitle] = []
 
 class PaletteElement extends HTMLElement
   SpacePenDSL.includeInto(this)
@@ -41,6 +38,9 @@ class PaletteElement extends HTMLElement
         @ol outlet: 'list'
 
   createdCallback: ->
+    CompositeDisposable ?= require('atom').CompositeDisposable
+    pigments ?= require './pigments'
+
     @project = pigments.getProject()
     @subscriptions = new CompositeDisposable
 
@@ -99,6 +99,8 @@ class PaletteElement extends HTMLElement
     @list.innerHTML = ''
 
     if @groupPaletteColors is 'by file'
+      StickyTitle ?= require './sticky-title'
+
       palettes = @getFilesPalettes()
       for file, palette of palettes
         li = document.createElement('li')
@@ -118,6 +120,8 @@ class PaletteElement extends HTMLElement
       @buildList(@list, @getColorsList(@palette))
 
   getGroupHeader: (label) ->
+    THEME_VARIABLES ?= require('./uris').THEME_VARIABLES
+
     header = document.createElement('div')
     header.className = 'pigments-color-group-header'
 
@@ -132,6 +136,8 @@ class PaletteElement extends HTMLElement
     header
 
   getFilesPalettes: ->
+    Palette ?= require './palette'
+
     palettes = {}
 
     @palette.eachColor (variable) =>
@@ -143,6 +149,8 @@ class PaletteElement extends HTMLElement
     palettes
 
   buildList: (container, paletteColors) ->
+    THEME_VARIABLES ?= require('./uris').THEME_VARIABLES
+
     paletteColors = @checkForDuplicates(paletteColors)
     for variables in paletteColors
       li = document.createElement('li')

@@ -1,6 +1,4 @@
-{countLines} = require './utils'
-{getRegistry} = require './color-expressions'
-ColorParser = require './color-parser'
+countLines = null
 
 module.exports =
 class ColorScanner
@@ -15,6 +13,8 @@ class ColorScanner
     new RegExp(@registry.getRegExpForScope(scope), 'g')
 
   search: (text, scope, start=0) ->
+    {countLines} = require './utils' unless countLines?
+
     regexp = @getRegExpForScope(scope)
     regexp.lastIndex = start
 
