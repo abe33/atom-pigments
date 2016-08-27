@@ -153,7 +153,7 @@ class ColorProjectElement extends HTMLElement
 
   getIconName: -> "pigments"
 
-  serialize: -> {deserializer: @constructor.name}
+  serialize: -> {deserializer: 'ColorProjectElement'}
 
 module.exports =
 ColorProjectElement =

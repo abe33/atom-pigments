@@ -179,7 +179,15 @@ module.exports =
   deserializeColorProjectElement: (state) ->
     ColorProjectElement ?= require './color-project-element'
     element = new ColorProjectElement
-    element.setModel(@getProject())
+
+    if @project?
+      element.setModel(@getProject())
+    else
+      subscription = atom.packages.onDidActivatePackage (pkg) =>
+        if pkg.name is 'pigments'
+          subscription.dispose()
+          element.setModel(@getProject())
+
     element
 
   deserializeVariablesCollection: (state) ->
