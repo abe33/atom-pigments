@@ -5,25 +5,37 @@ class ColorSearch
   @deserialize: (state) -> new ColorSearch(state.options)
 
   constructor: (@options={}) ->
+    {@sourceNames, ignoredNames: @ignoredNameSources, @context, @project} = @options
     {Emitter} = require 'atom' unless Emitter?
+    @emitter = new Emitter
+
+    if @project?
+      @init()
+    else
+      atom.packages.onDidActivatePackage (pkg) =>
+        if pkg.name is 'pigments'
+          @project = pkg.mainModule.getProject()
+          @init()
+
+  init: ->
     {Minimatch} = require 'minimatch' unless Minimatch?
     ColorContext ?= require './color-context'
-    registry ?= require './color-expressions'
 
-    {@sourceNames, ignoredNames, @context, @project} = @options
-    @emitter = new Emitter
-    @context ?= new ColorContext({registry})
+    @context ?= new ColorContext(registry: @project.getColorExpressionsRegistry())
+
     @parser = @context.parser
     @variables = @context.getVariables()
     @sourceNames ?= []
-    ignoredNames ?= []
+    @ignoredNameSources ?= []
 
     @ignoredNames = []
-    for ignore in ignoredNames when ignore?
+    for ignore in @ignoredNameSources when ignore?
       try
         @ignoredNames.push(new Minimatch(ignore, matchBase: true, dot: true))
       catch error
         console.warn "Error parsing ignore pattern (#{ignore}): #{error.message}"
+
+    @search() if @searchRequested
 
   getTitle: -> 'Pigments Find Results'
 
@@ -38,9 +50,11 @@ class ColorSearch
     @emitter.on 'did-complete-search', callback
 
   search: ->
-    registry ?= require './color-expressions'
+    unless @project?
+      @searchRequested = true
+      return
 
-    re = new RegExp registry.getRegExp()
+    re = new RegExp @project.getColorExpressionsRegistry().getRegExp()
     results = []
 
     promise = atom.workspace.scan re, paths: @sourceNames, (m) =>
@@ -80,5 +94,8 @@ class ColorSearch
   serialize: ->
     {
       deserializer: 'ColorSearch'
-      @options
+      options: {
+        @sourceNames,
+        ignoredNames: @ignoredNameSources
+      }
     }
