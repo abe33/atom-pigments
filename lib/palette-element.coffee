@@ -45,8 +45,9 @@ class PaletteElement extends HTMLElement
     if @project?
       @init()
     else
-      atom.packages.onDidActivatePackage (pkg) =>
+      subscription = atom.packages.onDidActivatePackage (pkg) =>
         if pkg.name is 'pigments'
+          subscription.dispose()
           @project = pigments.getProject()
           @init()
 

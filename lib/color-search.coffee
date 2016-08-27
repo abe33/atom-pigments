@@ -12,8 +12,9 @@ class ColorSearch
     if @project?
       @init()
     else
-      atom.packages.onDidActivatePackage (pkg) =>
+      subscription = atom.packages.onDidActivatePackage (pkg) =>
         if pkg.name is 'pigments'
+          subscription.dispose()
           @project = pkg.mainModule.getProject()
           @init()
 
