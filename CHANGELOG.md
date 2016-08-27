@@ -1,3 +1,16 @@
+<a name="v0.34.0"></a>
+# v0.34.0 (2016-08-27)
+
+## Bug Fixes
+
+- Fix restoration of project settings view ([4aa200fd](https://github.com/abe33/atom-pigments/commit/4aa200fd0865be12c4faae2dd5cf1adda03a07fa))
+- Fix color search serialization ([ab002ebd](https://github.com/abe33/atom-pigments/commit/ab002ebd26b8b5c0c0f03dfece379908d080e5a6))
+- Fix error on palette element restoration ([f200085a](https://github.com/abe33/atom-pigments/commit/f200085ac84d3856f73b04586c504f85d2aca04f))
+
+## Performances
+
+- Lazily load color project dependencies ([898b7071](https://github.com/abe33/atom-pigments/commit/898b70716fd759bedbc01d5b7320ad8503ca4531))
+
 <a name="v0.33.1"></a>
 # v0.33.1 (2016-08-25)
 
