@@ -15,6 +15,8 @@ class PigmentsProvider
     @subscriptions.add atom.config.observe 'pigments.extendAutocompleteToVariables', (@extendAutocompleteToVariables) =>
     @subscriptions.add atom.config.observe 'pigments.extendAutocompleteToColorValue', (@extendAutocompleteToColorValue) =>
 
+    @subscriptions.add atom.config.observe 'pigments.autocompleteSuggestionsFromValue', (@autocompleteSuggestionsFromValue) =>
+
   dispose: ->
     @disposed = true
     @subscriptions.dispose()
@@ -42,9 +44,13 @@ class PigmentsProvider
   getPrefix: (editor, bufferPosition) ->
     variablesRegExp ?= require('./regexes').variables
 
+    regexp = [variablesRegExp]
+
+    regexp.push("#[a-fA-F0-9]+") if @autocompleteSuggestionsFromValue
+
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
 
-    line.match(new RegExp(variablesRegExp + '$'))?[0] or ''
+    line.match(new RegExp("(#{regexp.join('|')})$"))?[0] or ''
 
   findSuggestionsForPrefix: (variables, prefix) ->
     return [] unless variables?
@@ -53,8 +59,10 @@ class PigmentsProvider
 
     suggestions = []
 
-    matchedVariables = variables.filter (v) ->
-      not v.isAlternate and ///^#{_.escapeRegExp prefix}///.test(v.name)
+    matchedVariables = variables.filter (v) =>
+      not v.isAlternate and
+      ///^#{_.escapeRegExp prefix}///.test(v.name) or
+      (@autocompleteSuggestionsFromValue and ///^#{_.escapeRegExp prefix}///.test("##{v.color?.hex}"))
 
     matchedVariables.forEach (v) =>
       if v.isColor

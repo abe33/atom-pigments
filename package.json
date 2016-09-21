@@ -154,6 +154,11 @@
       "default": false,
       "description": "When enabled, the autocomplete provider will also provides color value."
     },
+    "autocompleteSuggestionsFromValue": {
+      "type": "boolean",
+      "default": false,
+      "description": "When enabled, the autocomplete provider will suggests color variables from hexadecimal values."
+    },
     "markerType": {
       "type": "string",
       "default": "background",

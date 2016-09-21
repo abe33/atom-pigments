@@ -143,6 +143,35 @@ describe 'autocomplete provider', ->
 
             expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
 
+      describe 'when the autocompleteSuggestionsFromValue setting is enabled', ->
+        beforeEach ->
+          atom.config.set('pigments.autocompleteSuggestionsFromValue', true)
+
+
+        it 'suggests color variables from hexadecimal values', ->
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+            editor.moveToBottom()
+            editor.insertText('#')
+            editor.insertText('f')
+            editor.insertText('f')
+
+            advanceClock(completionDelay)
+
+          waitsFor ->
+            autocompleteManager.displaySuggestions.calls.length is 1
+
+          waitsFor ->
+            editorView.querySelector('.autocomplete-plus li')?
+
+          runs ->
+            popup = editorView.querySelector('.autocomplete-plus')
+            expect(popup).toExist()
+            expect(popup.querySelector('span.word').textContent).toEqual('var1')
+
+            expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
+
       describe 'with a transparent color', ->
         it 'displays the color hexadecimal code in the completion item', ->
           runs ->
