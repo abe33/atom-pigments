@@ -1,3 +1,16 @@
+<a name="v0.35.0"></a>
+# v0.35.0 (2016-09-22)
+
+## Features
+
+- Add support for QT rgba function ([d1322d4f](https://github.com/abe33/atom-pigments/commit/d1322d4f2983ea01f74a41e9fe4d0ff59990a8d3), [#226](https://github.com/abe33/atom-pigments/issues/226))
+- Implement sass default variables support ([b9b65efb](https://github.com/abe33/atom-pigments/commit/b9b65efbddddc538e192dcc7b522c2740e13559d), [#223](https://github.com/abe33/atom-pigments/issues/223))
+- Implement suggestion from value for all variables ([182761b8](https://github.com/abe33/atom-pigments/commit/182761b8e1bfb1448dd403b3d2dc46583fa1a0cf), [#142](https://github.com/abe33/atom-pigments/issues/142))
+
+## Bug Fixes
+
+- Change default source names to also handle CSS files ([0db760db](https://github.com/abe33/atom-pigments/commit/0db760dba33da81e3721e4632627d22042184ba5), [#224](https://github.com/abe33/atom-pigments/issues/224))
+
 <a name="v0.34.0"></a>
 # v0.34.0 (2016-08-27)
 
