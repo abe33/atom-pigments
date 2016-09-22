@@ -36,7 +36,6 @@ class ColorContext
       ColorContext::variablesRE = variables
       ColorContext::namePrefixes = namePrefixes
 
-
     {variables, colorVariables, @referenceVariable, @referencePath, @rootPaths, @parser, @colorVars, @vars, @defaultVars, @defaultColorVars, sorted, @registry, @sassScopeSuffix} = options
 
     variables ?= []
@@ -58,12 +57,16 @@ class ColorContext
       @defaultColorVars = {}
 
       for v in @variables
-        @vars[v.name] = v unless v.path.match /\/.pigments$/
-        @defaultVars[v.name] = v if v.path.match /\/.pigments$/
+        console.log v.name, v.value, v.default
+        @vars[v.name] = v unless v.default
+        @defaultVars[v.name] = v if v.default
 
       for v in @colorVariables
-        @colorVars[v.name] = v unless v.path.match /\/.pigments$/
-        @defaultColorVars[v.name] = v if v.path.match /\/.pigments$/
+        @colorVars[v.name] = v unless v.default
+        @defaultColorVars[v.name] = v if v.default
+
+      console.log @vars
+      console.log @defaultVars
 
     if not @registry.getExpression('pigments:variables')? and @colorVariables.length > 0
       expr = ColorExpression.colorExpressionForColorVariables(@colorVariables)

@@ -21,6 +21,24 @@ describe 'VariableParser', ->
 
       this
 
+    asDefault: (variables) ->
+      it "parses '#{expression}' as default variables #{jasmine.pp(variables)}", ->
+        results = parser.parse(expression)
+
+        expect(results.length).toEqual(Object.keys(variables).length)
+        for {name, value, range, default: isDefault} in results
+          expected = variables[name]
+          expect(isDefault).toBeTruthy()
+          if expected.value?
+            expect(value).toEqual(expected.value)
+          else if expected.range?
+            expect(range).toEqual(expected.range)
+          else
+            expect(value).toEqual(expected)
+
+      this
+
+
     asUndefined: ->
       it "does not parse '#{expression}' as a variable expression", ->
         results = parser.parse(expression)
@@ -34,6 +52,7 @@ describe 'VariableParser', ->
   itParses('non-color = 10px').as('non-color': '10px')
 
   itParses('$color: white').as('$color': 'white')
+  itParses('$color: white !default').asDefault('$color': 'white')
   itParses('$color: white // foo').as('$color': 'white')
   itParses('$color  : white').as('$color': 'white')
   itParses('$some-color: white;').as({

@@ -11,33 +11,16 @@ registry.createExpression 'pigments:scss_params', '^[ \\t]*@(mixin|include|funct
   solver.endParsing(match.length - 1)
 
 sass_handler = (match, solver) ->
-  solver.appendResult([
-    match[1]
-    match[2]
-    0
-    match[0].length
-  ])
+  solver.appendResult(match[1], match[2], 0, match[0].length, isDefault: match[3]?)
 
   if match[1].match(/[-_]/)
     all_underscore = match[1].replace(/-/g, '_')
     all_hyphen = match[1].replace(/_/g, '-')
 
     if match[1] isnt all_underscore
-      solver.appendResult([
-        all_underscore
-        match[2]
-        0
-        match[0].length
-        true
-      ])
+      solver.appendResult(all_underscore, match[2], 0, match[0].length, isAlternate: true, isDefault: match[3]?)
     if match[1] isnt all_hyphen
-      solver.appendResult([
-        all_hyphen
-        match[2]
-        0
-        match[0].length
-        true
-      ])
+      solver.appendResult(all_hyphen, match[2], 0, match[0].length, isAlternate: true, isDefault: match[3]?)
 
   solver.endParsing(match[0].length)
 
@@ -46,12 +29,7 @@ registry.createExpression 'pigments:scss', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\
 registry.createExpression 'pigments:sass', '^[ \\t]*(\\$[a-zA-Z0-9\\-_]+)\\s*:\\s*([^\\{]*?)(\\s*!default)?\\s*(?:$|\\/)', ['sass', 'haml'], sass_handler
 
 registry.createExpression 'pigments:css_vars', '(--[^\\s:]+):\\s*([^\\n;]+);', ['css'], (match, solver) ->
-  solver.appendResult([
-    "var(#{match[1]})"
-    match[2]
-    0
-    match[0].length
-  ])
+  solver.appendResult("var(#{match[1]})", match[2], 0, match[0].length)
   solver.endParsing(match[0].length)
 
 registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s*\\{([^=]*)\\}', ['styl', 'stylus'], (match, solver) ->
@@ -82,12 +60,7 @@ registry.createExpression 'pigments:stylus_hash', '^[ \\t]*([a-zA-Z_$][a-zA-Z0-9
       if buffer.length
         [key, value] = buffer.split(/\s*:\s*/)
 
-        solver.appendResult([
-          scope.concat(key).join('.')
-          value
-          current - buffer.length - 1
-          current
-        ])
+        solver.appendResult(scope.concat(key).join('.'), value, current - buffer.length - 1, current)
 
       buffer = ''
     else
@@ -116,25 +89,11 @@ registry.createExpression 'pigments:latex', '\\\\definecolor(\\{[^\\}]+\\})\\{([
     when 'HTML' then "##{value}"
     else value
 
-  solver.appendResult([
-    name
-    value
-    0
-    _.length
-    false
-    true
-  ])
+  solver.appendResult(name, value, 0, _.length, noNamePrefix: true)
   solver.endParsing(_.length)
 
 registry.createExpression 'pigments:latex_mix', '\\\\definecolor(\\{[^\\}]+\\})(\\{[^\\}\\n!]+[!][^\\}\\n]+\\})', ['tex'], (match, solver) ->
   [_, name, value] = match
 
-  solver.appendResult([
-    name
-    value
-    0
-    _.length
-    false
-    true
-  ])
+  solver.appendResult(name, value, 0, _.length, noNamePrefix: true)
   solver.endParsing(_.length)

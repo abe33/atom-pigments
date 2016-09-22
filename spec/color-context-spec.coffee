@@ -168,12 +168,12 @@ describe 'ColorContext', ->
 
   describe 'with variables from a default file', ->
     [projectPath, referenceVariable] = []
-    createVar = (name, value, path) ->
+    createVar = (name, value, path, isDefault=false) ->
       path ?= "#{projectPath}/file.styl"
-      {value, name, path}
+      {value, name, path, default: isDefault}
 
-    createColorVar = (name, value, path) ->
-      v = createVar(name, value, path)
+    createColorVar = (name, value, path, isDefault) ->
+      v = createVar(name, value, path, isDefault)
       v.isColor = true
       v
 
@@ -184,7 +184,7 @@ describe 'ColorContext', ->
 
         variables = [
           referenceVariable
-          createVar 'b', '10', "#{projectPath}/.pigments"
+          createVar 'b', '10', "#{projectPath}/b.styl", true
           createVar 'b', '20', "#{projectPath}/b.styl"
         ]
 
@@ -207,7 +207,7 @@ describe 'ColorContext', ->
 
         variables = [
           referenceVariable
-          createVar 'b', '10', "#{projectPath}/.pigments"
+          createVar 'b', '10', "#{projectPath}/b.styl", true
           createVar 'b', 'c', "#{projectPath}/b.styl"
         ]
 
@@ -230,7 +230,7 @@ describe 'ColorContext', ->
 
         variables = [
           referenceVariable
-          createColorVar 'b', '#ff0000', "#{projectPath}/.pigments"
+          createColorVar 'b', '#ff0000', "#{projectPath}/b.styl", true
           createColorVar 'b', '#0000ff', "#{projectPath}/b.styl"
         ]
 
@@ -253,7 +253,7 @@ describe 'ColorContext', ->
 
         variables = [
           referenceVariable
-          createColorVar 'b', '#ff0000', "#{projectPath}/.pigments"
+          createColorVar 'b', '#ff0000', "#{projectPath}/b.styl", true
           createColorVar 'b', 'c', "#{projectPath}/b.styl"
         ]
 

@@ -4,7 +4,7 @@ class VariableExpression
     [_, name, value] = match
     start = _.indexOf(name)
     end = _.indexOf(value) + value.length
-    solver.appendResult([name, value, start, end])
+    solver.appendResult(name, value, start, end)
     solver.endParsing(end)
 
   constructor: ({@name, @regexpString, @scopes, @priority, @handle}) ->
@@ -32,11 +32,14 @@ class VariableExpression
           results.match = matchText[start...end]
         abortParsing: ->
           parsingAborted = true
-        appendResult: ([name, value, start, end, isAlternate, noNamePrefix]) ->
+        appendResult: (name, value, start, end, {isAlternate, noNamePrefix, isDefault}={}) ->
           range = [start, end]
           reName = name.replace('$', '\\$')
           unless ///#{reName}(?![-_])///.test(value)
-            results.push {name, value, range, isAlternate, noNamePrefix}
+            results.push {
+              name, value, range, isAlternate, noNamePrefix
+              default: isDefault
+            }
 
       @handle(match, solver)
 
