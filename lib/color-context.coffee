@@ -58,11 +58,11 @@ class ColorContext
       @defaultColorVars = {}
 
       for v in @variables
-        @vars[v.name] = v
+        @vars[v.name] = v unless v.path.match /\/.pigments$/
         @defaultVars[v.name] = v if v.path.match /\/.pigments$/
 
       for v in @colorVariables
-        @colorVars[v.name] = v
+        @colorVars[v.name] = v unless v.path.match /\/.pigments$/
         @defaultColorVars[v.name] = v if v.path.match /\/.pigments$/
 
     if not @registry.getExpression('pigments:variables')? and @colorVariables.length > 0
