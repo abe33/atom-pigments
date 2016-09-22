@@ -986,3 +986,21 @@ describe 'ColorParser', ->
     itParses('{blue!20}').asColor('#ccccff')
     itParses('{blue!20!black}').asColor('#000033')
     itParses('{blue!20!black!30!green}').asColor('#00590f')
+
+  #     #######  ########
+  #    ##     ##    ##
+  #    ##     ##    ##
+  #    ##     ##    ##
+  #    ##  ## ##    ##
+  #    ##    ##     ##
+  #     ##### ##    ##
+
+  describe 'qt support', ->
+    beforeEach -> @scope = 'qml'
+
+    itParses('Qt.rgba(1.0,1.0,0,0.5)').asColor(255, 255, 0, 0.5)
+
+  describe 'qt cpp support', ->
+    beforeEach -> @scope = 'cpp'
+
+    itParses('Qt.rgba(1.0,1.0,0,0.5)').asColor(255, 255, 0, 0.5)

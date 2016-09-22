@@ -1434,3 +1434,30 @@ registry.createExpression 'pigments:latex_mix', strip('
     op.unshift(nextColor) if op.length > 0
 
   @rgb = nextColor.rgb
+
+#     #######  ########
+#    ##     ##    ##
+#    ##     ##    ##
+#    ##     ##    ##
+#    ##  ## ##    ##
+#    ##    ##     ##
+#     ##### ##    ##
+
+# Qt.rgba(1.0,0.5,0.0,0.7)
+registry.createExpression 'pigments:qt_rgba', strip("
+  Qt\\.rgba#{ps}\\s*
+    (#{float})
+    #{comma}
+    (#{float})
+    #{comma}
+    (#{float})
+    #{comma}
+    (#{float})
+  #{pe}
+"), ['qml', 'c', 'cc', 'cpp'], 1, (match, expression, context) ->
+  [_,r,g,b,a] = match
+
+  @red = context.readFloat(r) * 255
+  @green = context.readFloat(g) * 255
+  @blue = context.readFloat(b) * 255
+  @alpha = context.readFloat(a)
