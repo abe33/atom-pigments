@@ -37,6 +37,7 @@ describe 'autocomplete provider', ->
     waitsForPromise 'open sample file', ->
       atom.workspace.open('sample.styl').then (e) ->
         editor = e
+        editor.setText ''
         editorView = atom.views.getView(editor)
 
     waitsForPromise 'pigments project initialized', ->
@@ -147,7 +148,6 @@ describe 'autocomplete provider', ->
         beforeEach ->
           atom.config.set('pigments.autocompleteSuggestionsFromValue', true)
 
-
         it 'suggests color variables from hexadecimal values', ->
           runs ->
             expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -171,6 +171,65 @@ describe 'autocomplete provider', ->
             expect(popup.querySelector('span.word').textContent).toEqual('var1')
 
             expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
+
+        it 'suggests color variables from rgb values', ->
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+            editor.moveToBottom()
+            editor.insertText('r')
+            editor.insertText('g')
+            editor.insertText('b')
+            editor.insertText('(')
+            editor.insertText('2')
+            editor.insertText('5')
+            editor.insertText('5')
+            editor.insertText(',')
+            editor.insertText(' ')
+
+            advanceClock(completionDelay)
+
+          waitsFor ->
+            autocompleteManager.displaySuggestions.calls.length is 1
+
+          waitsFor ->
+            editorView.querySelector('.autocomplete-plus li')?
+
+          runs ->
+            popup = editorView.querySelector('.autocomplete-plus')
+            expect(popup).toExist()
+            expect(popup.querySelector('span.word').textContent).toEqual('var1')
+
+            expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
+
+        describe 'and when extendAutocompleteToVariables is true', ->
+          beforeEach ->
+            atom.config.set('pigments.extendAutocompleteToVariables', true)
+
+          it 'returns suggestions for the matching variable value', ->
+            runs ->
+              expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+              editor.moveToBottom()
+              editor.insertText('6')
+              editor.insertText('p')
+              editor.insertText('x')
+              editor.insertText(' ')
+
+              advanceClock(completionDelay)
+
+            waitsFor ->
+              autocompleteManager.displaySuggestions.calls.length is 1
+
+            waitsFor -> editorView.querySelector('.autocomplete-plus li')?
+
+            runs ->
+              popup = editorView.querySelector('.autocomplete-plus')
+              expect(popup).toExist()
+              expect(popup.querySelector('span.word').textContent).toEqual('button-padding')
+
+              expect(popup.querySelector('span.right-label').textContent).toEqual('6px 8px')
+
 
       describe 'with a transparent color', ->
         it 'displays the color hexadecimal code in the completion item', ->

@@ -30,6 +30,7 @@ class PigmentsProvider
     return if @disposed
     prefix = @getPrefix(editor, bufferPosition)
     project = @getProject()
+
     return unless prefix?.length
     return unless project?
 
@@ -42,27 +43,31 @@ class PigmentsProvider
     suggestions
 
   getPrefix: (editor, bufferPosition) ->
-    variablesRegExp ?= require('./regexes').variables
-
-    regexp = [variablesRegExp]
-
-    regexp.push("#[a-fA-F0-9]+") if @autocompleteSuggestionsFromValue
-
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
 
-    line.match(new RegExp("(#{regexp.join('|')})$"))?[0] or ''
+    if @autocompleteSuggestionsFromValue
+      line.match(/^\s*([^\s].+)$/)?[1] or ''
+    else
+      variablesRegExp ?= require('./regexes').variables
+
+      line.match(new RegExp("(#{variablesRegExp})$"))?[0] or ''
 
   findSuggestionsForPrefix: (variables, prefix) ->
     return [] unless variables?
 
     _ ?= require 'underscore-plus'
 
+    re = ///^#{_.escapeRegExp(prefix).replace(/,\s*/, '\\s*,\\s*')}///
+
     suggestions = []
+    matchesColorValue = (v) ->
+      res = re.test(v.value)
+      res ||= v.color.suggestionValues.some((s) -> re.test(s)) if v.color?
+      res
 
     matchedVariables = variables.filter (v) =>
-      not v.isAlternate and
-      ///^#{_.escapeRegExp prefix}///.test(v.name) or
-      (@autocompleteSuggestionsFromValue and ///^#{_.escapeRegExp prefix}///.test("##{v.color?.hex}"))
+      not v.isAlternate and re.test(v.name) or
+      (@autocompleteSuggestionsFromValue and matchesColorValue(v))
 
     matchedVariables.forEach (v) =>
       if v.isColor

@@ -248,6 +248,17 @@ class Color
       0.2126 * r + 0.7152 * g + 0.0722 * b
   }
 
+  Object.defineProperty Color.prototype, 'suggestionValues', {
+    enumerable: true
+    get: ->
+      rnd = Math.round
+
+      [
+        if @alpha is 1 then "##{@hex}" else "##{@hexRGBA}"
+        @toCSS()
+      ]
+  }
+
   isLiteral: -> not @variables? or @variables.length is 0
 
   isValid: ->
