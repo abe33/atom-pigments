@@ -1,3 +1,10 @@
+<a name="v0.35.2"></a>
+# v0.35.2 (2016-09-28)
+
+## Bug Fixes
+
+- Fix autocomplete provider ([8d234c7d](https://github.com/abe33/atom-pigments/commit/8d234c7d618f0c5e8cefa6603c4953f8b0f7418d))
+
 <a name="v0.35.1"></a>
 # v0.35.1 (2016-09-24)
 
