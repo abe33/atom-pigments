@@ -43,13 +43,16 @@ class PigmentsProvider
     suggestions
 
   getPrefix: (editor, bufferPosition) ->
+    variablesRegExp ?= require('./regexes').variables
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
 
     if @autocompleteSuggestionsFromValue
-      line.match(/^\s*([^\s].+)$/)?[1] or ''
+      line.match(/(?:#[a-fA-F0-9]*|rgb.+)$/)?[0] ?
+      line.match(new RegExp("(#{variablesRegExp})$"))?[0] ?
+      line.match(/:\s*([^\s].+)$/)?[1] ?
+      line.match(/^\s*([^\s].+)$/)?[1] ?
+      ''
     else
-      variablesRegExp ?= require('./regexes').variables
-
       line.match(new RegExp("(#{variablesRegExp})$"))?[0] or ''
 
   findSuggestionsForPrefix: (variables, prefix) ->

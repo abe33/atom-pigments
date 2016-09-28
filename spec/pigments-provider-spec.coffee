@@ -55,6 +55,8 @@ describe 'autocomplete provider', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         editor.moveToBottom()
+        editor.insertText('border: 1px solid ')
+        editor.moveToBottom()
         editor.insertText('b')
         editor.insertText('a')
 
@@ -172,10 +174,38 @@ describe 'autocomplete provider', ->
 
             expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
 
+        it 'suggests color variables from hexadecimal values when in a CSS expression', ->
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+            editor.moveToBottom()
+            editor.insertText('border: 1px solid ')
+            editor.moveToBottom()
+            editor.insertText('#')
+            editor.insertText('f')
+            editor.insertText('f')
+
+            advanceClock(completionDelay)
+
+          waitsFor ->
+            autocompleteManager.displaySuggestions.calls.length is 1
+
+          waitsFor ->
+            editorView.querySelector('.autocomplete-plus li')?
+
+          runs ->
+            popup = editorView.querySelector('.autocomplete-plus')
+            expect(popup).toExist()
+            expect(popup.querySelector('span.word').textContent).toEqual('var1')
+
+            expect(popup.querySelector('span.right-label').textContent).toContain('#ffffff')
+
         it 'suggests color variables from rgb values', ->
           runs ->
             expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+            editor.moveToBottom()
+            editor.insertText('border: 1px solid ')
             editor.moveToBottom()
             editor.insertText('r')
             editor.insertText('g')
@@ -210,6 +240,8 @@ describe 'autocomplete provider', ->
             runs ->
               expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+              editor.moveToBottom()
+              editor.insertText('border: ')
               editor.moveToBottom()
               editor.insertText('6')
               editor.insertText('p')
