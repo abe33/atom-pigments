@@ -159,6 +159,9 @@ class ColorContext
     if @colorVars[value]?
       @usedVariables.push(value)
       @colorVars[value].value
+    else if @defaultColorVars[value]?
+      @usedVariables.push(value)
+      @defaultColorVars[value].value
     else
       value
 
