@@ -1,3 +1,10 @@
+<a name="v0.35.3"></a>
+# v0.35.3 (2016-09-29)
+
+## Bug Fixes
+
+- Fix default colors not always available in context ([122725b0](https://github.com/abe33/atom-pigments/commit/122725b04ccf8f36bab528895246f16cd6a28446))
+
 <a name="v0.35.2"></a>
 # v0.35.2 (2016-09-28)
 
