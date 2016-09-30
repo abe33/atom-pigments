@@ -162,7 +162,7 @@
     },
     "markerType": {
       "type": "string",
-      "default": "background",
+      "default": "native-background",
       "enum": [
         "native-background",
         "native-underline",

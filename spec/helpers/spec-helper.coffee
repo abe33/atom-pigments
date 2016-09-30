@@ -9,6 +9,7 @@ deserializers =
   VariablesCollection: 'deserializeVariablesCollection'
 
 beforeEach ->
+  atom.config.set('pigments.markerType', 'background')
   atom.views.addViewProvider(Pigments.pigmentsViewProvider)
 
   for k,v of deserializers
