@@ -259,11 +259,7 @@ module.exports =
     .catch (reason) ->
       console.error reason
 
-  reloadProjectVariables: ->
-    @project.initialize().then =>
-      @project.loadPathsAndVariables()
-    .catch (reason) ->
-      console.error reason
+  reloadProjectVariables: -> @project.reload()
 
   createPigmentsReport: ->
     atom.workspace.open('pigments-report.json').then (editor) =>

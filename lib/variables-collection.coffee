@@ -16,12 +16,8 @@ class VariablesCollection
     Emitter ?= require('atom').Emitter
 
     @emitter = new Emitter
-    @variables = []
-    @variableNames = []
-    @colorVariables = []
-    @variablesByPath = {}
-    @dependencyGraph = {}
 
+    @reset()
     @initialize(state?.content)
 
   onDidChange: (callback) ->
@@ -53,6 +49,13 @@ class VariablesCollection
     iteration =>
       @initialized = true
       @emitter.emit('did-initialize')
+
+  reset: ->
+    @variables = []
+    @variableNames = []
+    @colorVariables = []
+    @variablesByPath = {}
+    @dependencyGraph = {}
 
   getVariables: -> @variables.slice()
 
