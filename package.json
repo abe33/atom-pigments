@@ -216,6 +216,16 @@
       "type": "boolean",
       "default": true,
       "title": "Ignore VCS Ignored Paths"
+    },
+    "notifyReloads": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether Pigments will use a notification once the `Pigments: Reload` command completes or not. The notification includes informations about the result of the reload."
+    },
+    "dismissableReloadNotifications": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the reload notifications should be dismissed by a user action or not."
     }
   },
   "dependencies": {

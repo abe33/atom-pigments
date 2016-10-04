@@ -181,10 +181,16 @@ class ColorProject
       @paths = []
       @loadPathsAndVariables()
     .then =>
-      atom.notifications.addSuccess("Pigments successfully reloaded", dismissable: true, description: """Found:
-      - **#{@paths.length}** path(s)
-      - **#{@getVariables().length}** variables(s) including **#{@getColorVariables().length}** color(s)
-      """)
+      if atom.config.get('pigments.notifyReloads')
+        atom.notifications.addSuccess("Pigments successfully reloaded", dismissable: atom.config.get('pigments.dismissableReloadNotifications'), description: """Found:
+        - **#{@paths.length}** path(s)
+        - **#{@getVariables().length}** variables(s) including **#{@getColorVariables().length}** color(s)
+        """)
+      else
+        console.log("""Found:
+        - #{@paths.length} path(s)
+        - #{@getVariables().length} variables(s) including #{@getColorVariables().length} color(s)
+        """)
     .catch (reason) ->
       detail = reason.message
       stack = reason.stack
