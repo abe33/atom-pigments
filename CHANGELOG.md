@@ -1,3 +1,10 @@
+<a name="v0.37.0"></a>
+# v0.37.0 (2016-10-04)
+
+## Features
+
+- Add setting to control reload notifications ([a869c819](https://github.com/abe33/atom-pigments/commit/a869c81906ff9f7ccfa945b9fbc1914856deb477), [#232](https://github.com/abe33/atom-pigments/issues/232))
+
 <a name="v0.36.0"></a>
 # v0.36.0 (2016-09-30)
 
