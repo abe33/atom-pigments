@@ -99,6 +99,24 @@ registry.createExpression 'pigments:css_rgb', strip("
   @blue = context.readIntOrPercent(b)
   @alpha = 1
 
+
+# vec3(0.2,0.36,0.15)
+registry.createExpression 'pigments:css_rgb', strip("
+  #{insensitive 'vec3'}#{ps}\\s*
+    (#{float})
+    #{comma}
+    (#{float})
+    #{comma}
+    (#{float})
+  #{pe}
+"), ['*'], (match, expression, context) ->
+  [_,r,g,b] = match
+
+  @red = context.readFloat(r * 255)
+  @green = context.readFloat(g * 255)
+  @blue = context.readFloat(b * 255)
+  @alpha = 1
+
 # rgba(50,120,200,0.7)
 registry.createExpression 'pigments:css_rgba', strip("
   #{insensitive 'rgba'}#{ps}\\s*
