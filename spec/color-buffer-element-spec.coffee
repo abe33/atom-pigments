@@ -73,33 +73,14 @@ describe 'ColorBufferElement', ->
 
     it 'attaches itself in the target text editor element', ->
       expect(colorBufferElement.parentNode).toExist()
-      expect(editorElement.shadowRoot.querySelector('.lines pigments-markers')).toExist()
-
-    describe 'when the editor shadow dom setting is not enabled', ->
-      beforeEach ->
-        editor.destroy()
-
-        atom.config.set('editor.useShadowDOM', false)
-
-        waitsForPromise ->
-          atom.workspace.open('four-variables.styl').then (o) -> editor = o
-
-        runs ->
-          editorElement = atom.views.getView(editor)
-          colorBuffer = project.colorBufferForEditor(editor)
-          colorBufferElement = atom.views.getView(colorBuffer)
-          colorBufferElement.attach()
-
-      it 'attaches itself in the target text editor element', ->
-        expect(colorBufferElement.parentNode).toExist()
-        # expect(editorElement.querySelector('.lines pigments-markers')).toExist()
+      expect(editorElement.querySelector('.lines pigments-markers')).toExist()
 
     describe 'when the color buffer is initialized', ->
       beforeEach ->
         waitsForPromise -> colorBuffer.initialize()
 
       it 'creates markers views for every visible buffer marker', ->
-        markersElements = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+        markersElements = colorBufferElement.querySelectorAll('pigments-color-marker')
 
         expect(markersElements.length).toEqual(3)
 
@@ -110,7 +91,7 @@ describe 'ColorBufferElement', ->
         it 'creates markers for the new valid colors', ->
           waitsForPromise -> colorBuffer.variablesAvailable()
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(4)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(4)
 
       describe 'when a selection intersects a marker range', ->
         beforeEach ->
@@ -123,7 +104,7 @@ describe 'ColorBufferElement', ->
             waitsFor -> colorBufferElement.updateSelections.callCount > 0
 
           it 'hides the intersected marker', ->
-            markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+            markers = colorBufferElement.querySelectorAll('pigments-color-marker')
 
             expect(isVisible(markers[0])).toBeTruthy()
             expect(isVisible(markers[1])).toBeTruthy()
@@ -136,7 +117,7 @@ describe 'ColorBufferElement', ->
             waitsFor -> colorBufferElement.updateSelections.callCount > 0
 
           it 'hides the existing markers', ->
-            markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+            markers = colorBufferElement.querySelectorAll('pigments-color-marker')
 
             expect(isVisible(markers[0])).toBeFalsy()
             expect(isVisible(markers[1])).toBeTruthy()
@@ -147,11 +128,11 @@ describe 'ColorBufferElement', ->
               waitsForPromise 'colors available', ->
                 colorBuffer.variablesAvailable()
               waitsFor 'last marker visible', ->
-                markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+                markers = colorBufferElement.querySelectorAll('pigments-color-marker')
                 isVisible(markers[3])
 
             it 'hides the created markers', ->
-              markers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker')
+              markers = colorBufferElement.querySelectorAll('pigments-color-marker')
               expect(isVisible(markers[0])).toBeFalsy()
               expect(isVisible(markers[1])).toBeTruthy()
               expect(isVisible(markers[2])).toBeTruthy()
@@ -186,7 +167,7 @@ describe 'ColorBufferElement', ->
           waitsFor -> spy.callCount > 0
 
         it 'releases the unused markers', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(3)
           expect(colorBufferElement.usedMarkers.length).toEqual(2)
           expect(colorBufferElement.unusedMarkers.length).toEqual(1)
 
@@ -200,7 +181,7 @@ describe 'ColorBufferElement', ->
             waitsFor -> colorBufferElement.unusedMarkers.length is 0
 
           it 'reuses the previously released marker element', ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(3)
             expect(colorBufferElement.usedMarkers.length).toEqual(3)
             expect(colorBufferElement.unusedMarkers.length).toEqual(0)
 
@@ -218,18 +199,18 @@ describe 'ColorBufferElement', ->
           waitsFor 'color buffer element', ->
             colorBufferElement = atom.views.getView(project.colorBufferForEditor(editor))
           waitsFor 'color buffer element markers', ->
-            colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length
+            colorBufferElement.querySelectorAll('pigments-color-marker').length
 
         it 'should keep all the buffer elements attached', ->
           editors = atom.workspace.getTextEditors()
 
           editors.forEach (editor) ->
             editorElement = atom.views.getView(editor)
-            colorBufferElement = editorElement.shadowRoot.querySelector('pigments-markers')
+            colorBufferElement = editorElement.querySelector('pigments-markers')
             expect(colorBufferElement).toExist()
 
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(3)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
 
       describe 'when the marker type is set to gutter', ->
         [gutter] = []
@@ -238,10 +219,10 @@ describe 'ColorBufferElement', ->
           waitsForPromise -> colorBuffer.initialize()
           runs ->
             atom.config.set 'pigments.markerType', 'gutter'
-            gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')
+            gutter = editorElement.querySelector('[gutter-name="pigments-gutter"]')
 
         it 'removes the markers', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(0)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(0)
 
         it 'adds a custom gutter to the text editor', ->
           expect(gutter).toExist()
@@ -286,7 +267,7 @@ describe 'ColorBufferElement', ->
                 project.colorPickerAPI =
                   open: jasmine.createSpy('color-picker.open')
 
-                decoration = editorElement.shadowRoot.querySelector('.pigments-gutter-marker span')
+                decoration = editorElement.querySelector('.pigments-gutter-marker span')
                 mousedown(decoration)
 
               it 'selects the text in the editor', ->
@@ -300,10 +281,10 @@ describe 'ColorBufferElement', ->
             atom.config.set 'pigments.markerType', 'background'
 
           it 'removes the gutter', ->
-            expect(editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')).not.toExist()
+            expect(editorElement.querySelector('[gutter-name="pigments-gutter"]')).not.toExist()
 
           it 'recreates the markers', ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(3)
 
         describe 'when a new buffer is opened', ->
           beforeEach ->
@@ -318,7 +299,7 @@ describe 'ColorBufferElement', ->
             waitsForPromise -> colorBuffer.variablesAvailable()
 
             runs ->
-              gutter = editorElement.shadowRoot.querySelector('[gutter-name="pigments-gutter"]')
+              gutter = editorElement.querySelector('[gutter-name="pigments-gutter"]')
 
           it 'creates the decorations in the new buffer gutter', ->
             decorations = editor.getDecorations().filter (d) ->
@@ -339,11 +320,11 @@ describe 'ColorBufferElement', ->
         pane.moveItemToPane(editor, newPane, 0)
 
         waitsFor ->
-          colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length
+          colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length
 
       it 'moves the editor with the buffer to the new pane', ->
-        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker').length).toEqual(3)
-        expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
+        expect(colorBufferElement.querySelectorAll('pigments-color-marker').length).toEqual(3)
+        expect(colorBufferElement.querySelectorAll('pigments-color-marker:empty').length).toEqual(0)
 
     describe 'when pigments.supportedFiletypes settings is defined', ->
       loadBuffer = (filePath) ->
@@ -371,11 +352,11 @@ describe 'ColorBufferElement', ->
         it 'supports every filetype', ->
           loadBuffer('scope-filter.coffee')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
 
           loadBuffer('project/vendor/css/variables.less')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
 
       describe 'with a filetype', ->
         beforeEach ->
@@ -384,11 +365,11 @@ describe 'ColorBufferElement', ->
         it 'supports the specified file type', ->
           loadBuffer('scope-filter.coffee')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
 
           loadBuffer('project/vendor/css/variables.less')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
       describe 'with many filetypes', ->
         beforeEach ->
@@ -398,15 +379,15 @@ describe 'ColorBufferElement', ->
         it 'supports the specified file types', ->
           loadBuffer('scope-filter.coffee')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
 
           loadBuffer('project/vendor/css/variables.less')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
 
           loadBuffer('four-variables.styl')
           runs ->
-            expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+            expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
         describe 'with global file types ignored', ->
           beforeEach ->
@@ -417,15 +398,15 @@ describe 'ColorBufferElement', ->
           it 'supports the specified file types', ->
             loadBuffer('scope-filter.coffee')
             runs ->
-              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+              expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
             loadBuffer('project/vendor/css/variables.less')
             runs ->
-              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
+              expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(20)
 
             loadBuffer('four-variables.styl')
             runs ->
-              expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+              expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
     describe 'when pigments.ignoredScopes settings is defined', ->
       beforeEach ->
@@ -447,21 +428,21 @@ describe 'ColorBufferElement', ->
           atom.config.set('pigments.ignoredScopes', ['\\.comment'])
 
         it 'ignores the colors that matches the defined scopes', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(1)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(1)
 
       describe 'with two filters', ->
         beforeEach ->
           atom.config.set('pigments.ignoredScopes', ['\\.string', '\\.comment'])
 
         it 'ignores the colors that matches the defined scopes', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
       describe 'with an invalid filter', ->
         beforeEach ->
           atom.config.set('pigments.ignoredScopes', ['\\'])
 
         it 'ignores the filter', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(2)
 
       describe 'when the project ignoredScopes is defined', ->
         beforeEach ->
@@ -469,7 +450,7 @@ describe 'ColorBufferElement', ->
           project.setIgnoredScopes(['\\.comment'])
 
         it 'ignores the colors that matches the defined scopes', ->
-          expect(colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
+          expect(colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)').length).toEqual(0)
 
     describe 'when a text editor settings is modified', ->
       [originalMarkers] = []
@@ -477,7 +458,7 @@ describe 'ColorBufferElement', ->
         waitsForPromise -> colorBuffer.variablesAvailable()
 
         runs ->
-          originalMarkers = colorBufferElement.shadowRoot.querySelectorAll('pigments-color-marker:not(:empty)')
+          originalMarkers = colorBufferElement.querySelectorAll('pigments-color-marker:not(:empty)')
           spyOn(colorBufferElement, 'updateMarkers').andCallThrough()
           spyOn(ColorMarkerElement::, 'render').andCallThrough()
 

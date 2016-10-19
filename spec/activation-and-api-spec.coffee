@@ -55,7 +55,7 @@ describe "Pigments", ->
           colorBuffer = project.colorBufferForEditor(editor)
 
       waitsFor 'pigments markers appended to the DOM', ->
-        editorElement.shadowRoot.querySelector('pigments-markers')
+        editorElement.querySelector('pigments-markers')
 
       runs ->
         spyOn(project, 'destroy').andCallThrough()
@@ -72,7 +72,7 @@ describe "Pigments", ->
       expect(colorBuffer.destroy).toHaveBeenCalled()
 
     it 'destroys the color buffer element that were added to the DOM', ->
-      expect(editorElement.shadowRoot.querySelector('pigments-markers')).not.toExist()
+      expect(editorElement.querySelector('pigments-markers')).not.toExist()
 
   describe 'pigments:project-settings', ->
     item = null

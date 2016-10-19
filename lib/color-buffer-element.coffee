@@ -14,7 +14,6 @@ class ColorBufferElement extends HTMLElement
     [@editorScrollLeft, @editorScrollTop] = [0, 0]
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
-    @shadowRoot = @createShadowRoot()
     @displayedMarkers = []
     @usedMarkers = []
     @unusedMarkers = []
@@ -144,7 +143,7 @@ class ColorBufferElement extends HTMLElement
     if @editorElement.hasTiledRendering and not @useNativeDecorations()
       @style.webkitTransform = "translate3d(#{-@editorScrollLeft}px, #{-@editorScrollTop}px, 0)"
 
-  getEditorRoot: -> @editorElement.shadowRoot ? @editorElement
+  getEditorRoot: -> @editorElement
 
   editorConfigChanged: ->
     return if not @parentNode? or @useNativeDecorations()
@@ -438,7 +437,7 @@ class ColorBufferElement extends HTMLElement
       view.onDidRelease ({marker}) =>
         @displayedMarkers.splice(@displayedMarkers.indexOf(marker), 1)
         @releaseMarkerView(marker)
-      @shadowRoot.appendChild view
+      @appendChild view
 
     view.setModel(marker)
 
@@ -467,7 +466,7 @@ class ColorBufferElement extends HTMLElement
     @usedMarkers = []
     @unusedMarkers = []
 
-    Array::forEach.call @shadowRoot.querySelectorAll('pigments-color-marker'), (el) -> el.parentNode.removeChild(el)
+    Array::forEach.call @querySelectorAll('pigments-color-marker'), (el) -> el.parentNode.removeChild(el)
 
   ##     ######  ######## ##       ########  ######  ########
   ##    ##    ## ##       ##       ##       ##    ##    ##
