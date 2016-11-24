@@ -6,8 +6,8 @@ Palette = require '../lib/palette'
 describe 'PaletteElement', ->
   [nextID, palette, paletteElement, workspaceElement, pigments, project] = [0]
 
-  createVar = (name, color, path, line) ->
-    {name, color, path, line, id: nextID++}
+  createVar = (name, color, path, line, isAlternate=false) ->
+    {name, color, path, line, id: nextID++, isAlternate}
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
@@ -32,6 +32,7 @@ describe 'PaletteElement', ->
         createVar 'green', new Color('#00ff00'), 'file.styl', 1
         createVar 'blue', new Color('#0000ff'), 'file.styl', 2
         createVar 'redCopy', new Color('#ff0000'), 'file.styl', 3
+        createVar 'red_copy', new Color('#ff0000'), 'file.styl', 3, true
         createVar 'red', new Color('#ff0000'), THEME_VARIABLES, 0
       ])
 
@@ -40,6 +41,9 @@ describe 'PaletteElement', ->
 
     it 'is associated with the Palette model', ->
       expect(paletteElement).toBeDefined()
+
+    it 'does not render alernate form of a variable', ->
+      expect(paletteElement.querySelectorAll('li').length).toEqual(5)
 
     it 'does not render the file link when the variable comes from a theme', ->
       expect(paletteElement.querySelectorAll('li')[4].querySelector(' [data-variable-id]')).not.toExist()
