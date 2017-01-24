@@ -160,6 +160,13 @@
       "default": false,
       "description": "When enabled, the autocomplete provider will suggests color variables from hexadecimal values."
     },
+    "maxDecorationsInGutter": {
+      "type": "integer",
+      "default": 100,
+      "min": 1,
+      "max": 100,
+      "description": "Sets a limit on how many decorations can be displayed in the gutter for the same row"
+    },
     "markerType": {
       "type": "string",
       "default": "native-background",

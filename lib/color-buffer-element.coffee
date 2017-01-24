@@ -84,6 +84,9 @@ class ColorBufferElement extends HTMLElement
     @subscriptions.add atom.config.observe 'editor.lineHeight', =>
       @editorConfigChanged()
 
+    @subscriptions.add atom.config.observe 'pigments.maxDecorationsInGutter', =>
+      @update()
+
     @subscriptions.add atom.config.observe 'pigments.markerType', (type) =>
       ColorMarkerElement ?= require './color-marker-element'
 
@@ -323,6 +326,7 @@ class ColorBufferElement extends HTMLElement
 
     markersByRows = {}
     maxRowLength = 0
+    maxDecorationsInGutter = atom.config.get('pigments.maxDecorationsInGutter')
 
     for m in markers
       if m.color?.isValid() and m not in @displayedMarkers
@@ -335,6 +339,8 @@ class ColorBufferElement extends HTMLElement
       deco = @decorationByMarkerId[m.id]
       row = m.marker.getStartScreenPosition().row
       markersByRows[row] ?= 0
+
+      continue if markersByRows[row] >= maxDecorationsInGutter
 
       rowLength = 0
 
