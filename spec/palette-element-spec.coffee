@@ -64,7 +64,7 @@ describe 'PaletteElement', ->
 
     it 'creates as many list item as there is colors in the project', ->
       expect(paletteElement.querySelectorAll('li').length).not.toEqual(0)
-      expect(paletteElement.querySelectorAll('li').length).toEqual(palette.variables.length)
+      expect(paletteElement.querySelectorAll('li').length).toEqual(palette.variables.filter((v) -> not v.isAlternate).length)
 
     it 'binds colors with project variables', ->
       projectVariables = project.getColorVariables()
@@ -87,7 +87,7 @@ describe 'PaletteElement', ->
         atom.config.set 'pigments.sortPaletteColors', 'by color'
 
       it 'reorders the colors', ->
-        sortedColors = project.getPalette().sortedByColor()
+        sortedColors = project.getPalette().sortedByColor().filter((v) -> not v.isAlternate)
         lis = paletteElement.querySelectorAll('li')
 
         for {name},i in sortedColors
@@ -98,7 +98,7 @@ describe 'PaletteElement', ->
         atom.config.set 'pigments.sortPaletteColors', 'by name'
 
       it 'reorders the colors', ->
-        sortedColors = project.getPalette().sortedByName()
+        sortedColors = project.getPalette().sortedByName().filter((v) -> not v.isAlternate)
         lis = paletteElement.querySelectorAll('li')
 
         for {name},i in sortedColors
@@ -128,7 +128,7 @@ describe 'PaletteElement', ->
           for file, palette of palettes
             ol = ols[n++]
             lis = ol.querySelectorAll('li')
-            sortedColors = palette.sortedByName()
+            sortedColors = palette.sortedByName().filter((v) -> not v.isAlternate)
 
             for {name},i in sortedColors
               expect(lis[i].querySelector('.name').textContent).toEqual(name)
