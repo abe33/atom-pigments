@@ -1,3 +1,20 @@
+<a name="v0.39.0"></a>
+# v0.39.0 (2017-01-24)
+
+## Features
+
+- Add setting to limit the number of decorations in the gutter ([56b27ab6](https://github.com/abe33/atom-pigments/commit/56b27ab692ec98c69a4ab485d0269fd9efa49331), [#273](https://github.com/abe33/atom-pigments/issues/273))
+
+## Bug Fixes
+
+- Fix error raised when using dots decorations ([e9919c67](https://github.com/abe33/atom-pigments/commit/e9919c6759f75f80e8b613cdff0b40e8e50294da), [#264](https://github.com/abe33/atom-pigments/issues/264))
+- Fix display of alternate case in palette view ([0cdc36f6](https://github.com/abe33/atom-pigments/commit/0cdc36f6c23c6e55fe6c107d6874064660d30f70), [#245](https://github.com/abe33/atom-pigments/issues/245))
+
+<a name="v0.38.0"></a>
+# v0.38.0 (2016-11-24)
+
+Remove support for the shadow DOM.
+
 <a name="v0.37.0"></a>
 # v0.37.0 (2016-10-04)
 
