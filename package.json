@@ -1,7 +1,7 @@
 {
   "name": "pigments",
   "main": "./lib/pigments",
-  "version": "0.37.0",
+  "version": "0.39.0",
   "description": "A package to display colors in project and files.",
   "keywords": [
     "colors",
@@ -15,7 +15,7 @@
   "repository": "https://github.com/abe33/atom-pigments",
   "license": "MIT",
   "engines": {
-    "atom": ">=1.7.0 <2.0.0"
+    "atom": ">=1.13.0 <2.0.0"
   },
   "providedServices": {
     "autocomplete.provider": {
@@ -159,6 +159,13 @@
       "type": "boolean",
       "default": false,
       "description": "When enabled, the autocomplete provider will suggests color variables from hexadecimal values."
+    },
+    "maxDecorationsInGutter": {
+      "type": "integer",
+      "default": 100,
+      "min": 1,
+      "max": 100,
+      "description": "Sets a limit on how many decorations can be displayed in the gutter for the same row"
     },
     "markerType": {
       "type": "string",

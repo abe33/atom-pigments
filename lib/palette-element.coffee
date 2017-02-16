@@ -166,8 +166,9 @@ class PaletteElement extends HTMLElement
     for variables in paletteColors
       li = document.createElement('li')
       li.className = 'pigments-color-item'
-      {color} = variables[0]
+      {color, isAlternate} = variables[0]
 
+      continue if isAlternate
       continue unless color.toCSS?
 
       html = """

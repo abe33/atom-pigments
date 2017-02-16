@@ -22,7 +22,7 @@
   left: 0;
 }
 
-.background-color {
+.background-color {
   z-index: -2;
 
   &:before {
@@ -76,12 +76,14 @@ atom-panel-container.footer {
   z-index: 3;
 }
 
-atom-text-editor::shadow, atom-text-editor {
+atom-text-editor {
   .pigments-native-background .region,
   .pigments-native-background-in-selection .region {
     position: absolute;
     white-space: pre;
     .background-color;
+    -webkit-font-smoothing: subpixel-antialiased;
+    font-weight: normal;
     z-index: 1;
   }
   .pigments-native-background-in-selection {
@@ -185,8 +187,8 @@ atom-text-editor::shadow, atom-text-editor {
     }
   }
 
-  pigments-markers::shadow pigments-color-marker,
-  pigments-markers::shadow pigments-color-marker,
+  pigments-markers pigments-color-marker,
+  pigments-markers pigments-color-marker,
   pigments-color-marker {
     display: block;
     position: absolute;
@@ -466,7 +468,7 @@ pigments-palette {
     display: -webkit-flex;
   }
 
-  .pigments-color-details {
+  .pigments-color-details {
     -webkit-flex-flow: column;
     -webkit-flex: 1;
   }
@@ -523,7 +525,7 @@ pigments-palette {
     font-family: @font-family;
   }
 
-  .settings-view input[type="checkbox"] {
+  .settings-view input[type="checkbox"] {
     margin: 0 0.5em 0 0;
     vertical-align: text-bottom;
     font-size: 0.8em;
