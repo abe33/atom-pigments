@@ -302,7 +302,8 @@ class ColorBufferElement extends HTMLElement
         if Array.isArray changes
           changes?.forEach (change) =>
             @updateDotDecorationsOffsets(change.start.row, change.newExtent.row)
-        else if changes.start and changes.newExtent
+
+        else if changes.start? and changes.newExtent?
           @updateDotDecorationsOffsets(changes.start.row, changes.newExtent.row)
 
     @updateGutterDecorations(type)
