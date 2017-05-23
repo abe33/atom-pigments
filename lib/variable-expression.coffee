@@ -34,7 +34,7 @@ class VariableExpression
           parsingAborted = true
         appendResult: (name, value, start, end, {isAlternate, noNamePrefix, isDefault}={}) ->
           range = [start, end]
-          reName = name.replace('$', '\\$')
+          reName = name.replace(/([()$])/g, '\\$1')
           unless ///#{reName}(?![-_])///.test(value)
             results.push {
               name, value, range, isAlternate, noNamePrefix
