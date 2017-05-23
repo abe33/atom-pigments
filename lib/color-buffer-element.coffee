@@ -218,11 +218,16 @@ class ColorBufferElement extends HTMLElement
         {className, style} = @getHighlighDecorationCSS(m, type)
         @appendChild(style)
         @styleByMarkerId[m.id] = style
-        @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
-          type: 'highlight'
-          class: "pigments-#{type} #{className}"
-          includeMarkerText: type is 'highlight'
-        })
+        if type is 'native-background'
+          @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
+            type: 'text'
+            class: "pigments-#{type} #{className}"
+          })
+        else
+          @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
+            type: 'highlight'
+            class: "pigments-#{type} #{className}"
+          })
 
     @displayedMarkers = markers
     @emitter.emit 'did-update'
@@ -243,7 +248,7 @@ class ColorBufferElement extends HTMLElement
 
     if type is 'native-background'
       style.innerHTML = """
-      .#{className} .region {
+      .#{className} {
         background-color: #{marker.color.toCSS()};
         color: #{if l > 0.43 then 'black' else 'white'};
       }
@@ -418,6 +423,10 @@ class ColorBufferElement extends HTMLElement
 
   updateMarkers: (type=@previousType) ->
     return if @editor.isDestroyed()
+
+    range = @editorElement.getVisibleRowRange?() ? @editor.getVisibleRowRange?()
+
+    return if isNaN(range[0])
 
     markers = @colorBuffer.findValidColorMarkers({
       intersectsScreenRowRange: @editorElement.getVisibleRowRange?() ? @editor.getVisibleRowRange?()

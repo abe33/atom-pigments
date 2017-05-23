@@ -77,17 +77,14 @@ atom-panel-container.footer {
 }
 
 atom-text-editor {
-  .pigments-native-background .region,
-  .pigments-native-background-in-selection .region {
-    position: absolute;
-    white-space: pre;
+  .pigments-native-background {
+    position: relative;
     .background-color;
-    -webkit-font-smoothing: subpixel-antialiased;
-    font-weight: normal;
-    z-index: 1;
   }
+  
   .pigments-native-background-in-selection {
-    display: none;
+    background: transparent !important;
+    color: inherit !important;
   }
 
   .pigments-native-underline .region,
