@@ -11,9 +11,13 @@
 
 module.exports =
   activate: (state) ->
+    [majorVer, minorVer] = atom.getVersion().split('.', 2).map(Number)
+    @useLegacyRender = majorVer <= 1 && minorVer <= 18
+        
     ColorProject ?= require './color-project'
 
-    @patchAtom()
+    if @useLegacyRender
+      @patchAtom()
 
     @project = if state.project?
       ColorProject.deserialize(state.project)
@@ -352,3 +356,5 @@ module.exports =
             regionNode = @regionNodesByHighlightId[id][i]
 
             regionNode.textContent = newRegionState.text if newRegionState.text?
+
+  
