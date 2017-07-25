@@ -1,3 +1,15 @@
+<a name="v0.40.0"></a>
+# v0.40.0 (2017-07-25)
+
+## Bug Fixes
+
+- Fix pigments icon size ([477e7d66](https://github.com/abe33/atom-pigments/commit/477e7d66bb4715ccbaa613c12a9521393f52ccac))
+
+## Dependencies Update
+
+- Bump Atom requirements ([573a309f](https://github.com/abe33/atom-pigments/commit/573a309f3c94ed1f3f1151ce8d44adc38d19afa6))
+- Bump serialized data versions ([864ed265](https://github.com/abe33/atom-pigments/commit/864ed26599637d1cb384dea61526d55164fcb080))
+
 <a name="v0.39.0"></a>
 # v0.39.0 (2017-01-24)
 
