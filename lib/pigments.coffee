@@ -3,7 +3,7 @@
   ColorSearch, ColorResultsElement,
   ColorProject, ColorProjectElement,
   ColorBuffer, ColorBufferElement,
-  ColorMarker, ColorMarkerElement,
+  ColorMarker,
   VariablesCollection, PigmentsProvider, PigmentsAPI,
   Disposable,
   url, uris
@@ -198,9 +198,6 @@ module.exports =
     element = if model instanceof (ColorBuffer ?= require './color-buffer')
       ColorBufferElement ?= require './color-buffer-element'
       element = new ColorBufferElement
-    else if model instanceof (ColorMarker ?= require './color-marker')
-      ColorMarkerElement ?= require './color-marker-element'
-      element = new ColorMarkerElement
     else if model instanceof (ColorSearch ?= require './color-search')
       ColorResultsElement ?= require './color-results-element'
       element = new ColorResultsElement

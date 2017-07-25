@@ -2,7 +2,7 @@ Color = require '../lib/color'
 ColorMarker = require '../lib/color-marker'
 
 describe 'ColorMarker', ->
-  [editor, marker, colorMarker, colorMarkerElement, jasmineContent] = []
+  [editor, marker, colorMarker, jasmineContent] = []
 
   beforeEach ->
     editor = atom.workspace.buildTextEditor({})

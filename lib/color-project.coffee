@@ -1,6 +1,6 @@
 [
   ColorBuffer, ColorSearch,
-  Palette, ColorMarkerElement, VariablesCollection,
+  Palette, VariablesCollection,
   PathsLoader, PathsScanner,
   Emitter, CompositeDisposable, Range,
   SERIALIZE_VERSION, SERIALIZE_MARKERS_VERSION, THEME_VARIABLES, ATOM_VARIABLES,
@@ -76,11 +76,6 @@ class ColorProject
     @subscriptions.add atom.config.observe 'pigments.supportedFiletypes', =>
       @updateIgnoredFiletypes()
       @emitter.emit('did-change-ignored-scopes', @getIgnoredScopes())
-
-    @subscriptions.add atom.config.observe 'pigments.markerType', (type) ->
-      if type?
-        ColorMarkerElement ?= require './color-marker-element'
-        ColorMarkerElement.setMarkerType(type)
 
     @subscriptions.add atom.config.observe 'pigments.ignoreVcsIgnoredPaths', =>
       @loadPathsAndVariables()

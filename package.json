@@ -176,11 +176,6 @@
         "native-outline",
         "native-dot",
         "native-square-dot",
-        "background",
-        "outline",
-        "underline",
-        "dot",
-        "square-dot",
         "gutter"
       ]
     },
