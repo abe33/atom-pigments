@@ -205,9 +205,11 @@ class ColorBufferElement extends HTMLElement
     markers = @colorBuffer.getValidColorMarkers()
 
     for m in @displayedMarkers when m not in markers
+      if @styleByMarkerId[m.id]?
+        @removeChild(@styleByMarkerId[m.id]) 
+        delete @styleByMarkerId[m.id]
+        
       @decorationByMarkerId[m.id]?.destroy()
-      @removeChild(@styleByMarkerId[m.id])
-      delete @styleByMarkerId[m.id]
       delete @decorationByMarkerId[m.id]
 
     markersByRows = {}
@@ -224,6 +226,7 @@ class ColorBufferElement extends HTMLElement
         else
           {className, style} = @getHighlighDecorationCSS(m, type)
           @appendChild(style)
+          @styleByMarkerId[m.id] = style
           props =
             type: 'highlight'
             class: "pigments-#{type} #{className}"
@@ -250,6 +253,7 @@ class ColorBufferElement extends HTMLElement
       when 'native-background'
         backgroundColor: marker.color.toCSS()
         color: if l > 0.43 then 'black' else 'white'
+        display: 'inline' # Prevent `.pigments-native-background-in-selection { display: none }` 
       when 'native-underline'
         backgroundColor: marker.color.toCSS()
       when 'native-outline'
