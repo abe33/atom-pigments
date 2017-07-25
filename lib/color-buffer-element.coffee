@@ -215,14 +215,21 @@ class ColorBufferElement extends HTMLElement
 
     for m in markers
       if m.color?.isValid() and m not in @displayedMarkers
-        {className, style} = @getHighlighDecorationCSS(m, type)
-        @appendChild(style)
-        @styleByMarkerId[m.id] = style
-        @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, {
-          type: 'highlight'
-          class: "pigments-#{type} #{className}"
-          includeMarkerText: type is 'highlight'
-        })
+        if @editor.component.addTextDecorationToRender?
+          style = @getHighlighDecorationStyle(m, type)
+          props =
+            type: 'text'
+            class: "pigments-#{type}"
+            style: style
+        else
+          {className, style} = @getHighlighDecorationCSS(m, type)
+          @appendChild(style)
+          props =
+            type: 'highlight'
+            class: "pigments-#{type} #{className}"
+            includeMarkerText: type is 'highlight'
+          
+        @decorationByMarkerId[m.id] = @editor.decorateMarker(m.marker, props)
 
     @displayedMarkers = markers
     @emitter.emit 'did-update'
@@ -235,31 +242,32 @@ class ColorBufferElement extends HTMLElement
     delete @decorationByMarkerId
     delete @styleByMarkerId
     @displayedMarkers = []
+    
+  getHighlighDecorationStyle: (marker, type) ->
+    l = marker.color.luma
+
+    switch type
+      when 'native-background'
+        backgroundColor: marker.color.toCSS()
+        color: if l > 0.43 then 'black' else 'white'
+      when 'native-underline'
+        backgroundColor: marker.color.toCSS()
+      when 'native-outline'
+        borderColor: marker.color.toCSS()
+      else {}
 
   getHighlighDecorationCSS: (marker, type) ->
     className = "pigments-highlight-#{nextHighlightId++}"
     style = document.createElement('style')
-    l = marker.color.luma
-
-    if type is 'native-background'
-      style.innerHTML = """
-      .#{className} .region {
-        background-color: #{marker.color.toCSS()};
-        color: #{if l > 0.43 then 'black' else 'white'};
-      }
-      """
-    else if type is 'native-underline'
-      style.innerHTML = """
-      .#{className} .region {
-        background-color: #{marker.color.toCSS()};
-      }
-      """
-    else if type is 'native-outline'
-      style.innerHTML = """
-      .#{className} .region {
-        border-color: #{marker.color.toCSS()};
-      }
-      """
+    props = for name, value of @getHighlighDecorationStyle(marker, type)
+      prop = name.replace /[A-Z]/g, (match, offset) -> (offset ? '-' : '') + match.toLowerCase()        
+      "#{prop}: #{value};" 
+        
+    style.innerHTML = """
+    .#{className} .region {
+      #{props.join('\n')}
+    }
+    """
 
     {className, style}
 
@@ -417,8 +425,8 @@ class ColorBufferElement extends HTMLElement
       dirtyMarkers.forEach (marker) -> marker.render()
 
   updateMarkers: (type=@previousType) ->
-    return if @editor.isDestroyed()
-
+    return if @editor.isDestroyed() || !@editor.component.attached
+    
     markers = @colorBuffer.findValidColorMarkers({
       intersectsScreenRowRange: @editorElement.getVisibleRowRange?() ? @editor.getVisibleRowRange?()
     })
