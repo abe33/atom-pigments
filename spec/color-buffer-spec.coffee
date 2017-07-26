@@ -311,10 +311,6 @@ describe 'ColorBuffer', ->
           colorBuffer = project.colorBufferForEditor(editor)
 
       it 'creates the color markers for the variables used in the buffer', ->
-        waitsForPromise -> colorBuffer.initialize()
-        runs -> expect(colorBuffer.getColorMarkers().length).toEqual(0)
-
-      it 'creates the color markers for the variables used in the buffer', ->
         waitsForPromise -> colorBuffer.variablesAvailable()
         runs -> expect(colorBuffer.getColorMarkers().length).toEqual(3)
 
@@ -548,7 +544,7 @@ describe 'ColorBuffer', ->
         expect(validMarkers.length).toEqual(5)
 
       it 'does not ask the project to reload the variables', ->
-        expect(project.reloadVariablesForPath.mostRecentCall.args[0]).not.toEqual(colorBuffer.editor.getPath())
+        expect(project.reloadVariablesForPath).not.toHaveBeenCalled()
 
   ##    ########  ########  ######  ########  #######  ########  ########
   ##    ##     ## ##       ##    ##    ##    ##     ## ##     ## ##
