@@ -23,25 +23,24 @@
 }
 
 .background-color {
-  z-index: -2;
-
-  &:before {
-    content: '';
-    background: url(atom://pigments/resources/transparent-background.png);
-    z-index: -1;
-    border-radius: inherit;
-    box-sizing: border-box;
-    .absolute-box;
-  }
-
-  &:after {
-    content: '';
-    background: inherit;
-    z-index: -1;
-    border-radius: inherit;
-    box-sizing: border-box;
-    .absolute-box;
-  }
+  box-sizing: border-box;
+  background-attachment: fixed;
+  // &:before {
+  //   content: '';
+  //   background: url(atom://pigments/resources/transparent-background.png);
+  //   z-index: -1;
+  //   border-radius: inherit;
+  //   .absolute-box;
+  // }
+  //
+  // &:after {
+  //   content: '';
+  //   background: inherit;
+  //   z-index: -1;
+  //   border-radius: inherit;
+  //   box-sizing: border-box;
+  //   .absolute-box;
+  // }
 }
 
 .icon-pigments::before {

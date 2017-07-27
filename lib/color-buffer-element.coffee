@@ -1,3 +1,4 @@
+
 {registerOrUpdateElement, EventsDelegation} = require 'atom-utils'
 
 [Emitter, CompositeDisposable] = []
@@ -176,6 +177,9 @@ class ColorBufferElement extends HTMLElement
       style.innerHTML = """
       .#{className} {
         background-color: #{marker.color.toCSS()};
+        background-image:
+          linear-gradient(to bottom, #{marker.color.toCSS()} 0%, #{marker.color.toCSS()} 100%),
+          url(atom://pigments/resources/transparent-background.png);
         color: #{if l > 0.43 then 'black' else 'white'};
       }
       """
@@ -183,6 +187,9 @@ class ColorBufferElement extends HTMLElement
       style.innerHTML = """
       .#{className} .region {
         background-color: #{marker.color.toCSS()};
+        background-image:
+          linear-gradient(to bottom, #{marker.color.toCSS()} 0%, #{marker.color.toCSS()} 100%),
+          url(atom://pigments/resources/transparent-background.png);
       }
       """
     else if type is 'native-outline'
@@ -316,7 +323,7 @@ class ColorBufferElement extends HTMLElement
   getGutterDecorationItem: (marker) ->
     div = document.createElement('div')
     div.innerHTML = """
-    <span style='background-color: #{marker.color.toCSS()};' data-marker-id='#{marker.id}'></span>
+    <span style='background-image: linear-gradient(to bottom, #{marker.color.toCSS()} 0%, #{marker.color.toCSS()} 100%), url(atom://pigments/resources/transparent-background.png);' data-marker-id='#{marker.id}'></span>
     """
     div
 
