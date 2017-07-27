@@ -284,7 +284,8 @@ class ColorBufferElement extends HTMLElement
       rowLength = 0
 
       if type isnt 'gutter'
-        rowLength = @editorElement.pixelPositionForScreenPosition([row, Infinity]).left
+        try
+          rowLength = @editorElement.pixelPositionForScreenPosition([row, Infinity]).left
 
       decoWidth = 14
 
