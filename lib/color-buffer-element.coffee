@@ -247,7 +247,7 @@ class ColorBufferElement extends HTMLElement
     @updateGutterDecorations(type)
 
   destroyGutter: ->
-    @gutter.destroy()
+    try @gutter.destroy()
     @gutterSubscription.dispose()
     @displayedMarkers = []
     decoration.destroy() for id, decoration of @decorationByMarkerId
