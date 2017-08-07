@@ -97,3 +97,7 @@ registry.createExpression 'pigments:latex_mix', '\\\\definecolor(\\{[^\\}]+\\})(
 
   solver.appendResult(name, value, 0, _.length, noNamePrefix: true)
   solver.endParsing(_.length)
+
+registry.createExpression 'pigments:javascript', '^[ \\t]*(var|let|const)\\s+([a-zA-Z0-9_]+)\\s*=\\s*[\'\"\`](.*?)[\'\"\`]', ['js'], (match, solver) ->
+  solver.appendResult(match[2], match[3], 0, match[0].length, noNamePrefix: true)
+  solver.endParsing(match[0].length)
