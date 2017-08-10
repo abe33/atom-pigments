@@ -236,6 +236,14 @@ class ColorBufferElement extends HTMLElement
         @colorBuffer.selectColorMarkerAndOpenPicker(colorMarker)
 
     if @isDotType(type)
+      @gutterSubscription.add @editorElement.onDidChangeScrollLeft =>
+        requestAnimationFrame =>
+          @updateDotDecorationsOffsets(@editorElement.getFirstVisibleScreenRow(), @editorElement.getLastVisibleScreenRow())
+
+      @gutterSubscription.add @editorElement.onDidChangeScrollTop =>
+        requestAnimationFrame =>
+          @updateDotDecorationsOffsets(@editorElement.getFirstVisibleScreenRow(), @editorElement.getLastVisibleScreenRow())
+
       @gutterSubscription.add @editor.onDidChange (changes) =>
         if Array.isArray changes
           changes?.forEach (change) =>
@@ -265,6 +273,7 @@ class ColorBufferElement extends HTMLElement
 
     markersByRows = {}
     maxRowLength = 0
+    scrollLeft = @editorElement.getScrollLeft()
     maxDecorationsInGutter = atom.config.get('pigments.maxDecorationsInGutter')
 
     for m in markers
@@ -289,7 +298,7 @@ class ColorBufferElement extends HTMLElement
 
       decoWidth = 14
 
-      deco.properties.item.style.left = "#{rowLength + markersByRows[row] * decoWidth}px"
+      deco.properties.item.style.left = "#{(rowLength + markersByRows[row] * decoWidth) - scrollLeft}px"
 
       markersByRows[row]++
       maxRowLength = Math.max(maxRowLength, markersByRows[row])
@@ -304,6 +313,7 @@ class ColorBufferElement extends HTMLElement
 
   updateDotDecorationsOffsets: (rowStart, rowEnd) ->
     markersByRows = {}
+    scrollLeft = @editorElement.getScrollLeft()
 
     for row in [rowStart..rowEnd]
       for m in @displayedMarkers
@@ -318,7 +328,7 @@ class ColorBufferElement extends HTMLElement
 
         decoWidth = 14
 
-        deco.properties.item.style.left = "#{rowLength + markersByRows[row] * decoWidth}px"
+        deco.properties.item.style.left = "#{(rowLength + markersByRows[row] * decoWidth) - scrollLeft}px"
         markersByRows[row]++
 
   getGutterDecorationItem: (marker) ->
