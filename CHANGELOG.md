@@ -1,3 +1,11 @@
+<a name="v0.40.2"></a>
+# v0.40.2 (2017-08-09)
+
+## Bug Fixes
+
+- Remove atom patching code ([b0015651](https://github.com/abe33/atom-pigments/commit/b0015651cbd7aa31999e0fe14fe923cf9ae5980d), [#313](https://github.com/abe33/atom-pigments/issues/313))
+- Fix horizontal offset not applied to dots when scrolling ([36d79248](https://github.com/abe33/atom-pigments/commit/36d792483dd0a7f88b670cb240d76bccd46d43f8), [#326](https://github.com/abe33/atom-pigments/issues/326))
+
 <a name="v0.40.1"></a>
 # v0.40.1 (2017-07-27)
 
