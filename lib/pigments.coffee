@@ -13,8 +13,6 @@ module.exports =
   activate: (state) ->
     ColorProject ?= require './color-project'
 
-    @patchAtom()
-
     @project = if state.project?
       ColorProject.deserialize(state.project)
     else
@@ -286,22 +284,3 @@ module.exports =
 
     JSON.stringify(o, null, 2)
     .replace(///#{atom.project.getPaths().join('|')}///g, '<root>')
-
-  patchAtom: ->
-    getModuleFromNodeCache = (name) ->
-      modulePath = Object.keys(require.cache).filter((s) -> s.indexOf(name) > -1)[0]
-      require.cache[modulePath]
-
-    getModuleFromSnapshotCache = (name) ->
-      if typeof snapshotResult is 'undefined'
-        null
-      else
-        modulePath = Object.keys(snapshotResult.customRequire.cache).filter((s) -> s.indexOf(name) > -1)[0]
-        snapshotResult.customRequire.cache[modulePath]
-
-    requireCore = (name) ->
-      module = getModuleFromNodeCache(name) ? getModuleFromSnapshotCache(name)
-      if module?
-        module.exports
-      else
-        throw new Error("Cannot find '#{name}' in the require cache.")
