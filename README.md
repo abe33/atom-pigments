@@ -10,6 +10,13 @@ Pigments will scan source files in your project directories looking for colors a
 
 Pigments supports out of the box most of the color transformations functions and expressions of the three biggest CSS pre-processors out there, namely LESS, Sass and Stylus. However, it doesn't mean pigments is able to parse and understand all of these languages constructs. For the moment, Pigments' aim is to support the widest range of usage, even if it implies reducing its ability to parse certain complex constructs. You can refer to the [parser specs](https://github.com/abe33/atom-pigments/blob/master/spec/color-parser-spec.coffee) for an exhaustive list of the supported expressions.
 
+## Contributor note
+
+_This is a small note from one of the contributors._ As of the time of writing, @abe33 (the creator of this amazing package) hasn't done any work on this repo for over 6 months. It seems he is focused on other projects. In the meantime, I've been trying to keep the issues clear and tagged and to close duplicates. However, I don't know enough about this project (or Atom plugins in general) to be able to fix any issues. If you think you are able to handle this project, please let me ([@C-Bouthoorn](https://github.com/C-Bouthoorn)) or Cédric ([@abe33](https://github.com/abe33)) know, so we could help you help this project.
+
+Please also see [this masterpost](https://github.com/abe33/atom-pigments/issues/351).
+
+
 ## Install
 
 Using `apm`:
