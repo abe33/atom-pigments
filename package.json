@@ -148,17 +148,17 @@
     "extendAutocompleteToVariables": {
       "type": "boolean",
       "default": false,
-      "description": "When enabled, the autocomplete provider will also provides completion for non-color variables."
+      "description": "When enabled, the autocomplete provider will also provide completion for non-color variables."
     },
     "extendAutocompleteToColorValue": {
       "type": "boolean",
       "default": false,
-      "description": "When enabled, the autocomplete provider will also provides color value."
+      "description": "When enabled, the autocomplete provider will also provide color value."
     },
     "autocompleteSuggestionsFromValue": {
       "type": "boolean",
       "default": false,
-      "description": "When enabled, the autocomplete provider will suggests color variables from hexadecimal values."
+      "description": "When enabled, the autocomplete provider will suggest color variables from hexadecimal values."
     },
     "maxDecorationsInGutter": {
       "type": "integer",
