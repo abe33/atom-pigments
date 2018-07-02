@@ -144,7 +144,7 @@ registry.createExpression 'pigments:css_hsl', strip("
     #{comma}
     (#{optionalPercent}|#{variables})
   #{pe}
-"), ['css', 'sass', 'scss', 'styl', 'stylus'], (match, expression, context) ->
+"), ['*'], (match, expression, context) ->
   [_,h,s,l] = match
 
   hsl = [
