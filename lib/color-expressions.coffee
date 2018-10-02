@@ -136,29 +136,6 @@ registry.createExpression 'pigments:stylus_rgba', strip("
   @alpha = context.readFloat(a)
 
 # hsl(210,50%,50%)
-registry.createExpression 'pigments:css_hsl', strip("
-  #{insensitive 'hsl'}#{ps}\\s*
-    (#{float}|#{variables})
-    #{comma}
-    (#{optionalPercent}|#{variables})
-    #{comma}
-    (#{optionalPercent}|#{variables})
-  #{pe}
-"), ['css', 'sass', 'scss', 'styl', 'stylus'], (match, expression, context) ->
-  [_,h,s,l] = match
-
-  hsl = [
-    context.readInt(h)
-    context.readFloat(s)
-    context.readFloat(l)
-  ]
-
-  return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
-
-  @hsl = hsl
-  @alpha = 1
-
-# hsl(210,50%,50%)
 registry.createExpression 'pigments:less_hsl', strip("
   hsl#{ps}\\s*
     (#{float}|#{variables})
@@ -174,6 +151,29 @@ registry.createExpression 'pigments:less_hsl', strip("
     context.readInt(h)
     context.readFloatOrPercent(s) * 100
     context.readFloatOrPercent(l) * 100
+  ]
+
+  return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
+
+  @hsl = hsl
+  @alpha = 1
+
+# hsl(210,50%,50%)
+registry.createExpression 'pigments:css_hsl', strip("
+  #{insensitive 'hsl'}#{ps}\\s*
+    (#{float}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+    #{comma}
+    (#{optionalPercent}|#{variables})
+  #{pe}
+"), ['*'], (match, expression, context) ->
+  [_,h,s,l] = match
+
+  hsl = [
+    context.readInt(h)
+    context.readFloat(s)
+    context.readFloat(l)
   ]
 
   return @invalid = true if hsl.some (v) -> not v? or isNaN(v)
