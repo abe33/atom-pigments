@@ -139,8 +139,15 @@ describe 'VariableParser', ->
       range: [[12,4],[12,14]]
   })
 
-  itParses('var colora="#f00";\nlet colorb = \'#00ff00\'\nconst colorc= `blue`;').as({
+  itParses('var colora="#f00";').as({
     'colora': '#f00'
+  })
+  
+  itParses("let colorb = '#00ff00';").as({
     'colorb': '#00ff00'
+  })
+  
+  itParses("const colorc= `blue`;").as({
     'colorc': 'blue'
   })
+
