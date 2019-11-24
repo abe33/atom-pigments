@@ -236,7 +236,7 @@
     "fs-plus": "2.x",
     "async": "0.2.6",
     "css-color-function": "0.1.x",
-    "minimatch": "0.3.x",
+    "minimatch": "3.0.x",
     "delegato": "^1.0.0",
     "atom-utils": ">=0.9.2"
   },
