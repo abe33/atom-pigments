@@ -12,7 +12,7 @@
     "css",
     "stylus"
   ],
-  "repository": "https://github.com/abe33/atom-pigments",
+  "repository": "git@github.com:abe33/atom-pigments.git",
   "license": "MIT",
   "engines": {
     "atom": ">=1.19.0 <2.0.0"
