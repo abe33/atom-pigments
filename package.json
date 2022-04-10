@@ -79,10 +79,13 @@
     "ignoredNames": {
       "type": "array",
       "default": [
-        "vendor/*",
-        "node_modules/*",
-        "spec/*",
-        "test/*"
+        "**/vendor",
+        "**/node_modules",
+        "**/spec",
+        "**/test",
+        "**/font",
+        "**/img",
+        "**/icon"
       ],
       "description": "Glob patterns of files to ignore when scanning the project for variables.",
       "items": {
