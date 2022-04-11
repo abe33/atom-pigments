@@ -1,7 +1,6 @@
 async = require 'async'
 fs = require 'fs'
 path = require 'path'
-{GitRepository} = require 'atom'
 {Minimatch} = require 'minimatch'
 
 PathsChunkSize = 100
@@ -17,8 +16,8 @@ class PathLoader
 
     @repo = null
     if ignoreVcsIgnores
-      repo = GitRepository.open(@rootPath, refreshOnWindowFocus: false)
-      @repo = repo if repo?.relativize(path.join(@rootPath, 'test')) is 'test'
+      repo = atom.project.repositories[0].getRepo().workingDirectory
+      @repo = repo if atom.project.repositories[0].isProjectAtRoot() is true
 
   load: (done) ->
     @loadPath @rootPath, =>
