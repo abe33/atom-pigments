@@ -237,7 +237,7 @@
     "underscore-plus": "1.x",
     "event-kit": "2.x",
     "fs-plus": "2.x",
-    "async": "0.2.6",
+    "async": "2.6.4",
     "css-color-function": "0.1.x",
     "minimatch": "3.0.x",
     "delegato": "^1.0.0",
